@@ -47,6 +47,12 @@
     <Filter Include="source_code\application\math">
       <UniqueIdentifier>{1098b12a-e985-44b8-8c34-b7586b12ef77}</UniqueIdentifier>
     </Filter>
+    <Filter Include="source_code\application\object\objects">
+      <UniqueIdentifier>{aad20ef4-2fa6-4e9f-aeb1-a931dc4e2228}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source_code\application\object\objects\sprite">
+      <UniqueIdentifier>{9f6c4f4d-4ff7-4e97-8212-7cfd9a468cb3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source_code\main.cpp">
@@ -117,6 +123,9 @@
     </ClCompile>
     <ClCompile Include="source_code\application\object\object_factory.cpp">
       <Filter>source_code\application\object</Filter>
+    </ClCompile>
+    <ClCompile Include="source_code\application\object\objects\sprite\sprite2d.cpp">
+      <Filter>source_code\application\object\objects\sprite</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -197,6 +206,9 @@
     </ClInclude>
     <ClInclude Include="source_code\application\object\object_factory.h">
       <Filter>source_code\application\object</Filter>
+    </ClInclude>
+    <ClInclude Include="source_code\application\object\objects\sprite\sprite2d.h">
+      <Filter>source_code\application\object\objects\sprite</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

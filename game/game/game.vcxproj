@@ -87,6 +87,7 @@
     <ClCompile Include="source_code\application\input\inputs\keyboard.cpp" />
     <ClCompile Include="source_code\application\input\input_factory.cpp" />
     <ClCompile Include="source_code\application\object\object.cpp" />
+    <ClCompile Include="source_code\application\object\objects\sprite\sprite2d.cpp" />
     <ClCompile Include="source_code\application\object\object_factory.cpp" />
     <ClCompile Include="source_code\application\object\object_manager.cpp" />
     <ClCompile Include="source_code\application\render\directx9\directx9.cpp" />
@@ -114,6 +115,7 @@
     <ClInclude Include="source_code\application\math\my_math.h" />
     <ClInclude Include="source_code\application\math\vector.h" />
     <ClInclude Include="source_code\application\object\object.h" />
+    <ClInclude Include="source_code\application\object\objects\sprite\sprite2d.h" />
     <ClInclude Include="source_code\application\object\object_factory.h" />
     <ClInclude Include="source_code\application\object\object_manager.h" />
     <ClInclude Include="source_code\application\render\directx9\directx9.h" />
