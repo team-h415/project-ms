@@ -18,13 +18,16 @@
 class Sprite2D : public Object
 {
 public:
-	Sprite2D();
+	Sprite2D(
+		const OBJECT_PARAMETER_DESC &parameter);
 	virtual ~Sprite2D();
 
 	void Update();
 	void Draw();
 
 private:
+	void CalculateVertex();
+	Vertex2D *vertex_;
 };
 
 

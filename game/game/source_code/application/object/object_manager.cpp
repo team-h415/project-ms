@@ -82,8 +82,13 @@ Object *ObjectManager::Create(
 	const OBJECT_PARAMETER_DESC &parameter)
 {
 	if (Search(name)) return nullptr;
-	Object *object = ObjectFactory::Create(parameter);
-	return object;
+	for (int i = 0; i < LAYER_MAX; i++){
+		if (i == parameter.layer_){
+			objects_[i][name] = ObjectFactory::Create(parameter);
+			return objects_[i][name];
+		}
+	}
+	
 }
 
 

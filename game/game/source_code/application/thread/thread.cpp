@@ -25,11 +25,14 @@ Thread::Thread()
 //-------------------------------------
 Thread::~Thread()
 {
-	HRESULT result;
+	BOOL result;
 	if (thread_)
 	{
 		WaitForSingleObject(thread_, INFINITE);
 		result = CloseHandle(thread_);
+		if (!result){
+			ASSERT_ERROR("ƒXƒŒƒbƒh‚Ì”jŠü‚ÉŽ¸”s");
+		}
 	}
 	else
 	{

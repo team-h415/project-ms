@@ -18,7 +18,8 @@
 // レイヤは後々書き換え、ゲームによって数も変わる
 enum OBJECT_LAYER
 {
-	LAYER_1 = 0,
+	LAYER_NONE = 0,
+	LAYER_SPRITE_2D,
 	LAYER_MAX,
 };
 

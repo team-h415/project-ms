@@ -15,6 +15,7 @@
 //-------------------------------------
 // class
 //-------------------------------------
+class ObjectManager;
 class Title : public Scene
 {
 public:
@@ -23,6 +24,7 @@ public:
 	void Update();
 	void Draw();
 private:
+	ObjectManager *object_manager_;
 };
 
 
