@@ -125,7 +125,7 @@ void SceneManager::ChangeScene()
 	thread_->Create(CreateScene);
 	next_request_ = false;
 	fade_->SetFade(FADE_OUT);
-
+	SAFE_DELETE(thread_);
 }
 
 
