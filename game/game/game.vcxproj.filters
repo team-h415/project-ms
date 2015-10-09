@@ -53,6 +53,12 @@
     <Filter Include="source_code\application\object\objects\sprite">
       <UniqueIdentifier>{9f6c4f4d-4ff7-4e97-8212-7cfd9a468cb3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="source_code\application\camera">
+      <UniqueIdentifier>{d91c4341-78c5-4c57-8dee-c9bc7d6083ab}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source_code\application\camera\cameras">
+      <UniqueIdentifier>{01d57e0c-cb28-49bd-8071-08e8cbc1de05}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source_code\main.cpp">
@@ -126,6 +132,21 @@
     </ClCompile>
     <ClCompile Include="source_code\application\object\objects\sprite\sprite2d.cpp">
       <Filter>source_code\application\object\objects\sprite</Filter>
+    </ClCompile>
+    <ClCompile Include="source_code\application\camera\camera.cpp">
+      <Filter>source_code\application\camera</Filter>
+    </ClCompile>
+    <ClCompile Include="source_code\application\camera\camera_factory.cpp">
+      <Filter>source_code\application\camera</Filter>
+    </ClCompile>
+    <ClCompile Include="source_code\application\camera\camera_manager.cpp">
+      <Filter>source_code\application\camera</Filter>
+    </ClCompile>
+    <ClCompile Include="source_code\application\camera\cameras\oltho_camera.cpp">
+      <Filter>source_code\application\camera\cameras</Filter>
+    </ClCompile>
+    <ClCompile Include="source_code\application\camera\cameras\perspective_camera.cpp">
+      <Filter>source_code\application\camera\cameras</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -209,6 +230,21 @@
     </ClInclude>
     <ClInclude Include="source_code\application\object\objects\sprite\sprite2d.h">
       <Filter>source_code\application\object\objects\sprite</Filter>
+    </ClInclude>
+    <ClInclude Include="source_code\application\camera\camera.h">
+      <Filter>source_code\application\camera</Filter>
+    </ClInclude>
+    <ClInclude Include="source_code\application\camera\camera_factory.h">
+      <Filter>source_code\application\camera</Filter>
+    </ClInclude>
+    <ClInclude Include="source_code\application\camera\camera_manager.h">
+      <Filter>source_code\application\camera</Filter>
+    </ClInclude>
+    <ClInclude Include="source_code\application\camera\cameras\oltho_camera.h">
+      <Filter>source_code\application\camera\cameras</Filter>
+    </ClInclude>
+    <ClInclude Include="source_code\application\camera\cameras\perspective_camera.h">
+      <Filter>source_code\application\camera\cameras</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

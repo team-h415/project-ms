@@ -88,7 +88,8 @@ Object *ObjectManager::Create(
 			return objects_[i][name];
 		}
 	}
-	
+	ASSERT_ERROR("指定したレイヤーが見つからない為、生成できませんでした");
+	return nullptr;
 }
 
 

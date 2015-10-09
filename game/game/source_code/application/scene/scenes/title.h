@@ -16,6 +16,7 @@
 // class
 //-------------------------------------
 class ObjectManager;
+class CameraManager;
 class Title : public Scene
 {
 public:
@@ -25,6 +26,7 @@ public:
 	void Draw();
 private:
 	ObjectManager *object_manager_;
+	CameraManager *camera_manager_;
 };
 
 

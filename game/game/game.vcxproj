@@ -82,6 +82,11 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="source_code\application\application.cpp" />
+    <ClCompile Include="source_code\application\camera\camera.cpp" />
+    <ClCompile Include="source_code\application\camera\cameras\oltho_camera.cpp" />
+    <ClCompile Include="source_code\application\camera\cameras\perspective_camera.cpp" />
+    <ClCompile Include="source_code\application\camera\camera_factory.cpp" />
+    <ClCompile Include="source_code\application\camera\camera_manager.cpp" />
     <ClCompile Include="source_code\application\fps\fps.cpp" />
     <ClCompile Include="source_code\application\input\input.cpp" />
     <ClCompile Include="source_code\application\input\inputs\keyboard.cpp" />
@@ -108,6 +113,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source_code\application\application.h" />
+    <ClInclude Include="source_code\application\camera\camera.h" />
+    <ClInclude Include="source_code\application\camera\cameras\oltho_camera.h" />
+    <ClInclude Include="source_code\application\camera\cameras\perspective_camera.h" />
+    <ClInclude Include="source_code\application\camera\camera_factory.h" />
+    <ClInclude Include="source_code\application\camera\camera_manager.h" />
     <ClInclude Include="source_code\application\fps\fps.h" />
     <ClInclude Include="source_code\application\input\input.h" />
     <ClInclude Include="source_code\application\input\inputs\keyboard.h" />

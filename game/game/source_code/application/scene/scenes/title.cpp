@@ -16,6 +16,8 @@
 #include "../../input/inputs/keyboard.h"
 #include "../../object/object.h"
 #include "../../object/object_manager.h"
+#include "../../camera/camera.h"
+#include "../../camera/camera_manager.h"
 #include "../scene.h"
 #include "../scene_manager.h"
 #include "title.h"
@@ -27,7 +29,23 @@
 //-------------------------------------
 Title::Title()
 {
+	camera_manager_ = new CameraManager;
 	object_manager_ = new ObjectManager;
+
+
+	CAMERA_PARAMETER_DESC camera_param;
+	camera_param.acpect_ = SCREEN_WIDTH / SCREEN_HEIGHT;
+	camera_param.fovy_ = D3DX_PI * 0.25f;
+	camera_param.position_ = { 0.0f, 10.0f, -20.0f };
+	camera_param.focus_ = { 0.0f, 0.0f, 0.0f };
+	camera_param.rotation_ = { 0.0f, 0.0f, 0.0f };
+	camera_param.up_ = { 0.0f, 1.0f, 0.0f };
+	camera_param.near_ = 0.1f;
+	camera_param.far_ = 1000.0f;
+
+	camera_manager_->Create(
+		 "Perspective", "MainCamera", camera_param);
+
 
 	OBJECT_PARAMETER_DESC param;
 	param.position_ = {
@@ -49,6 +67,7 @@ Title::Title()
 Title::~Title()
 {
 	SAFE_DELETE(object_manager_);
+	SAFE_DELETE(camera_manager_);
 }
 
 
@@ -57,6 +76,7 @@ Title::~Title()
 //-------------------------------------
 void Title::Update()
 {
+	camera_manager_->Update();
 	object_manager_->Update();
 
 	if (KeyBoard::isTrigger(DIK_RETURN))
@@ -71,9 +91,10 @@ void Title::Update()
 //-------------------------------------
 void Title::Draw()
 {
-	Color color(32, 255, 32, 255);
+	Color color(32, 32, 32, 255);
 	DirectX9Holder::DrawBegin();
 	DirectX9Holder::Clear(color);
+	camera_manager_->Set("MainCamera");
 	object_manager_->Draw();
 	Fade::Draw();
 	DirectX9Holder::DrawEnd();
