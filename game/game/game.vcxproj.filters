@@ -59,6 +59,9 @@
     <Filter Include="source_code\application\camera\cameras">
       <UniqueIdentifier>{01d57e0c-cb28-49bd-8071-08e8cbc1de05}</UniqueIdentifier>
     </Filter>
+    <Filter Include="source_code\application\shader">
+      <UniqueIdentifier>{d6041757-0270-48bb-970a-c45e00137a72}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source_code\main.cpp">
@@ -147,6 +150,9 @@
     </ClCompile>
     <ClCompile Include="source_code\application\camera\cameras\perspective_camera.cpp">
       <Filter>source_code\application\camera\cameras</Filter>
+    </ClCompile>
+    <ClCompile Include="source_code\application\shader\shader.cpp">
+      <Filter>source_code\application\shader</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -245,6 +251,9 @@
     </ClInclude>
     <ClInclude Include="source_code\application\camera\cameras\perspective_camera.h">
       <Filter>source_code\application\camera\cameras</Filter>
+    </ClInclude>
+    <ClInclude Include="source_code\application\shader\shader.h">
+      <Filter>source_code\application\shader</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
