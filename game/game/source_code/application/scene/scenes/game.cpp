@@ -8,12 +8,13 @@
 // include
 //-------------------------------------
 #include "../../../common/common.h"
-#include "../../math/vector.h"
 #include "../../render/renderer.h"
 #include "../../render/directx9/directx9.h"
 #include "../../render/directx9/directx9_holder.h"
+#include "../../math/vector.h"
 #include "../../input/input.h"
 #include "../../input/inputs/keyboard.h"
+#include "../../debug/debug_font.h"
 #include "../scene.h"
 #include "../scene_manager.h"
 #include "game.h"
@@ -54,7 +55,7 @@ void Game::Update()
 //-------------------------------------
 void Game::Draw()
 {
-	Color color(32, 32, 255, 0);
+	Color color(32, 32, 32, 0);
 	DirectX9Holder::DrawBegin();
 	DirectX9Holder::Clear(color);
 	Fade::Draw();

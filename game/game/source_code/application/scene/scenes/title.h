@@ -17,6 +17,7 @@
 //-------------------------------------
 class ObjectManager;
 class CameraManager;
+class DebugFont;
 class Title : public Scene
 {
 public:
@@ -27,6 +28,7 @@ public:
 private:
 	ObjectManager *object_manager_;
 	CameraManager *camera_manager_;
+	DebugFont *font_;
 };
 
 
