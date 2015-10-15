@@ -12,6 +12,7 @@
 #include "../../../render/directx9/directx9.h"
 #include "../../../render/directx9/directx9_holder.h"
 #include "../../../math/vector.h"
+#include "../../../shader/shader.h"
 #include "../../object.h"
 #include "field.h"
 
@@ -35,6 +36,8 @@ Field::Field(
 	index_count_ = 0;
 	mesh_division_ = { 0, 0 };
 	D3DXMatrixIdentity(&world_);
+	shader_ = nullptr;
+	shader_ = new Shader("resource/shader/halflambert_lighting.hlsl");
 }
 
 
@@ -43,6 +46,10 @@ Field::Field(
 //-------------------------------------
 Field::~Field()
 {
+	SAFE_RELEASE(vertex_buffer_);
+	SAFE_RELEASE(index_buffer_);
+	SAFE_DELETE_ARRAY(normal_buffer_);
+	SAFE_DELETE(shader_);
 }
 
 
@@ -83,6 +90,39 @@ void Field::Update()
 //-------------------------------------
 void Field::Draw()
 {
+	DirectX9Holder::device_->SetTransform(D3DTS_WORLD, &world_);
+	DirectX9Holder::device_->SetVertexDeclaration(
+		DirectX9Holder::vertex_declaration_3d_);
+
+	D3DXMATRIX view,projection,wvp;
+	DirectX9Holder::device_->GetTransform(D3DTS_VIEW, &view);
+	DirectX9Holder::device_->GetTransform(D3DTS_PROJECTION, &projection);
+	wvp = world_ * view * projection;
+
+	D3DXVECTOR3 light_vec(0.5f, -0.5f, 0.5f);
+	D3DXVec3Normalize(&light_vec, &light_vec);
+	D3DXCOLOR light_diffuse(0.8f, 0.8f, 0.8f, 0.8f);
+
+	shader_->vertex_table()->SetMatrix(
+		DirectX9Holder::device_, "matrix_wvp", &wvp);
+	shader_->vertex_table()->SetMatrix(
+		DirectX9Holder::device_, "matrix_w", &world_);
+
+	shader_->vertex_table()->SetFloatArray(
+		DirectX9Holder::device_,
+		"light_direction",
+		reinterpret_cast<float*>(&light_vec),
+		3);
+
+	shader_->vertex_table()->SetFloatArray(
+		DirectX9Holder::device_,
+		"light_diffuse",
+		reinterpret_cast<float*>(&light_diffuse),
+		4);
+
+	DirectX9Holder::device_->SetVertexShader(shader_->vertex_shader());
+	DirectX9Holder::device_->SetPixelShader(shader_->pixel_shader());
+
 	DirectX9Holder::device_->SetStreamSource(
 		0,
 		vertex_buffer_,

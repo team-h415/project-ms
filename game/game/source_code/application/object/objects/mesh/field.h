@@ -15,6 +15,7 @@
 //-------------------------------------
 // class
 //-------------------------------------
+class Shader;
 class Field : public Object
 {
 public:
@@ -53,6 +54,7 @@ private:
 	unsigned int index_count_;
 	D3DXVECTOR2 mesh_division_;
 	D3DXMATRIX world_;
+	Shader *shader_;
 };
 
 
