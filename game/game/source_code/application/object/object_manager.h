@@ -25,6 +25,12 @@ public:
 	static Object *Create(
 		const std::string &name,
 		const OBJECT_PARAMETER_DESC &parameter);
+
+	static Object *Create(
+		const std::string &name,
+		const OBJECT_PARAMETER_DESC &parameter,
+		const std::string &object_path);
+
 private:
 	static bool Search(const std::string &name);
 

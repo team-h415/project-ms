@@ -1,0 +1,498 @@
+//=========================================================
+// field.cpp
+// author:ryuya nakamura
+//=========================================================
+
+
+//-------------------------------------
+// include
+//-------------------------------------
+#include "../../../../common/common.h"
+#include "../../../render/renderer.h"
+#include "../../../render/directx9/directx9.h"
+#include "../../../render/directx9/directx9_holder.h"
+#include "../../../math/vector.h"
+#include "../../object.h"
+#include "field.h"
+
+
+//-------------------------------------
+// warninig
+//-------------------------------------
+#pragma warning(disable:4996)
+
+
+//-------------------------------------
+// Field()
+//-------------------------------------
+Field::Field(
+	const OBJECT_PARAMETER_DESC &parameter)
+{
+	parameter_ = parameter;
+	vertex_buffer_ = NULL;
+	index_buffer_ = NULL;
+	normal_buffer_ = nullptr;
+	index_count_ = 0;
+	mesh_division_ = { 0, 0 };
+	D3DXMatrixIdentity(&world_);
+}
+
+
+//-------------------------------------
+// ~Field()
+//-------------------------------------
+Field::~Field()
+{
+}
+
+
+//-------------------------------------
+// Update()
+//-------------------------------------
+void Field::Update()
+{
+	D3DXMATRIX translate, rotate, scaling;
+	D3DXMatrixIdentity(&translate);
+	D3DXMatrixIdentity(&rotate);
+	D3DXMatrixIdentity(&scaling);
+	D3DXMatrixIdentity(&world_);
+
+	D3DXMatrixScaling(
+		&scaling, 1.0f, 1.0f, 1.0f);
+	D3DXMatrixMultiply(
+		&world_, &world_, &scaling);
+	D3DXMatrixRotationYawPitchRoll(
+		&rotate,
+		parameter_.rotation_.y_,
+		parameter_.rotation_.x_,
+		parameter_.rotation_.z_);
+	D3DXMatrixMultiply(
+		&world_, &world_, &rotate);
+	D3DXMatrixTranslation(
+		&translate,
+		parameter_.position_.x_,
+		parameter_.position_.y_,
+		parameter_.position_.z_);
+	D3DXMatrixMultiply(
+		&world_, &world_, &translate);
+}
+
+
+//-------------------------------------
+// Draw()
+//-------------------------------------
+void Field::Draw()
+{
+	DirectX9Holder::device_->SetStreamSource(
+		0,
+		vertex_buffer_,
+		0,
+		sizeof(Vertex3D));
+	DirectX9Holder::device_->SetIndices(index_buffer_);
+	DirectX9Holder::device_->SetVertexDeclaration(
+		DirectX9Holder::vertex_declaration_3d_);
+	DirectX9Holder::device_->DrawIndexedPrimitive(
+		D3DPT_TRIANGLESTRIP,
+		0,
+		0,
+		index_count_,
+		0,
+		index_count_ - 2);
+}
+
+
+//-------------------------------------
+// LoadMesh()
+//-------------------------------------
+void Field::LoadMesh(
+	const std::string &path)
+{
+	FILE *file = fopen(path.c_str(), "rb");
+	int div_x(0), div_z(0), vertex_count(0);
+	D3DXVECTOR3 *vertex_buffer;
+
+	fread(&div_x, sizeof(unsigned int), 1, file);
+	fread(&div_z, sizeof(unsigned int), 1, file);
+	fread(&vertex_count, sizeof(unsigned int), 1, file);
+
+	vertex_buffer = new D3DXVECTOR3[vertex_count];
+	fread(vertex_buffer, sizeof(D3DXVECTOR3), vertex_count, file);
+
+	fclose(file);
+
+	index_count_ = ((div_x + 1) * 2 + 2) * div_z - 2;
+	mesh_division_ = {
+		static_cast<float>(div_x),
+		static_cast<float>(div_z)
+	};
+
+	if (FAILED(DirectX9Holder::device_->CreateVertexBuffer(
+		sizeof(Vertex3D)* vertex_count,
+		D3DUSAGE_WRITEONLY,
+		0,
+		D3DPOOL_MANAGED,
+		&vertex_buffer_,
+		NULL)))
+	{
+		ASSERT_ERROR("メッシュの頂点バッファ生成に失敗");
+	}
+
+	if (FAILED(DirectX9Holder::device_->CreateIndexBuffer(
+		sizeof(WORD)* index_count_,
+		D3DUSAGE_WRITEONLY,
+		D3DFMT_INDEX16,
+		D3DPOOL_MANAGED,
+		&index_buffer_,
+		NULL)))
+	{
+		ASSERT_ERROR("メッシュのインデックスバッファ生成に失敗");
+	}
+
+	normal_buffer_ = new D3DXVECTOR3[(div_x * 2) * div_z];
+
+	CalculateVertex(vertex_buffer);
+	CalculateNormal();
+	CalculateIndex();
+	SAFE_DELETE(vertex_buffer);
+}
+
+
+//-------------------------------------
+// CalculateVertex()
+//-------------------------------------
+void Field::CalculateVertex(
+	D3DXVECTOR3 *source_buffer)
+{
+	Vertex3D *vertex;
+	vertex_buffer_->Lock(0, 0, (void**)&vertex, 0);
+	for (int z = 0; z < static_cast<int>(mesh_division_.y + 1); z++)
+	{
+		for (int x = 0; x < static_cast<int>(mesh_division_.x + 1); x++)
+		{
+			int num = static_cast<int>(z * (mesh_division_.x + 1) + x);
+			vertex[num].position_ = {
+				(-parameter_.scaling_.x_ / 2.0f) + (x * (parameter_.scaling_.x_ / mesh_division_.x)),
+				source_buffer[num].y,
+				(parameter_.scaling_.z_ / 2.0f) - (z * (parameter_.scaling_.z_ / mesh_division_.y))
+			};
+			vertex[num].diffuse_ = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+			vertex[num].texture_ = {
+				static_cast<float>(x),
+				static_cast<float>(z)
+			};
+		}
+	}
+	vertex_buffer_->Unlock();
+}
+
+
+//-------------------------------------
+// CalculateIndex()
+//-------------------------------------
+void Field::CalculateIndex()
+{
+	WORD *index;
+	index_buffer_->Lock(0, 0, (void**)&index, 0);
+	for (unsigned int i = 0, j = 0, k = 0; j < index_count_; j++)
+	{
+		if (j == 2 * (static_cast<int>(mesh_division_.x) + 1) + k * (2 * (static_cast<int>(mesh_division_.x) + 1) + 2))
+		{
+			index[j] = (i - 1) + k * (static_cast<int>(mesh_division_.x) + 1);
+			index[j + 1] = i + (k + 1) * (static_cast<int>(mesh_division_.x) + 1);
+			j += 2; k++; i = 0;
+		}
+		if (j % 2 == 0)
+		{
+			index[j] = i + (k + 1) * (static_cast<int>(mesh_division_.x) + 1);
+		}
+		else
+		{
+			index[j] = i + k * (static_cast<int>(mesh_division_.x) + 1);
+			i++;
+		}
+	}
+	index_buffer_->Unlock();
+}
+
+
+//-------------------------------------
+// CalculateNormal()
+//-------------------------------------
+void Field::CalculateNormal()
+{
+	CalculatePanelNormal();
+	CalculateVertexNormal();
+}
+
+
+//-------------------------------------
+// CalculatePanelNormal()
+//-------------------------------------
+void Field::CalculatePanelNormal()
+{
+	Vertex3D *vertex;
+	D3DXVECTOR3 *normal = normal_buffer_;
+
+	vertex_buffer_->Lock(0, 0, (void**)&vertex, 0);
+
+	for (int z = 0; z < static_cast<int>(mesh_division_.y); z++)
+	{
+		for (int x = 0; x < static_cast<int>(mesh_division_.x); x++)
+		{
+			D3DXVECTOR3 vec1, vec2, vec_cross;
+			int num1, num2;
+
+			num1 = static_cast<int>(z * (mesh_division_.x + 1) + x);
+			num2 = static_cast<int>((z + 1) * (mesh_division_.x + 1) + x);
+			vec1 = vertex[num1].position_ - vertex[num2].position_;
+			num1 = static_cast<int>((z + 1) * (mesh_division_.x + 1) + x + 1);
+			num2 = static_cast<int>((z + 1) * (mesh_division_.x + 1) + x);
+			vec2 = vertex[num1].position_ - vertex[num2].position_;
+			D3DXVec3Cross(&vec_cross, &vec1, &vec2);
+			D3DXVec3Normalize(&vec_cross, &vec_cross);
+			*normal = vec_cross;
+			normal++;
+
+			num1 = static_cast<int>(z * (mesh_division_.x + 1) + x);
+			num2 = static_cast<int>(z * (mesh_division_.x + 1) + x + 1);
+			vec1 = vertex[num1].position_ - vertex[num2].position_;
+			num1 = static_cast<int>((z + 1) * (mesh_division_.x + 1) + x + 1);
+			num2 = static_cast<int>(z * (mesh_division_.x + 1) + x + 1);
+			vec2 = vertex[num1].position_ - vertex[num2].position_;
+			D3DXVec3Cross(&vec_cross, &vec2, &vec1);
+			D3DXVec3Normalize(&vec_cross, &vec_cross);
+			*normal = vec_cross;
+			normal++;
+		}
+	}
+
+	vertex_buffer_->Unlock();
+}
+
+
+//-------------------------------------
+// CalculateVertexNormal()
+//-------------------------------------
+void Field::CalculateVertexNormal()
+{
+	Vertex3D *vertex;
+	D3DXVECTOR3 *normal = normal_buffer_;
+
+	vertex_buffer_->Lock(0, 0, (void**)&vertex, 0);
+
+	for (int z = 0, num = 0; z < static_cast<int>(mesh_division_.y + 1); z++)
+	{
+		for (int x = 0; x < static_cast<int>(mesh_division_.x + 1); x++, num++)
+		{
+			if (z == 0)
+			{
+				if (x == 0)
+				{
+					int num1, num2;
+					num1 = static_cast<int>(z * (mesh_division_.x * 2) + (x * 2));
+					num2 = static_cast<int>(z * (mesh_division_.x * 2) + (x * 2) + 1);
+					vertex[num].normal_ = (normal[num1] + normal[num2]) / 2.0f;
+				}
+				else if (x == static_cast<int>(mesh_division_.x))
+				{
+					int num1 = static_cast<int>(z * (mesh_division_.x * 2) + (x * 2) + 1);
+					vertex[num].normal_ = normal[num1];
+				}
+				else
+				{
+					int num1, num2, num3;
+					num1 = static_cast<int>(z * (mesh_division_.x * 2) + (x * 2) - 1);
+					num2 = static_cast<int>(z * (mesh_division_.x * 2) + (x * 2));
+					num3 = static_cast<int>(z * (mesh_division_.x * 2) + (x * 2) + 1);
+					vertex[num].normal_ = (normal[num1] + normal[num2] + normal[num3]) / 3.0f;
+				}
+			}
+			else if (z == static_cast<int>(mesh_division_.y))
+			{
+				if (x == 0)
+				{
+					int num1 = static_cast<int>((z - 1) * (mesh_division_.x * 2) + (x * 2));
+					vertex[num].normal_ = normal[num1];
+				}
+				else if (x == static_cast<int>(mesh_division_.x))
+				{
+					int num1, num2;
+					num1 = static_cast<int>((z - 1) * (mesh_division_.x * 2) + (x * 2) - 2);
+					num2 = static_cast<int>((z - 1) * (mesh_division_.x * 2) + (x * 2) - 1);
+					vertex[num].normal_ = (normal[num1] + normal[num2]) / 2.0f;
+				}
+				else
+				{
+					int num1, num2, num3;
+					num1 = static_cast<int>((z - 1) * (mesh_division_.x * 2) + (x * 2) - 2);
+					num2 = static_cast<int>((z - 1) * (mesh_division_.x * 2) + (x * 2) - 1);
+					num3 = static_cast<int>((z - 1) * (mesh_division_.x * 2) + (x * 2));
+					vertex[num].normal_ = (normal[num1] + normal[num2] + normal[num3]) / 3.0f;
+				}
+			}
+			else
+			{
+				if (x == 0)
+				{
+					int num1, num2, num3;
+					num1 = static_cast<int>((z - 1) * (mesh_division_.x * 2) + (x * 2));
+					num2 = static_cast<int>(z * (mesh_division_.x * 2) + (x * 2));
+					num3 = static_cast<int>(z * (mesh_division_.x * 2) + (x * 2) + 1);
+					vertex[num].normal_ = (normal[num1] + normal[num2] + normal[num3]) / 3.0f;
+
+				}
+				else if (x == static_cast<int>(mesh_division_.x))
+				{
+					int num1, num2, num3;
+					num1 = static_cast<int>((z - 1) * (mesh_division_.x * 2) + (x * 2) - 2);
+					num2 = static_cast<int>((z - 1) * (mesh_division_.x * 2) + (x * 2) - 1);
+					num3 = static_cast<int>(z * (mesh_division_.x * 2) + (x * 2) - 1);
+					vertex[num].normal_ = (normal[num1] + normal[num2] + normal[num3]) / 3.0f;
+
+				}
+				else
+				{
+					int num1, num2, num3, num4, num5, num6;
+					num1 = static_cast<int>((z - 1) * (mesh_division_.x * 2) + (x * 2) - 2);
+					num2 = static_cast<int>((z - 1) * (mesh_division_.x * 2) + (x * 2) - 1);
+					num3 = static_cast<int>((z - 1) * (mesh_division_.x * 2) + (x * 2));
+					num4 = static_cast<int>(z * (mesh_division_.x * 2) + (x * 2) - 1);
+					num5 = static_cast<int>(z * (mesh_division_.x * 2) + (x * 2));
+					num6 = static_cast<int>(z * (mesh_division_.x * 2) + (x * 2) + 1);
+					vertex[num].normal_ = (normal[num1] + normal[num2] + normal[num3] + normal[num4] + normal[num5] + normal[num6]) / 6.0f;
+				}
+			}
+			D3DXVec3Normalize(&vertex[num].normal_, &vertex[num].normal_);
+		}
+	}
+
+	vertex_buffer_->Unlock();
+}
+
+
+//-------------------------------------
+// GetHeight()
+//-------------------------------------
+float Field::GetHeight(const D3DXVECTOR3 &position)
+{
+	D3DXVECTOR3 pos1, pos2, pos3;
+	D3DXVECTOR3 vec1, vec2, vec3;
+	D3DXVECTOR3 vec_p1, vec_p2, vec_p3;
+	float height = 0.0f;
+	Vertex3D *vertex;
+
+	vertex_buffer_->Lock(0, 0, (void**)&vertex, 0);
+	for (int z = 0; z < static_cast<int>(mesh_division_.y); z++)
+	{
+		for (int x = 0; x < static_cast<int>(mesh_division_.x); x++)
+		{
+			int num1, num2, num3;
+			num1 = (z + 1) * static_cast<int>(mesh_division_.x + 1) + x + 1;
+			num2 = (z + 1) * static_cast<int>(mesh_division_.x + 1) + x;
+			num3 = z * static_cast<int>(mesh_division_.x + 1) + x;
+
+			if (position.x > vertex[num1].position_.x) continue;
+			if (position.z < vertex[num1].position_.z) continue;
+			if (position.x < vertex[num3].position_.x) continue;
+			if (position.z > vertex[num3].position_.z) continue;
+
+			pos1 = vertex[num1].position_;
+			pos2 = vertex[num2].position_;
+			pos3 = vertex[num3].position_;
+
+			vec1 = pos2 - pos1;
+			vec2 = pos3 - pos2;
+			vec3 = pos1 - pos3;
+
+			vec_p1 = position - pos1;
+			vec_p2 = position - pos2;
+			vec_p3 = position - pos3;
+
+			if (isStand(">", vec1, vec2, vec3, vec_p1, vec_p2, vec_p3))
+			{
+				int num = z * static_cast<int>(mesh_division_.x * 2) + (x * 2);
+				D3DXVECTOR3 nor = normal_buffer_[num];
+				height = GetHeightValue(pos1, position, nor);
+				vertex_buffer_->Unlock();
+				return height;
+			}
+
+
+			num1 = z * static_cast<int>(mesh_division_.x + 1) + x;
+			num2 = z * static_cast<int>(mesh_division_.x + 1) + x + 1;
+			num3 = (z + 1) * static_cast<int>(mesh_division_.x + 1) + x + 1;
+
+			pos1 = vertex[num1].position_;
+			pos2 = vertex[num2].position_;
+			pos3 = vertex[num3].position_;
+
+			vec1 = pos2 - pos1;
+			vec2 = pos3 - pos2;
+			vec3 = pos1 - pos3;
+
+			vec_p1 = position - pos1;
+			vec_p2 = position - pos2;
+			vec_p3 = position - pos3;
+
+			if (isStand(">=", vec1, vec2, vec3, vec_p1, vec_p2, vec_p3))
+			{
+				int num = z * static_cast<int>(mesh_division_.x * 2) + (x * 2) + 1;
+				D3DXVECTOR3 nor = normal_buffer_[num];
+				height = GetHeightValue(pos1, position, nor);
+				vertex_buffer_->Unlock();
+				return height;
+			}
+		}
+	}
+	vertex_buffer_->Unlock();
+	return 0.0f;
+}
+
+
+//-------------------------------------
+// isStand()
+//-------------------------------------
+bool Field::isStand(
+	const std::string &type,
+	const D3DXVECTOR3 &vec1,
+	const D3DXVECTOR3 &vec2,
+	const D3DXVECTOR3 &vec3,
+	const D3DXVECTOR3 &vec_p1,
+	const D3DXVECTOR3 &vec_p2,
+	const D3DXVECTOR3 &vec_p3)
+{
+	if (type == ">"){
+		if ((vec1.x * vec_p1.z - vec1.z * vec_p1.x) > 0) return false;
+		if ((vec2.x * vec_p2.z - vec2.z * vec_p2.x) > 0) return false;
+		if ((vec3.x * vec_p3.z - vec3.z * vec_p3.x) > 0) return false;
+	}
+	if (type == ">="){
+		if ((vec1.x * vec_p1.z - vec1.z * vec_p1.x) >= 0) return false;
+		if ((vec2.x * vec_p2.z - vec2.z * vec_p2.x) >= 0) return false;
+		if ((vec3.x * vec_p3.z - vec3.z * vec_p3.x) >= 0) return false;
+	}
+	return true;
+}
+
+
+//-------------------------------------
+// GetHeightValue()
+//-------------------------------------
+float Field::GetHeightValue(
+	const D3DXVECTOR3 &position,
+	const D3DXVECTOR3 &player_position,
+	const D3DXVECTOR3 &normal)
+{
+	float height = 0.0f;
+	height =
+		position.y - (
+		(player_position.x - position.x) * normal.x +
+		(player_position.z - position.z) * normal.z) /
+		normal.y;
+	return height;
+}
+
+
+//-------------------------------------
+// end of file
+//-------------------------------------

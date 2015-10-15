@@ -81,7 +81,7 @@ void Title::Update()
 	object_manager_->Update();
 
 	font_->Add("シーン名:");
-	font_->Add("タイトル");
+	font_->Add("Title");
 
 	if (KeyBoard::isTrigger(DIK_RETURN))
 	{

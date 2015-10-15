@@ -92,6 +92,22 @@ Object *ObjectManager::Create(
 	return nullptr;
 }
 
+Object *ObjectManager::Create(
+	const std::string &name,
+	const OBJECT_PARAMETER_DESC &parameter,
+	const std::string &object_path)
+{
+	if (Search(name)) return nullptr;
+	for (int i = 0; i < LAYER_MAX; i++){
+		if (i == parameter.layer_){
+			objects_[i][name] = ObjectFactory::Create(parameter,object_path);
+			return objects_[i][name];
+		}
+	}
+	ASSERT_ERROR("指定したレイヤーが見つからない為、生成できませんでした");
+	return nullptr;
+}
+
 
 //-------------------------------------
 // Search()

@@ -17,9 +17,7 @@
 //-------------------------------------
 class ObjectManager;
 class CameraManager;
-class LightManager;
-class ShaderManager;
-class SurfaceManager;
+class DebugFont;
 class Game : public Scene
 {
 public:
@@ -30,9 +28,7 @@ public:
 private:
 	ObjectManager *object_manager_;
 	CameraManager *camera_manager_;
-	LightManager *light_manager_;
-	ShaderManager *shader_manager_;
-	SurfaceManager *sueface_manager;
+	DebugFont *font_;
 };
 
 

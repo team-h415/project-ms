@@ -20,6 +20,9 @@ class ObjectFactory
 public:
 	static Object *Create(
 		const OBJECT_PARAMETER_DESC &parameter);
+	static Object *Create(
+		const OBJECT_PARAMETER_DESC &parameter,
+		const std::string &object_path);
 };
 
 

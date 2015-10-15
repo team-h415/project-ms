@@ -65,6 +65,9 @@
     <Filter Include="source_code\application\debug">
       <UniqueIdentifier>{eaa7fb8f-9696-46ab-a4d3-135708f9b860}</UniqueIdentifier>
     </Filter>
+    <Filter Include="source_code\application\object\objects\mesh">
+      <UniqueIdentifier>{131ebc22-f660-4ec0-b334-b722dcc331ca}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source_code\main.cpp">
@@ -159,6 +162,9 @@
     </ClCompile>
     <ClCompile Include="source_code\application\debug\debug_font.cpp">
       <Filter>source_code\application\debug</Filter>
+    </ClCompile>
+    <ClCompile Include="source_code\application\object\objects\mesh\field.cpp">
+      <Filter>source_code\application\object\objects\mesh</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -263,6 +269,9 @@
     </ClInclude>
     <ClInclude Include="source_code\application\debug\debug_font.h">
       <Filter>source_code\application\debug</Filter>
+    </ClInclude>
+    <ClInclude Include="source_code\application\object\objects\mesh\field.h">
+      <Filter>source_code\application\object\objects\mesh</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
