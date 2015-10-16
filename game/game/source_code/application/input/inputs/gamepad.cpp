@@ -77,7 +77,7 @@ GamePad::GamePad()
 //-------------------------------------
 GamePad::~GamePad()
 {
-	device_->Unacquire();
+	if (device_) device_->Unacquire();
 	SAFE_RELEASE(device_);
 }
 
@@ -88,6 +88,8 @@ GamePad::~GamePad()
 void GamePad::Update()
 {
 	bool state[PAD_MAX];
+
+	if (!device_) return;
 
 	if (SUCCEEDED(device_->GetDeviceState(
 		sizeof(joy_state_), &joy_state_))){
