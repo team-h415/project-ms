@@ -138,6 +138,9 @@ void Field::Draw()
 		index_count_,
 		0,
 		index_count_ - 2);
+
+	DirectX9Holder::device_->SetVertexShader(NULL);
+	DirectX9Holder::device_->SetPixelShader(NULL);
 }
 
 

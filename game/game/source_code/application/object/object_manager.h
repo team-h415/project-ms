@@ -22,10 +22,23 @@ public:
 	virtual ~ObjectManager();
 	void Update();
 	void Draw();
+
+	//-------------------------------------
+	// オブジェクト生成
+	//-------------------------------------
+	// 外部ファイルから読み込むデータのないオブジェクトを生成します。
+	// ObjectManager::Create(
+	//      "オブジェクトの名前", 
+	//      設定するパラメータ);
 	static Object *Create(
 		const std::string &name,
 		const OBJECT_PARAMETER_DESC &parameter);
 
+	// 外部ファイルから読み込みが必要なオブジェクトを生成します。
+	// ObjectManager::Create("
+	//     オブジェクトの名前",
+	//     設定するパラメータ,
+	//     外部ファイルのパス);
 	static Object *Create(
 		const std::string &name,
 		const OBJECT_PARAMETER_DESC &parameter,
@@ -33,7 +46,6 @@ public:
 
 private:
 	static bool Search(const std::string &name);
-
 	static std::map<std::string, Object*> objects_[LAYER_MAX];
 };
 

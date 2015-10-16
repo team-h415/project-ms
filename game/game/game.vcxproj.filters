@@ -68,6 +68,9 @@
     <Filter Include="source_code\application\object\objects\mesh">
       <UniqueIdentifier>{131ebc22-f660-4ec0-b334-b722dcc331ca}</UniqueIdentifier>
     </Filter>
+    <Filter Include="source_code\application\object\objects\model">
+      <UniqueIdentifier>{fb393863-9c54-40b5-8c97-a885c8b52a56}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source_code\main.cpp">
@@ -168,6 +171,9 @@
     </ClCompile>
     <ClCompile Include="source_code\application\input\inputs\gamepad.cpp">
       <Filter>source_code\application\input\inputs</Filter>
+    </ClCompile>
+    <ClCompile Include="source_code\application\object\objects\model\x_model.cpp">
+      <Filter>source_code\application\object\objects\model</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -278,6 +284,9 @@
     </ClInclude>
     <ClInclude Include="source_code\application\input\inputs\gamepad.h">
       <Filter>source_code\application\input\inputs</Filter>
+    </ClInclude>
+    <ClInclude Include="source_code\application\object\objects\model\x_model.h">
+      <Filter>source_code\application\object\objects\model</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

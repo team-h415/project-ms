@@ -101,8 +101,6 @@ void Application::Update()
 //-------------------------------------
 void Application::Draw()
 {
-	keyboard_->Draw();
-	gamepad_->Draw();
 	scene_manager_->Draw();
 }
 

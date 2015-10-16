@@ -22,7 +22,6 @@ public:
 	virtual ~KeyBoard();
 
 	void Update();
-	void Draw();
 
 	//--------------------------------------
 	// ƒL[“ü—Íæ“¾(‰Ÿ‰º)

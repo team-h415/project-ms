@@ -15,6 +15,7 @@
 #include "object_factory.h"
 #include "objects/sprite/sprite2d.h"
 #include "objects/mesh/field.h"
+#include "objects\model\x_model.h"
 
 
 //-------------------------------------
@@ -43,10 +44,16 @@ Object *ObjectFactory::Create(
 	OBJECT_PARAMETER_DESC param = parameter;
 	Object *object = nullptr;
 
-	if (param.layer_ = LAYER_MESH_FIELD){
+	if (param.layer_ == LAYER_MESH_FIELD){
 		object = new Field(parameter);
 		Field *field = dynamic_cast<Field*>(object);
 		field->LoadMesh(object_path);
+	}
+	 
+	if (param.layer_ == LAYER_MODEL_X){
+		object = new XModel(parameter);
+		XModel *model = dynamic_cast<XModel*>(object);
+		model->LoadMesh(object_path);
 	}
 
 	return object;

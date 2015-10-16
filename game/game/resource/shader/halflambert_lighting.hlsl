@@ -31,6 +31,7 @@ float4 light_diffuse;
 float4x4 matrix_w;
 float4x4 matrix_wvp;
 
+
 //--------------------------------------
 // sampler
 //--------------------------------------

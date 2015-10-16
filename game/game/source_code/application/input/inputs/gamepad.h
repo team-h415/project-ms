@@ -57,7 +57,6 @@ public:
 	GamePad();
 	virtual ~GamePad();
 	void Update();
-	void Draw();
 
 	static bool isPress(int pad){
 		return press_[pad];
