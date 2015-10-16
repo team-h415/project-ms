@@ -45,7 +45,8 @@ private:
 	Renderer *renderer_;
 	static Fps *fps_;
 	SceneManager *scene_manager_;
-	Input *input_;
+	Input *keyboard_;
+	Input *gamepad_;
 };
 
 

@@ -90,6 +90,7 @@
     <ClCompile Include="source_code\application\debug\debug_font.cpp" />
     <ClCompile Include="source_code\application\fps\fps.cpp" />
     <ClCompile Include="source_code\application\input\input.cpp" />
+    <ClCompile Include="source_code\application\input\inputs\gamepad.cpp" />
     <ClCompile Include="source_code\application\input\inputs\keyboard.cpp" />
     <ClCompile Include="source_code\application\input\input_factory.cpp" />
     <ClCompile Include="source_code\application\object\object.cpp" />
@@ -124,6 +125,7 @@
     <ClInclude Include="source_code\application\debug\debug_font.h" />
     <ClInclude Include="source_code\application\fps\fps.h" />
     <ClInclude Include="source_code\application\input\input.h" />
+    <ClInclude Include="source_code\application\input\inputs\gamepad.h" />
     <ClInclude Include="source_code\application\input\inputs\keyboard.h" />
     <ClInclude Include="source_code\application\input\input_factory.h" />
     <ClInclude Include="source_code\application\math\my_math.h" />

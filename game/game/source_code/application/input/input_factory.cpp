@@ -10,6 +10,7 @@
 #include "../../common/common.h"
 #include "input.h"
 #include "inputs/keyboard.h"
+#include "inputs/gamepad.h"
 #include "input_factory.h"
 
 
@@ -20,9 +21,13 @@ Input *InputFactory::Create(
 	const std::string &category)
 {
 	Input *input = NULL;
-	if (category == "KeyBoard")
-	{
+
+	if (category == "KeyBoard"){
 		input = new KeyBoard;
+	}
+
+	if (category == "GamePad"){
+		input = new GamePad;
 	}
 
 	if (!input)

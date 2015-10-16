@@ -101,7 +101,7 @@ void Field::Draw()
 
 	D3DXVECTOR3 light_vec(0.5f, -0.5f, 0.5f);
 	D3DXVec3Normalize(&light_vec, &light_vec);
-	D3DXCOLOR light_diffuse(0.8f, 0.8f, 0.8f, 0.8f);
+	D3DXCOLOR light_diffuse(1.0f, 1.0f, 1.0f, 1.0f);
 
 	shader_->vertex_table()->SetMatrix(
 		DirectX9Holder::device_, "matrix_wvp", &wvp);

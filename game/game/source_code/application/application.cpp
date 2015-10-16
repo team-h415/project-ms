@@ -41,8 +41,10 @@ Application::Application(
 		WindowHolder::handle_,
 		"DirectX9");
 	scene_manager_ = new SceneManager;
-	input_ = InputFactory::Create(
+	keyboard_ = InputFactory::Create(
 		"KeyBoard");
+//	gamepad_ = InputFactory::Create(
+//		"GamePad");
 }
 
 
@@ -54,7 +56,8 @@ Application::~Application()
 	SAFE_DELETE(scene_manager_);
 	SAFE_DELETE(fps_);
 	SAFE_DELETE(renderer_);
-	SAFE_DELETE(input_);
+	SAFE_DELETE(keyboard_);
+//	SAFE_DELETE(gamepad_);
 }
 
 
@@ -87,7 +90,8 @@ void Application::Run(
 //-------------------------------------
 void Application::Update()
 {
-	input_->Update();
+	keyboard_->Update();
+//	gamepad_->Update();
 	scene_manager_->Update();
 }
 
@@ -97,7 +101,8 @@ void Application::Update()
 //-------------------------------------
 void Application::Draw()
 {
-	input_->Draw();
+	keyboard_->Draw();
+//	gamepad_->Draw();
 	scene_manager_->Draw();
 }
 

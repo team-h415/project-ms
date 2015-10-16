@@ -166,6 +166,9 @@
     <ClCompile Include="source_code\application\object\objects\mesh\field.cpp">
       <Filter>source_code\application\object\objects\mesh</Filter>
     </ClCompile>
+    <ClCompile Include="source_code\application\input\inputs\gamepad.cpp">
+      <Filter>source_code\application\input\inputs</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source_code\main.h">
@@ -272,6 +275,9 @@
     </ClInclude>
     <ClInclude Include="source_code\application\object\objects\mesh\field.h">
       <Filter>source_code\application\object\objects\mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="source_code\application\input\inputs\gamepad.h">
+      <Filter>source_code\application\input\inputs</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
