@@ -28,6 +28,10 @@ XModel::XModel(
 	material_buffer_ = NULL;
 	shader_ = nullptr;
 	shader_ = new Shader("resource/shader/halflambert_lighting.hlsl");
+	D3DXCreateTextureFromFile(
+		DirectX9Holder::device_,
+		"resource/texture/red.png",
+		&texture_);
 }
 
 
@@ -104,6 +108,8 @@ void XModel::Draw()
 		reinterpret_cast<float*>(&light_diffuse),
 		4);
 
+	DirectX9Holder::device_->SetTexture(
+		shader_->pixel_table()->GetSamplerIndex("texture_0"), texture_);
 
 	DirectX9Holder::device_->SetVertexShader(shader_->vertex_shader());
 	DirectX9Holder::device_->SetPixelShader(shader_->pixel_shader());

@@ -28,6 +28,8 @@ struct Vector3
 	Vector3() : x_(0.0f), y_(0.0f), z_(0.0f){}
 	Vector3(float x, float y, float z) :
 		x_(x), y_(y), z_(z){}
+	Vector3(const Vector3 &v) :
+		x_(v.x_), y_(v.y_), z_(v.z_){}
 	float x_, y_, z_;
 };
 

@@ -110,6 +110,22 @@ Object *ObjectManager::Create(
 
 
 //-------------------------------------
+// Get()
+//-------------------------------------
+Object *ObjectManager::Get(
+	const std::string &name)
+{
+	for (int i = 0; i < LAYER_MAX; i++){
+		for (auto it = objects_[i].begin(); it != objects_[i].end(); ++it){
+			if ((*it).first == name){
+				return (*it).second;
+			}
+		}
+	}
+}
+
+
+//-------------------------------------
 // Search()
 //-------------------------------------
 bool ObjectManager::Search(

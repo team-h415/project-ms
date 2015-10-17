@@ -30,7 +30,7 @@ DebugFont::DebugFont()
 	
 	D3DXCreateFont(
 		DirectX9Holder::device_,
-		0, 6, 0, 0,
+		18, 6, 0, 0,
 		FALSE,
 		SHIFTJIS_CHARSET,
 		OUT_DEFAULT_PRECIS,

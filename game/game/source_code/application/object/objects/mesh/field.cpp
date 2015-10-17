@@ -38,6 +38,10 @@ Field::Field(
 	D3DXMatrixIdentity(&world_);
 	shader_ = nullptr;
 	shader_ = new Shader("resource/shader/halflambert_lighting.hlsl");
+	D3DXCreateTextureFromFile(
+		DirectX9Holder::device_,
+		"resource/texture/grass.jpg",
+		&texture_);
 }
 
 
@@ -119,6 +123,8 @@ void Field::Draw()
 		"light_diffuse",
 		reinterpret_cast<float*>(&light_diffuse),
 		4);
+
+	DirectX9Holder::device_->SetTexture(0, texture_);
 
 	DirectX9Holder::device_->SetVertexShader(shader_->vertex_shader());
 	DirectX9Holder::device_->SetPixelShader(shader_->pixel_shader());

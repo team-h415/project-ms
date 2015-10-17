@@ -35,14 +35,23 @@ public:
 		const OBJECT_PARAMETER_DESC &parameter);
 
 	// 外部ファイルから読み込みが必要なオブジェクトを生成します。
-	// ObjectManager::Create("
-	//     オブジェクトの名前",
+	// ObjectManager::Create(
+	//     "オブジェクトの名前",
 	//     設定するパラメータ,
 	//     外部ファイルのパス);
 	static Object *Create(
 		const std::string &name,
 		const OBJECT_PARAMETER_DESC &parameter,
 		const std::string &object_path);
+
+	//-------------------------------------
+	// オブジェクト取得
+	//-------------------------------------
+	// オブジェクトを名前から検索し、ポインタを返します。
+	// ObjectManager::Get(
+	//     "オブジェクトの名前");
+	static Object *Get(
+		const std::string &name);
 
 private:
 	static bool Search(const std::string &name);

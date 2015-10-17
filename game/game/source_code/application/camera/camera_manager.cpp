@@ -79,6 +79,22 @@ Camera *CameraManager::Create(
 
 
 //-------------------------------------
+// Get()
+//-------------------------------------
+Camera *CameraManager::Get(
+	const std::string &name)
+{
+	for (auto it = cameras_.begin(); it != cameras_.end(); ++it){
+		if ((*it).first == name){
+			return (*it).second;
+		}
+	}
+	ASSERT_WARNING("“¯ˆê–¼‚ÌƒJƒƒ‰‚ª‘¶İ‚µ‚Ü‚¹‚ñ");
+	return nullptr;
+}
+
+
+//-------------------------------------
 // Search()
 //-------------------------------------
 bool CameraManager::Search(

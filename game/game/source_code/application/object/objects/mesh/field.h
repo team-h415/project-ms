@@ -55,6 +55,7 @@ private:
 	D3DXVECTOR2 mesh_division_;
 	D3DXMATRIX world_;
 	Shader *shader_;
+	LPDIRECT3DTEXTURE9 texture_;
 };
 
 

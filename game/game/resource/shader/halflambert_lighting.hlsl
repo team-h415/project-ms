@@ -64,6 +64,6 @@ V_OUT VS(V_IN v_in)
 //=========================================================
 float4 PS(V_OUT v_out) : COLOR
 {
-//	return tex2D(texture_0,v_out.texture_uv) * v_out.color;
-	return v_out.color;
+	return tex2D(texture_0,v_out.texture_uv) * v_out.color;
+//	return v_out.color;
 }
