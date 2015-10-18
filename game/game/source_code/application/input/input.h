@@ -34,7 +34,6 @@ public:
 	virtual ~Input();
 
 	virtual void Update() = 0;
-	virtual void Draw() = 0;
 	static bool isAquire(){ return aquire_; }
 	static void SetAquire(bool aquire){
 		aquire_ = aquire;

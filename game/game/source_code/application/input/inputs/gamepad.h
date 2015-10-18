@@ -49,6 +49,15 @@ enum INPUT_PAD
 
 
 //-------------------------------------
+// struct
+//-------------------------------------
+struct STICK_PARAMETER_DESC
+{
+	float lsx_, lsy_, rsx_, rsy_;
+};
+
+
+//-------------------------------------
 // class
 //-------------------------------------
 class GamePad : public Input
@@ -69,6 +78,14 @@ public:
 	}
 	static bool isRepeat(int pad){
 		return repeat_[pad];
+	}
+	static STICK_PARAMETER_DESC isStick(){
+		STICK_PARAMETER_DESC stick;
+		stick.lsx_ = static_cast<float>(joy_state_.lX) / 1000.0f;
+		stick.lsy_ = static_cast<float>(joy_state_.lY) / 1000.0f;
+		stick.rsx_ = static_cast<float>(joy_state_.lZ) / 1000.0f;
+		stick.rsy_ = static_cast<float>(joy_state_.lRz) / 1000.0f;
+		return stick;
 	}
 
 

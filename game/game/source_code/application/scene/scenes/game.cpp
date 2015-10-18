@@ -71,7 +71,6 @@ Game::Game()
 		"player",
 		player_param,
 		"resource/model/x/pone_red.x");
-
 }
 
 
@@ -103,23 +102,22 @@ void Game::Update()
 
 	static float camera_pos_y = 0.0f;
 	static float camera_focus_y = 0.0f;
-
+	static const float player_speed_value = 0.05f;
+	float player_speed = player_speed_value;
 
 	//-------------------------------------
 	// プレイヤーを地形に沿って移動させる
 	//-------------------------------------
-	if (GamePad::isPress(PAD_LS_LEFT)){
-		player_position.x_ -= 0.05f;
+	if (GamePad::isPress(PAD_BUTTON_11)){
+		player_speed = player_speed_value * 2.0f;
 	}
-	if (GamePad::isPress(PAD_LS_RIGHT)){
-		player_position.x_ += 0.05f;
-	}
-	if (GamePad::isPress(PAD_LS_UP)){
-		player_position.z_ += 0.05f;
-	}
-	if (GamePad::isPress(PAD_LS_DOWN)){
-		player_position.z_ -= 0.05f;
-	}	
+	player_position.x_ += (
+		cosf(player_rotation.y_) * GamePad::isStick().lsx_ +
+		sinf(-player_rotation.y_) * GamePad::isStick().lsy_) * player_speed;
+	player_position.z_ -= (
+		sinf(player_rotation.y_) * GamePad::isStick().lsx_ +
+		cosf(-player_rotation.y_) * GamePad::isStick().lsy_) * player_speed;
+
 	if (GamePad::isPress(PAD_RS_LEFT)){
 		player_rotation.y_ -= D3DX_PI * 0.01f;
 		if (player_rotation.y_ < D3DX_PI){
@@ -134,10 +132,10 @@ void Game::Update()
 	}
 
 	if (GamePad::isPress(PAD_RS_UP)){
-		camera_pos_y += 0.05f;
+		camera_pos_y -= 0.05f;
 	}
 	if (GamePad::isPress(PAD_RS_DOWN)){
-		camera_pos_y -= 0.05f;
+		camera_pos_y += 0.05f;
 	}
 	camera_pos_y = std::min<float>(camera_pos_y, 2.0f);
 	camera_pos_y = std::max<float>(camera_pos_y, -2.0f);
@@ -152,6 +150,7 @@ void Game::Update()
 	player->SetPosition(player_position);
 	player->SetRotation(player_rotation);
 
+
 	//-------------------------------------
 	// カメラ追従
 	//-------------------------------------
@@ -159,13 +158,13 @@ void Game::Update()
 	D3DXVECTOR3 camera_position(main_camera->position());
 	D3DXVECTOR3 camera_focus(main_camera->focus());
 	D3DXVECTOR3 camera_position_sub(
-		sinf(player_rotation.y_) * 6.0f,
+		-sinf(player_rotation.y_) * 6.0f,
 		0.3f + camera_pos_y,
-		cosf(player_rotation.y_) * 6.0f);
+		-cosf(player_rotation.y_) * 6.0f);
 	D3DXVECTOR3 camera_focus_sub(
-		sinf(player_rotation.y_ + D3DX_PI) * 6.0f,
+		-sinf(player_rotation.y_ + D3DX_PI) * 6.0f,
 		0.3f + camera_focus_y,
-		cosf(player_rotation.y_ + D3DX_PI) * 6.0f);
+		-cosf(player_rotation.y_ + D3DX_PI) * 6.0f);
 
 	camera_position = pos + camera_position_sub;
 	camera_focus = pos + camera_focus_sub;
