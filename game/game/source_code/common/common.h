@@ -23,9 +23,14 @@
 #include <time.h>
 #include <Windows.h>
 #include <process.h>
+#include <fbxsdk.h>
+#include <stdint.h>
+
+#include <algorithm>
+#include <vector>
+#include <set>
 #include <string>
 #include <map>
-#include <algorithm>
 
 
 //-------------------------------------

@@ -175,6 +175,9 @@
     <ClCompile Include="source_code\application\object\objects\model\x_model.cpp">
       <Filter>source_code\application\object\objects\model</Filter>
     </ClCompile>
+    <ClCompile Include="source_code\application\object\objects\model\fbx_model.cpp">
+      <Filter>source_code\application\object\objects\model</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source_code\main.h">
@@ -286,6 +289,9 @@
       <Filter>source_code\application\input\inputs</Filter>
     </ClInclude>
     <ClInclude Include="source_code\application\object\objects\model\x_model.h">
+      <Filter>source_code\application\object\objects\model</Filter>
+    </ClInclude>
+    <ClInclude Include="source_code\application\object\objects\model\fbx_model.h">
       <Filter>source_code\application\object\objects\model</Filter>
     </ClInclude>
   </ItemGroup>

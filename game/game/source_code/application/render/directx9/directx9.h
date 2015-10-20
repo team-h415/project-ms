@@ -28,6 +28,12 @@
 
 
 //-------------------------------------
+// define 
+//-------------------------------------
+#define FVF_VERTEX_BLEND_3D (D3DFVF_XYZB4 | D3DFVF_LASTBETA_UBYTE4 | D3DFVF_NORMAL | D3DFVF_DIFFUSE | D3DFVF_TEX1)
+
+
+//-------------------------------------
 // struct
 //-------------------------------------
 struct Vertex2D
@@ -44,6 +50,21 @@ struct Vertex3D
 	D3DXVECTOR3 normal_;
 	D3DCOLOR diffuse_;
 	D3DXVECTOR2 texture_;
+};
+
+struct VertexBlend3D
+{
+	D3DXVECTOR3 position;
+	float weight[3];
+	DWORD matrix_index;
+	D3DXVECTOR3 normal;
+	D3DCOLOR diffuse;
+	D3DXVECTOR2 texture;
+
+	bool operator == (const VertexBlend3D &src) const
+	{
+		return memcmp(this, &src, sizeof(VertexBlend3D)) == 0;
+	}
 };
 
 //-------------------------------------
