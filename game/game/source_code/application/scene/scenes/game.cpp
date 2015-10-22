@@ -19,13 +19,14 @@
 #include "../../object/object.h"
 #include "../../object/object_manager.h"
 #include "../../object/objects/mesh/field.h"
+#include "../../effect/effect.h"
+#include "../../effect/effect_manager.h"
 #include "../../camera/camera.h"
 #include "../../camera/camera_manager.h"
 #include "../scene.h"
 #include "../scene_manager.h"
 #include "game.h"
 #include "../fade/fade.h"
-
 
 
 //-------------------------------------
@@ -35,7 +36,23 @@ Game::Game()
 {
 	camera_manager_ = new CameraManager;
 	object_manager_ = new ObjectManager;
+	effect_manager_ = new EffectManager(5000);
 	font_ = new DebugFont;
+
+	//-------------------------------------
+	// エフェクトの読み込み
+	//-------------------------------------
+	EFFECT_PARAMETER_DESC water_param;
+	water_param.position_ = { 0.0f, 10.0f, 0.0f };
+	water_param.rotation_ = { 0.0f, 0.0f, 0.0f };
+	water_param.scaling_ = { 1.0f, 1.0f, 1.0f };
+	water_param.speed_ = 1.0f;
+
+	effect_manager_->Create(
+		"water",
+		"resource/effect/MagicWater.efkproj",
+		water_param);
+
 
 	CAMERA_PARAMETER_DESC camera_param;
 	camera_param.acpect_ = SCREEN_WIDTH / SCREEN_HEIGHT;
@@ -81,6 +98,7 @@ Game::~Game()
 {
 	SAFE_DELETE(object_manager_);
 	SAFE_DELETE(camera_manager_);
+	SAFE_DELETE(effect_manager_);
 	SAFE_DELETE(font_);
 }
 
@@ -171,13 +189,14 @@ void Game::Update()
 
 	main_camera->SetPosition(camera_position);
 	main_camera->SetFocus(pos);
-	
+
 
 	//-------------------------------------
 	// 実更新処理
 	//-------------------------------------
 	camera_manager_->Update();
 	object_manager_->Update();
+	effect_manager_->Update();
 
 	font_->Add("シーン名:");
 	font_->Add("Game\n");
@@ -199,11 +218,12 @@ void Game::Draw()
 		static_cast<LONG>(SCREEN_WIDTH),
 		static_cast<LONG>(SCREEN_HEIGHT) };
 	D3DXCOLOR font_color(0.0f, 1.0f, 1.0f, 1.0f);
-	Color color(32, 32, 32, 0);
+	MaterialColor color(32, 32, 32, 0);
 	DirectX9Holder::DrawBegin();
 	DirectX9Holder::Clear(color);
 	camera_manager_->Set("MainCamera");
 	object_manager_->Draw();
+	effect_manager_->Draw();
 	font_->Draw(rect, font_color);
 	Fade::Draw();
 	DirectX9Holder::DrawEnd();

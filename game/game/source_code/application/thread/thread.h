@@ -15,11 +15,11 @@
 //-------------------------------------
 // class
 //-------------------------------------
-class Thread
+class MyThread
 {
 public:
-	Thread();
-	virtual ~Thread();
+	MyThread();
+	virtual ~MyThread();
 	unsigned int Create(void *function);
 private:
 	HANDLE thread_;

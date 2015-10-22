@@ -14,7 +14,7 @@
 //-------------------------------------
 // class definitin
 //-------------------------------------
-class Renderer;
+class GameRenderer;
 class Fps;
 class SceneManager;
 class Input;
@@ -42,7 +42,7 @@ private:
 	void Draw();
 
 	// ƒƒ“ƒo•Ï”
-	Renderer *renderer_;
+	GameRenderer *renderer_;
 	static Fps *fps_;
 	SceneManager *scene_manager_;
 	Input *keyboard_;

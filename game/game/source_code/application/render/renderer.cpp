@@ -13,7 +13,7 @@
 //-------------------------------------
 // Renderer()
 //-------------------------------------
-Renderer::Renderer()
+GameRenderer::GameRenderer()
 {
 
 }
@@ -21,7 +21,7 @@ Renderer::Renderer()
 //-------------------------------------
 // ~Renderer()
 //-------------------------------------
-Renderer::~Renderer()
+GameRenderer::~GameRenderer()
 {
 
 }

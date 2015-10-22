@@ -28,7 +28,7 @@ std::string SceneManager::next_name_;
 bool SceneManager::next_request_ = false;
 bool SceneManager::loading_ = false;
 Fade *SceneManager::fade_ = nullptr;
-Thread *SceneManager::thread_ = nullptr;
+MyThread *SceneManager::thread_ = nullptr;
 
 
 //-------------------------------------
@@ -121,7 +121,7 @@ void SceneManager::ChangeScene()
 	SAFE_DELETE(current_scene_);
 	current_name_ = next_name_;
 	loading_ = true;
-	thread_ = new Thread;
+	thread_ = new MyThread;
 	thread_->Create(CreateScene);
 	next_request_ = false;
 	fade_->SetFade(FADE_OUT);

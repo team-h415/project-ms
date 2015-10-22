@@ -17,6 +17,8 @@
 //-------------------------------------
 #include <d3d9.h>
 #include <d3dx9.h>
+#include "../../../../../include/Effekseer.h"
+#include "../../../../../include/EffekseerRendererDX9.h"
 
 
 //-------------------------------------
@@ -25,6 +27,13 @@
 #pragma comment(lib,"d3d9.lib")
 #pragma comment(lib,"d3dx9.lib")
 #pragma comment(lib,"dxguid.lib")
+#ifdef _DEBUG
+#pragma comment(lib,"Effekseer.Debug.lib")
+#pragma comment(lib,"EffekseerRendererDX9.Debug.lib")
+#else
+#pragma comment(lib,"Effekseer.Release.lib")
+#pragma comment(lib,"EffekseerRendererDX9.Release.lib")
+#endif //_DEBUG
 
 
 //-------------------------------------
@@ -70,7 +79,7 @@ struct VertexBlend3D
 //-------------------------------------
 // class
 //-------------------------------------
-class DirectX9 : public Renderer
+class DirectX9 : public GameRenderer
 {
 public:
 	DirectX9();

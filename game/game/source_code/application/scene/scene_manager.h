@@ -12,7 +12,7 @@
 
 using namespace std;
 class Fade;
-class Thread;
+class MyThread;
 class SceneManager
 {
 public:
@@ -47,7 +47,7 @@ private:
 	// フェード
 	static Fade *fade_;
 	// スレッド
-	static Thread *thread_;
+	static MyThread *thread_;
 
 };
 

@@ -15,8 +15,11 @@
 //-------------------------------------
 // class
 //-------------------------------------
+using namespace Effekseer;
+using namespace EffekseerRenderer;
 class ObjectManager;
 class CameraManager;
+class EffectManager;
 class DebugFont;
 class Game : public Scene
 {
@@ -28,6 +31,7 @@ public:
 private:
 	ObjectManager *object_manager_;
 	CameraManager *camera_manager_;
+	EffectManager *effect_manager_;
 	DebugFont *font_;
 };
 

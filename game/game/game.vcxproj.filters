@@ -71,6 +71,9 @@
     <Filter Include="source_code\application\object\objects\model">
       <UniqueIdentifier>{fb393863-9c54-40b5-8c97-a885c8b52a56}</UniqueIdentifier>
     </Filter>
+    <Filter Include="source_code\application\effect">
+      <UniqueIdentifier>{748a7f89-554c-4f75-984e-0ffdab06f527}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source_code\main.cpp">
@@ -177,6 +180,12 @@
     </ClCompile>
     <ClCompile Include="source_code\application\object\objects\model\fbx_model.cpp">
       <Filter>source_code\application\object\objects\model</Filter>
+    </ClCompile>
+    <ClCompile Include="source_code\application\effect\effect.cpp">
+      <Filter>source_code\application\effect</Filter>
+    </ClCompile>
+    <ClCompile Include="source_code\application\effect\effect_manager.cpp">
+      <Filter>source_code\application\effect</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -293,6 +302,12 @@
     </ClInclude>
     <ClInclude Include="source_code\application\object\objects\model\fbx_model.h">
       <Filter>source_code\application\object\objects\model</Filter>
+    </ClInclude>
+    <ClInclude Include="source_code\application\effect\effect.h">
+      <Filter>source_code\application\effect</Filter>
+    </ClInclude>
+    <ClInclude Include="source_code\application\effect\effect_manager.h">
+      <Filter>source_code\application\effect</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

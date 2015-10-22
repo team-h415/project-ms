@@ -46,7 +46,7 @@ void Loading::Update()
 //-------------------------------------
 void Loading::Draw()
 {
-	Color color(0,0,0,255);
+	MaterialColor color(0, 0, 0, 255);
 	DirectX9Holder::DrawBegin();
 	DirectX9Holder::Clear(color);
 	DirectX9Holder::DrawEnd();

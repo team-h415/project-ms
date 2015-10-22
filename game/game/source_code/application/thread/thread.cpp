@@ -15,7 +15,7 @@
 //-------------------------------------
 // Thread()
 //-------------------------------------
-Thread::Thread()
+MyThread::MyThread()
 {
 }
 
@@ -23,7 +23,7 @@ Thread::Thread()
 //-------------------------------------
 // ~Thread()
 //-------------------------------------
-Thread::~Thread()
+MyThread::~MyThread()
 {
 	BOOL result;
 	if (thread_)
@@ -44,7 +44,7 @@ Thread::~Thread()
 //-------------------------------------
 // Create()
 //-------------------------------------
-unsigned int Thread::Create(void* function)
+unsigned int MyThread::Create(void* function)
 {
 	unsigned int thread_id;
 	thread_ = (HANDLE)_beginthreadex(

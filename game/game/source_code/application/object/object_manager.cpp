@@ -122,6 +122,7 @@ Object *ObjectManager::Get(
 			}
 		}
 	}
+	return nullptr;
 }
 
 

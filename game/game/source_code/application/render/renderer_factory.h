@@ -12,7 +12,7 @@
 class RendererFactory
 {
 public:
-	static Renderer *Create(
+	static GameRenderer *Create(
 		const HWND &window_handle,
 		const std::string &renderer);
 };

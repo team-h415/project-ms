@@ -9,13 +9,13 @@
 #pragma once
 #ifndef __APP_RENDER_RENDERER_H__
 #define __APP_RENDER_RENDERER_H__
-class Renderer
+class GameRenderer
 {
 public:
 	// コンストラクタ
-	Renderer();
+	GameRenderer();
 	// デストラクタ
-	virtual ~Renderer();
+	virtual ~GameRenderer();
 };
 
 #endif //__APP_RENDER_RENDERER_H__

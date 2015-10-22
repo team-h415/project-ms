@@ -44,7 +44,7 @@ void DirectX9Holder::DrawEnd()
 // Clear()
 //-------------------------------------
 void DirectX9Holder::Clear(
-	Color color)
+	MaterialColor color)
 {
 	color.a_ = std::min<int>(color.a_, 255);
 	color.r_ = std::min<int>(color.r_, 255);

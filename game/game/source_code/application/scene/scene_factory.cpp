@@ -8,6 +8,8 @@
 // include
 //-------------------------------------
 #include "../../common/common.h"
+#include "../../../../include/Effekseer.h"
+#include "../../../../include/EffekseerRendererDX9.h"
 #include "scene.h"
 #include "scene_manager.h"
 #include "scene_factory.h"

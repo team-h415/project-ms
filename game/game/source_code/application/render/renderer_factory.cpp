@@ -15,7 +15,7 @@
 //-------------------------------------
 // Create()
 //-------------------------------------
-Renderer *RendererFactory::Create(
+GameRenderer *RendererFactory::Create(
 	const HWND &window_handle,
 	const std::string &renderer)
 {
