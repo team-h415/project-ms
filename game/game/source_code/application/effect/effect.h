@@ -38,9 +38,9 @@ public:
 	virtual ~MyEffect();
 	void Update(
 		Effekseer::Manager *manager);
-private:
 	void Play(
 		Effekseer::Manager *manager);
+private:
 	Effekseer::Handle handle_;
 	Effekseer::Effect *effect_;
 	EFFECT_PARAMETER_DESC parameter_;

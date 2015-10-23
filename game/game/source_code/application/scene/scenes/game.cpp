@@ -43,14 +43,14 @@ Game::Game()
 	// エフェクトの読み込み
 	//-------------------------------------
 	EFFECT_PARAMETER_DESC water_param;
-	water_param.position_ = { 0.0f, 10.0f, 0.0f };
+	water_param.position_ = { 0.0f, 0.0f, 0.0f };
 	water_param.rotation_ = { 0.0f, 0.0f, 0.0f };
 	water_param.scaling_ = { 1.0f, 1.0f, 1.0f };
 	water_param.speed_ = 1.0f;
 
 	effect_manager_->Create(
 		"water",
-		"resource/effect/MagicWater.efkproj",
+		"resource/effect/t.efk",
 		water_param);
 
 
@@ -192,6 +192,14 @@ void Game::Update()
 
 
 	//-------------------------------------
+	// エフェクト再生
+	//-------------------------------------
+	if (KeyBoard::isTrigger(DIK_1)){
+		effect_manager_->Play("water");
+	}
+
+
+	//-------------------------------------
 	// 実更新処理
 	//-------------------------------------
 	camera_manager_->Update();
@@ -218,7 +226,7 @@ void Game::Draw()
 		static_cast<LONG>(SCREEN_WIDTH),
 		static_cast<LONG>(SCREEN_HEIGHT) };
 	D3DXCOLOR font_color(0.0f, 1.0f, 1.0f, 1.0f);
-	MaterialColor color(32, 32, 32, 0);
+	MaterialColor color(255, 255, 255, 0);
 	DirectX9Holder::DrawBegin();
 	DirectX9Holder::Clear(color);
 	camera_manager_->Set("MainCamera");
