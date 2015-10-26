@@ -15,7 +15,7 @@
 //-------------------------------------
 // class
 //-------------------------------------
-class FbxModel : Object
+class FbxModel : public Object
 {
 public:
 	FbxModel(
@@ -83,8 +83,8 @@ private:
 	void ExtractRotationFromMatrix(D3DXMATRIX *out, D3DXMATRIX *src);
 	void ExtractScalingFromMatrix(D3DXMATRIX *out, D3DXMATRIX *src);
 	void UpdateBoneMatrix(BONE *subject, D3DXMATRIX *parent);
+	void DeleteBone(BONE *bone);
 
-	OBJECT_PARAMETER_DESC parameter_;
 	int mesh_count_;
 	MESH *mesh_;
 	int mesh_cursor_;
@@ -93,6 +93,7 @@ private:
 	BONE *root_;
 	float cur_time_;
 	int bone_cursor_;
+	Shader *shader_;
 };
 
 

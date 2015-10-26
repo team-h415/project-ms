@@ -39,6 +39,7 @@ const OBJECT_PARAMETER_DESC &parameter)
 	bone_cursor_ = 0;
 	root_ = NULL;
 	cur_time_ = 0;
+//	shader_ = new Shader("resource/shader/halflambert_lighting_fbx.hlsl");
 }
 
 
@@ -47,6 +48,31 @@ const OBJECT_PARAMETER_DESC &parameter)
 //-------------------------------------
 FbxModel::~FbxModel()
 {
+	for (int i = 0; i < mesh_count_; i++){
+		SAFE_RELEASE(mesh_[i].vertex_);
+		SAFE_RELEASE(mesh_[i].index_);
+	}
+	SAFE_DELETE_ARRAY(mesh_);
+
+	for (int i = 0; i < bone_count_; i++){
+		DeleteBone(&bone_[i]);
+	}
+	SAFE_DELETE_ARRAY(bone_);
+}
+
+
+//-------------------------------------
+// DeleteBone()
+//-------------------------------------
+void FbxModel::DeleteBone(BONE *bone)
+{
+	if (bone->child_){
+		DeleteBone(bone->child_);
+	}
+	if (bone->sibling_){
+		DeleteBone(bone->sibling_);
+	}
+	SAFE_DELETE_ARRAY(bone->key_);
 }
 
 
@@ -56,11 +82,30 @@ FbxModel::~FbxModel()
 void FbxModel::Update()
 {
 	D3DXMATRIX element;
-	float anim_length = 0.0f;
-
+	D3DXMATRIX translate, rotate, scaling;
+	D3DXMatrixIdentity(&translate);
+	D3DXMatrixIdentity(&rotate);
+	D3DXMatrixIdentity(&scaling);
 	D3DXMatrixIdentity(&element);
 
+	float anim_length = 0.0f;
+
+	D3DXMatrixScaling(
+		&scaling, parameter_.scaling_.x_, parameter_.scaling_.y_, parameter_.scaling_.z_);
+	D3DXMatrixMultiply(
+		&element, &element, &scaling);
+	D3DXMatrixRotationYawPitchRoll(
+		&rotate, parameter_.rotation_.y_, parameter_.rotation_.x_, parameter_.rotation_.z_);
+	D3DXMatrixMultiply(
+		&element, &element, &rotate);
+	D3DXMatrixTranslation(
+		&translate, parameter_.position_.x_, parameter_.position_.y_, parameter_.position_.z_);
+	D3DXMatrixMultiply(
+		&element, &element, &translate);
+
 	UpdateBoneMatrix(&bone_[0], &element);
+
+	
 
 	cur_time_ += 1.0f;
 }
@@ -99,6 +144,9 @@ void FbxModel::Draw()
 
 	DirectX9Holder::device_->SetRenderState(D3DRS_INDEXEDVERTEXBLENDENABLE, TRUE);
 	DirectX9Holder::device_->SetRenderState(D3DRS_VERTEXBLEND, D3DVBF_3WEIGHTS);
+
+	//-------------------------------------
+	// ’¸“_éŒ¾(FVF)
 	DirectX9Holder::device_->SetFVF(FVF_VERTEX_BLEND_3D);
 
 	DWORD def_cull = 0;
@@ -921,8 +969,8 @@ void FbxModel::LoadMeshFromNode(FbxNode *node)
 		size = vertex_array.size();
 		dst_mesh->vertex_max_ = size;
 		if (FAILED(DirectX9Holder::device_->CreateVertexBuffer(
-			sizeof(VertexBlend3D)* size,
-			D3DUSAGE_SOFTWAREPROCESSING,
+			sizeof(VertexBlend3D) * size,
+			D3DUSAGE_WRITEONLY,
 			FVF_VERTEX_BLEND_3D,
 			D3DPOOL_MANAGED,
 			&dst_mesh->vertex_,

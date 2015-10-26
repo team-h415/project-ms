@@ -152,6 +152,23 @@ void EffectManager::Play(
 	}
 }
 
+
+//-------------------------------------
+// Get()
+//-------------------------------------
+MyEffect *EffectManager::Get(
+	const std::string &name)
+{
+	for (auto it = effects_.begin(); it != effects_.end(); ++it){
+		if ((*it).first == name){
+			return (*it).second;
+		}
+	}
+	ASSERT_ERROR("指定した名前のエフェクトは存在しません");
+	return nullptr;
+}
+
+
 //-------------------------------------
 // end of file
 //-------------------------------------

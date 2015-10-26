@@ -40,6 +40,15 @@ public:
 		Effekseer::Manager *manager);
 	void Play(
 		Effekseer::Manager *manager);
+
+	const EFFECT_PARAMETER_DESC &parameter(){
+		return parameter_;
+	}
+	void SetParameter(
+		const EFFECT_PARAMETER_DESC &parameter){
+		parameter_ = parameter;
+	}
+
 private:
 	Effekseer::Handle handle_;
 	Effekseer::Effect *effect_;
