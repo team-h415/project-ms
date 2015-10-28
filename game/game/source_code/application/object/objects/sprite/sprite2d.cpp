@@ -25,6 +25,7 @@ Sprite2D::Sprite2D(
 	parameter_ = parameter;
 	vertex_ = new Vertex2D[4];
 	CalculateVertex();
+	texture_ = NULL;
 }
 
 
@@ -34,6 +35,7 @@ Sprite2D::Sprite2D(
 Sprite2D::~Sprite2D()
 {
 	SAFE_DELETE_ARRAY(vertex_);
+	SAFE_RELEASE(texture_);
 }
 
 
@@ -54,11 +56,15 @@ void Sprite2D::Draw()
 	DirectX9Holder::device_->SetVertexDeclaration(
 		DirectX9Holder::vertex_declaration_2d_);
 
+	DirectX9Holder::device_->SetTexture(0, texture_);
+
 	DirectX9Holder::device_->DrawPrimitiveUP(
 		D3DPT_TRIANGLESTRIP,
 		2,
 		vertex_,
 		sizeof(Vertex2D));
+
+	DirectX9Holder::device_->SetTexture(0,NULL);
 }
 
 
@@ -107,6 +113,18 @@ void Sprite2D::CalculateVertex()
 	vertex_[1].texture_ = { 1.0f, 0.0f };
 	vertex_[2].texture_ = { 0.0f, 1.0f };
 	vertex_[3].texture_ = { 1.0f, 1.0f };
+}
+
+
+//-------------------------------------
+// SetTexture()
+//-------------------------------------
+void Sprite2D::SetTexture(
+	const std::string &path)
+{
+	D3DXCreateTextureFromFile(
+		DirectX9Holder::device_,
+		path.c_str(), &texture_);
 }
 
 
