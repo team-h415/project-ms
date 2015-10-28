@@ -187,6 +187,12 @@
     <ClCompile Include="source_code\application\effect\effect_manager.cpp">
       <Filter>source_code\application\effect</Filter>
     </ClCompile>
+    <ClCompile Include="source_code\application\scene\scenes\matching.cpp">
+      <Filter>source_code\application\scene\scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="source_code\application\scene\scenes\result.cpp">
+      <Filter>source_code\application\scene\scenes</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source_code\main.h">
@@ -308,6 +314,12 @@
     </ClInclude>
     <ClInclude Include="source_code\application\effect\effect_manager.h">
       <Filter>source_code\application\effect</Filter>
+    </ClInclude>
+    <ClInclude Include="source_code\application\scene\scenes\matching.h">
+      <Filter>source_code\application\scene\scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="source_code\application\scene\scenes\result.h">
+      <Filter>source_code\application\scene\scenes</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
