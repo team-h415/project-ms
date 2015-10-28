@@ -70,6 +70,19 @@ struct VertexBlend3D
 	D3DCOLOR diffuse;
 	D3DXVECTOR2 texture;
 
+	// コンストラクタ
+	VertexBlend3D(void) :
+		position(0.0f, 0.0f, 0.0f),
+		matrix_index(0),
+		normal(0.0f, 0.0f, 0.0f),
+		diffuse(0),
+		texture(0.0f, 0.0f)
+	{
+		weight[0] = 0.0f;
+		weight[1] = 0.0f;
+		weight[2] = 0.0f;
+	}
+
 	bool operator == (const VertexBlend3D &src) const
 	{
 		return memcmp(this, &src, sizeof(VertexBlend3D)) == 0;

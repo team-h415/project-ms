@@ -24,6 +24,14 @@ public:
 	void Draw();
 	// シーンの切り替え処理
 	static void RequestScene(const std::string &name);
+	// 現在のシーンを受け渡す
+	Scene *GetCurrentScene(){
+		return current_scene_;
+	}
+	// 現在のシーン名を取得
+	const std::string &GetCurrentSceneName(){
+		return current_name_;
+	}
 private:
 	// シーンの生成
 	static Scene *Create(const std::string &name);

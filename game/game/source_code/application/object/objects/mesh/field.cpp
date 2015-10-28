@@ -54,6 +54,7 @@ Field::~Field()
 	SAFE_RELEASE(index_buffer_);
 	SAFE_DELETE_ARRAY(normal_buffer_);
 	SAFE_DELETE(shader_);
+	SAFE_RELEASE(texture_);
 }
 
 

@@ -16,29 +16,41 @@
 #include "scenes/loading.h"
 #include "scenes/title.h"
 #include "scenes/game.h"
+#include "scenes/matching.h"
+#include "scenes/result.h"
 
 
+//-------------------------------------
+// Create()
+//-------------------------------------
 Scene *SceneFactory::Create(
 	const std::string &name)
 {
-	if (name == "Loading")
-	{
-		Scene *scene = new Loading();
+	Scene *scene = nullptr;
+
+	if (name == "Loading"){
+		scene = new Loading();
 		return scene;
 	}
-	if (name == "Game")
-	{
-		Scene *scene = new Game();
+	if (name == "Game"){
+		scene = new Game();
 		return scene;
 	}
-	if (name == "Title")
-	{
-		Scene *scene = new Title();
+	if (name == "Title"){
+		scene = new Title();
+		return scene;
+	}
+	if (name == "Matching"){
+		scene = new Matching();
+		return scene;
+	}
+	if (name == "Result"){
+		scene = new Result();
 		return scene;
 	}
 
 	ASSERT_ERROR("ÉVÅ[ÉìÇÃê∂ê¨ÇçsÇ¢Ç‹ÇπÇÒÇ≈ÇµÇΩ");
-	return nullptr;
+	return scene;
 }
 
 //-------------------------------------

@@ -1,5 +1,5 @@
 //=========================================================
-// title.cpp
+// Matching.cpp
 // author:ryuya nakamura
 //=========================================================
 
@@ -21,14 +21,14 @@
 #include "../../camera/camera_manager.h"
 #include "../scene.h"
 #include "../scene_manager.h"
-#include "title.h"
+#include "matching.h"
 #include "../fade/fade.h"
 
 
 //-------------------------------------
-// Title()
+// Matching()
 //-------------------------------------
-Title::Title()
+Matching::Matching()
 {
 	camera_manager_ = new CameraManager;
 	object_manager_ = new ObjectManager;
@@ -45,12 +45,12 @@ Title::Title()
 	camera_param.far_ = 1000.0f;
 
 	camera_manager_->Create(
-		 "Perspective", "MainCamera", camera_param);
-
+		"Perspective", "MainCamera", camera_param);
+	
 	OBJECT_PARAMETER_DESC param;
 	param.position_ = {
 		SCREEN_WIDTH * 0.5f,
-		SCREEN_HEIGHT * 0.5f,
+		SCREEN_HEIGHT * 0.25f,
 		0.0f
 	};
 	param.rotation_ = { 0.0f, 0.0f, 0.0f };
@@ -62,9 +62,9 @@ Title::Title()
 
 
 //-------------------------------------
-// ~Title()
+// ~Matching()
 //-------------------------------------
-Title::~Title()
+Matching::~Matching()
 {
 	SAFE_DELETE(object_manager_);
 	SAFE_DELETE(camera_manager_);
@@ -75,17 +75,17 @@ Title::~Title()
 //-------------------------------------
 // Update()
 //-------------------------------------
-void Title::Update()
+void Matching::Update()
 {
 	camera_manager_->Update();
 	object_manager_->Update();
 
 	font_->Add("ƒV[ƒ“–¼:");
-	font_->Add("Title");
+	font_->Add("Matching");
 
 	if (KeyBoard::isTrigger(DIK_RETURN))
 	{
-		SceneManager::RequestScene("Matching");
+		SceneManager::RequestScene("Game");
 	}
 }
 
@@ -93,13 +93,13 @@ void Title::Update()
 //-------------------------------------
 // Draw()
 //-------------------------------------
-void Title::Draw()
+void Matching::Draw()
 {
 	RECT rect = {
 		0, 0,
 		static_cast<LONG>(SCREEN_WIDTH),
 		static_cast<LONG>(SCREEN_HEIGHT) };
-	D3DXCOLOR font_color(0.0f, 1.0f, 0.0f, 1.0f);
+	D3DXCOLOR font_color(1.0f, 0.0f, 0.0f, 1.0f);
 	MaterialColor color(32, 32, 32, 255);
 	DirectX9Holder::DrawBegin();
 	DirectX9Holder::Clear(color);

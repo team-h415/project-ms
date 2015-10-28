@@ -25,6 +25,12 @@
 
 
 //-------------------------------------
+// define
+//-------------------------------------
+#define MAX_BONE 60
+
+
+//-------------------------------------
 // FbxModel()
 //-------------------------------------
 FbxModel::FbxModel(
@@ -39,7 +45,7 @@ const OBJECT_PARAMETER_DESC &parameter)
 	bone_cursor_ = 0;
 	root_ = NULL;
 	cur_time_ = 0;
-//	shader_ = new Shader("resource/shader/halflambert_lighting_fbx.hlsl");
+	shader_ = new Shader("resource/shader/halflambert_lighting_fbx.hlsl");
 }
 
 
@@ -48,6 +54,7 @@ const OBJECT_PARAMETER_DESC &parameter)
 //-------------------------------------
 FbxModel::~FbxModel()
 {
+	SAFE_DELETE(shader_);
 	for (int i = 0; i < mesh_count_; i++){
 		SAFE_RELEASE(mesh_[i].vertex_);
 		SAFE_RELEASE(mesh_[i].index_);
@@ -132,8 +139,6 @@ void FbxModel::Draw()
 
 	DirectX9Holder::device_->GetMaterial(&def_material);
 
-
-
 	DirectX9Holder::device_->GetDeviceCaps(&caps);
 	indexed_matrix_num = caps.MaxVertexBlendMatrixIndex;
 
@@ -162,6 +167,56 @@ void FbxModel::Draw()
 	DirectX9Holder::device_->SetRenderState(D3DRS_DIFFUSEMATERIALSOURCE, D3DMCS_MATERIAL);
 
 
+	//-------------------------------------
+	// shader code start
+
+	DirectX9Holder::device_->SetVertexDeclaration(
+		DirectX9Holder::vertex_declaration_fbx_);
+
+	D3DXMATRIX view, projection, vp;
+	DirectX9Holder::device_->GetTransform(D3DTS_VIEW, &view);
+	DirectX9Holder::device_->GetTransform(D3DTS_PROJECTION, &projection);
+	vp = view * projection;
+
+	D3DXVECTOR3 light_vec(0.5f, -0.5f, 0.5f);
+	D3DXVec3Normalize(&light_vec, &light_vec);
+	D3DXCOLOR light_diffuse(1.0f, 1.0f, 1.0f, 1.0f);
+
+	// ボーンマトリックスを配列に換装
+	D3DXMATRIX bone_worlds[MAX_BONE];
+	for(int i = 0; i < MAX_BONE; i++){
+		D3DXMatrixIdentity(&bone_worlds[i]);
+	}
+	for(int i = 0; i < bone_count_; i++){
+		bone_worlds[bone_[i].id_] = bone_[i].world_matrix_;
+	}
+
+	shader_->vertex_table()->SetMatrixArray(
+		DirectX9Holder::device_, "matrix_bone_w", bone_worlds, MAX_BONE);
+	shader_->vertex_table()->SetMatrix(
+		DirectX9Holder::device_, "matrix_vp", &vp);
+
+	shader_->vertex_table()->SetFloatArray(
+		DirectX9Holder::device_,
+		"light_direction",
+		reinterpret_cast<float*>(&light_vec),
+		3);
+
+	shader_->vertex_table()->SetFloatArray(
+		DirectX9Holder::device_,
+		"light_diffuse",
+		reinterpret_cast<float*>(&light_diffuse),
+		4);
+
+	DirectX9Holder::device_->SetVertexShader(shader_->vertex_shader());
+	DirectX9Holder::device_->SetPixelShader(shader_->pixel_shader());
+
+	//DirectX9Holder::device_->SetTexture(
+	//	shader_->pixel_table()->GetSamplerIndex("texture_0"), texture_);
+
+	// shader code end
+	//-------------------------------------
+
 	D3DMATERIAL9 debug_material;
 	for (i = 0; i < mesh_count_; i++)
 	{
@@ -185,6 +240,8 @@ void FbxModel::Draw()
 	DirectX9Holder::device_->SetRenderState(D3DRS_CULLMODE, def_cull);
 	DirectX9Holder::device_->SetRenderState(D3DRS_DIFFUSEMATERIALSOURCE, D3DMCS_COLOR1);
 
+	DirectX9Holder::device_->SetVertexShader(NULL);
+	DirectX9Holder::device_->SetPixelShader(NULL);
 }
 
 

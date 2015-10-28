@@ -81,6 +81,11 @@
 #define ASSERT_WARNING(t)	MessageBoxA(nullptr, t, "WARNING", MB_ICONWARNING)
 
 
+// •¶Žš—ñ•ÏŠ·
+#define TO_STRING(str) #str
+#define STRING_CONCATE(str1,str2) str1 ## str2
+
+
 //-------------------------------------
 // end of file
 //-------------------------------------
