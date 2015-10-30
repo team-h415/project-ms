@@ -85,7 +85,7 @@ void Title::Update()
 
 	if (KeyBoard::isTrigger(DIK_RETURN))
 	{
-		SceneManager::RequestScene("Game");
+		SceneManager::RequestScene("Matching");
 	}
 }
 

@@ -30,6 +30,7 @@ MyEffect::MyEffect(
 	MultiByteToWideChar(CP_ACP, 0, path.c_str(), -1, &string[0], size);
 	effect_ = Effekseer::Effect::Create(manager, (EFK_CHAR*)string.c_str());
 	Play(manager);
+	manager->Flip();
 }
 
 

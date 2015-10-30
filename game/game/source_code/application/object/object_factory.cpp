@@ -15,7 +15,8 @@
 #include "object_factory.h"
 #include "objects/sprite/sprite2d.h"
 #include "objects/mesh/field.h"
-#include "objects\model\x_model.h"
+#include "objects/model/x_model.h"
+#include "objects/model/fbx_model.h"
 
 
 //-------------------------------------
@@ -54,6 +55,12 @@ Object *ObjectFactory::Create(
 		object = new XModel(parameter);
 		XModel *model = dynamic_cast<XModel*>(object);
 		model->LoadMesh(object_path);
+	}
+
+	if (param.layer_ == LAYER_MODEL_FBX){
+		object = new FbxModel(parameter);
+		FbxModel *model = dynamic_cast<FbxModel*>(object);
+		model->Load(object_path);
 	}
 
 	return object;

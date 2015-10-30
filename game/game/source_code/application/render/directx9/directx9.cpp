@@ -146,6 +146,23 @@ DirectX9::DirectX9()
 		ASSERT_ERROR("3D用頂点宣言生成に失敗");
 	}
 
+	D3DVERTEXELEMENT9 velementfbx[] = {
+		{ 0, 0, D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_POSITION, 0 },
+		{ 0, 12, D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_BLENDWEIGHT, 0 },
+		{ 0, 24, D3DDECLTYPE_UBYTE4, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_BLENDINDICES, 0 },
+		{ 0, 28, D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_NORMAL, 0 },
+		{ 0, 40, D3DDECLTYPE_D3DCOLOR, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_COLOR, 0 },
+		{ 0, 44, D3DDECLTYPE_FLOAT2, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 0 },
+		D3DDECL_END()
+	};
+
+	if (FAILED(device->CreateVertexDeclaration(
+		velementfbx,
+		&DirectX9Holder::vertex_declaration_fbx_)))
+	{
+		ASSERT_ERROR("fbx用頂点宣言生成に失敗");
+	}
+
 	DirectX9Holder::directx9_ = directx9;
 	DirectX9Holder::device_ = device;
 }
@@ -158,6 +175,7 @@ DirectX9::~DirectX9()
 {
 	SAFE_RELEASE(DirectX9Holder::vertex_declaration_2d_);
 	SAFE_RELEASE(DirectX9Holder::vertex_declaration_3d_);
+	SAFE_RELEASE(DirectX9Holder::vertex_declaration_fbx_);
 	SAFE_RELEASE(DirectX9Holder::device_);
 	SAFE_RELEASE(DirectX9Holder::directx9_);
 }

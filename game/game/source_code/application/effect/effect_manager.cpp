@@ -69,6 +69,7 @@ void EffectManager::Update()
 	for (auto it = effects_.begin(); it != effects_.end(); ++it){
 		(*it).second->Update(manager_);
 	}
+	manager_->Update();
 }
 
 
@@ -80,6 +81,15 @@ void EffectManager::Draw()
 	renderer_->BeginRendering();
 	manager_->Draw();
 	renderer_->EndRendering();
+
+	DirectX9Holder::device_->SetSamplerState(0, D3DSAMP_ADDRESSU, D3DTADDRESS_WRAP);
+	DirectX9Holder::device_->SetSamplerState(0, D3DSAMP_ADDRESSV, D3DTADDRESS_WRAP);
+	DirectX9Holder::device_->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
+	DirectX9Holder::device_->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
+
+	DirectX9Holder::device_->SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_MODULATE);
+	DirectX9Holder::device_->SetTextureStageState(0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE);
+	DirectX9Holder::device_->SetTextureStageState(0, D3DTSS_ALPHAARG2, D3DTA_CURRENT);
 }
 
 
@@ -107,7 +117,7 @@ void EffectManager::SetProjectionMatrix()
 {
 	D3DXMATRIX proj;
 	Effekseer::Matrix44 e_proj;
-	DirectX9Holder::device_->GetTransform(D3DTS_VIEW, &proj);
+	DirectX9Holder::device_->GetTransform(D3DTS_PROJECTION, &proj);
 	for (int i = 0; i < 4; i++){
 		for (int j = 0; j < 4; j++){
 			e_proj.Values[i][j] = proj.m[i][j];
@@ -126,6 +136,36 @@ void EffectManager::Create(
 	const EFFECT_PARAMETER_DESC &parameter)
 {
 	effects_[name] = new MyEffect(manager_, parameter, path);
+}
+
+
+//-------------------------------------
+// Play()
+//-------------------------------------
+void EffectManager::Play(
+	const std::string &name)
+{
+	for (auto it = effects_.begin(); it != effects_.end(); ++it){
+		if ((*it).first == name){
+			(*it).second->Play(manager_);
+		}
+	}
+}
+
+
+//-------------------------------------
+// Get()
+//-------------------------------------
+MyEffect *EffectManager::Get(
+	const std::string &name)
+{
+	for (auto it = effects_.begin(); it != effects_.end(); ++it){
+		if ((*it).first == name){
+			return (*it).second;
+		}
+	}
+	ASSERT_ERROR("指定した名前のエフェクトは存在しません");
+	return nullptr;
 }
 
 

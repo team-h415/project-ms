@@ -29,6 +29,10 @@ public:
 		const std::string &name,
 		const std::string &path,
 		const EFFECT_PARAMETER_DESC &parameter);
+	void Play(
+		const std::string &name);
+	MyEffect *Get(
+		const std::string &name);
 private:
 	void SetViewMatrix();
 	void SetProjectionMatrix();

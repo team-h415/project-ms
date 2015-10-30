@@ -38,9 +38,18 @@ public:
 	virtual ~MyEffect();
 	void Update(
 		Effekseer::Manager *manager);
-private:
 	void Play(
 		Effekseer::Manager *manager);
+
+	const EFFECT_PARAMETER_DESC &parameter(){
+		return parameter_;
+	}
+	void SetParameter(
+		const EFFECT_PARAMETER_DESC &parameter){
+		parameter_ = parameter;
+	}
+
+private:
 	Effekseer::Handle handle_;
 	Effekseer::Effect *effect_;
 	EFFECT_PARAMETER_DESC parameter_;

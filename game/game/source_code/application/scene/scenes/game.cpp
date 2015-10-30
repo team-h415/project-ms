@@ -43,14 +43,14 @@ Game::Game()
 	// エフェクトの読み込み
 	//-------------------------------------
 	EFFECT_PARAMETER_DESC water_param;
-	water_param.position_ = { 0.0f, 10.0f, 0.0f };
+	water_param.position_ = { 0.0f, 0.0f, 0.0f };
 	water_param.rotation_ = { 0.0f, 0.0f, 0.0f };
 	water_param.scaling_ = { 1.0f, 1.0f, 1.0f };
 	water_param.speed_ = 1.0f;
 
 	effect_manager_->Create(
 		"water",
-		"resource/effect/MagicWater.efkproj",
+		"resource/effect/water.efk",
 		water_param);
 
 
@@ -88,6 +88,17 @@ Game::Game()
 		"player",
 		player_param,
 		"resource/model/x/pone_red.x");
+
+	OBJECT_PARAMETER_DESC fbx_param;
+	fbx_param.layer_ = LAYER_MODEL_FBX;
+	fbx_param.position_ = { 0.0f, 0.0f, 0.0f };
+	fbx_param.rotation_ = { 0.0f, 0.0f, 0.0f };
+	fbx_param.scaling_ = { 0.1f, 0.1f, 0.1f };
+
+	object_manager_->Create(
+		"fbx",
+		fbx_param,
+		"resource/model/fbx/UneUne2.fbx");
 }
 
 
@@ -112,8 +123,11 @@ void Game::Update()
 	// 変数宣言
 	//-------------------------------------
 	Object *player = object_manager_->Get("player");
+	Object *fbx = object_manager_->Get("fbx");
 	Vector3 player_position(player->parameter().position_);
 	Vector3 player_rotation(player->parameter().rotation_);
+	Vector3 fbx_position(fbx->parameter().position_);
+	Vector3 fbx_rotation(fbx->parameter().rotation_);
 
 	Field *field = dynamic_cast<Field*>(
 		object_manager_->Get("field"));
@@ -149,6 +163,19 @@ void Game::Update()
 		}
 	}
 
+	if (KeyBoard::isPress(DIK_A)){
+		fbx_position.x_ -= 0.1f;
+	}
+	if (KeyBoard::isPress(DIK_D)){
+		fbx_position.x_ += 0.1f;
+	}
+	if (KeyBoard::isPress(DIK_W)){
+		fbx_position.z_ += 0.1f;
+	}
+	if (KeyBoard::isPress(DIK_S)){
+		fbx_position.z_ -= 0.1f;
+	}
+
 	if (GamePad::isPress(PAD_RS_UP)){
 		camera_pos_y -= 0.05f;
 	}
@@ -159,15 +186,24 @@ void Game::Update()
 	camera_pos_y = std::max<float>(camera_pos_y, -2.0f);
 	camera_focus_y = -camera_pos_y;
 
+
 	D3DXVECTOR3 pos(
 		player_position.x_,
 		player_position.y_,
 		player_position.z_);
 	player_position.y_ = field->GetHeight(pos);
 
+	D3DXVECTOR3 fbx_pos(
+		fbx_position.x_,
+		fbx_position.y_,
+		fbx_position.z_);
+	fbx_position.y_ = field->GetHeight(fbx_pos);
+	
+
 	player->SetPosition(player_position);
 	player->SetRotation(player_rotation);
-
+	fbx->SetPosition(fbx_position);
+	fbx->SetRotation(fbx_rotation);
 
 	//-------------------------------------
 	// カメラ追従
@@ -177,19 +213,34 @@ void Game::Update()
 	D3DXVECTOR3 camera_focus(main_camera->focus());
 	D3DXVECTOR3 camera_position_sub(
 		-sinf(player_rotation.y_) * 6.0f,
-		0.3f + camera_pos_y,
+		3.0f + camera_pos_y,
 		-cosf(player_rotation.y_) * 6.0f);
 	D3DXVECTOR3 camera_focus_sub(
 		-sinf(player_rotation.y_ + D3DX_PI) * 6.0f,
-		0.3f + camera_focus_y,
+		1.0f + camera_focus_y,
 		-cosf(player_rotation.y_ + D3DX_PI) * 6.0f);
 
 	camera_position = pos + camera_position_sub;
 	camera_focus = pos + camera_focus_sub;
 
 	main_camera->SetPosition(camera_position);
-	main_camera->SetFocus(pos);
+	main_camera->SetFocus(camera_focus);
 
+
+	//-------------------------------------
+	// エフェクト再生
+	//-------------------------------------
+	if (KeyBoard::isTrigger(DIK_1)){
+		effect_manager_->Play("water");
+	}
+	if (GamePad::isTrigger(PAD_BUTTON_6)){
+		EFFECT_PARAMETER_DESC effect_param;
+		MyEffect *effect = effect_manager_->Get("water");
+		effect_param = effect->parameter();
+		effect_param.position_ = player_position;
+		effect->SetParameter(effect_param);
+		effect_manager_->Play("water");
+	}
 
 	//-------------------------------------
 	// 実更新処理
@@ -203,7 +254,7 @@ void Game::Update()
 
 	if (KeyBoard::isTrigger(DIK_RETURN))
 	{
-		SceneManager::RequestScene("Title");
+		SceneManager::RequestScene("Result");
 	}
 }
 
@@ -218,7 +269,7 @@ void Game::Draw()
 		static_cast<LONG>(SCREEN_WIDTH),
 		static_cast<LONG>(SCREEN_HEIGHT) };
 	D3DXCOLOR font_color(0.0f, 1.0f, 1.0f, 1.0f);
-	MaterialColor color(32, 32, 32, 0);
+	MaterialColor color(255, 255, 255, 0);
 	DirectX9Holder::DrawBegin();
 	DirectX9Holder::Clear(color);
 	camera_manager_->Set("MainCamera");
