@@ -98,7 +98,7 @@ Game::Game()
 	object_manager_->Create(
 		"fbx",
 		fbx_param,
-		"resource/model/fbx/UneUne2.fbx");
+		"resource/model/fbx/REuneune.fbx");
 }
 
 
@@ -140,46 +140,46 @@ void Game::Update()
 	//-------------------------------------
 	// プレイヤーを地形に沿って移動させる
 	//-------------------------------------
-	if (GamePad::isPress(PAD_BUTTON_11)){
+	if (GamePad::isPress(GAMEPAD_GRANDFATHER, PAD_BUTTON_11)){
 		player_speed = player_speed_value * 2.0f;
 	}
 	player_position.x_ += (
-		cosf(player_rotation.y_) * GamePad::isStick().lsx_ +
-		sinf(-player_rotation.y_) * GamePad::isStick().lsy_) * player_speed;
+		cosf(player_rotation.y_) * GamePad::isStick(GAMEPAD_GRANDFATHER).lsx_ +
+		sinf(-player_rotation.y_) * GamePad::isStick(GAMEPAD_GRANDFATHER).lsy_) * player_speed;
 	player_position.z_ -= (
-		sinf(player_rotation.y_) * GamePad::isStick().lsx_ +
-		cosf(-player_rotation.y_) * GamePad::isStick().lsy_) * player_speed;
+		sinf(player_rotation.y_) * GamePad::isStick(GAMEPAD_GRANDFATHER).lsx_ +
+		cosf(-player_rotation.y_) * GamePad::isStick(GAMEPAD_GRANDFATHER).lsy_) * player_speed;
 
-	if (GamePad::isPress(PAD_RS_LEFT)){
+	if (GamePad::isPress(GAMEPAD_GRANDFATHER, PAD_RS_LEFT)){
 		player_rotation.y_ -= D3DX_PI * 0.01f;
 		if (player_rotation.y_ < D3DX_PI){
 			player_rotation.y_ += D3DX_PI * 2.0f;
 		}
 	}
-	if (GamePad::isPress(PAD_RS_RIGHT)){
+	if (GamePad::isPress(GAMEPAD_GRANDFATHER, PAD_RS_RIGHT)){
 		player_rotation.y_ += D3DX_PI * 0.01f;
 		if (player_rotation.y_ > D3DX_PI){
 			player_rotation.y_ -= D3DX_PI * 2.0f;
 		}
 	}
 
-	if (KeyBoard::isPress(DIK_A)){
+	if (GamePad::isPress(GAMEPAD_CHILD1, PAD_LS_LEFT)){
 		fbx_position.x_ -= 0.1f;
 	}
-	if (KeyBoard::isPress(DIK_D)){
+	if (GamePad::isPress(GAMEPAD_CHILD1, PAD_LS_RIGHT)){
 		fbx_position.x_ += 0.1f;
 	}
-	if (KeyBoard::isPress(DIK_W)){
+	if (GamePad::isPress(GAMEPAD_CHILD1, PAD_LS_UP)){
 		fbx_position.z_ += 0.1f;
 	}
-	if (KeyBoard::isPress(DIK_S)){
+	if (GamePad::isPress(GAMEPAD_CHILD1, PAD_LS_DOWN)){
 		fbx_position.z_ -= 0.1f;
 	}
 
-	if (GamePad::isPress(PAD_RS_UP)){
+	if (GamePad::isPress(GAMEPAD_GRANDFATHER, PAD_RS_UP)){
 		camera_pos_y -= 0.05f;
 	}
-	if (GamePad::isPress(PAD_RS_DOWN)){
+	if (GamePad::isPress(GAMEPAD_GRANDFATHER, PAD_RS_DOWN)){
 		camera_pos_y += 0.05f;
 	}
 	camera_pos_y = std::min<float>(camera_pos_y, 2.0f);
@@ -233,7 +233,7 @@ void Game::Update()
 	if (KeyBoard::isTrigger(DIK_1)){
 		effect_manager_->Play("water");
 	}
-	if (GamePad::isTrigger(PAD_BUTTON_6)){
+	if (GamePad::isTrigger(GAMEPAD_GRANDFATHER, PAD_BUTTON_6)){
 		EFFECT_PARAMETER_DESC effect_param;
 		MyEffect *effect = effect_manager_->Get("water");
 		effect_param = effect->parameter();

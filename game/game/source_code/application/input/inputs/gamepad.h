@@ -47,6 +47,16 @@ enum INPUT_PAD
 	PAD_MAX
 };
 
+enum GAMEPAD_ID
+{
+	GAMEPAD_GRANDFATHER = 0,
+	GAMEPAD_CHILD1,
+	GAMEPAD_CHILD2,
+	GAMEPAD_CHILD3,
+	GAMEPAD_CHILD4,
+	GAMEPAD_MAX
+};
+
 
 //-------------------------------------
 // struct
@@ -67,24 +77,24 @@ public:
 	virtual ~GamePad();
 	void Update();
 
-	static bool isPress(int pad){
-		return press_[pad];
+	static bool isPress(int id, int pad){
+		return press_[id][pad];
 	}
-	static bool isTrigger(int pad){
-		return trigger_[pad];
+	static bool isTrigger(int id, int pad){
+		return trigger_[id][pad];
 	}
-	static bool isRelease(int pad){
-		return release_[pad];
+	static bool isRelease(int id, int pad){
+		return release_[id][pad];
 	}
-	static bool isRepeat(int pad){
-		return repeat_[pad];
+	static bool isRepeat(int id, int pad){
+		return repeat_[id][pad];
 	}
-	static STICK_PARAMETER_DESC isStick(){
+	static STICK_PARAMETER_DESC isStick(int id){
 		STICK_PARAMETER_DESC stick;
-		stick.lsx_ = static_cast<float>(joy_state_.lX) / 1000.0f;
-		stick.lsy_ = static_cast<float>(joy_state_.lY) / 1000.0f;
-		stick.rsx_ = static_cast<float>(joy_state_.lZ) / 1000.0f;
-		stick.rsy_ = static_cast<float>(joy_state_.lRz) / 1000.0f;
+		stick.lsx_ = static_cast<float>(joy_state_[id].lX) / 1000.0f;
+		stick.lsy_ = static_cast<float>(joy_state_[id].lY) / 1000.0f;
+		stick.rsx_ = static_cast<float>(joy_state_[id].lZ) / 1000.0f;
+		stick.rsy_ = static_cast<float>(joy_state_[id].lRz) / 1000.0f;
 		return stick;
 	}
 
@@ -97,14 +107,15 @@ private:
 		const LPCDIDEVICEOBJECTINSTANCE instance,
 		LPVOID reference);
 
-	static LPDIRECTINPUTDEVICE8 device_;
-	static DIJOYSTATE2 joy_state_;
-	static bool state_[PAD_MAX];
-	static bool press_[PAD_MAX];
-	static bool trigger_[PAD_MAX];
-	static bool repeat_[PAD_MAX];
-	static bool release_[PAD_MAX];
-	static int repeat_count_[PAD_MAX];
+	static LPDIRECTINPUTDEVICE8 device_[GAMEPAD_MAX];
+	static DIJOYSTATE2 joy_state_[GAMEPAD_MAX];
+	static bool state_[GAMEPAD_MAX][PAD_MAX];
+	static bool press_[GAMEPAD_MAX][PAD_MAX];
+	static bool trigger_[GAMEPAD_MAX][PAD_MAX];
+	static bool repeat_[GAMEPAD_MAX][PAD_MAX];
+	static bool release_[GAMEPAD_MAX][PAD_MAX];
+	static int repeat_count_[GAMEPAD_MAX][PAD_MAX];
+	static bool gamepad_aquire[GAMEPAD_MAX];
 };
 
 
