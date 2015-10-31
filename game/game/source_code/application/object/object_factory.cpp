@@ -51,16 +51,26 @@ Object *ObjectFactory::Create(
 		field->LoadMesh(object_path);
 	}
 	 
-	if (param.layer_ == LAYER_MODEL_X){
+	else if (param.layer_ == LAYER_MODEL_X){
 		object = new XModel(parameter);
 		XModel *model = dynamic_cast<XModel*>(object);
 		model->LoadMesh(object_path);
 	}
 
-	if (param.layer_ == LAYER_MODEL_FBX){
+	else if (param.layer_ == LAYER_MODEL_FBX){
 		object = new FbxModel(parameter);
 		FbxModel *model = dynamic_cast<FbxModel*>(object);
 		model->Load(object_path);
+	}
+
+	else if (param.layer_ = LAYER_SPRITE_2D){
+		object = new Sprite2D(parameter);
+		Sprite2D *sprite = dynamic_cast<Sprite2D*>(object);
+		sprite->SetTexture(object_path);
+	}
+
+	else{
+		ASSERT_ERROR("無効なオブジェクト生成カテゴリです");
 	}
 
 	return object;

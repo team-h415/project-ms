@@ -30,7 +30,7 @@ public:
 	// ObjectManager::Create(
 	//      "オブジェクトの名前", 
 	//      設定するパラメータ);
-	static Object *Create(
+	Object *Create(
 		const std::string &name,
 		const OBJECT_PARAMETER_DESC &parameter);
 
@@ -39,7 +39,7 @@ public:
 	//     "オブジェクトの名前",
 	//     設定するパラメータ,
 	//     外部ファイルのパス);
-	static Object *Create(
+	Object *Create(
 		const std::string &name,
 		const OBJECT_PARAMETER_DESC &parameter,
 		const std::string &object_path);
@@ -50,12 +50,12 @@ public:
 	// オブジェクトを名前から検索し、ポインタを返します。
 	// ObjectManager::Get(
 	//     "オブジェクトの名前");
-	static Object *Get(
+	Object *Get(
 		const std::string &name);
 
 private:
-	static bool Search(const std::string &name);
-	static std::map<std::string, Object*> objects_[LAYER_MAX];
+	bool Search(const std::string &name);
+	std::map<std::string, Object*> objects_[LAYER_MAX];
 };
 
 

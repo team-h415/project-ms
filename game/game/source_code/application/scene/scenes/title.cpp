@@ -49,15 +49,17 @@ Title::Title()
 
 	OBJECT_PARAMETER_DESC param;
 	param.position_ = {
-		SCREEN_WIDTH * 0.5f,
-		SCREEN_HEIGHT * 0.5f,
+		200.0f,
+		100.0f,
 		0.0f
 	};
 	param.rotation_ = { 0.0f, 0.0f, 0.0f };
-	param.scaling_ = { 100.0f, 100.0f, 0.0f };
+	param.scaling_ = { 120.0f, 50.0f, 0.0f };
 	param.layer_ = LAYER_SPRITE_2D;
 
-	object_manager_->Create("test", param);
+	object_manager_->Create(
+		"test", param,
+		"resource/texture/title/logo.png");
 }
 
 

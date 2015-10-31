@@ -18,12 +18,6 @@
 
 
 //-------------------------------------
-// variable
-//-------------------------------------
-std::map<std::string, Object*> ObjectManager::objects_[LAYER_MAX];
-
-
-//-------------------------------------
 // ObjectManager()
 //-------------------------------------
 ObjectManager::ObjectManager()

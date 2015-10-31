@@ -10,6 +10,11 @@
 #ifndef __APP_SCENE_SCENES_LOADING_H__
 #define __APP_SCENE_SCENES_LOADING_H__
 
+
+//-------------------------------------
+// class
+//-------------------------------------
+class ObjectManager;
 class Loading : public Scene
 {
 public:
@@ -18,6 +23,7 @@ public:
 	void Update();
 	void Draw();
 private:
+	ObjectManager *object_manager_;
 };
 
 
