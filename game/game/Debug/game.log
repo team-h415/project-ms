@@ -1,57 +1,51 @@
-﻿2015/10/07 14:56:24 にビルドを開始しました。
-     1>ノード 2 上のプロジェクト "E:\H415\git\game\game\game.vcxproj" (Build ターゲット)。
+﻿2015/11/01 23:04:00 にビルドを開始しました。
+     1>ノード 2 上のプロジェクト "C:\Users\RyuyaNakamura\Documents\project-ms\game\game\game.vcxproj" (Build ターゲット)。
      1>ClCompile:
-         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D WIN32 /D _DEBUG /D _WINDOWS /D _MBCS /Gm /EHsc /RTC1 /MTd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt source_code\application\application.cpp source_code\application\fps\fps.cpp source_code\application\input\input.cpp source_code\application\input\inputs\keyboard.cpp source_code\application\input\input_factory.cpp source_code\application\object\object.cpp source_code\application\object\objects\sprite\sprite2d.cpp source_code\application\object\object_factory.cpp source_code\application\object\object_manager.cpp source_code\application\render\directx9\directx9.cpp source_code\application\render\directx9\directx9_holder.cpp source_code\application\render\renderer.cpp source_code\application\render\renderer_factory.cpp source_code\application\scene\fade\fade.cpp source_code\application\scene\scene.cpp source_code\application\scene\scenes\game.cpp source_code\application\scene\scenes\loading.cpp source_code\application\scene\scenes\title.cpp source_code\application\scene\scene_factory.cpp source_code\application\scene\scene_manager.cpp source_code\application\thread\thread.cpp source_code\application\window\window.cpp source_code\application\window\window_holder.cpp source_code\main.cpp
-         main.cpp
-         window_holder.cpp
-         window.cpp
-         thread.cpp
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /I"C:\Program Files\Autodesk\FBX\FBX SDK\2016.1.2\include" /I../include /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D WIN32 /D _DEBUG /D _WINDOWS /D _MBCS /Gm /EHsc /RTC1 /MTd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt source_code\application\scene\scene_manager.cpp
          scene_manager.cpp
-         scene_factory.cpp
-         title.cpp
-         loading.cpp
-         game.cpp
-         scene.cpp
-         fade.cpp
-         renderer_factory.cpp
-         renderer.cpp
-         directx9_holder.cpp
-         directx9.cpp
-         object_manager.cpp
-         object_factory.cpp
-         sprite2d.cpp
-     1>e:\h415\git\game\game\source_code\application\object\object.h(31): error C2146: 構文エラー : ';' が、識別子 'position_' の前に必要です。
-     1>e:\h415\git\game\game\source_code\application\object\object.h(31): error C4430: 型指定子がありません - int と仮定しました。メモ: C++ は int を既定値としてサポートしていません
-     1>e:\h415\git\game\game\source_code\application\object\object.h(32): error C2146: 構文エラー : ';' が、識別子 'rotation_' の前に必要です。
-     1>e:\h415\git\game\game\source_code\application\object\object.h(32): error C4430: 型指定子がありません - int と仮定しました。メモ: C++ は int を既定値としてサポートしていません
-     1>e:\h415\git\game\game\source_code\application\object\object.h(33): error C2146: 構文エラー : ';' が、識別子 'scaling_' の前に必要です。
-     1>e:\h415\git\game\game\source_code\application\object\object.h(33): error C4430: 型指定子がありません - int と仮定しました。メモ: C++ は int を既定値としてサポートしていません
-     1>e:\h415\git\game\game\source_code\application\object\object.h(59): error C4430: 型指定子がありません - int と仮定しました。メモ: C++ は int を既定値としてサポートしていません
-     1>e:\h415\git\game\game\source_code\application\object\object.h(59): error C2143: 構文エラー : ',' が '&' の前にありません。
-     1>e:\h415\git\game\game\source_code\application\object\object.h(63): error C4430: 型指定子がありません - int と仮定しました。メモ: C++ は int を既定値としてサポートしていません
-     1>e:\h415\git\game\game\source_code\application\object\object.h(63): error C2143: 構文エラー : ',' が '&' の前にありません。
-     1>e:\h415\git\game\game\source_code\application\object\object.h(67): error C4430: 型指定子がありません - int と仮定しました。メモ: C++ は int を既定値としてサポートしていません
-     1>e:\h415\git\game\game\source_code\application\object\object.h(67): error C2143: 構文エラー : ',' が '&' の前にありません。
-     1>e:\h415\git\game\game\source_code\application\object\object.h(60): error C2039: 'position_' : 'OBJECT_PARAMETER_DESC' のメンバーではありません。
-                 e:\h415\git\game\game\source_code\application\object\object.h(30) : 'OBJECT_PARAMETER_DESC' の宣言を確認してください。
-     1>e:\h415\git\game\game\source_code\application\object\object.h(60): error C2065: 'position' : 定義されていない識別子です。
-     1>e:\h415\git\game\game\source_code\application\object\object.h(64): error C2039: 'rotation_' : 'OBJECT_PARAMETER_DESC' のメンバーではありません。
-                 e:\h415\git\game\game\source_code\application\object\object.h(30) : 'OBJECT_PARAMETER_DESC' の宣言を確認してください。
-     1>e:\h415\git\game\game\source_code\application\object\object.h(64): error C2065: 'rotation' : 定義されていない識別子です。
-     1>e:\h415\git\game\game\source_code\application\object\object.h(68): error C2039: 'scaling_' : 'OBJECT_PARAMETER_DESC' のメンバーではありません。
-                 e:\h415\git\game\game\source_code\application\object\object.h(30) : 'OBJECT_PARAMETER_DESC' の宣言を確認してください。
-     1>e:\h415\git\game\game\source_code\application\object\object.h(68): error C2065: 'scaling' : 定義されていない識別子です。
-         object.cpp
-         input_factory.cpp
-         コードを生成中...
-         コンパイル中...
-         keyboard.cpp
-         input.cpp
-         fps.cpp
-         application.cpp
-         コードを生成中...
-     1>プロジェクト "E:\H415\git\game\game\game.vcxproj" (Build ターゲット) のビルドが終了しました -- 失敗。
+       Link:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\RyuyaNakamura\Documents\project-ms\game\game\Debug\game.exe" /INCREMENTAL /NOLOGO /LIBPATH:"C:\Program Files\Autodesk\FBX\FBX SDK\2016.1.2\lib\vs2013\x86\debug" /LIBPATH:../lib/x86 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib "libfbxsdk-mt.lib" kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\Users\RyuyaNakamura\Documents\project-ms\game\game\Debug\game.pdb" /SUBSYSTEM:WINDOWS /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\RyuyaNakamura\Documents\project-ms\game\game\Debug\game.lib" /MACHINE:X86 Debug\application.obj
+         Debug\camera.obj
+         Debug\oltho_camera.obj
+         Debug\perspective_camera.obj
+         Debug\camera_factory.obj
+         Debug\camera_manager.obj
+         Debug\debug_font.obj
+         Debug\effect.obj
+         Debug\effect_manager.obj
+         Debug\fps.obj
+         Debug\input.obj
+         Debug\gamepad.obj
+         Debug\keyboard.obj
+         Debug\input_factory.obj
+         Debug\object.obj
+         Debug\field.obj
+         Debug\fbx_model.obj
+         Debug\x_model.obj
+         Debug\sprite2d.obj
+         Debug\object_factory.obj
+         Debug\object_manager.obj
+         Debug\directx9.obj
+         Debug\directx9_holder.obj
+         Debug\renderer.obj
+         Debug\renderer_factory.obj
+         Debug\fade.obj
+         Debug\scene.obj
+         Debug\game.obj
+         Debug\loading.obj
+         Debug\matching.obj
+         Debug\result.obj
+         Debug\title.obj
+         Debug\scene_factory.obj
+         Debug\scene_manager.obj
+         Debug\shader.obj
+         Debug\thread.obj
+         Debug\window.obj
+         Debug\window_holder.obj
+         Debug\main.obj
+         game.vcxproj -> C:\Users\RyuyaNakamura\Documents\project-ms\game\game\Debug\game.exe
+     1>プロジェクト "C:\Users\RyuyaNakamura\Documents\project-ms\game\game\game.vcxproj" (Build ターゲット) のビルドが完了しました。
 
-ビルドに失敗しました。
+ビルドに成功しました。
 
-経過時間 00:00:13.91
+経過時間 00:00:02.24

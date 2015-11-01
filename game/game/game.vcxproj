@@ -112,6 +112,7 @@
     <ClCompile Include="source_code\application\render\directx9\directx9_holder.cpp" />
     <ClCompile Include="source_code\application\render\renderer.cpp" />
     <ClCompile Include="source_code\application\render\renderer_factory.cpp" />
+    <ClCompile Include="source_code\application\resource\resource_holder.cpp" />
     <ClCompile Include="source_code\application\scene\fade\fade.cpp" />
     <ClCompile Include="source_code\application\scene\scene.cpp" />
     <ClCompile Include="source_code\application\scene\scenes\game.cpp" />
@@ -155,6 +156,7 @@
     <ClInclude Include="source_code\application\render\directx9\directx9_holder.h" />
     <ClInclude Include="source_code\application\render\renderer.h" />
     <ClInclude Include="source_code\application\render\renderer_factory.h" />
+    <ClInclude Include="source_code\application\resource\resource_holder.h" />
     <ClInclude Include="source_code\application\scene\fade\fade.h" />
     <ClInclude Include="source_code\application\scene\scene.h" />
     <ClInclude Include="source_code\application\scene\scenes\game.h" />

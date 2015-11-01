@@ -76,8 +76,14 @@ void SceneManager::Update()
 			if (fade_->GetFade() == FADE_IN){
 				ChangeScene();
 			}
+			
 		}
 		else{
+
+			if (fade_->GetFade() == FADE_OUT){
+				SAFE_DELETE(thread_);
+			}
+
 			current_scene_->Update();
 		}
 		fade_->Update();
@@ -125,7 +131,6 @@ void SceneManager::ChangeScene()
 	thread_->Create(CreateScene);
 	next_request_ = false;
 	fade_->SetFade(FADE_OUT);
-	SAFE_DELETE(thread_);
 }
 
 
