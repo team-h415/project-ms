@@ -1,8 +1,8 @@
-﻿2015/11/04 15:01:07 にビルドを開始しました。
+﻿2015/11/07 0:16:58 にビルドを開始しました。
      1>ノード 2 上のプロジェクト "C:\Users\RyuyaNakamura\Documents\project-ms\game\game\game.vcxproj" (Build ターゲット)。
      1>ClCompile:
-         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /I"C:\Program Files\Autodesk\FBX\FBX SDK\2016.1.2\include" /I../include /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D WIN32 /D _DEBUG /D _WINDOWS /D _MBCS /Gm /EHsc /RTC1 /MTd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt source_code\application\effect\effect_manager.cpp
-         effect_manager.cpp
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /I"C:\Program Files\Autodesk\FBX\FBX SDK\2016.1.2\include" /I../include /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D WIN32 /D _DEBUG /D _WINDOWS /D _MBCS /Gm /EHsc /RTC1 /MTd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt source_code\application\scene\scenes\game.cpp
+         game.cpp
        Link:
          C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\RyuyaNakamura\Documents\project-ms\game\game\Debug\game.exe" /INCREMENTAL /NOLOGO /LIBPATH:"C:\Program Files\Autodesk\FBX\FBX SDK\2016.1.2\lib\vs2013\x86\debug" /LIBPATH:../lib/x86 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib "libfbxsdk-mt.lib" kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\Users\RyuyaNakamura\Documents\project-ms\game\game\Debug\game.pdb" /SUBSYSTEM:WINDOWS /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\RyuyaNakamura\Documents\project-ms\game\game\Debug\game.lib" /MACHINE:X86 Debug\application.obj
          Debug\camera.obj
@@ -49,4 +49,4 @@
 
 ビルドに成功しました。
 
-経過時間 00:00:02.37
+経過時間 00:00:17.95

@@ -51,7 +51,7 @@ Game::Game()
 
 	effect_manager_->Create(
 		"water",
-		"resource/effect/water.efk",
+		"resource/effect/test_water2.efk",
 		water_param);
 
 
@@ -155,6 +155,7 @@ void Game::Update()
 	static float camera_pos_y[5] = { 0.0f };
 	static float camera_focus_y[5] = { 0.0f };
 	static const float player_speed_value = 0.05f;
+	static bool effect_play[5] = { false };
 
 	if (KeyBoard::isTrigger(DIK_1)){
 		current_id_ = 1;
@@ -269,16 +270,25 @@ void Game::Update()
 		//-------------------------------------
 		// エフェクト再生
 		//-------------------------------------
-		if (KeyBoard::isTrigger(DIK_1)){
-			effect_manager_->Play("water");
-		}
 		if (GamePad::isTrigger(i, PAD_BUTTON_6)){
 			EFFECT_PARAMETER_DESC effect_param;
 			MyEffect *effect = effect_manager_->Get("water");
 			effect_param = effect->parameter();
 			effect_param.position_ = player_position;
+			effect_param.rotation_.y_ = player_rotation.y_;
+			effect_param.position_.y_ += 0.5f;
 			effect->SetParameter(effect_param);
 			effect_manager_->Play("water");
+			effect_play[i] = true;
+		}
+		if (effect_play[i]){
+			EFFECT_PARAMETER_DESC effect_param;
+			MyEffect *effect = effect_manager_->Get("water");
+			effect_param = effect->parameter();
+			effect_param.position_ = player_position;
+			effect_param.rotation_.y_ = player_rotation.y_;
+			effect_param.position_.y_ += 0.5f;
+			effect->SetParameter(effect_param);
 		}
 	}
 
