@@ -21,11 +21,12 @@ public:
 	FbxModel(
 		const OBJECT_PARAMETER_DESC &parameter);
 	virtual ~FbxModel();
-	void Update();
+	virtual void Update();
 	void Draw();
 	void Load(
 		const std::string &path);
-private:
+
+protected:
 	struct MESH
 	{
 		LPDIRECT3DVERTEXBUFFER9 vertex_;
@@ -65,6 +66,23 @@ private:
 			id_ = -1;
 		}
 	};
+	struct ANIMATION
+	{
+		float begin_;				// 開始時間
+		float end_;					// 終了時間
+		float speed_;				// 再生速度 1.0fがデフォルト
+		float time_;				// 現在の位置
+		bool loop_;					// loop falg
+		// コンストラクタ
+		ANIMATION(void) :
+			begin_(0.0f),
+			end_(0.0f),
+			speed_(1.0f),
+			time_(0.0f),
+			loop_(false)
+		{
+		}
+	};
 
 	FbxNode *GetRootBone(FbxNode *node);
 	void CountUpBone(FbxNode *node);
@@ -82,7 +100,7 @@ private:
 	void ExtractTranslationFromMatrix(D3DXMATRIX *out, D3DXMATRIX *src);
 	void ExtractRotationFromMatrix(D3DXMATRIX *out, D3DXMATRIX *src);
 	void ExtractScalingFromMatrix(D3DXMATRIX *out, D3DXMATRIX *src);
-	void UpdateBoneMatrix(BONE *subject, D3DXMATRIX *parent);
+	virtual void UpdateBoneMatrix(BONE *subject, D3DXMATRIX *parent);
 	void DeleteBone(BONE *bone);
 
 	int mesh_count_;
@@ -94,6 +112,13 @@ private:
 	float cur_time_;
 	int bone_cursor_;
 	Shader *shader_;
+
+	ANIMATION*	animation_;					// アニメーション管理構造体
+	int			previous_animation_id_;		// 前のアニメーション
+	int			current_animation_id_;		// 現在のアニメーション
+	int			animation_switching_;		// アニメーション移行時間
+	bool		animation_blending_;		// アニメーションの合成
+	bool		animation_play_;			// アニメーションの再生
 };
 
 

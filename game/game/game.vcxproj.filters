@@ -77,6 +77,9 @@
     <Filter Include="source_code\application\resource">
       <UniqueIdentifier>{bf55e749-48c0-49e8-8f7d-4dbbbed1d5a0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="source_code\application\object\objects\model\fbx">
+      <UniqueIdentifier>{60eba6c7-d95d-45f3-b4c7-933671d79331}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source_code\main.cpp">
@@ -198,6 +201,9 @@
     </ClCompile>
     <ClCompile Include="source_code\application\resource\resource_holder.cpp">
       <Filter>source_code\application\resource</Filter>
+    </ClCompile>
+    <ClCompile Include="source_code\application\object\objects\model\fbx\fbx_grandfather.cpp">
+      <Filter>source_code\application\object\objects\model\fbx</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -329,6 +335,9 @@
     </ClInclude>
     <ClInclude Include="source_code\application\resource\resource_holder.h">
       <Filter>source_code\application\resource</Filter>
+    </ClInclude>
+    <ClInclude Include="source_code\application\object\objects\model\fbx\fbx_grandfather.h">
+      <Filter>source_code\application\object\objects\model\fbx</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
