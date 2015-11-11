@@ -77,6 +77,9 @@
     <Filter Include="source_code\application\resource">
       <UniqueIdentifier>{bf55e749-48c0-49e8-8f7d-4dbbbed1d5a0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="source_code\application\network">
+      <UniqueIdentifier>{8a9e29bc-3eba-4074-a8dc-87f51e042e8f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source_code\main.cpp">
@@ -198,6 +201,15 @@
     </ClCompile>
     <ClCompile Include="source_code\application\resource\resource_holder.cpp">
       <Filter>source_code\application\resource</Filter>
+    </ClCompile>
+    <ClCompile Include="source_code\application\network\network_guest.cpp">
+      <Filter>source_code\application\network</Filter>
+    </ClCompile>
+    <ClCompile Include="source_code\application\network\network_host.cpp">
+      <Filter>source_code\application\network</Filter>
+    </ClCompile>
+    <ClCompile Include="source_code\application\scene\scenes\game_server.cpp">
+      <Filter>source_code\application\scene\scenes</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -329,6 +341,18 @@
     </ClInclude>
     <ClInclude Include="source_code\application\resource\resource_holder.h">
       <Filter>source_code\application\resource</Filter>
+    </ClInclude>
+    <ClInclude Include="source_code\application\network\network.h">
+      <Filter>source_code\application\network</Filter>
+    </ClInclude>
+    <ClInclude Include="source_code\application\network\network_guest.h">
+      <Filter>source_code\application\network</Filter>
+    </ClInclude>
+    <ClInclude Include="source_code\application\network\network_host.h">
+      <Filter>source_code\application\network</Filter>
+    </ClInclude>
+    <ClInclude Include="source_code\application\scene\scenes\game_server.h">
+      <Filter>source_code\application\scene\scenes</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

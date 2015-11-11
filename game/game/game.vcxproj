@@ -101,6 +101,8 @@
     <ClCompile Include="source_code\application\input\inputs\gamepad.cpp" />
     <ClCompile Include="source_code\application\input\inputs\keyboard.cpp" />
     <ClCompile Include="source_code\application\input\input_factory.cpp" />
+    <ClCompile Include="source_code\application\network\network_guest.cpp" />
+    <ClCompile Include="source_code\application\network\network_host.cpp" />
     <ClCompile Include="source_code\application\object\object.cpp" />
     <ClCompile Include="source_code\application\object\objects\mesh\field.cpp" />
     <ClCompile Include="source_code\application\object\objects\model\fbx_model.cpp" />
@@ -116,6 +118,7 @@
     <ClCompile Include="source_code\application\scene\fade\fade.cpp" />
     <ClCompile Include="source_code\application\scene\scene.cpp" />
     <ClCompile Include="source_code\application\scene\scenes\game.cpp" />
+    <ClCompile Include="source_code\application\scene\scenes\game_server.cpp" />
     <ClCompile Include="source_code\application\scene\scenes\loading.cpp" />
     <ClCompile Include="source_code\application\scene\scenes\matching.cpp" />
     <ClCompile Include="source_code\application\scene\scenes\result.cpp" />
@@ -145,6 +148,9 @@
     <ClInclude Include="source_code\application\input\input_factory.h" />
     <ClInclude Include="source_code\application\math\my_math.h" />
     <ClInclude Include="source_code\application\math\vector.h" />
+    <ClInclude Include="source_code\application\network\network.h" />
+    <ClInclude Include="source_code\application\network\network_guest.h" />
+    <ClInclude Include="source_code\application\network\network_host.h" />
     <ClInclude Include="source_code\application\object\object.h" />
     <ClInclude Include="source_code\application\object\objects\mesh\field.h" />
     <ClInclude Include="source_code\application\object\objects\model\fbx_model.h" />
@@ -160,6 +166,7 @@
     <ClInclude Include="source_code\application\scene\fade\fade.h" />
     <ClInclude Include="source_code\application\scene\scene.h" />
     <ClInclude Include="source_code\application\scene\scenes\game.h" />
+    <ClInclude Include="source_code\application\scene\scenes\game_server.h" />
     <ClInclude Include="source_code\application\scene\scenes\loading.h" />
     <ClInclude Include="source_code\application\scene\scenes\matching.h" />
     <ClInclude Include="source_code\application\scene\scenes\result.h" />

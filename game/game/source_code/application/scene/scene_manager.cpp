@@ -8,6 +8,7 @@
 // include 
 //-------------------------------------
 #include "../../common/common.h"
+#include "../network/network.h"
 #include "../render/renderer.h"
 #include "../render/directx9/directx9.h"
 #include "../render/directx9/directx9_holder.h"
@@ -36,7 +37,13 @@ MyThread *SceneManager::thread_ = nullptr;
 //-------------------------------------
 SceneManager::SceneManager()
 {
-	current_scene_ = Create("Title");
+	#ifdef NETWORK_HOST_MODE
+		current_scene_ = Create("GameServer");
+	#else
+		//current_scene_ = Create("Title");
+		current_scene_ = Create("Matching");
+	#endif
+
 	loading_scene_ = Create("Loading");
 	fade_ = new Fade();
 	fade_->SetFade(FADE_OUT);

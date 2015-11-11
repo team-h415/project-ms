@@ -21,6 +21,7 @@ public:
 	MyThread();
 	virtual ~MyThread();
 	unsigned int Create(void *function);
+	void CloseThread(bool safe = true);
 private:
 	HANDLE thread_;
 };

@@ -28,6 +28,11 @@ public:
 	virtual ~Game();
 	void Update();
 	void Draw();
+
+	ObjectManager* GetObjectManager(){return object_manager_;}
+	CameraManager* GetCameraManager(){return camera_manager_;}
+	EffectManager* GetEffectManager(){return effect_manager_;}
+
 private:
 	ObjectManager *object_manager_;
 	CameraManager *camera_manager_;

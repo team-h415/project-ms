@@ -4,9 +4,16 @@
 // アプリケーションの管理
 //=========================================================
 
+
 //-------------------------------------
 // include 
 //-------------------------------------
+#include "network/network.h"
+#ifdef NETWORK_HOST_MODE
+	#include "network/network_host.h"
+#else
+	#include "network/network_guest.h"
+#endif
 #include "../common/common.h"
 #include "fps/fps.h"
 #include "window/window.h"
@@ -45,6 +52,11 @@ Application::Application(
 		"KeyBoard");
 	gamepad_ = InputFactory::Create(
 		"GamePad");
+	#ifdef NETWORK_HOST_MODE
+		NetworkHost::StartCommunication();
+	#else
+		NetworkGuest::StartCommunication(scene_manager_);
+	#endif
 }
 
 
@@ -53,6 +65,11 @@ Application::Application(
 //-------------------------------------
 Application::~Application()
 {
+	#ifdef NETWORK_HOST_MODE
+		NetworkHost::CloseCommunication();
+	#else
+		NetworkGuest::CloseCommunication();
+	#endif
 	SAFE_DELETE(scene_manager_);
 	SAFE_DELETE(fps_);
 	SAFE_DELETE(renderer_);

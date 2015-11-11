@@ -25,19 +25,7 @@ MyThread::MyThread()
 //-------------------------------------
 MyThread::~MyThread()
 {
-	BOOL result;
-	if (thread_)
-	{
-		WaitForSingleObject(thread_, INFINITE);
-		result = CloseHandle(thread_);
-		if (!result){
-			ASSERT_ERROR("スレッドの破棄に失敗");
-		}
-	}
-	else
-	{
-		ASSERT_WARNING("スレッドは動いていません");
-	}
+	CloseThread();
 }
 
 
@@ -61,6 +49,24 @@ unsigned int MyThread::Create(void* function)
 	}
 
 	return (unsigned int)thread_;
+}
+
+
+//-------------------------------------
+// ThreadEnd()
+//-------------------------------------
+void MyThread::CloseThread(bool safe)
+{
+	if(thread_)
+	{
+		if(safe)
+		{
+			WaitForSingleObject(thread_, INFINITE);
+		}
+		BOOL result;
+		result = CloseHandle(thread_);
+		thread_ = 0;
+	}
 }
 
 

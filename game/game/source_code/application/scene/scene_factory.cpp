@@ -16,6 +16,7 @@
 #include "scenes/loading.h"
 #include "scenes/title.h"
 #include "scenes/game.h"
+#include "scenes/game_server.h"
 #include "scenes/matching.h"
 #include "scenes/result.h"
 
@@ -46,6 +47,10 @@ Scene *SceneFactory::Create(
 	}
 	if (name == "Result"){
 		scene = new Result();
+		return scene;
+	}
+	if(name == "GameServer"){
+		scene = new GameServer();
 		return scene;
 	}
 
