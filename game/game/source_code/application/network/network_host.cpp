@@ -160,25 +160,41 @@ unsigned __stdcall NetworkHost::Communication()
 			switch(rec_data.type_)
 			{
 				case DATA_REQUEST_ADDR:
-					printf("アドレスリクエストを受信\n");
-					from_addr.sin_port = htons(PORT_NUMBER_1);
-					send_data.type_ = DATA_GIVE_ADDR;
-					//// ID設定
-					//if(rec_data.object_param_.type_ == OBJ_CHILD)
-					//{
-					//	child_counter++;
-					//	send_data.id_ = child_counter;
-					//	guest_addr_[child_counter] = from_addr.sin_addr.s_addr;
-					//}
-					//else
-					//{
-					//	send_data.id_ = 0;
-					//	guest_addr_[0] = from_addr.sin_addr.s_addr;
-					//}
-					guest_addr_[access_counter] = from_addr.sin_addr.s_addr;
-					sendto(socket_data_, (char*)&send_data, sizeof(send_data), 0, (sockaddr*)&from_addr, sizeof(from_addr));
-					printf("アドレスを返信\n");
-					access_counter++;
+					{
+						printf("アドレスリクエストを受信\n");
+						from_addr.sin_port = htons(PORT_NUMBER_1);
+						send_data.type_ = DATA_GIVE_ADDR;
+						//// ID設定
+						//if(rec_data.object_param_.type_ == OBJ_CHILD)
+						//{
+						//	child_counter++;
+						//	send_data.id_ = child_counter;
+						//	guest_addr_[child_counter] = from_addr.sin_addr.s_addr;
+						//}
+						//else
+						//{
+						//	send_data.id_ = 0;
+						//	guest_addr_[0] = from_addr.sin_addr.s_addr;
+						//}
+						bool no_ip(true);
+						for(int i = 0; i < MAX_GUEST; i++)
+						{
+							// IPアドレス重複チェック
+							if(guest_addr_[i] == from_addr.sin_addr.s_addr)
+							{
+								no_ip = false;
+								break;
+							}
+						}
+						// IPアドレスの記録
+						if(no_ip)
+						{
+							guest_addr_[access_counter] = from_addr.sin_addr.s_addr;
+							access_counter++;
+						}
+						sendto(socket_data_, (char*)&send_data, sizeof(send_data), 0, (sockaddr*)&from_addr, sizeof(from_addr));
+						printf("アドレスを返信\n");
+					}
 					break;
 
 				case DATA_COMPLETE_SCENE_CHANGE:
