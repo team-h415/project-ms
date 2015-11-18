@@ -124,6 +124,7 @@
     <ClCompile Include="source_code\application\scene\scene_factory.cpp" />
     <ClCompile Include="source_code\application\scene\scene_manager.cpp" />
     <ClCompile Include="source_code\application\shader\shader.cpp" />
+    <ClCompile Include="source_code\application\sound\sound.cpp" />
     <ClCompile Include="source_code\application\thread\thread.cpp" />
     <ClCompile Include="source_code\application\window\window.cpp" />
     <ClCompile Include="source_code\application\window\window_holder.cpp" />
@@ -169,6 +170,7 @@
     <ClInclude Include="source_code\application\scene\scene_factory.h" />
     <ClInclude Include="source_code\application\scene\scene_manager.h" />
     <ClInclude Include="source_code\application\shader\shader.h" />
+    <ClInclude Include="source_code\application\sound\sound.h" />
     <ClInclude Include="source_code\application\thread\thread.h" />
     <ClInclude Include="source_code\application\window\window.h" />
     <ClInclude Include="source_code\application\window\window_holder.h" />

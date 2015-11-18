@@ -17,6 +17,7 @@
 #include "scene/scene_manager.h"
 #include "input/input.h"
 #include "input/input_factory.h"
+#include "sound/sound.h"
 #include "application.h"
 
 
@@ -45,6 +46,7 @@ Application::Application(
 		"KeyBoard");
 	gamepad_ = InputFactory::Create(
 		"GamePad");
+	Sound::Setup();
 }
 
 
@@ -53,6 +55,7 @@ Application::Application(
 //-------------------------------------
 Application::~Application()
 {
+	Sound::End();
 	SAFE_DELETE(scene_manager_);
 	SAFE_DELETE(fps_);
 	SAFE_DELETE(renderer_);
