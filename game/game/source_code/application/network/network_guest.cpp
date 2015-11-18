@@ -277,125 +277,25 @@ unsigned __stdcall NetworkGuest::Communication()
 					scene_name = scene_manager_->GetCurrentSceneName();
 					if("Matching" == scene_name)
 					{
+						// マッチングクラス取得
+						Matching *matching = dynamic_cast<Matching*>(scene_manager_->GetCurrentScene());
+						if(matching == nullptr)
+						{
+							continue;
+						}
+						ObjDataAdaptation(matching->GetObjectManager(),
+							matching->GetCameraManager(), matching->GetEffectManager(), rec_data);
 					}
 					else if("Game" == scene_name)
 					{
 						// ゲームクラス取得
-						Game *game = reinterpret_cast<Game*>(scene_manager_->GetCurrentScene());
+						Game *game = dynamic_cast<Game*>(scene_manager_->GetCurrentScene());
 						if(game == nullptr)
 						{
 							continue;
 						}
-						switch(rec_data.object_param_.type_)
-						{
-							case OBJ_GRANDFATHER:			// おじいちゃん
-							case OBJ_CHILD:					// 子供
-								{
-									ObjectManager *object_manager = game->GetObjectManager();
-									if(object_manager == nullptr)
-									{
-										continue;
-									}
-									Object *object;
-									switch(rec_data.id_)
-									{
-										case 0:
-											object = object_manager->Get("player1");
-											break;
-										case 1:
-											object = object_manager->Get("player2");
-											break;
-										case 2:
-											object = object_manager->Get("player3");
-											break;
-										case 3:
-											object = object_manager->Get("player4");
-											break;
-										case 4:
-											object = object_manager->Get("player5");
-											break;
-										default:
-											object = object_manager->Get("player1");
-											break;
-									}
-									if(object == nullptr)
-									{
-										continue;
-									}
-									Vector3 set_param;
-									// 座標
-									set_param.x_ = rec_data.object_param_.position_.x_;
-									set_param.y_ = rec_data.object_param_.position_.y_;
-									set_param.z_ = rec_data.object_param_.position_.z_;
-									object->SetPosition(set_param);
-									// 回転
-									set_param.x_ = rec_data.object_param_.rotation_.x_;
-									set_param.y_ = rec_data.object_param_.rotation_.y_;
-									set_param.z_ = rec_data.object_param_.rotation_.z_;
-									object->SetRotation(set_param);
-								}
-								break;
-
-							case OBJ_EFFECT:				// エフェクト
-								{
-									EffectManager *effect_manager_ = game->GetEffectManager();
-									if(effect_manager_ == nullptr)
-									{
-										continue;
-									}
-									EFFECT_PARAMETER_DESC effect_param;
-									MyEffect *effect = effect_manager_->Get("water");
-									if(effect == nullptr)
-									{
-										continue;
-									}
-									effect_param = effect->parameter();
-									effect_param.position_.x_ = rec_data.object_param_.position_.x_;
-									effect_param.position_.y_ = rec_data.object_param_.position_.y_;
-									effect_param.position_.z_ = rec_data.object_param_.position_.z_;
-									effect->SetParameter(effect_param);
-									effect_manager_->Play("water");
-								}
-								break;
-
-							case OBJ_UI:					// UI
-								{
-									
-								}
-								break;
-
-							case OBJ_CAMERA:
-								{
-									CameraManager *camera_manager = game->GetCameraManager();
-									if(camera_manager == nullptr)
-									{
-										continue;
-									}
-									Camera *main_camera = camera_manager->Get("camera1");
-									if(main_camera == nullptr)
-									{
-										continue;
-									}
-									D3DXVECTOR3 camera_position;
-									D3DXVECTOR3 camera_focus;
-
-									camera_position.x = rec_data.object_param_.position_.x_;
-									camera_position.y = rec_data.object_param_.position_.y_;
-									camera_position.z = rec_data.object_param_.position_.z_;
-
-									camera_focus.x = rec_data.object_param_.rotation_.x_;
-									camera_focus.y = rec_data.object_param_.rotation_.y_;
-									camera_focus.z = rec_data.object_param_.rotation_.z_;
-
-									main_camera->SetPosition(camera_position);
-									main_camera->SetFocus(camera_focus);
-
-								}
-								break;
-
-							default:
-								break;
-						}
+						ObjDataAdaptation(game->GetObjectManager(),
+							game->GetCameraManager(), game->GetEffectManager(), rec_data);
 					}
 					break;
 
@@ -416,6 +316,98 @@ unsigned __stdcall NetworkGuest::Communication()
 	return 1;
 }
 
+
+void NetworkGuest::ObjDataAdaptation(
+	ObjectManager *object_manager, CameraManager *camera_manager, EffectManager *effect_manager, NETWORK_DATA rec_data)
+{
+	switch(rec_data.object_param_.type_)
+	{
+		case OBJ_GRANDFATHER:			// おじいちゃん
+		case OBJ_CHILD:					// 子供
+			{
+				if(object_manager == nullptr)
+				{
+					return;
+				}
+				std::string player_str = "player" + std::to_string(rec_data.id_ + 1);
+				Object *object = object_manager->Get(player_str);
+				if(object == nullptr)
+				{
+					return;
+				}
+				Vector3 set_param;
+				// 座標
+				set_param.x_ = rec_data.object_param_.position_.x_;
+				set_param.y_ = rec_data.object_param_.position_.y_;
+				set_param.z_ = rec_data.object_param_.position_.z_;
+				object->SetPosition(set_param);
+				// 回転
+				set_param.x_ = rec_data.object_param_.rotation_.x_;
+				set_param.y_ = rec_data.object_param_.rotation_.y_;
+				set_param.z_ = rec_data.object_param_.rotation_.z_;
+				object->SetRotation(set_param);
+			}
+			break;
+
+		case OBJ_EFFECT:				// エフェクト
+			{
+				if(effect_manager == nullptr)
+				{
+					return;
+				}
+				EFFECT_PARAMETER_DESC effect_param;
+				MyEffect *effect = effect_manager->Get("water");
+				if(effect == nullptr)
+				{
+					return;
+				}
+				effect_param = effect->parameter();
+				effect_param.position_.x_ = rec_data.object_param_.position_.x_;
+				effect_param.position_.y_ = rec_data.object_param_.position_.y_;
+				effect_param.position_.z_ = rec_data.object_param_.position_.z_;
+				effect->SetParameter(effect_param);
+				effect_manager->Play("water");
+			}
+			break;
+
+		case OBJ_UI:					// UI
+			{
+
+			}
+			break;
+
+		case OBJ_CAMERA:
+			{
+				if(camera_manager == nullptr)
+				{
+					return;
+				}
+				Camera *main_camera = camera_manager->Get("MainCamera");
+				if(main_camera == nullptr)
+				{
+					return;
+				}
+				D3DXVECTOR3 camera_position;
+				D3DXVECTOR3 camera_focus;
+
+				camera_position.x = rec_data.object_param_.position_.x_;
+				camera_position.y = rec_data.object_param_.position_.y_;
+				camera_position.z = rec_data.object_param_.position_.z_;
+
+				camera_focus.x = rec_data.object_param_.rotation_.x_;
+				camera_focus.y = rec_data.object_param_.rotation_.y_;
+				camera_focus.z = rec_data.object_param_.rotation_.z_;
+
+				main_camera->SetPosition(camera_position);
+				main_camera->SetFocus(camera_focus);
+
+			}
+			break;
+
+		default:
+			break;
+	}
+}
 
 //-------------------------------------
 // end of file

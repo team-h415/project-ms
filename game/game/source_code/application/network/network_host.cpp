@@ -164,18 +164,7 @@ unsigned __stdcall NetworkHost::Communication()
 						printf("アドレスリクエストを受信\n");
 						from_addr.sin_port = htons(PORT_NUMBER_1);
 						send_data.type_ = DATA_GIVE_ADDR;
-						//// ID設定
-						//if(rec_data.object_param_.type_ == OBJ_CHILD)
-						//{
-						//	child_counter++;
-						//	send_data.id_ = child_counter;
-						//	guest_addr_[child_counter] = from_addr.sin_addr.s_addr;
-						//}
-						//else
-						//{
-						//	send_data.id_ = 0;
-						//	guest_addr_[0] = from_addr.sin_addr.s_addr;
-						//}
+						// IPアドレス登録
 						bool no_ip(true);
 						for(int i = 0; i < MAX_GUEST; i++)
 						{

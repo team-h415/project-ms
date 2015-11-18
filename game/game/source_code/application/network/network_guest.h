@@ -32,6 +32,9 @@
 //-------------------------------------
 class MyThread;
 class SceneManager;
+class ObjectManager;
+class CameraManager;
+class EffectManager;
 class NetworkGuest
 {
 public:
@@ -41,6 +44,8 @@ public:
 
 private:
 	static unsigned __stdcall Communication();				// ホストからの受信を行います、基本的にサブスレッドで稼働します
+	static void ObjDataAdaptation(
+		ObjectManager *object_manager, CameraManager *camera_manager, EffectManager *effect_manager, NETWORK_DATA rec_data);
 
 	static SOCKET		socket_data_;						// ソケット
 	static ULONG		host_addr_;							// ホストアドレス
