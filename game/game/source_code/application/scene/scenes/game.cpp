@@ -18,6 +18,8 @@
 #include "../../debug/debug_font.h"
 #include "../../object/object.h"
 #include "../../object/object_manager.h"
+#include "../../object/objects/model/fbx_model.h"
+#include "../../object/objects/model/fbx/fbx_grandfather.h"
 #include "../../object/objects/mesh/field.h"
 #include "../../effect/effect.h"
 #include "../../effect/effect_manager.h"
@@ -123,15 +125,25 @@ Game::Game()
 		"resource/model/x/pone.x");
 
 	OBJECT_PARAMETER_DESC fbx_param;
-	fbx_param.layer_ = LAYER_MODEL_FBX;
-	fbx_param.position_ = { 0.0f, 0.0f, 0.0f };
-	fbx_param.rotation_ = { 0.0f, 0.0f, 0.0f };
-	fbx_param.scaling_ = { 0.1f, 0.1f, 0.1f };
+	//fbx_param.layer_ = LAYER_MODEL_FBX;
+	//fbx_param.position_ = { 2.0f, 0.0f, 0.0f };
+	//fbx_param.rotation_ = { 0.0f, 0.0f, 0.0f };
+	//fbx_param.scaling_ = { 0.1f, 0.1f, 0.1f };
+
+	//object_manager_->Create(
+	//	"fbx",
+	//	fbx_param,
+	//	"./resource/model/fbx/REuneune.fbx");
+
+	fbx_param.layer_ = LAYER_MODEL_GRANDFATHER;
+	fbx_param.position_ = {2.0f, 0.0f, 0.0f};
+	fbx_param.rotation_ = {0.0f, 0.0f, 0.0f};
+	fbx_param.scaling_ = {0.1f, 0.1f, 0.1f};
 
 	object_manager_->Create(
 		"fbx",
-		fbx_param,
-		"resource/model/fbx/REuneune.fbx");
+		fbx_param);
+
 }
 
 
@@ -170,6 +182,15 @@ void Game::Update()
 	}
 	if (KeyBoard::isTrigger(DIK_5)){
 		current_id_ = 5;
+	}
+
+	if(KeyBoard::isTrigger(DIK_9)){
+		FbxGrandfather *fbx = dynamic_cast<FbxGrandfather*>(object_manager_->Get("fbx"));
+		fbx->SetCurrentAnimation(FbxGrandfather::TYPE_0);
+	}
+	if(KeyBoard::isTrigger(DIK_0)){
+		FbxGrandfather *fbx = dynamic_cast<FbxGrandfather*>(object_manager_->Get("fbx"));
+		fbx->SetCurrentAnimation(FbxGrandfather::TYPE_1);
 	}
 
 	for (int i = 0; i < 5; i++){

@@ -15,6 +15,7 @@
 //-------------------------------------
 // class
 //-------------------------------------
+class Shader;
 class FbxModel : public Object
 {
 public:

@@ -21,7 +21,7 @@
 //-------------------------------------
 // define
 //-------------------------------------
-#define ANIMATION_SWITCHING_TIME 8
+#define ANIMATION_SWITCHING_TIME 10
 
 
 //-------------------------------------
@@ -30,14 +30,41 @@
 FbxGrandfather::FbxGrandfather(const OBJECT_PARAMETER_DESC &parameter) :
 	FbxModel(parameter)
 {
+	// モデル読み込み
+	Load("./resource/model/fbx/REuneune.fbx");
+
+#ifdef _DEBUG
+	int x;
+	float time;
+	// ボーンのパラメータチェク用
+	for(int i = 0; i < bone_count_; i++)
+	{
+		x = bone_[i].key_max_;
+		int st = 0;
+		for(int l = 0; l < x; l++)
+		{
+			time = bone_[i].key_[l].time_;
+			int st2 = 0;
+		}
+	}
+#endif
+
 	// おじいちゃん用のアニメーションを設定
 	animation_ = new ANIMATION[MAX_TYPE];
 
-	animation_[0].begin_ = 0.0f;
-	animation_[0].end_ = 10.0f;
-	animation_[0].loop_ = true;
-	animation_[0].speed_ = 1.0f;
-	animation_[0].time_ = 0.0f;
+	// モーション
+	animation_[TYPE_0].begin_ = 0.0f;
+	animation_[TYPE_0].end_ = 29.0f;
+	animation_[TYPE_0].loop_ = true;
+	animation_[TYPE_0].speed_ = 1.0f;
+	animation_[TYPE_0].time_ = 0.0f;
+
+	// モーション
+	animation_[TYPE_1].begin_ = 30.0f;
+	animation_[TYPE_1].end_ = 60.0f;
+	animation_[TYPE_1].loop_ = true;
+	animation_[TYPE_1].speed_ = 1.0f;
+	animation_[TYPE_1].time_ = 0.0f;
 }
 
 
@@ -86,6 +113,7 @@ void FbxGrandfather::Update()
 		{
 			animation_switching_ = 0;
 			animation_blending_ = false;
+			animation_[previous_animation_id_].time_ = 0.0f;
 		}
 	}
 
@@ -113,18 +141,6 @@ void FbxGrandfather::Update()
 		&element, &element, &translate);
 
 	UpdateBoneMatrix(&bone_[0], &element);
-
-	//for(int i = 0; i < bone_count_; i++)
-	//{
-	//	int x = bone_[i].key_max_;
-	//	int st = 0;
-	//	for(int l = 0; l < x; l++)
-	//	{
-	//		float time = bone_[i].key_[l].time_;
-	//		int st2 = 0;
-	//	}
-	//}
-
 }
 
 

@@ -13,23 +13,23 @@
 
 
 //-------------------------------------
-// enum
-//-------------------------------------
-enum ANIMATION_TYPE
-{
-	TYPE_0,
-	TYPE_1,
-
-	MAX_TYPE
-};
-
-
-//-------------------------------------
 // class
 //-------------------------------------
 class FbxGrandfather : public FbxModel
 {
 public:
+	//-------------------------------------
+	// enum
+	//-------------------------------------
+	enum ANIMATION_TYPE
+	{
+		TYPE_0,
+		TYPE_1,
+
+		MAX_TYPE
+	};
+
+
 	FbxGrandfather(
 		const OBJECT_PARAMETER_DESC &parameter);
 	~FbxGrandfather();
@@ -37,7 +37,7 @@ public:
 
 	void SetCurrentAnimation(int animId, bool blend = true)
 	{
-		if(0 <= animId && animId < MAX_TYPE)
+		if(0 <= animId && animId < MAX_TYPE && !(current_animation_id_ == animId))
 		{
 			previous_animation_id_ = current_animation_id_;
 			current_animation_id_ = animId;

@@ -17,6 +17,7 @@
 #include "objects/mesh/field.h"
 #include "objects/model/x_model.h"
 #include "objects/model/fbx_model.h"
+#include "objects/model/fbx/fbx_grandfather.h"
 
 
 //-------------------------------------
@@ -29,8 +30,20 @@ Object *ObjectFactory::Create(
 	OBJECT_PARAMETER_DESC param = parameter;
 	Object *object = nullptr;
 
-	if (param.layer_ = LAYER_SPRITE_2D){
+	if (param.layer_ == LAYER_SPRITE_2D){
 		object = new Sprite2D(parameter);
+	}
+
+	else if(param.layer_ == LAYER_MODEL_GRANDFATHER){
+		object = new FbxGrandfather(parameter);
+	}
+
+	else if(param.layer_ == LAYER_MODEL_CHILD){
+		object = new FbxGrandfather(parameter);
+	}
+
+	else{
+		ASSERT_ERROR("無効なオブジェクト生成カテゴリです");
 	}
 
 	return object;
@@ -63,7 +76,7 @@ Object *ObjectFactory::Create(
 		model->Load(object_path);
 	}
 
-	else if (param.layer_ = LAYER_SPRITE_2D){
+	else if (param.layer_ == LAYER_SPRITE_2D){
 		object = new Sprite2D(parameter);
 		Sprite2D *sprite = dynamic_cast<Sprite2D*>(object);
 		sprite->SetTexture(object_path);
