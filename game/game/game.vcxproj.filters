@@ -202,7 +202,6 @@
     <ClCompile Include="source_code\application\scene\scenes\result.cpp">
       <Filter>source_code\application\scene\scenes</Filter>
     </ClCompile>
-<<<<<<< HEAD
     <ClCompile Include="source_code\application\resource\resource_holder.cpp">
       <Filter>source_code\application\resource</Filter>
     </ClCompile>
@@ -211,7 +210,7 @@
     </ClCompile>
     <ClCompile Include="source_code\application\sound\sound.cpp">
       <Filter>source_code\application\sound</Filter>
-=======
+    </ClCompile>
     <ClCompile Include="source_code\application\object\objects\sprite\timer.cpp">
       <Filter>source_code\application\object\objects\sprite</Filter>
     </ClCompile>
@@ -220,7 +219,6 @@
     </ClCompile>
     <ClCompile Include="source_code\application\object\objects\sprite\water_gage.cpp">
       <Filter>source_code\application\object\objects\sprite</Filter>
->>>>>>> origin/rockman
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -350,7 +348,6 @@
     <ClInclude Include="source_code\application\scene\scenes\result.h">
       <Filter>source_code\application\scene\scenes</Filter>
     </ClInclude>
-<<<<<<< HEAD
     <ClInclude Include="source_code\application\resource\resource_holder.h">
       <Filter>source_code\application\resource</Filter>
     </ClInclude>
@@ -359,7 +356,7 @@
     </ClInclude>
     <ClInclude Include="source_code\application\sound\sound.h">
       <Filter>source_code\application\sound</Filter>
-=======
+    </ClInclude>
     <ClInclude Include="source_code\application\object\objects\sprite\timer.h">
       <Filter>source_code\application\object\objects\sprite</Filter>
     </ClInclude>
@@ -368,7 +365,6 @@
     </ClInclude>
     <ClInclude Include="source_code\application\object\objects\sprite\water_gage.h">
       <Filter>source_code\application\object\objects\sprite</Filter>
->>>>>>> origin/rockman
     </ClInclude>
   </ItemGroup>
 </Project>
