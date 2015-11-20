@@ -33,6 +33,7 @@ private:
 	CameraManager *camera_manager_;
 	EffectManager *effect_manager_;
 	DebugFont *font_;
+	int current_id_;
 };
 
 

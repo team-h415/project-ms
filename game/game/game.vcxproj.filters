@@ -74,6 +74,15 @@
     <Filter Include="source_code\application\effect">
       <UniqueIdentifier>{748a7f89-554c-4f75-984e-0ffdab06f527}</UniqueIdentifier>
     </Filter>
+    <Filter Include="source_code\application\resource">
+      <UniqueIdentifier>{bf55e749-48c0-49e8-8f7d-4dbbbed1d5a0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source_code\application\object\objects\model\fbx">
+      <UniqueIdentifier>{60eba6c7-d95d-45f3-b4c7-933671d79331}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source_code\application\sound">
+      <UniqueIdentifier>{8da156ac-fc99-4c4c-8546-fc7c5a2eaa2f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source_code\main.cpp">
@@ -192,6 +201,26 @@
     </ClCompile>
     <ClCompile Include="source_code\application\scene\scenes\result.cpp">
       <Filter>source_code\application\scene\scenes</Filter>
+    </ClCompile>
+<<<<<<< HEAD
+    <ClCompile Include="source_code\application\resource\resource_holder.cpp">
+      <Filter>source_code\application\resource</Filter>
+    </ClCompile>
+    <ClCompile Include="source_code\application\object\objects\model\fbx\fbx_grandfather.cpp">
+      <Filter>source_code\application\object\objects\model\fbx</Filter>
+    </ClCompile>
+    <ClCompile Include="source_code\application\sound\sound.cpp">
+      <Filter>source_code\application\sound</Filter>
+=======
+    <ClCompile Include="source_code\application\object\objects\sprite\timer.cpp">
+      <Filter>source_code\application\object\objects\sprite</Filter>
+    </ClCompile>
+    <ClCompile Include="source_code\application\object\objects\sprite\number.cpp">
+      <Filter>source_code\application\object\objects\sprite</Filter>
+    </ClCompile>
+    <ClCompile Include="source_code\application\object\objects\sprite\water_gage.cpp">
+      <Filter>source_code\application\object\objects\sprite</Filter>
+>>>>>>> origin/rockman
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -320,6 +349,26 @@
     </ClInclude>
     <ClInclude Include="source_code\application\scene\scenes\result.h">
       <Filter>source_code\application\scene\scenes</Filter>
+    </ClInclude>
+<<<<<<< HEAD
+    <ClInclude Include="source_code\application\resource\resource_holder.h">
+      <Filter>source_code\application\resource</Filter>
+    </ClInclude>
+    <ClInclude Include="source_code\application\object\objects\model\fbx\fbx_grandfather.h">
+      <Filter>source_code\application\object\objects\model\fbx</Filter>
+    </ClInclude>
+    <ClInclude Include="source_code\application\sound\sound.h">
+      <Filter>source_code\application\sound</Filter>
+=======
+    <ClInclude Include="source_code\application\object\objects\sprite\timer.h">
+      <Filter>source_code\application\object\objects\sprite</Filter>
+    </ClInclude>
+    <ClInclude Include="source_code\application\object\objects\sprite\number.h">
+      <Filter>source_code\application\object\objects\sprite</Filter>
+    </ClInclude>
+    <ClInclude Include="source_code\application\object\objects\sprite\water_gage.h">
+      <Filter>source_code\application\object\objects\sprite</Filter>
+>>>>>>> origin/rockman
     </ClInclude>
   </ItemGroup>
 </Project>

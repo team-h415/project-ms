@@ -46,6 +46,11 @@ const OBJECT_PARAMETER_DESC &parameter)
 	root_ = NULL;
 	cur_time_ = 0;
 	shader_ = new Shader("resource/shader/halflambert_lighting_fbx.hlsl");
+	animation_ = nullptr;
+	previous_animation_id_ = 0;
+	current_animation_id_ = 0;
+	animation_switching_ = 0;
+	animation_blending_ = false;
 }
 
 
@@ -54,6 +59,7 @@ const OBJECT_PARAMETER_DESC &parameter)
 //-------------------------------------
 FbxModel::~FbxModel()
 {
+	SAFE_DELETE_ARRAY(animation_);
 	SAFE_DELETE(shader_);
 	for (int i = 0; i < mesh_count_; i++){
 		SAFE_RELEASE(mesh_[i].vertex_);
@@ -111,8 +117,6 @@ void FbxModel::Update()
 		&element, &element, &translate);
 
 	UpdateBoneMatrix(&bone_[0], &element);
-
-	
 
 	cur_time_ += 1.0f;
 }

@@ -99,6 +99,75 @@ Game::Game()
 		"fbx",
 		fbx_param,
 		"resource/model/fbx/REuneune.fbx");
+
+    OBJECT_PARAMETER_DESC time_param;
+    time_param.position_ = {
+        SCREEN_WIDTH * 0.5f,
+        40.0f,
+        0.0f
+    };
+    time_param.rotation_ = { 0.0f, 0.0f, 0.0f };
+    time_param.scaling_ = { 160.0f, 80.0f, 0.0f };
+    time_param.layer_ = LAYER_TIMER;
+
+    object_manager_->Create(
+        "time", time_param);
+
+    OBJECT_PARAMETER_DESC fort_state_param;
+    fort_state_param.position_ = {
+        SCREEN_WIDTH * 0.5f,
+        100.0f,
+        0.0f
+    };
+    fort_state_param.rotation_ = { 0.0f, 0.0f, 0.0f };
+    fort_state_param.scaling_ = { 160.0f, 40.0f, 0.0f };
+    fort_state_param.layer_ = LAYER_SPRITE_2D;
+
+    object_manager_->Create(
+        "fort_state", fort_state_param,
+        "resource/texture/title/logo.png");
+
+    OBJECT_PARAMETER_DESC mini_map_param;
+    mini_map_param.position_ = {
+        1180.0f,
+        100.0f,
+        0.0f
+    };
+    mini_map_param.rotation_ = { 0.0f, 0.0f, 0.0f };
+    mini_map_param.scaling_ = { 200.0f, 200.0f, 0.0f };
+    mini_map_param.layer_ = LAYER_SPRITE_2D;
+
+    object_manager_->Create(
+        "mini_map", mini_map_param,
+        "resource/texture/title/logo.png");
+
+    OBJECT_PARAMETER_DESC water_design_param;
+    water_design_param.position_ = {
+        40.0f,
+        680.0f,
+        0.0f
+    };
+    water_design_param.rotation_ = { 0.0f, 0.0f, 0.0f };
+    water_design_param.scaling_ = { 75.0f, 75.0f, 0.0f };
+    water_design_param.layer_ = LAYER_SPRITE_2D;
+
+    object_manager_->Create(
+        "water_design", water_design_param,
+        "resource/texture/title/logo.png");
+
+    OBJECT_PARAMETER_DESC water_gage_param;
+    water_gage_param.position_ = {
+        250.0f,
+        680.0f,
+        0.0f
+    };
+    water_gage_param.rotation_ = { 0.0f, 0.0f, 0.0f };
+    water_gage_param.scaling_ = { 300.0f, 50.0f, 0.0f };
+    water_gage_param.layer_ = LAYER_SPRITE_2D;
+
+    object_manager_->Create(
+        "water_gage", water_gage_param);
+
 }
 
 
