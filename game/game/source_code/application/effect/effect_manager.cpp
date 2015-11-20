@@ -35,6 +35,7 @@ EffectManager::EffectManager(
 	manager_->SetRibbonRenderer(renderer_->CreateRibbonRenderer());
 	manager_->SetRingRenderer(renderer_->CreateRingRenderer());
 	manager_->SetModelRenderer(renderer_->CreateModelRenderer());
+	manager_->SetTrackRenderer(renderer_->CreateTrackRenderer());
 
 	// ƒ[ƒ_[‚ÌÝ’è
 	manager_->SetModelLoader(renderer_->CreateModelLoader());
