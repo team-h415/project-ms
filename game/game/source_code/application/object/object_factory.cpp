@@ -17,8 +17,8 @@
 #include "objects/mesh/field.h"
 #include "objects/model/x_model.h"
 #include "objects/model/fbx_model.h"
-#include "objects/model/fbx/fbx_grandfather.h"
-
+#include "objects/sprite/timer.h"
+#include "objects/sprite/water_gage.h"
 
 //-------------------------------------
 // ObjectFactory()
@@ -34,17 +34,9 @@ Object *ObjectFactory::Create(
 		object = new Sprite2D(parameter);
 	}
 
-	else if(param.layer_ == LAYER_MODEL_GRANDFATHER){
-		object = new FbxGrandfather(parameter);
-	}
-
-	else if(param.layer_ == LAYER_MODEL_CHILD){
-		object = new FbxGrandfather(parameter);
-	}
-
-	else{
-		ASSERT_ERROR("無効なオブジェクト生成カテゴリです");
-	}
+    else if (param.layer_ == LAYER_TIMER){
+        object = new Timer(parameter);
+    }
 
 	return object;
 }
@@ -81,6 +73,11 @@ Object *ObjectFactory::Create(
 		Sprite2D *sprite = dynamic_cast<Sprite2D*>(object);
 		sprite->SetTexture(object_path);
 	}
+
+    else if (param.layer_ == LAYER_WATER_GAGE){
+        object = new WaterGage(parameter);
+
+    }
 
 	else{
 		ASSERT_ERROR("無効なオブジェクト生成カテゴリです");
