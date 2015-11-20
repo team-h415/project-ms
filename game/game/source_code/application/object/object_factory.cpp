@@ -17,6 +17,7 @@
 #include "objects/mesh/field.h"
 #include "objects/model/x_model.h"
 #include "objects/model/fbx_model.h"
+#include "objects/model/fbx/fbx_grandfather.h"
 
 
 //-------------------------------------
@@ -31,6 +32,18 @@ Object *ObjectFactory::Create(
 
 	if (param.layer_ == LAYER_SPRITE_2D){
 		object = new Sprite2D(parameter);
+	}
+
+	else if(param.layer_ == LAYER_MODEL_GRANDFATHER){
+		object = new FbxGrandfather(parameter);
+	}
+
+	else if(param.layer_ == LAYER_MODEL_CHILD){
+		object = new FbxGrandfather(parameter);
+	}
+
+	else{
+		ASSERT_ERROR("無効なオブジェクト生成カテゴリです");
 	}
 
 	return object;
