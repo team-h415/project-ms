@@ -29,7 +29,7 @@ Object *ObjectFactory::Create(
 	OBJECT_PARAMETER_DESC param = parameter;
 	Object *object = nullptr;
 
-	if (param.layer_ = LAYER_SPRITE_2D){
+	if (param.layer_ == LAYER_SPRITE_2D){
 		object = new Sprite2D(parameter);
 	}
 
@@ -63,7 +63,7 @@ Object *ObjectFactory::Create(
 		model->Load(object_path);
 	}
 
-	else if (param.layer_ = LAYER_SPRITE_2D){
+	else if (param.layer_ == LAYER_SPRITE_2D){
 		object = new Sprite2D(parameter);
 		Sprite2D *sprite = dynamic_cast<Sprite2D*>(object);
 		sprite->SetTexture(object_path);
