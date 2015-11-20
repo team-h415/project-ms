@@ -17,7 +17,8 @@
 #include "objects/mesh/field.h"
 #include "objects/model/x_model.h"
 #include "objects/model/fbx_model.h"
-
+#include "objects/sprite/timer.h"
+#include "objects/sprite/water_gage.h"
 
 //-------------------------------------
 // ObjectFactory()
@@ -29,9 +30,13 @@ Object *ObjectFactory::Create(
 	OBJECT_PARAMETER_DESC param = parameter;
 	Object *object = nullptr;
 
-	if (param.layer_ = LAYER_SPRITE_2D){
+	if (param.layer_ == LAYER_SPRITE_2D){
 		object = new Sprite2D(parameter);
 	}
+
+    else if (param.layer_ == LAYER_TIMER){
+        object = new Timer(parameter);
+    }
 
 	return object;
 }
@@ -63,11 +68,16 @@ Object *ObjectFactory::Create(
 		model->Load(object_path);
 	}
 
-	else if (param.layer_ = LAYER_SPRITE_2D){
+	else if (param.layer_ == LAYER_SPRITE_2D){
 		object = new Sprite2D(parameter);
 		Sprite2D *sprite = dynamic_cast<Sprite2D*>(object);
 		sprite->SetTexture(object_path);
 	}
+
+    else if (param.layer_ == LAYER_WATER_GAGE){
+        object = new WaterGage(parameter);
+
+    }
 
 	else{
 		ASSERT_ERROR("無効なオブジェクト生成カテゴリです");

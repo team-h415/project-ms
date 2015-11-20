@@ -193,6 +193,15 @@
     <ClCompile Include="source_code\application\scene\scenes\result.cpp">
       <Filter>source_code\application\scene\scenes</Filter>
     </ClCompile>
+    <ClCompile Include="source_code\application\object\objects\sprite\timer.cpp">
+      <Filter>source_code\application\object\objects\sprite</Filter>
+    </ClCompile>
+    <ClCompile Include="source_code\application\object\objects\sprite\number.cpp">
+      <Filter>source_code\application\object\objects\sprite</Filter>
+    </ClCompile>
+    <ClCompile Include="source_code\application\object\objects\sprite\water_gage.cpp">
+      <Filter>source_code\application\object\objects\sprite</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source_code\main.h">
@@ -320,6 +329,15 @@
     </ClInclude>
     <ClInclude Include="source_code\application\scene\scenes\result.h">
       <Filter>source_code\application\scene\scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="source_code\application\object\objects\sprite\timer.h">
+      <Filter>source_code\application\object\objects\sprite</Filter>
+    </ClInclude>
+    <ClInclude Include="source_code\application\object\objects\sprite\number.h">
+      <Filter>source_code\application\object\objects\sprite</Filter>
+    </ClInclude>
+    <ClInclude Include="source_code\application\object\objects\sprite\water_gage.h">
+      <Filter>source_code\application\object\objects\sprite</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
