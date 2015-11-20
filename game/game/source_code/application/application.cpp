@@ -93,6 +93,7 @@ void Application::Run(
 //-------------------------------------
 void Application::Update()
 {
+	Sound::UpdateAll();
 	keyboard_->Update();
 	gamepad_->Update();
 	scene_manager_->Update();
