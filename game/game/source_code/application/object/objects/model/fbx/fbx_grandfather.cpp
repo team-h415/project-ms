@@ -31,7 +31,7 @@ FbxGrandfather::FbxGrandfather(const OBJECT_PARAMETER_DESC &parameter) :
 	FbxModel(parameter)
 {
 	// モデル読み込み
-	Load("./resource/model/fbx/REuneune.fbx");
+	Load("./resource/model/fbx/child_01_tester.fbx");
 
 #ifdef _DEBUG
 	int x;
@@ -53,18 +53,39 @@ FbxGrandfather::FbxGrandfather(const OBJECT_PARAMETER_DESC &parameter) :
 	animation_ = new ANIMATION[MAX_TYPE];
 
 	// モーション
-	animation_[TYPE_0].begin_ = 0.0f;
-	animation_[TYPE_0].end_ = 29.0f;
-	animation_[TYPE_0].loop_ = true;
-	animation_[TYPE_0].speed_ = 1.0f;
-	animation_[TYPE_0].time_ = 0.0f;
+	animation_[IDLE].begin_ = 0.0f;
+	animation_[IDLE].end_ = 30.0f;
+	animation_[IDLE].loop_ = true;
+	animation_[IDLE].speed_ = 0.5f;
+	animation_[IDLE].time_ = 0.0f;
 
 	// モーション
-	animation_[TYPE_1].begin_ = 30.0f;
-	animation_[TYPE_1].end_ = 60.0f;
-	animation_[TYPE_1].loop_ = true;
-	animation_[TYPE_1].speed_ = 1.0f;
-	animation_[TYPE_1].time_ = 0.0f;
+	animation_[WALK].begin_ = 30.0f;
+	animation_[WALK].end_ = 60.0f;
+	animation_[WALK].loop_ = true;
+	animation_[WALK].speed_ = 0.5f;
+	animation_[WALK].time_ = 0.0f;
+
+	//// モーション
+	//animation_[IDLE].begin_ = 1.0f;
+	//animation_[IDLE].end_ = 31.0f;
+	//animation_[IDLE].loop_ = true;
+	//animation_[IDLE].speed_ = 0.5f;
+	//animation_[IDLE].time_ = 0.0f;
+
+	//// モーション
+	//animation_[WALK].begin_ = 35.0f;
+	//animation_[WALK].end_ = 66.0f;
+	//animation_[WALK].loop_ = true;
+	//animation_[WALK].speed_ = 0.5f;
+	//animation_[WALK].time_ = 0.0f;
+
+	//// モーション
+	//animation_[DOWN].begin_ = 70.0f;
+	//animation_[DOWN].end_ = 90.0f;
+	//animation_[DOWN].loop_ = false;
+	//animation_[DOWN].speed_ = 0.5f;
+	//animation_[DOWN].time_ = 0.0f;
 }
 
 

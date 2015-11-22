@@ -120,6 +120,7 @@ protected:
 	int			animation_switching_;		// アニメーション移行時間
 	bool		animation_blending_;		// アニメーションの合成
 	bool		animation_play_;			// アニメーションの再生
+
 };
 
 

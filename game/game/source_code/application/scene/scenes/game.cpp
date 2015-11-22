@@ -19,6 +19,8 @@
 #include "../../object/object.h"
 #include "../../object/object_manager.h"
 #include "../../object/objects/mesh/field.h"
+#include "../../object/objects/model/fbx_model.h"
+#include "../../object/objects/model/fbx/fbx_grandfather.h"
 #include "../../effect/effect.h"
 #include "../../effect/effect_manager.h"
 #include "../../camera/camera.h"
@@ -62,7 +64,7 @@ Game::Game()
 	camera_param.rotation_ = { 0.0f, 0.0f, 0.0f };
 	camera_param.up_ = { 0.0f, 1.0f, 0.0f };
 	camera_param.near_ = 0.1f;
-	camera_param.far_ = 1000.0f;
+	camera_param.far_ = 100000.0f;
 
 	camera_manager_->Create(
 		"Perspective", "MainCamera", camera_param);
@@ -90,15 +92,14 @@ Game::Game()
 		"resource/model/x/pone_red.x");
 
 	OBJECT_PARAMETER_DESC fbx_param;
-	fbx_param.layer_ = LAYER_MODEL_FBX;
+	fbx_param.layer_ = LAYER_MODEL_GRANDFATHER;
 	fbx_param.position_ = { 0.0f, 0.0f, 0.0f };
 	fbx_param.rotation_ = { 0.0f, 0.0f, 0.0f };
-	fbx_param.scaling_ = { 0.1f, 0.1f, 0.1f };
+	fbx_param.scaling_ = { 100.0f, 1000.0f, 100.0f };
 
 	object_manager_->Create(
 		"fbx",
-		fbx_param,
-		"resource/model/fbx/REuneune.fbx");
+		fbx_param);
 
     OBJECT_PARAMETER_DESC time_param;
     time_param.position_ = {
@@ -311,6 +312,19 @@ void Game::Update()
 		effect_manager_->Play("water");
 	}
 
+
+	//-------------------------------------
+	// アニメーション制御
+	//-------------------------------------
+	if (KeyBoard::isTrigger(DIK_3)){
+		FbxGrandfather *grandfather = dynamic_cast<FbxGrandfather*>(fbx);
+		grandfather->PlayAnimation(FbxGrandfather::IDLE);
+	}
+	else if (KeyBoard::isTrigger(DIK_4)){
+		FbxGrandfather *grandfather = dynamic_cast<FbxGrandfather*>(fbx);
+		grandfather->PlayAnimation(FbxGrandfather::WALK);
+	}
+
 	//-------------------------------------
 	// 実更新処理
 	//-------------------------------------
@@ -338,7 +352,7 @@ void Game::Draw()
 		static_cast<LONG>(SCREEN_WIDTH),
 		static_cast<LONG>(SCREEN_HEIGHT) };
 	D3DXCOLOR font_color(0.0f, 1.0f, 1.0f, 1.0f);
-	MaterialColor color(255, 255, 255, 0);
+	MaterialColor color(32, 32, 32, 0);
 	DirectX9Holder::DrawBegin();
 	DirectX9Holder::Clear(color);
 	camera_manager_->Set("MainCamera");
