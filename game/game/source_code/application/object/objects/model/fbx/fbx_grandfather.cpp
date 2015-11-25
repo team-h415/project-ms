@@ -52,19 +52,6 @@ FbxGrandfather::FbxGrandfather(const OBJECT_PARAMETER_DESC &parameter) :
 	// おじいちゃん用のアニメーションを設定
 	animation_ = new ANIMATION[MAX_TYPE];
 
-	// モーション(REuneune)
-	//animation_[IDLE].begin_ = 0.0f;
-	//animation_[IDLE].end_ = 30.0f;
-	//animation_[IDLE].loop_ = true;
-	//animation_[IDLE].speed_ = 0.5f;
-	//animation_[IDLE].time_ = 0.0f;
-
-	//animation_[WALK].begin_ = 30.0f;
-	//animation_[WALK].end_ = 60.0f;
-	//animation_[WALK].loop_ = true;
-	//animation_[WALK].speed_ = 0.5f;
-	//animation_[WALK].time_ = 0.0f;
-
 	// モーション
 	animation_[IDLE].begin_ = 1.0f;
 	animation_[IDLE].end_ = 31.0f;
@@ -131,7 +118,6 @@ void FbxGrandfather::Update()
 		{
 			animation_switching_ = 0;
 			animation_blending_ = false;
-			animation_[previous_animation_id_].time_ = 0.0f;
 		}
 	}
 
@@ -181,7 +167,7 @@ void FbxGrandfather::UpdateBoneMatrix(BONE *subject, D3DXMATRIX *parent)
 	{
 		//時間の計算
 		float cur_time(animation_[current_animation_id_].begin_ + animation_[current_animation_id_].time_);
-		float pre_time(animation_[previous_animation_id_].begin_ + animation_[previous_animation_id_].time_);
+		float pre_time(animation_previous_time_);
 
 		float blend_weight((float)animation_switching_ / (float)ANIMATION_SWITCHING_TIME);
 

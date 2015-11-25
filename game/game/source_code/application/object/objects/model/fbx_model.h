@@ -27,6 +27,8 @@ public:
 	void Load(
 		const std::string &path);
 
+	int GetCurrentAnimationId(void){ return current_animation_id_; }
+
 protected:
 	struct MESH
 	{
@@ -115,8 +117,8 @@ protected:
 	Shader *shader_;
 
 	ANIMATION*	animation_;					// アニメーション管理構造体
-	int			previous_animation_id_;		// 前のアニメーション
 	int			current_animation_id_;		// 現在のアニメーション
+	float		animation_previous_time_;	// 前のアニメーション時間
 	int			animation_switching_;		// アニメーション移行時間
 	bool		animation_blending_;		// アニメーションの合成
 	bool		animation_play_;			// アニメーションの再生

@@ -109,7 +109,7 @@ Game::Game()
 
 	OBJECT_PARAMETER_DESC fbx_param;
 	fbx_param.layer_ = LAYER_MODEL_GRANDFATHER;
-	fbx_param.position_ = { 0.0f, 0.0f, 0.0f };
+	fbx_param.position_ = { 1.0f, 0.0f, 0.0f };
 	fbx_param.rotation_ = { 0.0f, 0.0f, 0.0f };
 	fbx_param.scaling_ = { 1.0f, 1.0f, 1.0f };
 
@@ -335,11 +335,17 @@ void Game::Update()
 	//-------------------------------------
 	if (KeyBoard::isTrigger(DIK_3)){
 		FbxGrandfather *grandfather = dynamic_cast<FbxGrandfather*>(fbx);
-		grandfather->PlayAnimation(FbxGrandfather::IDLE);
+		if(grandfather->GetCurrentAnimationId() != FbxGrandfather::IDLE)
+		{
+			grandfather->PlayAnimation(FbxGrandfather::IDLE);
+		}
 	}
 	else if (KeyBoard::isTrigger(DIK_4)){
 		FbxGrandfather *grandfather = dynamic_cast<FbxGrandfather*>(fbx);
-		grandfather->PlayAnimation(FbxGrandfather::WALK);
+		if(grandfather->GetCurrentAnimationId() != FbxGrandfather::WALK)
+		{
+			grandfather->PlayAnimation(FbxGrandfather::WALK);
+		}
 	}
 	else if (KeyBoard::isTrigger(DIK_5)){
 		FbxGrandfather *grandfather = dynamic_cast<FbxGrandfather*>(fbx);
