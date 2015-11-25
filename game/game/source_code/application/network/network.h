@@ -21,7 +21,7 @@
 #define PORT_NUMBER_1 20001						// ホストからゲストへの送信時のポート
 #define MULTICAST_ADDRESS "239.0.0.25"			// マルチキャスト用のアドレス
 #define MAX_GUEST 5								// 接続ゲスト最大数
-
+//re
 
 //-------------------------------------
 // enum
