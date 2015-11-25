@@ -21,7 +21,7 @@ class ObjectManager;
 class CameraManager;
 class EffectManager;
 class DebugFont;
-class Collision;
+class CollisionManager;
 class Game : public Scene
 {
 public:
@@ -33,9 +33,9 @@ private:
 	ObjectManager *object_manager_;
 	CameraManager *camera_manager_;
 	EffectManager *effect_manager_;
+	CollisionManager *collision_manager_;
 	DebugFont *font_;
 	int current_id_;
-	Collision *collision_;
 };
 
 

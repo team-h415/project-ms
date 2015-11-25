@@ -14,6 +14,7 @@
 #include "../math/vector.h"
 #include "../object/object.h"
 #include "collision.h"
+#include "collision_factory.h"
 #include "collision_manager.h"
 
 
@@ -48,6 +49,14 @@ CollisionManager::~CollisionManager()
 //-------------------------------------
 void CollisionManager::Update()
 {
+	//-------------------------------------
+	// ‘S—v‘f‚ðXV
+	for (auto it = collision_.begin(); it != collision_.end(); ++it){
+		(*it)->Update();
+	}
+
+	//-------------------------------------
+	// ‹…Œ`“¯Žm‚Ì‚ ‚½‚è”»’è‚ðŽÀŽ{
 	for (auto it = collision_.begin(); it != collision_.end(); ++it){
 		for (auto it2 = collision_.begin(); it2 != collision_.end(); ++it2){
 			if ((*it) == (*it2)) continue;
@@ -56,10 +65,10 @@ void CollisionManager::Update()
 			float range = (*it)->parameter().range_ + (*it2)->parameter().range_;
 			float d = sqrt(
 				(distance.x * distance.x) + (distance.y * distance.y) + (distance.z * distance.z));
-			if (range < d){
+			if (range > d){
 				//-------------------------------------
 				// “–‚½‚Á‚½Žž‚Ìˆ—
-				int a = 0;
+				(*it)->parent()->Action();
 			}
 		}
 	}
@@ -87,6 +96,7 @@ Collision *CollisionManager::Create(
 	const COLLISION_PARAMETER_DESC &parameter)
 {
 	Collision *collision = nullptr;
+	collision = CollisionFactory::Create(parent, parameter);
 	collision_.push_back(collision);
 	return collision;
 }

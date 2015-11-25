@@ -67,7 +67,7 @@ FbxGrandfather::FbxGrandfather(const OBJECT_PARAMETER_DESC &parameter) :
 
 	// ÉÇÅ[ÉVÉáÉì
 	animation_[IDLE].begin_ = 1.0f;
-	animation_[IDLE].end_ = 31.0f;
+	animation_[IDLE].end_ = 30.0f;
 	animation_[IDLE].loop_ = true;
 	animation_[IDLE].speed_ = 0.5f;
 	animation_[IDLE].time_ = 0.0f;
