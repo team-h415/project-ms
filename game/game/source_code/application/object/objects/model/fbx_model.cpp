@@ -146,10 +146,10 @@ void FbxModel::Draw()
 	DirectX9Holder::device_->GetDeviceCaps(&caps);
 	indexed_matrix_num = caps.MaxVertexBlendMatrixIndex;
 
-	if (indexed_matrix_num < bone_count_)
-	{
-		DirectX9Holder::device_->SetSoftwareVertexProcessing(true);
-	}
+	//if (indexed_matrix_num < bone_count_)
+	//{
+	//	DirectX9Holder::device_->SetSoftwareVertexProcessing(true);
+	//}
 
 	DirectX9Holder::device_->SetRenderState(D3DRS_INDEXEDVERTEXBLENDENABLE, TRUE);
 	DirectX9Holder::device_->SetRenderState(D3DRS_VERTEXBLEND, D3DVBF_3WEIGHTS);
@@ -240,7 +240,7 @@ void FbxModel::Draw()
 
 	DirectX9Holder::device_->SetMaterial(&def_material);
 	DirectX9Holder::device_->SetRenderState(D3DRS_INDEXEDVERTEXBLENDENABLE, FALSE);
-	DirectX9Holder::device_->SetSoftwareVertexProcessing(false);
+	//DirectX9Holder::device_->SetSoftwareVertexProcessing(false);
 	DirectX9Holder::device_->SetRenderState(D3DRS_CULLMODE, def_cull);
 	DirectX9Holder::device_->SetRenderState(D3DRS_DIFFUSEMATERIALSOURCE, D3DMCS_COLOR1);
 
