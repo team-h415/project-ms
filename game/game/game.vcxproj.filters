@@ -83,6 +83,9 @@
     <Filter Include="source_code\application\sound">
       <UniqueIdentifier>{8da156ac-fc99-4c4c-8546-fc7c5a2eaa2f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="source_code\application\collision">
+      <UniqueIdentifier>{c09705a5-6fd5-416a-a7c8-f5890c109e2e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source_code\main.cpp">
@@ -219,6 +222,15 @@
     </ClCompile>
     <ClCompile Include="source_code\application\object\objects\sprite\water_gage.cpp">
       <Filter>source_code\application\object\objects\sprite</Filter>
+    </ClCompile>
+    <ClCompile Include="source_code\application\collision\collision.cpp">
+      <Filter>source_code\application\collision</Filter>
+    </ClCompile>
+    <ClCompile Include="source_code\application\collision\collision_manager.cpp">
+      <Filter>source_code\application\collision</Filter>
+    </ClCompile>
+    <ClCompile Include="source_code\application\collision\collision_factory.cpp">
+      <Filter>source_code\application\collision</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -365,6 +377,15 @@
     </ClInclude>
     <ClInclude Include="source_code\application\object\objects\sprite\water_gage.h">
       <Filter>source_code\application\object\objects\sprite</Filter>
+    </ClInclude>
+    <ClInclude Include="source_code\application\collision\collision.h">
+      <Filter>source_code\application\collision</Filter>
+    </ClInclude>
+    <ClInclude Include="source_code\application\collision\collision_manager.h">
+      <Filter>source_code\application\collision</Filter>
+    </ClInclude>
+    <ClInclude Include="source_code\application\collision\collision_factory.h">
+      <Filter>source_code\application\collision</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -19,12 +19,14 @@
 #include "../../object/object.h"
 #include "../../object/object_manager.h"
 #include "../../object/objects/mesh/field.h"
+#include "../../object/objects/model/x_model.h"
 #include "../../object/objects/model/fbx_model.h"
 #include "../../object/objects/model/fbx/fbx_grandfather.h"
 #include "../../effect/effect.h"
 #include "../../effect/effect_manager.h"
 #include "../../camera/camera.h"
 #include "../../camera/camera_manager.h"
+#include "../../collision/collision.h"
 #include "../scene.h"
 #include "../scene_manager.h"
 #include "game.h"
@@ -91,11 +93,25 @@ Game::Game()
 		player_param,
 		"resource/model/x/pone_red.x");
 
+	COLLISION_PARAMETER_DESC collision_param;
+	Object *obj = object_manager_->Get("player");
+	collision_param.position_ = {
+		obj->parameter().position_.x_,
+		obj->parameter().position_.y_,
+		obj->parameter().position_.z_ };
+	collision_param.range_ = 1.0f;
+	collision_param.offset_ = { 0.0f, 0.5f, 0.0f };
+
+	collision_ = new Collision(
+		dynamic_cast<XModel*>(object_manager_->Get("player")),
+		collision_param);
+
+
 	OBJECT_PARAMETER_DESC fbx_param;
 	fbx_param.layer_ = LAYER_MODEL_GRANDFATHER;
 	fbx_param.position_ = { 0.0f, 0.0f, 0.0f };
 	fbx_param.rotation_ = { 0.0f, 0.0f, 0.0f };
-	fbx_param.scaling_ = { 100.0f, 1000.0f, 100.0f };
+	fbx_param.scaling_ = { 1.0f, 1.0f, 1.0f };
 
 	object_manager_->Create(
 		"fbx",
@@ -181,6 +197,7 @@ Game::~Game()
 	SAFE_DELETE(camera_manager_);
 	SAFE_DELETE(effect_manager_);
 	SAFE_DELETE(font_);
+	SAFE_DELETE(collision_);
 }
 
 
@@ -324,6 +341,10 @@ void Game::Update()
 		FbxGrandfather *grandfather = dynamic_cast<FbxGrandfather*>(fbx);
 		grandfather->PlayAnimation(FbxGrandfather::WALK);
 	}
+	else if (KeyBoard::isTrigger(DIK_5)){
+		FbxGrandfather *grandfather = dynamic_cast<FbxGrandfather*>(fbx);
+		grandfather->PlayAnimation(FbxGrandfather::DOWN);
+	}
 
 	//-------------------------------------
 	// 実更新処理
@@ -331,6 +352,7 @@ void Game::Update()
 	camera_manager_->Update();
 	object_manager_->Update();
 	effect_manager_->Update();
+	collision_->Update();
 
 	font_->Add("シーン名:");
 	font_->Add("Game\n");
@@ -358,6 +380,7 @@ void Game::Draw()
 	camera_manager_->Set("MainCamera");
 	object_manager_->Draw();
 	effect_manager_->Draw();
+	collision_->Draw();
 	font_->Draw(rect, font_color);
 	Fade::Draw();
 	DirectX9Holder::DrawEnd();
