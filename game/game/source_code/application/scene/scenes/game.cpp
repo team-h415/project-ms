@@ -243,37 +243,24 @@ void Game::Update()
 	if (GamePad::isPress(GAMEPAD_GRANDFATHER, PAD_BUTTON_11)){
 		player_speed = player_speed_value * 2.0f;
 	}
-	player_position.x_ += (
-		cosf(player_rotation.y_) * GamePad::isStick(GAMEPAD_GRANDFATHER).lsx_ +
-		sinf(-player_rotation.y_) * GamePad::isStick(GAMEPAD_GRANDFATHER).lsy_) * player_speed;
-	player_position.z_ -= (
-		sinf(player_rotation.y_) * GamePad::isStick(GAMEPAD_GRANDFATHER).lsx_ +
-		cosf(-player_rotation.y_) * GamePad::isStick(GAMEPAD_GRANDFATHER).lsy_) * player_speed;
+	fbx_position.x_ += (
+		cosf(fbx_rotation.y_) * GamePad::isStick(GAMEPAD_GRANDFATHER).lsx_ +
+		sinf(-fbx_rotation.y_) * GamePad::isStick(GAMEPAD_GRANDFATHER).lsy_) * player_speed;
+	fbx_position.z_ -= (
+		sinf(fbx_rotation.y_) * GamePad::isStick(GAMEPAD_GRANDFATHER).lsx_ +
+		cosf(-fbx_rotation.y_) * GamePad::isStick(GAMEPAD_GRANDFATHER).lsy_) * player_speed;
 
 	if (GamePad::isPress(GAMEPAD_GRANDFATHER, PAD_RS_LEFT)){
-		player_rotation.y_ -= D3DX_PI * 0.01f;
-		if (player_rotation.y_ < D3DX_PI){
-			player_rotation.y_ += D3DX_PI * 2.0f;
+		fbx_rotation.y_ -= D3DX_PI * 0.01f;
+		if (fbx_rotation.y_ < D3DX_PI){
+			fbx_rotation.y_ += D3DX_PI * 2.0f;
 		}
 	}
 	if (GamePad::isPress(GAMEPAD_GRANDFATHER, PAD_RS_RIGHT)){
-		player_rotation.y_ += D3DX_PI * 0.01f;
-		if (player_rotation.y_ > D3DX_PI){
-			player_rotation.y_ -= D3DX_PI * 2.0f;
+		fbx_rotation.y_ += D3DX_PI * 0.01f;
+		if (fbx_rotation.y_ > D3DX_PI){
+			fbx_rotation.y_ -= D3DX_PI * 2.0f;
 		}
-	}
-
-	if (GamePad::isPress(GAMEPAD_CHILD1, PAD_LS_LEFT)){
-		fbx_position.x_ -= 0.1f;
-	}
-	if (GamePad::isPress(GAMEPAD_CHILD1, PAD_LS_RIGHT)){
-		fbx_position.x_ += 0.1f;
-	}
-	if (GamePad::isPress(GAMEPAD_CHILD1, PAD_LS_UP)){
-		fbx_position.z_ += 0.1f;
-	}
-	if (GamePad::isPress(GAMEPAD_CHILD1, PAD_LS_DOWN)){
-		fbx_position.z_ -= 0.1f;
 	}
 
 	if (GamePad::isPress(GAMEPAD_GRANDFATHER, PAD_RS_UP)){
@@ -312,16 +299,16 @@ void Game::Update()
 	D3DXVECTOR3 camera_position(main_camera->position());
 	D3DXVECTOR3 camera_focus(main_camera->focus());
 	D3DXVECTOR3 camera_position_sub(
-		-sinf(player_rotation.y_) * 6.0f,
+		-sinf(fbx_rotation.y_) * 6.0f,
 		3.0f + camera_pos_y,
-		-cosf(player_rotation.y_) * 6.0f);
+		-cosf(fbx_rotation.y_) * 6.0f);
 	D3DXVECTOR3 camera_focus_sub(
-		-sinf(player_rotation.y_ + D3DX_PI) * 6.0f,
+		-sinf(fbx_rotation.y_ + D3DX_PI) * 6.0f,
 		1.0f + camera_focus_y,
-		-cosf(player_rotation.y_ + D3DX_PI) * 6.0f);
+		-cosf(fbx_rotation.y_ + D3DX_PI) * 6.0f);
 
-	camera_position = pos + camera_position_sub;
-	camera_focus = pos + camera_focus_sub;
+	camera_position = fbx_pos + camera_position_sub;
+	camera_focus = fbx_pos + camera_focus_sub;
 
 	main_camera->SetPosition(camera_position);
 	main_camera->SetFocus(camera_focus);
@@ -337,7 +324,8 @@ void Game::Update()
 		EFFECT_PARAMETER_DESC effect_param;
 		MyEffect *effect = effect_manager_->Get("water");
 		effect_param = effect->parameter();
-		effect_param.position_ = player_position;
+		effect_param.position_ = fbx_position;
+		effect_param.rotation_ = fbx_rotation;
 		effect->SetParameter(effect_param);
 		effect_manager_->Play("water");
 	}
@@ -346,21 +334,25 @@ void Game::Update()
 	//-------------------------------------
 	// アニメーション制御
 	//-------------------------------------
-	if (KeyBoard::isTrigger(DIK_3)){
-		FbxGrandfather *grandfather = dynamic_cast<FbxGrandfather*>(fbx);
-		if(grandfather->GetCurrentAnimationId() != FbxGrandfather::IDLE)
-		{
-			grandfather->PlayAnimation(FbxGrandfather::IDLE);
-		}
-	}
-	else if (KeyBoard::isTrigger(DIK_4)){
+	if (GamePad::isPress(GAMEPAD_GRANDFATHER, PAD_LS_DOWN) || 
+		GamePad::isPress(GAMEPAD_GRANDFATHER, PAD_LS_UP) || 
+		GamePad::isPress(GAMEPAD_GRANDFATHER, PAD_LS_LEFT) || 
+		GamePad::isPress(GAMEPAD_GRANDFATHER, PAD_LS_RIGHT)){
 		FbxGrandfather *grandfather = dynamic_cast<FbxGrandfather*>(fbx);
 		if(grandfather->GetCurrentAnimationId() != FbxGrandfather::WALK)
 		{
 			grandfather->PlayAnimation(FbxGrandfather::WALK);
 		}
 	}
-	else if (KeyBoard::isTrigger(DIK_5)){
+	else{
+		FbxGrandfather *grandfather = dynamic_cast<FbxGrandfather*>(fbx);
+		if(grandfather->GetCurrentAnimationId() != FbxGrandfather::IDLE)
+		{
+			grandfather->PlayAnimation(FbxGrandfather::IDLE);
+		}
+	}
+	
+	if (KeyBoard::isTrigger(DIK_5)){
 		FbxGrandfather *grandfather = dynamic_cast<FbxGrandfather*>(fbx);
 		grandfather->PlayAnimation(FbxGrandfather::DOWN);
 	}
