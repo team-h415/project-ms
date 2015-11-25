@@ -39,6 +39,9 @@ public:
 	const COLLISION_PARAMETER_DESC &parameter(){
 		return parameter_;
 	}
+	Object *parent(){
+		return parent_;
+	}
 
 	//-------------------------------------
 	// •`‰æ—p

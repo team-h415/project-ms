@@ -27,6 +27,7 @@
 #include "../../camera/camera.h"
 #include "../../camera/camera_manager.h"
 #include "../../collision/collision.h"
+#include "../../collision/collision_manager.h"
 #include "../scene.h"
 #include "../scene_manager.h"
 #include "game.h"
@@ -41,6 +42,7 @@ Game::Game()
 	camera_manager_ = new CameraManager;
 	object_manager_ = new ObjectManager;
 	effect_manager_ = new EffectManager(5000);
+	collision_manager_ = new CollisionManager;
 	font_ = new DebugFont;
 
 	//-------------------------------------
@@ -84,7 +86,7 @@ Game::Game()
 
 	OBJECT_PARAMETER_DESC player_param;
 	player_param.layer_ = LAYER_MODEL_X;
-	player_param.position_ = { 0.0f, 0.0f, 0.0f };
+	player_param.position_ = { -5.0f, 0.0f, 0.0f };
 	player_param.rotation_ = { 0.0f, 0.0f, 0.0f };
 	player_param.scaling_ = { 1.0f, 1.0f, 1.0f };
 
@@ -93,18 +95,17 @@ Game::Game()
 		player_param,
 		"resource/model/x/pone_red.x");
 
-	COLLISION_PARAMETER_DESC collision_param;
+	COLLISION_PARAMETER_DESC player_collision_param;
 	Object *obj = object_manager_->Get("player");
-	collision_param.position_ = {
+	player_collision_param.position_ = {
 		obj->parameter().position_.x_,
 		obj->parameter().position_.y_,
 		obj->parameter().position_.z_ };
-	collision_param.range_ = 1.0f;
-	collision_param.offset_ = { 0.0f, 0.5f, 0.0f };
+	player_collision_param.range_ = 1.0f;
+	player_collision_param.offset_ = { 0.0f, 0.5f, 0.0f };
 
-	collision_ = new Collision(
-		dynamic_cast<XModel*>(object_manager_->Get("player")),
-		collision_param);
+	collision_manager_->Create(object_manager_->Get("player"),
+		player_collision_param);
 
 
 	OBJECT_PARAMETER_DESC fbx_param;
@@ -116,6 +117,18 @@ Game::Game()
 	object_manager_->Create(
 		"fbx",
 		fbx_param);
+
+	COLLISION_PARAMETER_DESC fbx_collision_param;
+	Object *obj2 = object_manager_->Get("fbx");
+	fbx_collision_param.position_ = {
+		obj2->parameter().position_.x_,
+		obj2->parameter().position_.y_,
+		obj2->parameter().position_.z_ };
+	fbx_collision_param.range_ = 1.0f;
+	fbx_collision_param.offset_ = { 0.0f, 0.5f, 0.0f };
+
+	collision_manager_->Create(object_manager_->Get("fbx"),
+		fbx_collision_param);
 
     OBJECT_PARAMETER_DESC time_param;
     time_param.position_ = {
@@ -197,7 +210,7 @@ Game::~Game()
 	SAFE_DELETE(camera_manager_);
 	SAFE_DELETE(effect_manager_);
 	SAFE_DELETE(font_);
-	SAFE_DELETE(collision_);
+	SAFE_DELETE(collision_manager_);
 }
 
 
@@ -358,7 +371,7 @@ void Game::Update()
 	camera_manager_->Update();
 	object_manager_->Update();
 	effect_manager_->Update();
-	collision_->Update();
+	collision_manager_->Update();
 
 	font_->Add("ƒV[ƒ“–¼:");
 	font_->Add("Game\n");
@@ -386,7 +399,7 @@ void Game::Draw()
 	camera_manager_->Set("MainCamera");
 	object_manager_->Draw();
 	effect_manager_->Draw();
-	collision_->Draw();
+	collision_manager_->Draw();
 	font_->Draw(rect, font_color);
 	Fade::Draw();
 	DirectX9Holder::DrawEnd();

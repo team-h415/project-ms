@@ -56,6 +56,8 @@ public:
 	virtual void Update() = 0;
 	// •`‰æ
 	virtual void Draw() = 0;
+	// ‚ ‚½‚è”»’è
+	virtual void Action();
 	
 	// ƒpƒ‰ƒ[ƒ^æ“¾
 	const OBJECT_PARAMETER_DESC &parameter(){
