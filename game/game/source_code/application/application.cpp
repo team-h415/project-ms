@@ -18,6 +18,7 @@
 #include "input/input.h"
 #include "input/input_factory.h"
 #include "sound/sound.h"
+#include "resource/texture_manager.h"
 #include "application.h"
 
 
@@ -55,6 +56,7 @@ Application::Application(
 //-------------------------------------
 Application::~Application()
 {
+	TextureManager::AllRelease();
 	Sound::End();
 	SAFE_DELETE(scene_manager_);
 	SAFE_DELETE(fps_);
