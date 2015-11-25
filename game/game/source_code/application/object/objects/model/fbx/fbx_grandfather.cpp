@@ -402,5 +402,27 @@ D3DXVECTOR3 FbxGrandfather::InterpolateBlendScaling(BONE* subject, float prev_ti
 
 
 //-------------------------------------
+// Action()
+//-------------------------------------
+void FbxGrandfather::Action(
+	Object *target,
+	const float range)
+{
+	//-------------------------------------
+	// Xƒ‚ƒfƒ‹‚Æ“–‚½‚Á‚½‚ç
+	if (target->parameter().layer_ == LAYER_MODEL_X){
+		Vector3 vec = target->parameter().position_ - parameter_.position_;
+		Vector3 v = vec;
+		Vec3Normalize(vec, vec);
+		float distance = sqrtf(
+			(v.x_ * v.x_) + (v.y_ * v.y_) + (v.z_ * v.z_));
+		float sub = range - distance;
+		vec *= sub;
+		parameter_.position_ -= vec;
+	}
+}
+
+
+//-------------------------------------
 // end of file
 //-------------------------------------

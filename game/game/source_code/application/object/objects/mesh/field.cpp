@@ -15,7 +15,7 @@
 #include "../../../shader/shader.h"
 #include "../../object.h"
 #include "field.h"
-
+#include "../../../resource/texture_manager.h"
 
 //-------------------------------------
 // warninig
@@ -38,10 +38,8 @@ Field::Field(
 	D3DXMatrixIdentity(&world_);
 	shader_ = nullptr;
 	shader_ = new Shader("resource/shader/halflambert_lighting.hlsl");
-	D3DXCreateTextureFromFile(
-		DirectX9Holder::device_,
-		"resource/texture/grass.jpg",
-		&texture_);
+
+	texture_ = TextureManager::GetTexture("resource/texture/grass.jpg");
 }
 
 
@@ -54,7 +52,7 @@ Field::~Field()
 	SAFE_RELEASE(index_buffer_);
 	SAFE_DELETE_ARRAY(normal_buffer_);
 	SAFE_DELETE(shader_);
-	SAFE_RELEASE(texture_);
+	texture_ = NULL;
 }
 
 

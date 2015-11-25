@@ -15,6 +15,7 @@
 #include "../../../shader/shader.h"
 #include "../../object.h"
 #include "x_model.h"
+#include "../../../resource/texture_manager.h"
 
 
 //-------------------------------------
@@ -28,10 +29,9 @@ XModel::XModel(
 	material_buffer_ = NULL;
 	shader_ = nullptr;
 	shader_ = new Shader("resource/shader/halflambert_lighting.hlsl");
-	D3DXCreateTextureFromFile(
-		DirectX9Holder::device_,
-		"resource/texture/red.png",
-		&texture_);
+
+	texture_ = TextureManager::GetTexture(
+		"resource/texture/red.png");
 }
 
 
@@ -42,8 +42,8 @@ XModel::~XModel()
 {
 	SAFE_RELEASE(mesh_);
 	SAFE_RELEASE(material_buffer_);
-	SAFE_RELEASE(texture_);
 	SAFE_DELETE(shader_);
+	texture_ = NULL;
 }
 
 

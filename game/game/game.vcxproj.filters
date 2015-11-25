@@ -241,6 +241,9 @@
     <ClCompile Include="source_code\application\resource\texture_creator.cpp">
       <Filter>source_code\application\resource</Filter>
     </ClCompile>
+    <ClCompile Include="source_code\application\math\vector.cpp">
+      <Filter>source_code\application\math</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source_code\main.h">

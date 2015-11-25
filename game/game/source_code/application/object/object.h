@@ -57,7 +57,9 @@ public:
 	// •`‰æ
 	virtual void Draw() = 0;
 	// ‚ ‚½‚è”»’è
-	virtual void Action();
+	virtual void Action(
+		Object *target, 
+		const float range);
 	
 	// ƒpƒ‰ƒ[ƒ^æ“¾
 	const OBJECT_PARAMETER_DESC &parameter(){

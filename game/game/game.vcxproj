@@ -104,6 +104,7 @@
     <ClCompile Include="source_code\application\input\inputs\gamepad.cpp" />
     <ClCompile Include="source_code\application\input\inputs\keyboard.cpp" />
     <ClCompile Include="source_code\application\input\input_factory.cpp" />
+    <ClCompile Include="source_code\application\math\vector.cpp" />
     <ClCompile Include="source_code\application\object\object.cpp" />
     <ClCompile Include="source_code\application\object\objects\mesh\field.cpp" />
     <ClCompile Include="source_code\application\object\objects\model\fbx\fbx_grandfather.cpp" />

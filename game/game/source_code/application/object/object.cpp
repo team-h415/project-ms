@@ -31,7 +31,9 @@ Object::~Object()
 //-------------------------------------
 // Action()
 //-------------------------------------
-void Object::Action()
+void Object::Action(
+	Object *target,
+	const float range)
 {
 }
 

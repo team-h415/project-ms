@@ -263,6 +263,38 @@ void Game::Update()
 		}
 	}
 
+#ifdef _DEBUG
+	if (KeyBoard::isPress(DIK_W)){
+		fbx_position.x_ += sinf(fbx_rotation.y_) * player_speed;
+		fbx_position.z_ += cosf(fbx_rotation.y_) * player_speed;
+	}
+	if (KeyBoard::isPress(DIK_A)){
+		fbx_position.x_ += sinf(fbx_rotation.y_ - (D3DX_PI * 0.5f)) * player_speed;
+		fbx_position.z_ += cosf(fbx_rotation.y_ - (D3DX_PI * 0.5f)) * player_speed;
+	}
+	if (KeyBoard::isPress(DIK_S)){
+		fbx_position.x_ += sinf(fbx_rotation.y_ + (D3DX_PI)) * player_speed;
+		fbx_position.z_ += cosf(fbx_rotation.y_ + (D3DX_PI)) * player_speed;
+	}
+	if (KeyBoard::isPress(DIK_D)){
+		fbx_position.x_ += sinf(fbx_rotation.y_ + (D3DX_PI * 0.5f)) * player_speed;
+		fbx_position.z_ += cosf(fbx_rotation.y_ + (D3DX_PI * 0.5f)) * player_speed;
+	}
+	if (KeyBoard::isPress(DIK_RIGHT)){
+		fbx_rotation.y_ += D3DX_PI * 0.01f;
+		if (fbx_rotation.y_ > D3DX_PI){
+			fbx_rotation.y_ -= D3DX_PI * 2.0f;
+		}
+	}
+	if (KeyBoard::isPress(DIK_LEFT)){
+		fbx_rotation.y_ -= D3DX_PI * 0.01f;
+		if (fbx_rotation.y_ < -D3DX_PI){
+			fbx_rotation.y_ += D3DX_PI * 2.0f;
+		}
+	}
+
+#endif //_DEBUG
+
 	if (GamePad::isPress(GAMEPAD_GRANDFATHER, PAD_RS_UP)){
 		camera_pos_y -= 0.05f;
 	}
