@@ -38,6 +38,7 @@
 SOCKET			NetworkGuest::socket_data_(INVALID_SOCKET);					// ソケット
 ULONG			NetworkGuest::host_addr_(0);								// ホストアドレス
 MyThread		*NetworkGuest::thread_(nullptr);							// スレッド
+int				NetworkGuest::id_(ID_NONE);									// ID
 SceneManager	*NetworkGuest::scene_manager_(nullptr);						// シーンマネージャー
 
 
@@ -91,6 +92,8 @@ void NetworkGuest::CloseCommunication()
 //-------------------------------------
 void NetworkGuest::SendTo(NETWORK_DATA network_data)
 {
+	// ID設定
+	network_data.id_ = id_;
 	// 送信設定
 	sockaddr_in send_addr;
 	ZeroMemory(&send_addr, sizeof(send_addr));
@@ -165,7 +168,7 @@ unsigned __stdcall NetworkGuest::Communication()
 			if(rec_data.type_ == DATA_GIVE_ADDR)
 			{
 				host_addr_ = from_addr.sin_addr.s_addr;
-				id = rec_data.id_;
+				id_ = rec_data.id_;
 				//printf("ホストからアドレス・IDを取得\n");
 				break;
 			}
@@ -296,6 +299,14 @@ unsigned __stdcall NetworkGuest::Communication()
 						}
 						ObjDataAdaptation(game->GetObjectManager(),
 							game->GetCameraManager(), game->GetEffectManager(), rec_data);
+					}
+					break;
+
+				case DATA_UI_PARAM:
+					scene_name = scene_manager_->GetCurrentSceneName();
+					if("Game" == scene_name)
+					{
+
 					}
 					break;
 

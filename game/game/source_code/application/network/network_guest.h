@@ -49,6 +49,7 @@ private:
 
 	static SOCKET		socket_data_;						// ソケット
 	static ULONG		host_addr_;							// ホストアドレス
+	static int			id_;								// 自分のID
 	static MyThread		*thread_;							// スレッド
 	static SceneManager	*scene_manager_;					// シーンマネージャー
 

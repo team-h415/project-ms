@@ -20,6 +20,7 @@
 #define PORT_NUMBER_0 20000						// ゲストからホストへの送信時のポート
 #define PORT_NUMBER_1 20001						// ホストからゲストへの送信時のポート
 #define MULTICAST_ADDRESS "239.0.0.25"			// マルチキャスト用のアドレス
+#define MAX_GUEST 5								// 接続ゲスト最大数
 
 
 //-------------------------------------
@@ -40,6 +41,7 @@ enum DATA_TYPE
 	DATA_GAME_END,				// ホストが使用 ゲームの終了命令
 
 	DATA_OBJ_PARAM,				// ホストが使用 オブジェクトのパラメータ情報を送信
+	DATA_UI_PARAM,				// ホストが使用 UIのパラメータ情報を送信
 
 	DATA_TEST,			// テスト
 };
@@ -56,6 +58,15 @@ enum OBJ_TYPE
 };
 
 
+enum UI_TYPE
+{
+	UI_TIME,					// おじいちゃん
+	UI_LIFE,					// 子供
+	UI_WATER,					// エフェクト
+	UI_FORT,					// 砦
+};
+
+
 //-------------------------------------
 // struct
 //-------------------------------------
@@ -66,10 +77,16 @@ struct VEC3
 
 struct OBJ_PARAM
 {
-	OBJ_TYPE	type_;
-	VEC3		position_;
-	VEC3		rotation_;
-	VEC3		scaling_;
+	OBJ_TYPE	type_;			// オブジェクトタイプ
+	VEC3		position_;		// 座標
+	VEC3		rotation_;		// 回転
+	int			ex_id_;			// EX項目 FBXのアニメーションIDなどで
+};
+
+struct UI_PARAM
+{
+	UI_TYPE		type_;			// UIタイプ
+	float		value_;			// 値
 };
 
 struct NETWORK_DATA
@@ -80,6 +97,7 @@ struct NETWORK_DATA
 	union
 	{
 		OBJ_PARAM	object_param_;
+		UI_PARAM	ui_param_;
 	};
 };
 

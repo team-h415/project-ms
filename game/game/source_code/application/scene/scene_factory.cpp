@@ -16,6 +16,7 @@
 #include "scenes/loading.h"
 #include "scenes/title.h"
 #include "scenes/game.h"
+#include "../network/network.h"
 #include "scenes/game_server.h"
 #include "scenes/matching.h"
 #include "scenes/result.h"

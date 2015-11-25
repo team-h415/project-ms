@@ -26,8 +26,6 @@ enum SERVER_STATE
 //-------------------------------------
 // class
 //-------------------------------------
-using namespace Effekseer;
-using namespace EffekseerRenderer;
 class ObjectManager;
 class CameraManager;
 class EffectManager;
@@ -40,6 +38,8 @@ public:
 	void Update();
 	void Draw();
 
+	void SetGuestSceneChange(int i, bool set){ guest_scene_change_[i] = set; }
+
 private:
 	void ChangeState(SERVER_STATE next);
 
@@ -47,6 +47,7 @@ private:
 	ObjectManager	*object_manager_;
 	CameraManager	*camera_manager_;
 	DebugFont		*font_;
+	bool			guest_scene_change_[MAX_GUEST];
 };
 
 

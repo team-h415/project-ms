@@ -10,6 +10,7 @@
 #ifndef __APP_SCENE_SCENEMANAGER_H__
 #define __APP_SCENE_SCENEMANAGER_H__
 
+
 using namespace std;
 class Fade;
 class MyThread;

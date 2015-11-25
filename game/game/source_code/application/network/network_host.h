@@ -27,10 +27,6 @@
 #pragma warning (disable : 4996 )
 
 
-//-------------------------------------
-// define
-//-------------------------------------
-#define MAX_GUEST 5
 
 //-------------------------------------
 // enum
@@ -49,19 +45,21 @@ enum DELI_TYPE
 // class
 //-------------------------------------
 class MyThread;
+class SceneManager;
 class NetworkHost
 {
 public:
-	static void StartCommunication();										// 通信を開始します
+	static void StartCommunication(SceneManager *set);						// 通信を開始します
 	static void SendTo(DELI_TYPE deli_type, NETWORK_DATA network_data);		// データ送信
 	static void CloseCommunication();										// 通信を終了します
 
 private:
 	static unsigned __stdcall Communication();								// ホストからの受信を行います、基本的にサブスレッドで稼働します
 
-	static MyThread*		thread_;										// スレッド
+	static MyThread			*thread_;										// スレッド
 	static SOCKET			socket_data_;									// ソケット
 	static unsigned long	guest_addr_[MAX_GUEST];							// ゲストのIPアドレス
+	static SceneManager		*scene_manager_;								// シーンマネージャー
 
 	NetworkHost();
 	virtual ~NetworkHost();

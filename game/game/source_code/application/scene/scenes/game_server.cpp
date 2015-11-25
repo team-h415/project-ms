@@ -40,7 +40,10 @@
 //-------------------------------------
 GameServer::GameServer()
 {
-	ChangeState(STATE_MATCHING);
+	for(int i = 0; i < MAX_GUEST; i++)
+	{
+		guest_scene_change_[i] = false;
+	}
 
 	camera_manager_ = new CameraManager;
 	object_manager_ = new ObjectManager;
@@ -132,6 +135,9 @@ GameServer::GameServer()
 		"fbx",
 		fbx_param,
 		"resource/model/fbx/REuneune.fbx");
+
+	// ステートセット
+	ChangeState(STATE_MATCHING);
 }
 
 

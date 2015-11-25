@@ -7,9 +7,13 @@
 //-------------------------------------
 // include
 //-------------------------------------
+#include "network.h"
 #include "network_host.h"
 #include "../thread/thread.h"
-#include <stdio.h>
+#include "../../common/common.h"
+#include "../scene/scene.h"
+#include "../scene/scene_manager.h"
+#include "../scene/scenes/game_server.h"
 
 
 //-------------------------------------
@@ -18,13 +22,16 @@
 MyThread*		NetworkHost::thread_(nullptr);
 SOCKET			NetworkHost::socket_data_(INVALID_SOCKET);
 unsigned long	NetworkHost::guest_addr_[MAX_GUEST];
+SceneManager*	NetworkHost::scene_manager_(nullptr);								// シーンマネージャー
 
 
 //-------------------------------------
 // StartCommunication()
 //-------------------------------------
-void NetworkHost::StartCommunication()
+void NetworkHost::StartCommunication(SceneManager *set)
 {
+	scene_manager_ = set;
+
 	// スレッドスタート
 	if(thread_ == nullptr)
 	{
@@ -188,7 +195,10 @@ unsigned __stdcall NetworkHost::Communication()
 
 				case DATA_COMPLETE_SCENE_CHANGE:
 					// メインループに通知
-
+					{
+						GameServer* game_server = dynamic_cast<GameServer*>(scene_manager_->GetCurrentScene());
+						game_server->SetGuestSceneChange(rec_data.id_, true);
+					}
 					break;
 
 				case DATA_TEST:

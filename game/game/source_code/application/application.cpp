@@ -53,7 +53,7 @@ Application::Application(
 	gamepad_ = InputFactory::Create(
 		"GamePad");
 	#ifdef NETWORK_HOST_MODE
-		NetworkHost::StartCommunication();
+		NetworkHost::StartCommunication(scene_manager_);
 	#else
 		NetworkGuest::StartCommunication(scene_manager_);
 	#endif
