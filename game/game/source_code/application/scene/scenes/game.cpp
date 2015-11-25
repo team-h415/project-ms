@@ -19,10 +19,15 @@
 #include "../../object/object.h"
 #include "../../object/object_manager.h"
 #include "../../object/objects/mesh/field.h"
+#include "../../object/objects/model/x_model.h"
+#include "../../object/objects/model/fbx_model.h"
+#include "../../object/objects/model/fbx/fbx_grandfather.h"
 #include "../../effect/effect.h"
 #include "../../effect/effect_manager.h"
 #include "../../camera/camera.h"
 #include "../../camera/camera_manager.h"
+#include "../../collision/collision.h"
+#include "../../collision/collision_manager.h"
 #include "../scene.h"
 #include "../scene_manager.h"
 #include "game.h"
@@ -37,6 +42,7 @@ Game::Game()
 	camera_manager_ = new CameraManager;
 	object_manager_ = new ObjectManager;
 	effect_manager_ = new EffectManager(5000);
+	collision_manager_ = new CollisionManager;
 	font_ = new DebugFont;
 
 	//-------------------------------------
@@ -62,7 +68,7 @@ Game::Game()
 	camera_param.rotation_ = { 0.0f, 0.0f, 0.0f };
 	camera_param.up_ = { 0.0f, 1.0f, 0.0f };
 	camera_param.near_ = 0.1f;
-	camera_param.far_ = 1000.0f;
+	camera_param.far_ = 100000.0f;
 
 	camera_manager_->Create(
 		"Perspective", "MainCamera", camera_param);
@@ -80,7 +86,7 @@ Game::Game()
 
 	OBJECT_PARAMETER_DESC player_param;
 	player_param.layer_ = LAYER_MODEL_X;
-	player_param.position_ = { 0.0f, 0.0f, 0.0f };
+	player_param.position_ = { -5.0f, 0.0f, 0.0f };
 	player_param.rotation_ = { 0.0f, 0.0f, 0.0f };
 	player_param.scaling_ = { 1.0f, 1.0f, 1.0f };
 
@@ -89,16 +95,40 @@ Game::Game()
 		player_param,
 		"resource/model/x/pone_red.x");
 
+	COLLISION_PARAMETER_DESC player_collision_param;
+	Object *obj = object_manager_->Get("player");
+	player_collision_param.position_ = {
+		obj->parameter().position_.x_,
+		obj->parameter().position_.y_,
+		obj->parameter().position_.z_ };
+	player_collision_param.range_ = 1.0f;
+	player_collision_param.offset_ = { 0.0f, 0.5f, 0.0f };
+
+	collision_manager_->Create(object_manager_->Get("player"),
+		player_collision_param);
+
+
 	OBJECT_PARAMETER_DESC fbx_param;
-	fbx_param.layer_ = LAYER_MODEL_FBX;
-	fbx_param.position_ = { 0.0f, 0.0f, 0.0f };
+	fbx_param.layer_ = LAYER_MODEL_GRANDFATHER;
+	fbx_param.position_ = { 1.0f, 0.0f, 0.0f };
 	fbx_param.rotation_ = { 0.0f, 0.0f, 0.0f };
-	fbx_param.scaling_ = { 0.1f, 0.1f, 0.1f };
+	fbx_param.scaling_ = { 1.0f, 1.0f, 1.0f };
 
 	object_manager_->Create(
 		"fbx",
-		fbx_param,
-		"resource/model/fbx/REuneune.fbx");
+		fbx_param);
+
+	COLLISION_PARAMETER_DESC fbx_collision_param;
+	Object *obj2 = object_manager_->Get("fbx");
+	fbx_collision_param.position_ = {
+		obj2->parameter().position_.x_,
+		obj2->parameter().position_.y_,
+		obj2->parameter().position_.z_ };
+	fbx_collision_param.range_ = 1.0f;
+	fbx_collision_param.offset_ = { 0.0f, 0.5f, 0.0f };
+
+	collision_manager_->Create(object_manager_->Get("fbx"),
+		fbx_collision_param);
 
     OBJECT_PARAMETER_DESC time_param;
     time_param.position_ = {
@@ -180,6 +210,7 @@ Game::~Game()
 	SAFE_DELETE(camera_manager_);
 	SAFE_DELETE(effect_manager_);
 	SAFE_DELETE(font_);
+	SAFE_DELETE(collision_manager_);
 }
 
 
@@ -311,12 +342,36 @@ void Game::Update()
 		effect_manager_->Play("water");
 	}
 
+
+	//-------------------------------------
+	// アニメーション制御
+	//-------------------------------------
+	if (KeyBoard::isTrigger(DIK_3)){
+		FbxGrandfather *grandfather = dynamic_cast<FbxGrandfather*>(fbx);
+		if(grandfather->GetCurrentAnimationId() != FbxGrandfather::IDLE)
+		{
+			grandfather->PlayAnimation(FbxGrandfather::IDLE);
+		}
+	}
+	else if (KeyBoard::isTrigger(DIK_4)){
+		FbxGrandfather *grandfather = dynamic_cast<FbxGrandfather*>(fbx);
+		if(grandfather->GetCurrentAnimationId() != FbxGrandfather::WALK)
+		{
+			grandfather->PlayAnimation(FbxGrandfather::WALK);
+		}
+	}
+	else if (KeyBoard::isTrigger(DIK_5)){
+		FbxGrandfather *grandfather = dynamic_cast<FbxGrandfather*>(fbx);
+		grandfather->PlayAnimation(FbxGrandfather::DOWN);
+	}
+
 	//-------------------------------------
 	// 実更新処理
 	//-------------------------------------
 	camera_manager_->Update();
 	object_manager_->Update();
 	effect_manager_->Update();
+	collision_manager_->Update();
 
 	font_->Add("シーン名:");
 	font_->Add("Game\n");
@@ -338,12 +393,13 @@ void Game::Draw()
 		static_cast<LONG>(SCREEN_WIDTH),
 		static_cast<LONG>(SCREEN_HEIGHT) };
 	D3DXCOLOR font_color(0.0f, 1.0f, 1.0f, 1.0f);
-	MaterialColor color(255, 255, 255, 0);
+	MaterialColor color(32, 32, 32, 0);
 	DirectX9Holder::DrawBegin();
 	DirectX9Holder::Clear(color);
 	camera_manager_->Set("MainCamera");
 	object_manager_->Draw();
 	effect_manager_->Draw();
+	collision_manager_->Draw();
 	font_->Draw(rect, font_color);
 	Fade::Draw();
 	DirectX9Holder::DrawEnd();

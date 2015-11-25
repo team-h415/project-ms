@@ -95,6 +95,9 @@ void Field::Update()
 //-------------------------------------
 void Field::Draw()
 {
+	DirectX9Holder::device_->SetRenderState(
+		D3DRS_FILLMODE, D3DFILL_WIREFRAME);
+
 	DirectX9Holder::device_->SetVertexDeclaration(
 		DirectX9Holder::vertex_declaration_3d_);
 
@@ -147,6 +150,10 @@ void Field::Draw()
 
 	DirectX9Holder::device_->SetVertexShader(NULL);
 	DirectX9Holder::device_->SetPixelShader(NULL);
+
+
+	DirectX9Holder::device_->SetRenderState(
+		D3DRS_FILLMODE, D3DFILL_SOLID);
 }
 
 

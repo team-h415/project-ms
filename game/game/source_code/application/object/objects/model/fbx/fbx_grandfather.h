@@ -23,9 +23,9 @@ public:
 	//-------------------------------------
 	enum ANIMATION_TYPE
 	{
-		TYPE_0,
-		TYPE_1,
-
+		IDLE = 0,
+		WALK,
+		DOWN,
 		MAX_TYPE
 	};
 
@@ -37,9 +37,9 @@ public:
 
 	void SetCurrentAnimation(int animId, bool blend = true)
 	{
-		if(0 <= animId && animId < MAX_TYPE && !(current_animation_id_ == animId))
+		if(0 <= animId && animId < MAX_TYPE)
 		{
-			previous_animation_id_ = current_animation_id_;
+			animation_previous_time_ = animation_[current_animation_id_].begin_ + animation_[current_animation_id_].time_;
 			current_animation_id_ = animId;
 			animation_switching_ = 0;
 			animation_blending_ = true;
@@ -83,7 +83,6 @@ private:
 	D3DXVECTOR3 InterpolateBlendTranslation(BONE* subject, float prev_time, float next_time, float t);
 	D3DXQUATERNION InterpolateBlendQuaternion(BONE* subject, float prev_time, float next_time, float t);
 	D3DXVECTOR3 InterpolateBlendScaling(BONE* subject, float prev_time, float next_time, float t);
-
 };
 
 

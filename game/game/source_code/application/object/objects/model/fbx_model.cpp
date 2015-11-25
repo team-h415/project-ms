@@ -47,7 +47,7 @@ const OBJECT_PARAMETER_DESC &parameter)
 	cur_time_ = 0;
 	shader_ = new Shader("resource/shader/halflambert_lighting_fbx.hlsl");
 	animation_ = nullptr;
-	previous_animation_id_ = 0;
+	animation_previous_time_ = 0.0f;
 	current_animation_id_ = 0;
 	animation_switching_ = 0;
 	animation_blending_ = false;

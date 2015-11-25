@@ -19,6 +19,8 @@
 #include "objects/model/fbx_model.h"
 #include "objects/sprite/timer.h"
 #include "objects/sprite/water_gage.h"
+#include "objects/model/fbx/fbx_grandfather.h"
+
 
 //-------------------------------------
 // ObjectFactory()
@@ -37,6 +39,15 @@ Object *ObjectFactory::Create(
     else if (param.layer_ == LAYER_TIMER){
         object = new Timer(parameter);
     }
+
+	else if (param.layer_ == LAYER_MODEL_GRANDFATHER){
+		object = new FbxGrandfather(parameter);
+	}
+
+	else{
+		ASSERT_ERROR("無効なオブジェクト生成カテゴリです");
+	}
+
 
 	return object;
 }
