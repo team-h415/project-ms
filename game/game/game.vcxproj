@@ -110,6 +110,7 @@
     <ClCompile Include="source_code\application\object\objects\model\fbx\fbx_grandfather.cpp" />
     <ClCompile Include="source_code\application\object\objects\model\fbx_model.cpp" />
     <ClCompile Include="source_code\application\object\objects\model\x_model.cpp" />
+    <ClCompile Include="source_code\application\object\objects\notice\bullet.cpp" />
     <ClCompile Include="source_code\application\object\objects\sprite\number.cpp" />
     <ClCompile Include="source_code\application\object\objects\sprite\sprite2d.cpp" />
     <ClCompile Include="source_code\application\object\objects\sprite\timer.cpp" />
@@ -165,6 +166,7 @@
     <ClInclude Include="source_code\application\object\objects\model\fbx\fbx_grandfather.h" />
     <ClInclude Include="source_code\application\object\objects\model\fbx_model.h" />
     <ClInclude Include="source_code\application\object\objects\model\x_model.h" />
+    <ClInclude Include="source_code\application\object\objects\notice\bullet.h" />
     <ClInclude Include="source_code\application\object\objects\sprite\number.h" />
     <ClInclude Include="source_code\application\object\objects\sprite\sprite2d.h" />
     <ClInclude Include="source_code\application\object\objects\sprite\timer.h" />

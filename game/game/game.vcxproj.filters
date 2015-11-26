@@ -86,6 +86,9 @@
     <Filter Include="source_code\application\collision">
       <UniqueIdentifier>{c09705a5-6fd5-416a-a7c8-f5890c109e2e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="source_code\application\object\objects\notice">
+      <UniqueIdentifier>{86029387-578a-438b-b5e5-ffe1a744ca49}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source_code\main.cpp">
@@ -243,6 +246,9 @@
     </ClCompile>
     <ClCompile Include="source_code\application\math\vector.cpp">
       <Filter>source_code\application\math</Filter>
+    </ClCompile>
+    <ClCompile Include="source_code\application\object\objects\notice\bullet.cpp">
+      <Filter>source_code\application\object\objects\notice</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -407,6 +413,9 @@
     </ClInclude>
     <ClInclude Include="source_code\application\resource\texture_creator.h">
       <Filter>source_code\application\resource</Filter>
+    </ClInclude>
+    <ClInclude Include="source_code\application\object\objects\notice\bullet.h">
+      <Filter>source_code\application\object\objects\notice</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

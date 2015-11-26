@@ -24,6 +24,7 @@ enum OBJECT_LAYER
 	LAYER_MODEL_FBX,
 	LAYER_MODEL_GRANDFATHER,
 	LAYER_MODEL_CHILD,
+	LAYER_BULLET,
 	LAYER_SPRITE_2D,
     LAYER_TIMER,
     LAYER_WATER_GAGE,
@@ -65,6 +66,9 @@ public:
 	const OBJECT_PARAMETER_DESC &parameter(){
 		return parameter_;
 	}
+	bool this_delete(){
+		return this_delete_;
+	}
 
 	// ÉpÉâÉÅÅ[É^ê›íË
 	void SetPosition(
@@ -82,6 +86,7 @@ public:
 
 protected:
 	OBJECT_PARAMETER_DESC parameter_;
+	bool this_delete_;
 };
 
 

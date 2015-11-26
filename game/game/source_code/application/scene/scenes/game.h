@@ -29,6 +29,23 @@ public:
 	virtual ~Game();
 	void Update();
 	void Draw();
+
+	//-------------------------------------
+	// ƒpƒ‰ƒ[ƒ^
+	//-------------------------------------
+	CollisionManager *collision_manager(){
+		return collision_manager_;
+	}
+	ObjectManager *object_manager(){
+		return object_manager_;
+	}
+	CameraManager *camera_manager(){
+		return camera_manager_;
+	}
+	EffectManager *effect_manager(){
+		return effect_manager_;
+	}
+
 private:
 	ObjectManager *object_manager_;
 	CameraManager *camera_manager_;
