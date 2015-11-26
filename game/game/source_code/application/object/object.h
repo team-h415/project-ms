@@ -22,7 +22,11 @@ enum OBJECT_LAYER
 	LAYER_MESH_FIELD,
 	LAYER_MODEL_X,
 	LAYER_MODEL_FBX,
+	LAYER_MODEL_GRANDFATHER,
+	LAYER_MODEL_CHILD,
 	LAYER_SPRITE_2D,
+    LAYER_TIMER,
+    LAYER_WATER_GAGE,
 	LAYER_MAX,
 };
 
@@ -52,6 +56,8 @@ public:
 	virtual void Update() = 0;
 	// ï`âÊ
 	virtual void Draw() = 0;
+	// Ç†ÇΩÇËîªíË
+	virtual void Action();
 	
 	// ÉpÉâÉÅÅ[É^éÊìæ
 	const OBJECT_PARAMETER_DESC &parameter(){

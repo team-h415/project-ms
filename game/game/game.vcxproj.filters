@@ -78,7 +78,16 @@
       <UniqueIdentifier>{bf55e749-48c0-49e8-8f7d-4dbbbed1d5a0}</UniqueIdentifier>
     </Filter>
     <Filter Include="source_code\application\network">
-      <UniqueIdentifier>{8a9e29bc-3eba-4074-a8dc-87f51e042e8f}</UniqueIdentifier>
+	</Filter>
+	<UniqueIdentifier>{8a9e29bc-3eba-4074-a8dc-87f51e042e8f}</UniqueIdentifier>
+    <Filter Include="source_code\application\object\objects\model\fbx">
+      <UniqueIdentifier>{60eba6c7-d95d-45f3-b4c7-933671d79331}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source_code\application\sound">
+      <UniqueIdentifier>{8da156ac-fc99-4c4c-8546-fc7c5a2eaa2f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source_code\application\collision">
+      <UniqueIdentifier>{c09705a5-6fd5-416a-a7c8-f5890c109e2e}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -210,6 +219,39 @@
     </ClCompile>
     <ClCompile Include="source_code\application\scene\scenes\game_server.cpp">
       <Filter>source_code\application\scene\scenes</Filter>
+	</ClCompile>
+	<ClCompile Include="source_code\application\object\objects\model\fbx\fbx_grandfather.cpp">
+      <Filter>source_code\application\object\objects\model\fbx</Filter>
+    </ClCompile>
+    <ClCompile Include="source_code\application\sound\sound.cpp">
+      <Filter>source_code\application\sound</Filter>
+    </ClCompile>
+    <ClCompile Include="source_code\application\object\objects\sprite\timer.cpp">
+      <Filter>source_code\application\object\objects\sprite</Filter>
+    </ClCompile>
+    <ClCompile Include="source_code\application\object\objects\sprite\number.cpp">
+      <Filter>source_code\application\object\objects\sprite</Filter>
+    </ClCompile>
+    <ClCompile Include="source_code\application\object\objects\sprite\water_gage.cpp">
+      <Filter>source_code\application\object\objects\sprite</Filter>
+    </ClCompile>
+    <ClCompile Include="source_code\application\collision\collision.cpp">
+      <Filter>source_code\application\collision</Filter>
+    </ClCompile>
+    <ClCompile Include="source_code\application\collision\collision_manager.cpp">
+      <Filter>source_code\application\collision</Filter>
+    </ClCompile>
+    <ClCompile Include="source_code\application\collision\collision_factory.cpp">
+      <Filter>source_code\application\collision</Filter>
+    </ClCompile>
+    <ClCompile Include="source_code\application\resource\texture_manager.cpp">
+      <Filter>source_code\application\resource</Filter>
+    </ClCompile>
+    <ClCompile Include="source_code\application\resource\texture.cpp">
+      <Filter>source_code\application\resource</Filter>
+    </ClCompile>
+    <ClCompile Include="source_code\application\resource\texture_creator.cpp">
+      <Filter>source_code\application\resource</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -353,6 +395,39 @@
     </ClInclude>
     <ClInclude Include="source_code\application\scene\scenes\game_server.h">
       <Filter>source_code\application\scene\scenes</Filter>
+	</ClInclude>
+	<ClInclude Include="source_code\application\object\objects\model\fbx\fbx_grandfather.h">
+      <Filter>source_code\application\object\objects\model\fbx</Filter>
+    </ClInclude>
+    <ClInclude Include="source_code\application\sound\sound.h">
+      <Filter>source_code\application\sound</Filter>
+    </ClInclude>
+    <ClInclude Include="source_code\application\object\objects\sprite\timer.h">
+      <Filter>source_code\application\object\objects\sprite</Filter>
+    </ClInclude>
+    <ClInclude Include="source_code\application\object\objects\sprite\number.h">
+      <Filter>source_code\application\object\objects\sprite</Filter>
+    </ClInclude>
+    <ClInclude Include="source_code\application\object\objects\sprite\water_gage.h">
+      <Filter>source_code\application\object\objects\sprite</Filter>
+    </ClInclude>
+    <ClInclude Include="source_code\application\collision\collision.h">
+      <Filter>source_code\application\collision</Filter>
+    </ClInclude>
+    <ClInclude Include="source_code\application\collision\collision_manager.h">
+      <Filter>source_code\application\collision</Filter>
+    </ClInclude>
+    <ClInclude Include="source_code\application\collision\collision_factory.h">
+      <Filter>source_code\application\collision</Filter>
+    </ClInclude>
+    <ClInclude Include="source_code\application\resource\texture_manager.h">
+      <Filter>source_code\application\resource</Filter>
+    </ClInclude>
+    <ClInclude Include="source_code\application\resource\texture.h">
+      <Filter>source_code\application\resource</Filter>
+    </ClInclude>
+    <ClInclude Include="source_code\application\resource\texture_creator.h">
+      <Filter>source_code\application\resource</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

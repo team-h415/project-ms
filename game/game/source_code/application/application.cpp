@@ -24,6 +24,8 @@
 #include "scene/scene_manager.h"
 #include "input/input.h"
 #include "input/input_factory.h"
+#include "sound/sound.h"
+#include "resource/texture_manager.h"
 #include "application.h"
 
 
@@ -57,6 +59,7 @@ Application::Application(
 	#else
 		NetworkGuest::StartCommunication(scene_manager_);
 	#endif
+	Sound::Setup();
 }
 
 
@@ -70,6 +73,8 @@ Application::~Application()
 	#else
 		NetworkGuest::CloseCommunication();
 	#endif
+	TextureManager::AllRelease();
+	Sound::End();
 	SAFE_DELETE(scene_manager_);
 	SAFE_DELETE(fps_);
 	SAFE_DELETE(renderer_);
@@ -107,6 +112,7 @@ void Application::Run(
 //-------------------------------------
 void Application::Update()
 {
+	Sound::UpdateAll();
 	keyboard_->Update();
 	gamepad_->Update();
 	scene_manager_->Update();
