@@ -37,7 +37,7 @@ MyThread *SceneManager::thread_ = nullptr;
 SceneManager::SceneManager()
 {
 	loading_scene_ = Create("Loading");
-	current_scene_ = Create("Game");
+	current_scene_ = Create("Matching");
 	fade_ = new Fade();
 	fade_->SetFade(FADE_OUT);
 }

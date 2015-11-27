@@ -146,6 +146,30 @@ Game::Game()
 	collision_manager_->Create(object_manager_->Get("fbx"),
 		fbx_collision_param);
 
+	//-------------------------------------
+	// FBX子供
+	OBJECT_PARAMETER_DESC child_param;
+	child_param.layer_ = LAYER_MODEL_CHILD;
+	child_param.position_ = { -1.0f, 0.0f, 0.0f };
+	child_param.rotation_ = { 0.0f, 0.0f, 0.0f };
+	child_param.scaling_ = { 1.0f, 1.0f, 1.0f };
+
+	object_manager_->Create(
+		"child",
+		child_param);
+
+	COLLISION_PARAMETER_DESC child_collision_param;
+	Object *obj3 = object_manager_->Get("child");
+	child_collision_param.position_ = {
+		obj3->parameter().position_.x_,
+		obj3->parameter().position_.y_,
+		obj3->parameter().position_.z_ };
+	child_collision_param.range_ = 1.0f;
+	child_collision_param.offset_ = { 0.0f, 0.5f, 0.0f };
+
+	collision_manager_->Create(object_manager_->Get("child"),
+		child_collision_param);
+
 
 	//-------------------------------------
 	// タイマー
@@ -260,10 +284,12 @@ void Game::Update()
 	//-------------------------------------
 	Object *player = object_manager_->Get("player");
 	Object *fbx = object_manager_->Get("fbx");
+	Object *child = object_manager_->Get("child");
 	Vector3 player_position(player->parameter().position_);
 	Vector3 player_rotation(player->parameter().rotation_);
 	Vector3 fbx_position(fbx->parameter().position_);
 	Vector3 fbx_rotation(fbx->parameter().rotation_);
+	Vector3 child_position(child->parameter().position_);
 
 	Field *field = dynamic_cast<Field*>(
 		object_manager_->Get("field"));
@@ -360,11 +386,17 @@ void Game::Update()
 		fbx_position.z_);
 	fbx_position.y_ = field->GetHeight(fbx_pos);
 	
+	D3DXVECTOR3 child_pos(
+		child_position.x_,
+		child_position.y_,
+		child_position.z_);
+	child_position.y_ = field->GetHeight(child_pos);
 
 	player->SetPosition(player_position);
 	player->SetRotation(player_rotation);
 	fbx->SetPosition(fbx_position);
 	fbx->SetRotation(fbx_rotation);
+	child->SetPosition(child_position);
 
 	//-------------------------------------
 	// カメラ追従

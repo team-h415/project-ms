@@ -148,6 +148,9 @@ void FbxMyContainer::Load(const std::string &path)
 
 	manager->Destroy();
 	manager = nullptr;
+
+	// ƒ‹[ƒg‚Ì‹L˜^
+	root_ = &bone_[0];
 }
 
 //-------------------------------------

@@ -32,8 +32,8 @@ FbxGrandfather::FbxGrandfather(const OBJECT_PARAMETER_DESC &parameter) :
 	FbxModel(parameter)
 {
 	// ÉÇÉfÉãì«Ç›çûÇ›
-	Load("./resource/model/fbx/child_01.fbx");
-	texture_ = TextureManager::GetTexture("resource/texture/game/Child_01.jpg");
+	Load("./resource/model/fbx/ogchan.fbx");
+	texture_ = TextureManager::GetTexture("resource/texture/game/ogchan.jpg");
 
 #ifdef _DEBUG
 	int x;

@@ -20,6 +20,7 @@
 #include "objects/sprite/timer.h"
 #include "objects/sprite/water_gage.h"
 #include "objects/model/fbx/fbx_grandfather.h"
+#include "objects/model/fbx/fbx_child.h"
 #include "objects/notice/bullet.h"
 
 
@@ -43,6 +44,10 @@ Object *ObjectFactory::Create(
 
 	else if (param.layer_ == LAYER_MODEL_GRANDFATHER){
 		object = new FbxGrandfather(parameter);
+	}
+
+	else if (param.layer_ == LAYER_MODEL_CHILD){
+		object = new FbxChild(parameter);
 	}
 
 	else if (param.layer_ == LAYER_BULLET){
