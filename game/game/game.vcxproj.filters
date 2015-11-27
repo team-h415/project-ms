@@ -253,6 +253,15 @@
     <ClCompile Include="source_code\application\resource\x_container.cpp">
       <Filter>source_code\application\resource</Filter>
     </ClCompile>
+    <ClCompile Include="source_code\application\math\vector.cpp">
+      <Filter>source_code</Filter>
+    </ClCompile>
+    <ClCompile Include="source_code\application\object\objects\notice\bullet.cpp">
+      <Filter>source_code</Filter>
+    </ClCompile>
+    <ClCompile Include="source_code\application\object\objects\sprite\damage_effect.cpp">
+      <Filter>source_code\application\object\objects\sprite</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source_code\main.h">
@@ -428,6 +437,10 @@
     </ClInclude>
     <ClInclude Include="source_code\application\resource\x_container.h">
       <Filter>source_code\application\resource</Filter>
+    </ClInclude>
+    <ClInclude Include="source_code\application\object\objects\notice\bullet.h" />
+    <ClInclude Include="source_code\application\object\objects\sprite\damage_effect.h">
+      <Filter>source_code\application\object\objects\sprite</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

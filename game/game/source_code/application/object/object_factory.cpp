@@ -19,6 +19,7 @@
 #include "objects/model/fbx_model.h"
 #include "objects/sprite/timer.h"
 #include "objects/sprite/water_gage.h"
+#include "objects/sprite/damage_effect.h"
 #include "objects/model/fbx/fbx_grandfather.h"
 #include "objects/notice/bullet.h"
 
@@ -39,6 +40,10 @@ Object *ObjectFactory::Create(
 
     else if (param.layer_ == LAYER_TIMER){
         object = new Timer(parameter);
+    }
+
+    else if (param.layer_ == LAYER_DAMAGE_EFFECT){
+        object = new DamageEffect(parameter);
     }
 
 	else if (param.layer_ == LAYER_MODEL_GRANDFATHER){
