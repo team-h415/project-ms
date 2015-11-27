@@ -30,6 +30,7 @@
 #include "../../collision/collision_manager.h"
 #include "../scene.h"
 #include "../scene_manager.h"
+#include "../../config/config.h"
 #include "game.h"
 #include "../fade/fade.h"
 
@@ -268,8 +269,6 @@ void Game::Update()
 	Field *field = dynamic_cast<Field*>(
 		object_manager_->Get("field"));
 
-	static float camera_pos_y = 0.0f;
-	static float camera_focus_y = 0.0f;
 	static const float player_speed_value = 0.05f;
 	static int bullet_count = 0;
 	float player_speed = player_speed_value;
@@ -288,13 +287,13 @@ void Game::Update()
 		cosf(-fbx_rotation.y_) * GamePad::isStick(GAMEPAD_GRANDFATHER).lsy_) * player_speed;
 
 	if (GamePad::isPress(GAMEPAD_GRANDFATHER, PAD_RS_LEFT)){
-		fbx_rotation.y_ -= D3DX_PI * 0.01f;
+		fbx_rotation.y_ -= CHAR_ROT_SPEED;
 		if (fbx_rotation.y_ < D3DX_PI){
 			fbx_rotation.y_ += D3DX_PI * 2.0f;
 		}
 	}
 	if (GamePad::isPress(GAMEPAD_GRANDFATHER, PAD_RS_RIGHT)){
-		fbx_rotation.y_ += D3DX_PI * 0.01f;
+		fbx_rotation.y_ += CHAR_ROT_SPEED;
 		if (fbx_rotation.y_ > D3DX_PI){
 			fbx_rotation.y_ -= D3DX_PI * 2.0f;
 		}
@@ -321,32 +320,19 @@ void Game::Update()
 		fbx_position.z_ += cosf(fbx_rotation.y_ + (D3DX_PI * 0.5f)) * player_speed;
 	}
 	if (KeyBoard::isPress(DIK_RIGHT)){
-		fbx_rotation.y_ += D3DX_PI * 0.01f;
+		fbx_rotation.y_ += CHAR_ROT_SPEED;
 		if (fbx_rotation.y_ > D3DX_PI){
 			fbx_rotation.y_ -= D3DX_PI * 2.0f;
 		}
 	}
 	if (KeyBoard::isPress(DIK_LEFT)){
-		fbx_rotation.y_ -= D3DX_PI * 0.01f;
+		fbx_rotation.y_ -= CHAR_ROT_SPEED;
 		if (fbx_rotation.y_ < -D3DX_PI){
 			fbx_rotation.y_ += D3DX_PI * 2.0f;
 		}
 	}
 
 #endif //_DEBUG
-
-
-
-	if (GamePad::isPress(GAMEPAD_GRANDFATHER, PAD_RS_UP)){
-		camera_pos_y -= 0.05f;
-	}
-	if (GamePad::isPress(GAMEPAD_GRANDFATHER, PAD_RS_DOWN)){
-		camera_pos_y += 0.05f;
-	}
-	camera_pos_y = std::min<float>(camera_pos_y, 2.0f);
-	camera_pos_y = std::max<float>(camera_pos_y, -2.0f);
-	camera_focus_y = -camera_pos_y;
-
 
 	D3DXVECTOR3 pos(
 		player_position.x_,
@@ -370,46 +356,35 @@ void Game::Update()
 	// カメラ追従
 	//-------------------------------------
 	Camera *main_camera = camera_manager_->Get("MainCamera");
-	D3DXVECTOR3 camera_position(main_camera->position());
-	D3DXVECTOR3 camera_focus(main_camera->focus());
+	D3DXVECTOR3 camera_position, camera_focus;
 	D3DXVECTOR3 camera_rotation(main_camera->rotation());
-	D3DXVECTOR3 camera_position_sub(
-		-sinf(fbx_rotation.y_) * 6.0f,
-		3.0f + camera_pos_y,
-		-cosf(fbx_rotation.y_) * 6.0f);
-	//D3DXVECTOR3 camera_focus_sub(
-	//	-sinf(fbx_rotation.y_ + D3DX_PI) * 6.0f,
-	//	1.0f + camera_focus_y,
-	//	-cosf(fbx_rotation.y_ + D3DX_PI) * 6.0f);
-	//camera_position = fbx_pos + camera_position_sub;
-	//camera_focus = fbx_pos + camera_focus_sub;
 
 	// 入力
 #ifdef _DEBUG
 	if(KeyBoard::isPress(DIK_UP)){
-		camera_rotation.x -= D3DX_PI * 0.01f;
-		if(camera_rotation.x < -(D3DX_PI * 0.4f)){
-			camera_rotation.x = -(D3DX_PI * 0.4f);
+		camera_rotation.x -= CAMERA_ROT_SPEED;
+		if(camera_rotation.x < -CAMERA_ROT_X_LIMIT){
+			camera_rotation.x = -CAMERA_ROT_X_LIMIT;
 		}
 	}
 	if(KeyBoard::isPress(DIK_DOWN)){
-		camera_rotation.x += D3DX_PI * 0.01f;
-		if(camera_rotation.x > (D3DX_PI * 0.4f)){
-			camera_rotation.x = (D3DX_PI * 0.4f);
+		camera_rotation.x += CAMERA_ROT_SPEED;
+		if(camera_rotation.x > CAMERA_ROT_X_LIMIT){
+			camera_rotation.x = CAMERA_ROT_X_LIMIT;
 		}
 	}
 #endif
 	
 	if(GamePad::isPress(GAMEPAD_GRANDFATHER, PAD_RS_UP)){
-		camera_rotation.x -= D3DX_PI * 0.01f;
-		if(camera_rotation.x < -(D3DX_PI * 0.4f)){
-			camera_rotation.x = -(D3DX_PI * 0.4f);
+		camera_rotation.x -= CAMERA_ROT_SPEED;
+		if(camera_rotation.x < -CAMERA_ROT_X_LIMIT){
+			camera_rotation.x = -CAMERA_ROT_X_LIMIT;
 		}
 	}
 	if(GamePad::isPress(GAMEPAD_GRANDFATHER, PAD_RS_DOWN)){
-		camera_rotation.x += D3DX_PI * 0.01f;
-		if(camera_rotation.x >(D3DX_PI * 0.4f)){
-			camera_rotation.x = (D3DX_PI * 0.4f);
+		camera_rotation.x += CAMERA_ROT_SPEED;
+		if(camera_rotation.x > CAMERA_ROT_X_LIMIT){
+			camera_rotation.x = CAMERA_ROT_X_LIMIT;
 		}
 	}
 
@@ -417,18 +392,18 @@ void Game::Update()
 	camera_rotation.y = fbx_rotation.y_;
 	// 一旦モデルを注視点に
 	camera_focus = fbx_pos;
-	// 足元基準から体の中心を基準に
-	camera_focus.y += 1.0f;
+	// 足元基準から体の中心辺りを基準に
+	camera_focus.y += CAMERA_FOCUS_OFFSET_Y;
 	// モデルの少し先を見るように調整
-	camera_focus.x += sinf(camera_rotation.y) * 0.5f * cosf(camera_rotation.x);
-	camera_focus.z += cosf(camera_rotation.y) * 0.5f * cosf(camera_rotation.x);
-	camera_focus.y += sinf(camera_rotation.x) * 0.5f;
+	camera_focus.x += sinf(camera_rotation.y) * CAMERA_FOCUS_OFFSET * cosf(camera_rotation.x);
+	camera_focus.z += cosf(camera_rotation.y) * CAMERA_FOCUS_OFFSET * cosf(camera_rotation.x);
+	camera_focus.y += sinf(camera_rotation.x) * CAMERA_FOCUS_OFFSET;
 
 	// 注視点を基準にカメラ座標を設定
 	camera_position = camera_focus;
-	camera_position.x -= sinf(camera_rotation.y) * 8.0f * cosf(camera_rotation.x);
-	camera_position.z -= cosf(camera_rotation.y) * 8.0f * cosf(camera_rotation.x);
-	camera_position.y -= sinf(camera_rotation.x) * 8.0f;
+	camera_position.x -= sinf(camera_rotation.y) * CAMERA_POS_LEN * cosf(camera_rotation.x);
+	camera_position.z -= cosf(camera_rotation.y) * CAMERA_POS_LEN * cosf(camera_rotation.x);
+	camera_position.y -= sinf(camera_rotation.x) * CAMERA_POS_LEN;
 
 	// カメラにパラメータを再セット
 	main_camera->SetPosition(camera_position);
@@ -459,7 +434,6 @@ void Game::Update()
 
 		// カメラの回転Xを利用
 		bullet_param.rotation_.x_ = camera_rotation.x;
-		bullet_param.rotation_.x_ += D3DX_PI * 0.1f;
 
 		bullet_param.scaling_ = { 1.0f, 1.0f, 1.0f };
 		std::string str = "notice" + std::to_string(bullet_count);
@@ -487,7 +461,6 @@ void Game::Update()
 
 		// カメラの回転Xを利用
 		bullet_param.rotation_.x_ = camera_rotation.x;
-		bullet_param.rotation_.x_ += D3DX_PI * 0.1f;
 
 		std::string str = "notice" + std::to_string(bullet_count);
 		object_manager_->Create(
