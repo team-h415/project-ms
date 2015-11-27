@@ -78,8 +78,8 @@
       <UniqueIdentifier>{bf55e749-48c0-49e8-8f7d-4dbbbed1d5a0}</UniqueIdentifier>
     </Filter>
     <Filter Include="source_code\application\network">
+		<UniqueIdentifier>{8a9e29bc-3eba-4074-a8dc-87f51e042e8f}</UniqueIdentifier>
 	</Filter>
-	<UniqueIdentifier>{8a9e29bc-3eba-4074-a8dc-87f51e042e8f}</UniqueIdentifier>
     <Filter Include="source_code\application\object\objects\model\fbx">
       <UniqueIdentifier>{60eba6c7-d95d-45f3-b4c7-933671d79331}</UniqueIdentifier>
     </Filter>
