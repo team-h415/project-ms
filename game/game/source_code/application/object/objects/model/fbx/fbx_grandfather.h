@@ -72,6 +72,10 @@ public:
 		}
 	}
 
+	void Action(
+		Object *target,
+		const float range);
+
 private:
 	void UpdateBoneMatrix(BONE *subject, D3DXMATRIX *parent);
 

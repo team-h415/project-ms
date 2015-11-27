@@ -36,8 +36,8 @@ MyThread *SceneManager::thread_ = nullptr;
 //-------------------------------------
 SceneManager::SceneManager()
 {
-	current_scene_ = Create("Game");
 	loading_scene_ = Create("Loading");
+	current_scene_ = Create("Game");
 	fade_ = new Fade();
 	fade_->SetFade(FADE_OUT);
 }
@@ -60,8 +60,8 @@ SceneManager::~SceneManager()
 //-------------------------------------
 Scene *SceneManager::Create(const std::string &name)
 {
-	Scene *scene = SceneFactory::Create(name);
 	current_name_ = name;
+	Scene *scene = SceneFactory::Create(name);
 	return scene;
 }
 

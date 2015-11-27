@@ -56,10 +56,17 @@ Game::Game()
 
 	effect_manager_->Create(
 		"water",
-		"resource/effect/water.efk",
+		"resource/effect/BulletFire.efk",
 		water_param);
 
+	effect_manager_->Create(
+		"damage",
+		"resource/effect/Damage4.efk",
+		water_param);
 
+	//-------------------------------------
+	// メインカメラ
+	//-------------------------------------
 	CAMERA_PARAMETER_DESC camera_param;
 	camera_param.acpect_ = SCREEN_WIDTH / SCREEN_HEIGHT;
 	camera_param.fovy_ = D3DX_PI * 0.25f;
@@ -73,6 +80,9 @@ Game::Game()
 	camera_manager_->Create(
 		"Perspective", "MainCamera", camera_param);
 
+	//-------------------------------------
+	// 地形
+	//-------------------------------------
 	OBJECT_PARAMETER_DESC param;
 	param.position_ = { 0.0f, 0.0f, 0.0f };
 	param.rotation_ = { 0.0f, 0.0f, 0.0f };
@@ -84,6 +94,9 @@ Game::Game()
 		param,
 		"resource/mesh/field.heightmap");
 
+	//-------------------------------------
+	// Xモデル
+	//-------------------------------------
 	OBJECT_PARAMETER_DESC player_param;
 	player_param.layer_ = LAYER_MODEL_X;
 	player_param.position_ = { -5.0f, 0.0f, 0.0f };
@@ -99,7 +112,7 @@ Game::Game()
 	Object *obj = object_manager_->Get("player");
 	player_collision_param.position_ = {
 		obj->parameter().position_.x_,
-		obj->parameter().position_.y_,
+		obj->parameter().position_.y_ + 0.5f,
 		obj->parameter().position_.z_ };
 	player_collision_param.range_ = 1.0f;
 	player_collision_param.offset_ = { 0.0f, 0.5f, 0.0f };
@@ -108,6 +121,9 @@ Game::Game()
 		player_collision_param);
 
 
+	//-------------------------------------
+	// FBXモデル
+	//-------------------------------------
 	OBJECT_PARAMETER_DESC fbx_param;
 	fbx_param.layer_ = LAYER_MODEL_GRANDFATHER;
 	fbx_param.position_ = { 1.0f, 0.0f, 0.0f };
@@ -130,6 +146,10 @@ Game::Game()
 	collision_manager_->Create(object_manager_->Get("fbx"),
 		fbx_collision_param);
 
+
+	//-------------------------------------
+	// タイマー
+	//-------------------------------------
     OBJECT_PARAMETER_DESC time_param;
     time_param.position_ = {
         SCREEN_WIDTH * 0.5f,
@@ -143,6 +163,10 @@ Game::Game()
     object_manager_->Create(
         "time", time_param);
 
+
+	//-------------------------------------
+	// 砦
+	//-------------------------------------
     OBJECT_PARAMETER_DESC fort_state_param;
     fort_state_param.position_ = {
         SCREEN_WIDTH * 0.5f,
@@ -157,6 +181,10 @@ Game::Game()
         "fort_state", fort_state_param,
         "resource/texture/title/logo.png");
 
+
+	//-------------------------------------
+	// ミニマップ
+	//-------------------------------------
     OBJECT_PARAMETER_DESC mini_map_param;
     mini_map_param.position_ = {
         1180.0f,
@@ -171,6 +199,10 @@ Game::Game()
         "mini_map", mini_map_param,
         "resource/texture/title/logo.png");
 
+
+	//-------------------------------------
+	// 水
+	//-------------------------------------
     OBJECT_PARAMETER_DESC water_design_param;
     water_design_param.position_ = {
         40.0f,
@@ -185,6 +217,10 @@ Game::Game()
         "water_design", water_design_param,
         "resource/texture/title/logo.png");
 
+
+	//-------------------------------------
+	// 水ゲージ
+	//-------------------------------------
     OBJECT_PARAMETER_DESC water_gage_param;
     water_gage_param.position_ = {
         250.0f,
@@ -235,6 +271,7 @@ void Game::Update()
 	static float camera_pos_y = 0.0f;
 	static float camera_focus_y = 0.0f;
 	static const float player_speed_value = 0.05f;
+	static int bullet_count = 0;
 	float player_speed = player_speed_value;
 
 	//-------------------------------------
@@ -262,6 +299,74 @@ void Game::Update()
 			fbx_rotation.y_ -= D3DX_PI * 2.0f;
 		}
 	}
+
+	//-------------------------------------
+	// デバッグ時のプレイヤー操作
+	//-------------------------------------
+#ifdef _DEBUG
+	if (KeyBoard::isPress(DIK_W)){
+		fbx_position.x_ += sinf(fbx_rotation.y_) * player_speed;
+		fbx_position.z_ += cosf(fbx_rotation.y_) * player_speed;
+	}
+	if (KeyBoard::isPress(DIK_A)){
+		fbx_position.x_ += sinf(fbx_rotation.y_ - (D3DX_PI * 0.5f)) * player_speed;
+		fbx_position.z_ += cosf(fbx_rotation.y_ - (D3DX_PI * 0.5f)) * player_speed;
+	}
+	if (KeyBoard::isPress(DIK_S)){
+		fbx_position.x_ += sinf(fbx_rotation.y_ + (D3DX_PI)) * player_speed;
+		fbx_position.z_ += cosf(fbx_rotation.y_ + (D3DX_PI)) * player_speed;
+	}
+	if (KeyBoard::isPress(DIK_D)){
+		fbx_position.x_ += sinf(fbx_rotation.y_ + (D3DX_PI * 0.5f)) * player_speed;
+		fbx_position.z_ += cosf(fbx_rotation.y_ + (D3DX_PI * 0.5f)) * player_speed;
+	}
+	if (KeyBoard::isPress(DIK_RIGHT)){
+		fbx_rotation.y_ += D3DX_PI * 0.01f;
+		if (fbx_rotation.y_ > D3DX_PI){
+			fbx_rotation.y_ -= D3DX_PI * 2.0f;
+		}
+	}
+	if (KeyBoard::isPress(DIK_LEFT)){
+		fbx_rotation.y_ -= D3DX_PI * 0.01f;
+		if (fbx_rotation.y_ < -D3DX_PI){
+			fbx_rotation.y_ += D3DX_PI * 2.0f;
+		}
+	}
+
+	if (KeyBoard::isPress(DIK_UP)){
+		camera_pos_y -= 0.05f;
+	}
+	if (KeyBoard::isPress(DIK_DOWN)){
+		camera_pos_y += 0.05f;
+	}
+
+	if (KeyBoard::isTrigger(DIK_SPACE)){
+		EFFECT_PARAMETER_DESC effect_param;
+		MyEffect *effect = effect_manager_->Get("water");
+		effect_param = effect->parameter();
+		effect_param.position_ = fbx_position;
+		effect_param.position_.y_ += 0.5f;
+		effect_param.rotation_ = fbx_rotation;
+		effect->SetParameter(effect_param);
+		effect_manager_->Play("water");
+
+
+		OBJECT_PARAMETER_DESC bullet_param;
+		bullet_param.layer_ = LAYER_BULLET;
+		bullet_param.position_ = fbx_position;
+		bullet_param.rotation_ = fbx_rotation;
+		bullet_param.scaling_ = { 1.0f, 1.0f, 1.0f };
+		std::string str = "notice" + std::to_string(bullet_count);
+		object_manager_->Create(
+			str,
+			bullet_param);
+		bullet_count++;
+	}
+	
+
+#endif //_DEBUG
+
+
 
 	if (GamePad::isPress(GAMEPAD_GRANDFATHER, PAD_RS_UP)){
 		camera_pos_y -= 0.05f;
@@ -320,14 +425,27 @@ void Game::Update()
 	if (KeyBoard::isTrigger(DIK_1)){
 		effect_manager_->Play("water");
 	}
-	if (GamePad::isTrigger(GAMEPAD_GRANDFATHER, PAD_BUTTON_6)){
+	if (GamePad::isTrigger(GAMEPAD_GRANDFATHER, PAD_BUTTON_8)){
 		EFFECT_PARAMETER_DESC effect_param;
 		MyEffect *effect = effect_manager_->Get("water");
 		effect_param = effect->parameter();
 		effect_param.position_ = fbx_position;
+		effect_param.position_.y_ += 0.5f;
 		effect_param.rotation_ = fbx_rotation;
 		effect->SetParameter(effect_param);
 		effect_manager_->Play("water");
+
+
+		OBJECT_PARAMETER_DESC bullet_param;
+		bullet_param.layer_ = LAYER_BULLET;
+		bullet_param.position_ = fbx_position;
+		bullet_param.rotation_ = fbx_rotation;
+		bullet_param.scaling_ = { 1.0f, 1.0f, 1.0f };
+		std::string str = "notice" + std::to_string(bullet_count);
+		object_manager_->Create(
+			str,
+			bullet_param);
+		bullet_count++;
 	}
 
 

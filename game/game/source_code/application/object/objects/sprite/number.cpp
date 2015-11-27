@@ -13,7 +13,8 @@
 #include "../../../render/directx9/directx9_holder.h"
 #include "../../../math/vector.h"
 #include "../../object.h"
-#include "Number.h"
+#include "number.h"
+#include "../../../resource/texture_manager.h"
 
 
 //-------------------------------------
@@ -36,7 +37,7 @@ Number::Number(
 Number::~Number()
 {
     SAFE_DELETE_ARRAY(vertex_);
-    SAFE_RELEASE(texture_);
+	texture_ = NULL;
 }
 
 
@@ -129,9 +130,7 @@ void Number::CalculateVertex()
 void Number::SetTexture(
     const std::string &path)
 {
-    D3DXCreateTextureFromFile(
-        DirectX9Holder::device_,
-        path.c_str(), &texture_);
+	texture_ = TextureManager::GetTexture(path.c_str());
 }
 
 

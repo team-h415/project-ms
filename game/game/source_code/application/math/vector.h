@@ -30,8 +30,24 @@ struct Vector3
 		x_(x), y_(y), z_(z){}
 	Vector3(const Vector3 &v) :
 		x_(v.x_), y_(v.y_), z_(v.z_){}
+
+	Vector3 operator * (float) const;
+	Vector3 operator / (float) const;
+	Vector3 operator + (const Vector3&) const; 
+	Vector3 operator - (const Vector3&) const;
+	Vector3 operator + () const;
+	Vector3 operator - () const;
+	Vector3& operator += (const Vector3&);
+	Vector3& operator -= (const Vector3&);
+	Vector3& operator *= (float);
+	Vector3& operator /= (float);
 	float x_, y_, z_;
 };
+
+float Vec3LengthPow2(const Vector3 &in);
+float Vec3Length(const Vector3 &in);
+float Vec3LengthReverce(const Vector3 &in);
+void Vec3Normalize(Vector3 &out, const Vector3 &in);
 
 
 #endif //__ADD_YOUR_HANDS__

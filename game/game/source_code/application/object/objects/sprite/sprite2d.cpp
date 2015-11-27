@@ -14,6 +14,7 @@
 #include "../../../math/vector.h"
 #include "../../object.h"
 #include "sprite2d.h"
+#include "../../../resource/texture_manager.h"
 
 
 //-------------------------------------
@@ -35,7 +36,7 @@ Sprite2D::Sprite2D(
 Sprite2D::~Sprite2D()
 {
 	SAFE_DELETE_ARRAY(vertex_);
-	SAFE_RELEASE(texture_);
+	texture_ = NULL;
 }
 
 
@@ -122,9 +123,7 @@ void Sprite2D::CalculateVertex()
 void Sprite2D::SetTexture(
 	const std::string &path)
 {
-	D3DXCreateTextureFromFile(
-		DirectX9Holder::device_,
-		path.c_str(), &texture_);
+	texture_ = TextureManager::GetTexture(path.c_str());
 }
 
 

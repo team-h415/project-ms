@@ -17,6 +17,7 @@
 //-------------------------------------
 Object::Object()
 {
+	this_delete_ = false;
 }
 
 
@@ -31,7 +32,9 @@ Object::~Object()
 //-------------------------------------
 // Action()
 //-------------------------------------
-void Object::Action()
+void Object::Action(
+	Object *target,
+	const float range)
 {
 }
 

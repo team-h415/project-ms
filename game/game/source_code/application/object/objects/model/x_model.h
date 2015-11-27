@@ -25,6 +25,9 @@ public:
 	void Draw();
 	void LoadMesh(
 		const std::string &path);
+	void Action(
+		Object *target,
+		const float range);
 private:
 	LPD3DXMESH mesh_;
 	LPD3DXBUFFER material_buffer_;

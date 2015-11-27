@@ -27,6 +27,7 @@ Collision::Collision(
 	parameter_ = parameter;
 	D3DXMatrixIdentity(&world_);
 	CalculateVertex();
+	this_delete_ = false;
 }
 
 

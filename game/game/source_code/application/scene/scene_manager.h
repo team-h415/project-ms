@@ -25,11 +25,11 @@ public:
 	// シーンの切り替え処理
 	static void RequestScene(const std::string &name);
 	// 現在のシーンを受け渡す
-	Scene *GetCurrentScene(){
+	static Scene *GetCurrentScene(){
 		return current_scene_;
 	}
 	// 現在のシーン名を取得
-	const std::string &GetCurrentSceneName(){
+	static const std::string &GetCurrentSceneName(){
 		return current_name_;
 	}
 private:
