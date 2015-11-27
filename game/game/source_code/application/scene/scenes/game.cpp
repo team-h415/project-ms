@@ -333,37 +333,6 @@ void Game::Update()
 		}
 	}
 
-	if (KeyBoard::isPress(DIK_UP)){
-		camera_pos_y -= 0.05f;
-	}
-	if (KeyBoard::isPress(DIK_DOWN)){
-		camera_pos_y += 0.05f;
-	}
-
-	if (KeyBoard::isTrigger(DIK_SPACE)){
-		EFFECT_PARAMETER_DESC effect_param;
-		MyEffect *effect = effect_manager_->Get("water");
-		effect_param = effect->parameter();
-		effect_param.position_ = fbx_position;
-		effect_param.position_.y_ += 0.5f;
-		effect_param.rotation_ = fbx_rotation;
-		effect->SetParameter(effect_param);
-		effect_manager_->Play("water");
-
-
-		OBJECT_PARAMETER_DESC bullet_param;
-		bullet_param.layer_ = LAYER_BULLET;
-		bullet_param.position_ = fbx_position;
-		bullet_param.rotation_ = fbx_rotation;
-		bullet_param.scaling_ = { 1.0f, 1.0f, 1.0f };
-		std::string str = "notice" + std::to_string(bullet_count);
-		object_manager_->Create(
-			str,
-			bullet_param);
-		bullet_count++;
-	}
-	
-
 #endif //_DEBUG
 
 
@@ -403,21 +372,68 @@ void Game::Update()
 	Camera *main_camera = camera_manager_->Get("MainCamera");
 	D3DXVECTOR3 camera_position(main_camera->position());
 	D3DXVECTOR3 camera_focus(main_camera->focus());
+	D3DXVECTOR3 camera_rotation(main_camera->rotation());
 	D3DXVECTOR3 camera_position_sub(
 		-sinf(fbx_rotation.y_) * 6.0f,
 		3.0f + camera_pos_y,
 		-cosf(fbx_rotation.y_) * 6.0f);
-	D3DXVECTOR3 camera_focus_sub(
-		-sinf(fbx_rotation.y_ + D3DX_PI) * 6.0f,
-		1.0f + camera_focus_y,
-		-cosf(fbx_rotation.y_ + D3DX_PI) * 6.0f);
+	//D3DXVECTOR3 camera_focus_sub(
+	//	-sinf(fbx_rotation.y_ + D3DX_PI) * 6.0f,
+	//	1.0f + camera_focus_y,
+	//	-cosf(fbx_rotation.y_ + D3DX_PI) * 6.0f);
+	//camera_position = fbx_pos + camera_position_sub;
+	//camera_focus = fbx_pos + camera_focus_sub;
 
-	camera_position = fbx_pos + camera_position_sub;
-	camera_focus = fbx_pos + camera_focus_sub;
+	// 入力
+#ifdef _DEBUG
+	if(KeyBoard::isPress(DIK_UP)){
+		camera_rotation.x -= D3DX_PI * 0.01f;
+		if(camera_rotation.x < -(D3DX_PI * 0.4f)){
+			camera_rotation.x = -(D3DX_PI * 0.4f);
+		}
+	}
+	if(KeyBoard::isPress(DIK_DOWN)){
+		camera_rotation.x += D3DX_PI * 0.01f;
+		if(camera_rotation.x > (D3DX_PI * 0.4f)){
+			camera_rotation.x = (D3DX_PI * 0.4f);
+		}
+	}
+#endif
+	
+	if(GamePad::isPress(GAMEPAD_GRANDFATHER, PAD_RS_UP)){
+		camera_rotation.x -= D3DX_PI * 0.01f;
+		if(camera_rotation.x < -(D3DX_PI * 0.4f)){
+			camera_rotation.x = -(D3DX_PI * 0.4f);
+		}
+	}
+	if(GamePad::isPress(GAMEPAD_GRANDFATHER, PAD_RS_DOWN)){
+		camera_rotation.x += D3DX_PI * 0.01f;
+		if(camera_rotation.x >(D3DX_PI * 0.4f)){
+			camera_rotation.x = (D3DX_PI * 0.4f);
+		}
+	}
 
+	// モデルの回転Yをそのままカメラの回転Yへ
+	camera_rotation.y = fbx_rotation.y_;
+	// 一旦モデルを注視点に
+	camera_focus = fbx_pos;
+	// 足元基準から体の中心を基準に
+	camera_focus.y += 1.0f;
+	// モデルの少し先を見るように調整
+	camera_focus.x += sinf(camera_rotation.y) * 0.5f * cosf(camera_rotation.x);
+	camera_focus.z += cosf(camera_rotation.y) * 0.5f * cosf(camera_rotation.x);
+	camera_focus.y += sinf(camera_rotation.x) * 0.5f;
+
+	// 注視点を基準にカメラ座標を設定
+	camera_position = camera_focus;
+	camera_position.x -= sinf(camera_rotation.y) * 8.0f * cosf(camera_rotation.x);
+	camera_position.z -= cosf(camera_rotation.y) * 8.0f * cosf(camera_rotation.x);
+	camera_position.y -= sinf(camera_rotation.x) * 8.0f;
+
+	// カメラにパラメータを再セット
 	main_camera->SetPosition(camera_position);
 	main_camera->SetFocus(camera_focus);
-
+	main_camera->SetRotation(camera_rotation);
 
 	//-------------------------------------
 	// エフェクト再生
@@ -440,6 +456,11 @@ void Game::Update()
 		bullet_param.layer_ = LAYER_BULLET;
 		bullet_param.position_ = fbx_position;
 		bullet_param.rotation_ = fbx_rotation;
+
+		// カメラの回転Xを利用
+		bullet_param.rotation_.x_ = camera_rotation.x;
+		bullet_param.rotation_.x_ += D3DX_PI * 0.1f;
+
 		bullet_param.scaling_ = { 1.0f, 1.0f, 1.0f };
 		std::string str = "notice" + std::to_string(bullet_count);
 		object_manager_->Create(
@@ -447,6 +468,34 @@ void Game::Update()
 			bullet_param);
 		bullet_count++;
 	}
+#ifdef _DEBUG
+	if(KeyBoard::isPress(DIK_SPACE)){
+		EFFECT_PARAMETER_DESC effect_param;
+		MyEffect *effect = effect_manager_->Get("water");
+		effect_param = effect->parameter();
+		effect_param.position_ = fbx_position;
+		effect_param.position_.y_ += 0.5f;
+		effect_param.rotation_ = fbx_rotation;
+		effect->SetParameter(effect_param);
+		effect_manager_->Play("water");
+
+		OBJECT_PARAMETER_DESC bullet_param;
+		bullet_param.layer_ = LAYER_BULLET;
+		bullet_param.position_ = fbx_position;
+		bullet_param.rotation_ = fbx_rotation;
+		bullet_param.scaling_ = {1.0f, 1.0f, 1.0f};
+
+		// カメラの回転Xを利用
+		bullet_param.rotation_.x_ = camera_rotation.x;
+		bullet_param.rotation_.x_ += D3DX_PI * 0.1f;
+
+		std::string str = "notice" + std::to_string(bullet_count);
+		object_manager_->Create(
+			str,
+			bullet_param);
+		bullet_count++;
+	}
+#endif //_DEBUG
 
 
 	//-------------------------------------
