@@ -155,6 +155,7 @@
     <ClInclude Include="source_code\application\collision\collision.h" />
     <ClInclude Include="source_code\application\collision\collision_factory.h" />
     <ClInclude Include="source_code\application\collision\collision_manager.h" />
+    <ClInclude Include="source_code\application\config\config.h" />
     <ClInclude Include="source_code\application\debug\debug_font.h" />
     <ClInclude Include="source_code\application\effect\effect.h" />
     <ClInclude Include="source_code\application\effect\effect_manager.h" />

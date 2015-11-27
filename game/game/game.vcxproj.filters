@@ -89,6 +89,9 @@
     <Filter Include="source_code\application\object\objects\notice">
       <UniqueIdentifier>{7f67fc37-b121-4bb2-82e8-fd68939f9b56}</UniqueIdentifier>
     </Filter>
+    <Filter Include="source_code\application\config">
+      <UniqueIdentifier>{52a6b0e7-89e4-46d9-9144-769d0090ea01}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source_code\main.cpp">
@@ -440,6 +443,9 @@
     </ClInclude>
     <ClInclude Include="source_code\application\object\objects\notice\bullet.h">
       <Filter>source_code\application\object\objects\notice</Filter>
+    </ClInclude>
+    <ClInclude Include="source_code\application\config\config.h">
+      <Filter>source_code\application\config</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
