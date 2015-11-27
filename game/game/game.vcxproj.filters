@@ -86,6 +86,9 @@
     <Filter Include="source_code\application\collision">
       <UniqueIdentifier>{c09705a5-6fd5-416a-a7c8-f5890c109e2e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="source_code\application\object\objects\notice">
+      <UniqueIdentifier>{7f67fc37-b121-4bb2-82e8-fd68939f9b56}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source_code\main.cpp">
@@ -252,6 +255,12 @@
     </ClCompile>
     <ClCompile Include="source_code\application\resource\x_container.cpp">
       <Filter>source_code\application\resource</Filter>
+    </ClCompile>
+    <ClCompile Include="source_code\application\math\vector.cpp">
+      <Filter>source_code</Filter>
+    </ClCompile>
+    <ClCompile Include="source_code\application\object\objects\notice\bullet.cpp">
+      <Filter>source_code\application\object\objects\notice</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -428,6 +437,9 @@
     </ClInclude>
     <ClInclude Include="source_code\application\resource\x_container.h">
       <Filter>source_code\application\resource</Filter>
+    </ClInclude>
+    <ClInclude Include="source_code\application\object\objects\notice\bullet.h">
+      <Filter>source_code\application\object\objects\notice</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

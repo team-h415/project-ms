@@ -78,6 +78,7 @@ protected:
 	bool		animation_blending_;		// アニメーションの合成
 	bool		animation_play_;			// アニメーションの再生
 
+	LPDIRECT3DTEXTURE9 texture_;
 };
 
 

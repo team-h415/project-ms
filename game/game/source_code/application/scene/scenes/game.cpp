@@ -61,7 +61,7 @@ Game::Game()
 
 	effect_manager_->Create(
 		"damage",
-		"resource/effect/Damage4.efk",
+		"resource/effect/Damage3_2.efk",
 		water_param);
 
 	//-------------------------------------
@@ -86,13 +86,13 @@ Game::Game()
 	OBJECT_PARAMETER_DESC param;
 	param.position_ = { 0.0f, 0.0f, 0.0f };
 	param.rotation_ = { 0.0f, 0.0f, 0.0f };
-	param.scaling_ = { 500.0f, 1.0f, 500.0f };
+	param.scaling_ = { 100.0f, 10.0f, 200.0f };
 	param.layer_ = LAYER_MESH_FIELD;
 
 	object_manager_->Create(
 		"field",
 		param,
-		"resource/mesh/field.heightmap");
+		"resource/mesh/map.heightmap");
 
 	//-------------------------------------
 	// Xƒ‚ƒfƒ‹

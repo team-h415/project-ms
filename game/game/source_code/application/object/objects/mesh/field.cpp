@@ -17,6 +17,7 @@
 #include "field.h"
 #include "../../../resource/texture_manager.h"
 
+
 //-------------------------------------
 // warninig
 //-------------------------------------
@@ -39,7 +40,7 @@ Field::Field(
 	shader_ = nullptr;
 	shader_ = new Shader("resource/shader/halflambert_lighting.hlsl");
 
-	texture_ = TextureManager::GetTexture("resource/texture/grass.jpg");
+	texture_ = TextureManager::GetTexture("resource/texture/game/map.png");
 }
 
 
@@ -69,6 +70,7 @@ void Field::Update()
 
 	D3DXMatrixScaling(
 		&scaling, 1.0f, 1.0f, 1.0f);
+
 	D3DXMatrixMultiply(
 		&world_, &world_, &scaling);
 	D3DXMatrixRotationYawPitchRoll(
@@ -93,8 +95,8 @@ void Field::Update()
 //-------------------------------------
 void Field::Draw()
 {
-	DirectX9Holder::device_->SetRenderState(
-		D3DRS_FILLMODE, D3DFILL_WIREFRAME);
+//	DirectX9Holder::device_->SetRenderState(
+//		D3DRS_FILLMODE, D3DFILL_WIREFRAME);
 
 	DirectX9Holder::device_->SetVertexDeclaration(
 		DirectX9Holder::vertex_declaration_3d_);
@@ -150,8 +152,8 @@ void Field::Draw()
 	DirectX9Holder::device_->SetPixelShader(NULL);
 
 
-	DirectX9Holder::device_->SetRenderState(
-		D3DRS_FILLMODE, D3DFILL_SOLID);
+//	DirectX9Holder::device_->SetRenderState(
+//		D3DRS_FILLMODE, D3DFILL_SOLID);
 }
 
 
@@ -164,9 +166,10 @@ void Field::LoadMesh(
 	FILE *file = fopen(path.c_str(), "rb");
 	int div_x(0), div_z(0), vertex_count(0);
 	D3DXVECTOR3 *vertex_buffer;
-
-	fread(&div_x, sizeof(unsigned int), 1, file);
-	fread(&div_z, sizeof(unsigned int), 1, file);
+	D3DXVECTOR2 scale_(0.0f, 0.0f);
+	fread(&div_x, sizeof(int), 1, file);
+	fread(&div_z, sizeof(int), 1, file);
+	fread(&scale_, sizeof(D3DXVECTOR2), 1, file);
 	fread(&vertex_count, sizeof(unsigned int), 1, file);
 
 	vertex_buffer = new D3DXVECTOR3[vertex_count];
@@ -226,13 +229,13 @@ void Field::CalculateVertex(
 			int num = static_cast<int>(z * (mesh_division_.x + 1) + x);
 			vertex[num].position_ = {
 				(-parameter_.scaling_.x_ / 2.0f) + (x * (parameter_.scaling_.x_ / mesh_division_.x)),
-				source_buffer[num].y,
+				source_buffer[num].y * parameter_.scaling_.y_,
 				(parameter_.scaling_.z_ / 2.0f) - (z * (parameter_.scaling_.z_ / mesh_division_.y))
 			};
 			vertex[num].diffuse_ = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
 			vertex[num].texture_ = {
-				static_cast<float>(x),
-				static_cast<float>(z)
+				static_cast<float>(x) / mesh_division_.x,
+				static_cast<float>(z) / mesh_division_.y
 			};
 		}
 	}

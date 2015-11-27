@@ -157,5 +157,22 @@ bool ObjectManager::Search(
 
 
 //-------------------------------------
+// Clear()
+//-------------------------------------
+void ObjectManager::Clear(
+	OBJECT_LAYER layer)
+{
+	for (int i = 0; i < LAYER_MAX; i++){
+		if (i == layer){
+			for (auto it = objects_[i].begin(); it != objects_[i].end(); ++it){
+				SAFE_DELETE((*it).second);
+			}
+			objects_[i].clear();
+		}
+	}
+}
+
+
+//-------------------------------------
 // end of file
 //-------------------------------------

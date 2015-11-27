@@ -16,6 +16,7 @@
 #include "../../../object.h"
 #include "../fbx_model.h"
 #include "fbx_grandfather.h"
+#include "../../../../resource/texture_manager.h"
 
 
 //-------------------------------------
@@ -32,6 +33,7 @@ FbxGrandfather::FbxGrandfather(const OBJECT_PARAMETER_DESC &parameter) :
 {
 	// ÉÇÉfÉãì«Ç›çûÇ›
 	Load("./resource/model/fbx/child_01.fbx");
+	texture_ = TextureManager::GetTexture("resource/texture/game/Child_01.jpg");
 
 #ifdef _DEBUG
 	int x;

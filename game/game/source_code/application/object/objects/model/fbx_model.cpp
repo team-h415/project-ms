@@ -46,6 +46,7 @@ const OBJECT_PARAMETER_DESC &parameter)
 	current_animation_id_ = 0;
 	animation_switching_ = 0;
 	animation_blending_ = false;
+	texture_ = NULL;
 }
 
 
@@ -56,6 +57,7 @@ FbxModel::~FbxModel()
 {
 	SAFE_DELETE_ARRAY(animation_);
 	SAFE_DELETE(shader_);
+	texture_ = NULL;
 }
 
 
@@ -199,7 +201,7 @@ void FbxModel::Draw()
 			continue;
 		}
 
-		DirectX9Holder::device_->SetTexture(0, NULL);
+		DirectX9Holder::device_->SetTexture(0, texture_);
 		debug_material = mesh_[i].material_;
 		DirectX9Holder::device_->SetMaterial(&debug_material);
 		DirectX9Holder::device_->SetStreamSource(0, mesh_[i].vertex_, 0, sizeof(VertexBlend3D));
@@ -216,6 +218,7 @@ void FbxModel::Draw()
 
 	DirectX9Holder::device_->SetVertexShader(NULL);
 	DirectX9Holder::device_->SetPixelShader(NULL);
+	DirectX9Holder::device_->SetTexture(0, NULL);
 }
 
 
