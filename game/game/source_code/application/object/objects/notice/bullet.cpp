@@ -41,7 +41,10 @@ Bullet::Bullet(
 		parameter_.position_.z_ };
 	param.range_ = 0.5f;
 	param.offset_ = { 0.0f, 0.0f, 0.0f };
-	speed_ = { 0.2f, 0.1f, 0.2f };
+	speed_ = { 0.2f, 0.05f, 0.2f };
+
+	speed_.y += sinf(parameter_.rotation_.x_) * 0.3f;
+
 	Scene *scene = SceneManager::GetCurrentScene();
 	std::string str = SceneManager::GetCurrentSceneName();
 	if (str != "Game"){
@@ -67,7 +70,7 @@ Bullet::~Bullet()
 //-------------------------------------
 void Bullet::Update()
 {
-	static float gravity = 0.005f;
+	static float gravity = 0.003f;
 	parameter_.position_.x_ += sinf(parameter_.rotation_.y_) * speed_.x;
 	parameter_.position_.y_ += speed_.y;
 	parameter_.position_.z_ += cosf(parameter_.rotation_.y_) * speed_.z;
