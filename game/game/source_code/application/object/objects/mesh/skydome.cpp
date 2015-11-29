@@ -96,6 +96,7 @@ void SkyDome::Draw()
 	//DirectX9Holder::device_->SetRenderState(
 	//	D3DRS_FILLMODE, D3DFILL_WIREFRAME);
 
+	DirectX9Holder::device_->SetRenderState(D3DRS_LIGHTING, FALSE);
 	DirectX9Holder::device_->SetVertexDeclaration(
 		DirectX9Holder::vertex_declaration_3d_);
 
@@ -150,6 +151,7 @@ void SkyDome::Draw()
 	DirectX9Holder::device_->SetPixelShader(NULL);
 
 
+	DirectX9Holder::device_->SetRenderState(D3DRS_LIGHTING, TRUE);
 	DirectX9Holder::device_->SetRenderState(
 	D3DRS_FILLMODE, D3DFILL_SOLID);
 }
@@ -212,7 +214,6 @@ void SkyDome::LoadMesh(
 	normal_buffer_ = new D3DXVECTOR3[(div_x * 2) * div_y];
 
 	CalculateVertex(vertex_buffer);
-	CalculateNormal();
 	CalculateIndex();
 	SAFE_DELETE(vertex_buffer);
 }
@@ -227,27 +228,31 @@ void SkyDome::CalculateVertex(
 	D3DXVECTOR2 curcle_radius = D3DXVECTOR2(mesh_radius_, 0.0f);
 	Vertex3D *vertex;
 	vertex_buffer_->Lock(0, 0, (void**)&vertex, 0);
+	float height = 0.0f;
+	float angle = 0.0f;
+	float lange = 0.5f;
+	float height_sub = D3DX_PI * 0.5f / mesh_division_.y;
+	float angle_sub = D3DX_PI * 2.0f / mesh_division_.x;
+	float lange_sub = 0.5f / mesh_division_.y;
 
-	float arc = (float)360 / mesh_division_.x;
+	for (int y = 0; y < static_cast<int>(mesh_division_.y + 1); y++, height += height_sub, lange -= lange_sub){
+		angle = 0.0f;
+		for (int x = 0; x < static_cast<int>(mesh_division_.x + 1); x++, angle += angle_sub){
 
-	for (int y = 0; y < static_cast<int>(mesh_division_.y + 1); y++)
-	{
-		float radius_angle_y = (float)90 / mesh_division_.y*D3DX_PI / 180 * y;
-
-		curcle_radius.y = mesh_radius_*cosf(radius_angle_y);
-		
-		for (int x = 0; x < static_cast<int>(mesh_division_.x + 1); x++)
-		{
 			int num = static_cast<int>(y * (mesh_division_.x + 1) + x);
-			float angle_x = arc * x * D3DX_PI / 180.0f * -1.0f;
-
+			
 			vertex[num].position_ = {
-				(sinf(angle_x)*curcle_radius.y),
-				(sinf(radius_angle_y)*mesh_radius_),
-				(cosf(angle_x)*curcle_radius.y)
+				sinf(-angle) * mesh_radius_ * cosf(height),
+				mesh_radius_ * sinf(height),
+				cosf(-angle) * mesh_radius_ * cosf(height)
 			};
 
 			vertex[num].diffuse_ = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+			vertex[num].normal_ = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
+
+			vertex[num].texture_ = {
+				0.5f - sinf(angle) * lange,
+				0.5f - cosf(angle) * lange };
 		}
 	}
 	vertex_buffer_->Unlock();
@@ -283,94 +288,6 @@ void SkyDome::CalculateIndex()
 }
 
 
-//-------------------------------------
-// CalculateNormal()
-//-------------------------------------
-void SkyDome::CalculateNormal()
-{
-	CalculateVertexNormal();
-	CalculateTextureUV();
-	NomalizeNormal();
-}
-
-
-//-------------------------------------
-// CalculateVertexNormal()
-//-------------------------------------
-void SkyDome::CalculateVertexNormal()
-{
-	D3DXVECTOR2 curcle_radius = D3DXVECTOR2(mesh_radius_, 0.0f);
-	Vertex3D *vertex;
-	vertex_buffer_->Lock(0, 0, (void**)&vertex, 0);
-
-	float arc = (float)360 / mesh_division_.x;
-
-	for (int y = 0; y < static_cast<int>(mesh_division_.y + 1); y++)
-	{
-		float radius_angle_y = (float)90 / mesh_division_.y*D3DX_PI / 180 * y;
-		curcle_radius.y = mesh_radius_*cosf(radius_angle_y);
-
-		for (int x = 0; x < static_cast<int>(mesh_division_.x + 1); x++)
-		{
-			int num = static_cast<int>(y * (mesh_division_.x + 1) + x);
-			float angle_x = arc * x * D3DX_PI / 180.0f * -1.0f;
-			float normal_y = sinf(radius_angle_y);
-			D3DXVECTOR3 vector = D3DXVECTOR3( 0.0f, 0.0f, 0.0f)-vertex[num].position_;
-			normal_buffer_[num] = vector;
-			D3DXVec3Normalize(&normal_buffer_[num], &normal_buffer_[num]);
-		}
-	}
-
-	vertex_buffer_->Unlock();
-}
-
-
-//-------------------------------------
-// NomalizeNormal()
-//-------------------------------------
-void SkyDome::NomalizeNormal()
-{
-	Vertex3D *vertex;
-
-	vertex_buffer_->Lock(0, 0, (void**)&vertex, 0);
-
-	for (int num = 0; num < (mesh_division_.x + 1)*(mesh_division_.y + 1); num++)
-	{
-		vertex[num].normal_ = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
-	}
-
-	vertex_buffer_->Unlock();
-
-}
-
-
-//-------------------------------------
-// CalculateTextureUV()
-//-------------------------------------
-void SkyDome::CalculateTextureUV()
-{
-	D3DXVECTOR2 curcle_radius = D3DXVECTOR2(mesh_radius_, 0.0f);
-	Vertex3D *vertex;
-	vertex_buffer_->Lock(0, 0, (void**)&vertex, 0);
-
-	for (int y = 0; y < static_cast<int>(mesh_division_.y + 1); y++)
-	{
-		for (int x = 0; x < static_cast<int>(mesh_division_.x + 1); x++)
-		{
-			
-			int num = static_cast<int>(y * (mesh_division_.x + 1) + x);
-
-			vertex[num].texture_ = {
-				static_cast<float>(normal_buffer_[num].x*0.5 + 0.5f),
-				static_cast<float>(normal_buffer_[num].z*0.5 + 0.5f)
-			};
-
-		}
-	}
-
-	vertex_buffer_->Unlock();
-
-}
 //-------------------------------------
 // end of file
 //-------------------------------------

@@ -23,6 +23,7 @@
 #include "objects/model/fbx/fbx_grandfather.h"
 #include "objects/model/fbx/fbx_child.h"
 #include "objects/notice/bullet.h"
+#include "objects/mesh/skydome.h"
 
 
 //-------------------------------------
@@ -81,6 +82,12 @@ Object *ObjectFactory::Create(
 		Field *field = dynamic_cast<Field*>(object);
 		field->LoadMesh(object_path);
 	}
+
+	else if (param.layer_ == LAYER_MESH_SKYDOME){
+		object = new SkyDome(parameter);
+		SkyDome *sky = dynamic_cast<SkyDome*>(object);
+		sky->LoadMesh(object_path);
+	}
 	 
 	else if (param.layer_ == LAYER_MODEL_X){
 		object = new XModel(parameter);
@@ -99,11 +106,10 @@ Object *ObjectFactory::Create(
 		Sprite2D *sprite = dynamic_cast<Sprite2D*>(object);
 		sprite->SetTexture(object_path);
 	}
-
+/*
     else if (param.layer_ == LAYER_WATER_GAGE){
         object = new WaterGage(parameter);
-
-    }
+    }*/
 
 	else{
 		ASSERT_ERROR("無効なオブジェクト生成カテゴリです");

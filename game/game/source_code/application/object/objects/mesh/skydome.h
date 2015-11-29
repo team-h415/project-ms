@@ -29,10 +29,6 @@ private:
 	void CalculateVertex(
 		D3DXVECTOR3 *source_buffer);
 	void CalculateIndex();
-	void CalculateNormal();
-	void CalculateVertexNormal();
-	void CalculateTextureUV();
-	void NomalizeNormal();
 
 	LPDIRECT3DVERTEXBUFFER9 vertex_buffer_;
 	LPDIRECT3DINDEXBUFFER9 index_buffer_;
