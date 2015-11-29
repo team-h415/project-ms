@@ -96,9 +96,9 @@
     <ClCompile Include="source_code\application\collision\collision.cpp" />
     <ClCompile Include="source_code\application\collision\collision_factory.cpp" />
     <ClCompile Include="source_code\application\collision\collision_manager.cpp" />
-    <ClCompile Include="source_code\application\debug\debug_font.cpp" />
     <ClCompile Include="source_code\application\effect\effect.cpp" />
     <ClCompile Include="source_code\application\effect\effect_manager.cpp" />
+    <ClCompile Include="source_code\application\font\debug_font.cpp" />
     <ClCompile Include="source_code\application\fps\fps.cpp" />
     <ClCompile Include="source_code\application\input\input.cpp" />
     <ClCompile Include="source_code\application\input\inputs\gamepad.cpp" />
@@ -158,9 +158,9 @@
     <ClInclude Include="source_code\application\collision\collision_factory.h" />
     <ClInclude Include="source_code\application\collision\collision_manager.h" />
     <ClInclude Include="source_code\application\config\config.h" />
-    <ClInclude Include="source_code\application\debug\debug_font.h" />
     <ClInclude Include="source_code\application\effect\effect.h" />
     <ClInclude Include="source_code\application\effect\effect_manager.h" />
+    <ClInclude Include="source_code\application\font\debug_font.h" />
     <ClInclude Include="source_code\application\fps\fps.h" />
     <ClInclude Include="source_code\application\input\input.h" />
     <ClInclude Include="source_code\application\input\inputs\gamepad.h" />

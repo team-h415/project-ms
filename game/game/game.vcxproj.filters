@@ -62,9 +62,6 @@
     <Filter Include="source_code\application\shader">
       <UniqueIdentifier>{d6041757-0270-48bb-970a-c45e00137a72}</UniqueIdentifier>
     </Filter>
-    <Filter Include="source_code\application\debug">
-      <UniqueIdentifier>{eaa7fb8f-9696-46ab-a4d3-135708f9b860}</UniqueIdentifier>
-    </Filter>
     <Filter Include="source_code\application\object\objects\mesh">
       <UniqueIdentifier>{131ebc22-f660-4ec0-b334-b722dcc331ca}</UniqueIdentifier>
     </Filter>
@@ -91,6 +88,9 @@
     </Filter>
     <Filter Include="source_code\application\config">
       <UniqueIdentifier>{52a6b0e7-89e4-46d9-9144-769d0090ea01}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source_code\application\font">
+      <UniqueIdentifier>{eaa7fb8f-9696-46ab-a4d3-135708f9b860}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -184,9 +184,6 @@
     <ClCompile Include="source_code\application\shader\shader.cpp">
       <Filter>source_code\application\shader</Filter>
     </ClCompile>
-    <ClCompile Include="source_code\application\debug\debug_font.cpp">
-      <Filter>source_code\application\debug</Filter>
-    </ClCompile>
     <ClCompile Include="source_code\application\object\objects\mesh\field.cpp">
       <Filter>source_code\application\object\objects\mesh</Filter>
     </ClCompile>
@@ -270,6 +267,9 @@
     </ClCompile>
     <ClCompile Include="source_code\application\object\objects\sprite\damage_effect.cpp">
       <Filter>source_code\application\object\objects\sprite</Filter>
+    </ClCompile>
+    <ClCompile Include="source_code\application\font\debug_font.cpp">
+      <Filter>source_code\application\font</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -372,9 +372,6 @@
     <ClInclude Include="source_code\application\shader\shader.h">
       <Filter>source_code\application\shader</Filter>
     </ClInclude>
-    <ClInclude Include="source_code\application\debug\debug_font.h">
-      <Filter>source_code\application\debug</Filter>
-    </ClInclude>
     <ClInclude Include="source_code\application\object\objects\mesh\field.h">
       <Filter>source_code\application\object\objects\mesh</Filter>
     </ClInclude>
@@ -458,6 +455,9 @@
     </ClInclude>
     <ClInclude Include="source_code\application\object\objects\sprite\damage_effect.h">
       <Filter>source_code\application\object\objects\sprite</Filter>
+    </ClInclude>
+    <ClInclude Include="source_code\application\font\debug_font.h">
+      <Filter>source_code\application\font</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
