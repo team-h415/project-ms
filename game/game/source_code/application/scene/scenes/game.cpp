@@ -95,6 +95,20 @@ Game::Game()
 		param,
 		"resource/mesh/map.heightmap");
 
+
+	//-------------------------------------
+	// ‹ó
+	//-------------------------------------
+	param.position_ = { 0.0f, 0.0f, 0.0f };
+	param.rotation_ = { 0.0f, 0.0f, 0.0f };
+	param.scaling_ = { 500.0f, 1.0f, 500.0f };
+	param.layer_ = LAYER_MESH_SKYDOME;
+
+	object_manager_->Create(
+		"skydome",
+		param,
+		"resource/mesh/skydome.txt");
+
 	//-------------------------------------
 	// Xƒ‚ƒfƒ‹
 	//-------------------------------------

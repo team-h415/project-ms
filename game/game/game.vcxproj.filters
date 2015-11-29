@@ -271,6 +271,9 @@
     <ClCompile Include="source_code\application\font\debug_font.cpp">
       <Filter>source_code\application\font</Filter>
     </ClCompile>
+    <ClCompile Include="source_code\application\object\objects\mesh\skydome.cpp">
+      <Filter>source_code\application\object\objects\mesh</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source_code\main.h">
@@ -458,6 +461,9 @@
     </ClInclude>
     <ClInclude Include="source_code\application\font\debug_font.h">
       <Filter>source_code\application\font</Filter>
+    </ClInclude>
+    <ClInclude Include="source_code\application\object\objects\mesh\skydome.h">
+      <Filter>source_code\application\object\objects\mesh</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
