@@ -71,13 +71,13 @@ DamageEffect::~DamageEffect()
 //-------------------------------------
 void DamageEffect::Update()
 {
-    if (KeyBoard::isPress(DIK_UP))
+    if (KeyBoard::isPress(DIK_6))
     {
         ++hp_;
         if (hp_ > 100)
             hp_ = 100;
     }
-    else if (KeyBoard::isPress(DIK_DOWN))
+    else if (KeyBoard::isPress(DIK_7))
     {
         --hp_;
         if (hp_ < 0)
@@ -130,6 +130,10 @@ void DamageEffect::Update()
 //-------------------------------------
 void DamageEffect::Draw()
 {
+	DirectX9Holder::device_->SetRenderState(D3DRS_ALPHATESTENABLE, TRUE);
+	DirectX9Holder::device_->SetRenderState(D3DRS_ALPHAREF, 0x01);
+	DirectX9Holder::device_->SetRenderState(D3DRS_ALPHAFUNC, D3DCMP_GREATEREQUAL);
+
     DirectX9Holder::device_->SetVertexDeclaration(
         DirectX9Holder::vertex_declaration_2d_);
 
@@ -152,6 +156,9 @@ void DamageEffect::Draw()
 
     DirectX9Holder::device_->SetVertexShader(NULL);
     DirectX9Holder::device_->SetPixelShader(NULL);
+
+
+	DirectX9Holder::device_->SetRenderState(D3DRS_ALPHATESTENABLE, FALSE);
 }
 
 
