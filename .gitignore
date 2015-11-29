@@ -1,3 +1,5 @@
 *.opensdf
 *.suo
 Release/
+Debug/
+resource/
