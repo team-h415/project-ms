@@ -19,6 +19,7 @@
 #include "../../../effect/effect.h"
 #include "../../../effect/effect_manager.h"
 #include "../mesh/field.h"
+#include "../../../config/config.h"
 #include "bullet.h"
 #include "../../../scene/scene.h"
 #include "../../../scene/scene_manager.h"
@@ -41,7 +42,13 @@ Bullet::Bullet(
 		parameter_.position_.z_ };
 	param.range_ = 0.5f;
 	param.offset_ = { 0.0f, 0.0f, 0.0f };
-	speed_ = { 0.2f, 0.1f, 0.2f };
+	speed_ = {BULLET_DEF_SPEED_XZ, BULLET_DEF_SPEED_Y, BULLET_DEF_SPEED_XZ};
+
+	// 回転値を少し調整
+	parameter_.rotation_.x_ += BULLET_OFFSET_ROT;
+	// 回転値を参照して速度を改良
+	speed_.y += sinf(parameter_.rotation_.x_) * BULLET_ADD_SPEED_Y;
+
 	Scene *scene = SceneManager::GetCurrentScene();
 	std::string str = SceneManager::GetCurrentSceneName();
 	if (str != "Game"){
@@ -67,11 +74,10 @@ Bullet::~Bullet()
 //-------------------------------------
 void Bullet::Update()
 {
-	static float gravity = 0.005f;
 	parameter_.position_.x_ += sinf(parameter_.rotation_.y_) * speed_.x;
 	parameter_.position_.y_ += speed_.y;
 	parameter_.position_.z_ += cosf(parameter_.rotation_.y_) * speed_.z;
-	speed_.y -= gravity;
+	speed_.y -= BULLET_GRAVITY;
 
 	Scene *scene = SceneManager::GetCurrentScene();
 	std::string str = SceneManager::GetCurrentSceneName();

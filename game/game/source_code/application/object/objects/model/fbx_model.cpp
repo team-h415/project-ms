@@ -46,6 +46,7 @@ const OBJECT_PARAMETER_DESC &parameter)
 	current_animation_id_ = 0;
 	animation_switching_ = 0;
 	animation_blending_ = false;
+	texture_ = NULL;
 }
 
 
@@ -54,8 +55,14 @@ const OBJECT_PARAMETER_DESC &parameter)
 //-------------------------------------
 FbxModel::~FbxModel()
 {
+	for (int i = 0; i < bone_count_; i++)
+	{
+		SAFE_DELETE_ARRAY(bone_[i].key_);
+	}
+	SAFE_DELETE_ARRAY(bone_);
 	SAFE_DELETE_ARRAY(animation_);
 	SAFE_DELETE(shader_);
+	texture_ = NULL;
 }
 
 
@@ -199,7 +206,7 @@ void FbxModel::Draw()
 			continue;
 		}
 
-		DirectX9Holder::device_->SetTexture(0, NULL);
+		DirectX9Holder::device_->SetTexture(0, texture_);
 		debug_material = mesh_[i].material_;
 		DirectX9Holder::device_->SetMaterial(&debug_material);
 		DirectX9Holder::device_->SetStreamSource(0, mesh_[i].vertex_, 0, sizeof(VertexBlend3D));
@@ -216,6 +223,7 @@ void FbxModel::Draw()
 
 	DirectX9Holder::device_->SetVertexShader(NULL);
 	DirectX9Holder::device_->SetPixelShader(NULL);
+	DirectX9Holder::device_->SetTexture(0, NULL);
 }
 
 
@@ -231,8 +239,32 @@ const std::string &path)
 	mesh_ = container->mesh_;
 	mesh_cursor_ = container->mesh_cursor_;
 	bone_count_ = container->bone_count_;
-	bone_ = container->bone_;
 	root_ = container->root_;
+	bone_ = new BONE[bone_count_];
+	for (int i = 0; i < bone_count_; i++){
+		bone_[i] = container->bone_[i];
+
+		if (bone_[i].child_ != nullptr)
+		{
+			int id;
+			id = bone_[i].child_ - root_;
+			bone_[i].child_ = &bone_[id];
+		}
+		if (bone_[i].sibling_ != nullptr)
+		{
+			int id;
+			id = bone_[i].sibling_ - root_;
+			bone_[i].sibling_ = &bone_[id];
+		}
+
+		bone_[i].key_ = new KEY_FRAME[bone_[i].key_max_];
+		for (int j = 0; j < bone_[i].key_max_; j++)
+		{
+			bone_[i].key_[j] = container->bone_[i].key_[j];
+		}
+
+	}
+//	bone_ = container->bone_;
 	cur_time_ = container->cur_time_;
 	bone_cursor_ = container->bone_cursor_;
 }

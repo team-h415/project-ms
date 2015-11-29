@@ -52,15 +52,16 @@ void CollisionManager::Update()
 	//-------------------------------------
 	// 全要素を更新
 	for (auto it = collision_.begin(); it != collision_.end(); ++it){
-		(*it)->Update();
-	}
-
-	for (auto it = collision_.begin(); it != collision_.end(); ++it){
 		if ((*it)->this_delete()){
 			SAFE_DELETE((*it));
 		}
 	}
 	collision_.remove(nullptr);
+
+	for(auto it = collision_.begin(); it != collision_.end(); ++it){
+		(*it)->Update();
+	}
+
 
 	//-------------------------------------
 	// 球形同士のあたり判定を実施

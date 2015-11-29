@@ -14,7 +14,7 @@
 #include "../../math/vector.h"
 #include "../../input/input.h"
 #include "../../input/inputs/keyboard.h"
-#include "../../debug/debug_font.h"
+#include "../../font/debug_font.h"
 #include "../../object/object.h"
 #include "../../object/object_manager.h"
 #include "../../camera/camera.h"
@@ -87,7 +87,7 @@ void Result::Update()
 
 	if (KeyBoard::isTrigger(DIK_RETURN))
 	{
-		SceneManager::RequestScene("Title");
+		SceneManager::RequestScene("Matching");
 	}
 }
 

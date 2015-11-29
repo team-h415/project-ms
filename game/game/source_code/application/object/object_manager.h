@@ -53,6 +53,15 @@ public:
 	Object *Get(
 		const std::string &name);
 
+	//-------------------------------------
+	// 指定レイヤーのオブジェクト削除
+	//-------------------------------------
+	// 指定したレイヤーのコンテナをクリアします
+	// ObjectManager::Clear(
+	//     "オブジェクトのレイヤー");
+	void Clear(
+		OBJECT_LAYER layer);
+
 private:
 	bool Search(const std::string &name);
 	std::map<std::string, Object*> objects_[LAYER_MAX];
