@@ -259,6 +259,23 @@ Game::Game()
     object_manager_->Create(
         "water_gage", water_gage_param);
 
+
+    //-------------------------------------
+    // ダメージエフェクト
+    //-------------------------------------
+    OBJECT_PARAMETER_DESC hit_point_param;
+    hit_point_param.position_ = {
+        SCREEN_WIDTH * 0.5f,
+        SCREEN_HEIGHT * 0.5f,
+        0.0f
+    };
+    hit_point_param.rotation_ = { 0.0f, 0.0f, 0.0f };
+    hit_point_param.scaling_ = { SCREEN_WIDTH, SCREEN_HEIGHT, 0.0f };
+    hit_point_param.layer_ = LAYER_DAMAGE_EFFECT;
+
+    object_manager_->Create(
+        "damage_effect", hit_point_param);
+
 }
 
 
