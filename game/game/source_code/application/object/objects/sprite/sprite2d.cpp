@@ -14,6 +14,7 @@
 #include "../../../math/vector.h"
 #include "../../object.h"
 #include "sprite2d.h"
+#include "../../../resource/texture_manager.h"
 
 
 //-------------------------------------
@@ -35,7 +36,7 @@ Sprite2D::Sprite2D(
 Sprite2D::~Sprite2D()
 {
 	SAFE_DELETE_ARRAY(vertex_);
-	SAFE_RELEASE(texture_);
+	texture_ = NULL;
 }
 
 
@@ -53,6 +54,10 @@ void Sprite2D::Update()
 //-------------------------------------
 void Sprite2D::Draw()
 {
+	DirectX9Holder::device_->SetRenderState(D3DRS_ALPHATESTENABLE, TRUE);
+	DirectX9Holder::device_->SetRenderState(D3DRS_ALPHAREF, 0x01);
+	DirectX9Holder::device_->SetRenderState(D3DRS_ALPHAFUNC, D3DCMP_GREATEREQUAL);
+
 	DirectX9Holder::device_->SetVertexDeclaration(
 		DirectX9Holder::vertex_declaration_2d_);
 
@@ -64,7 +69,9 @@ void Sprite2D::Draw()
 		vertex_,
 		sizeof(Vertex2D));
 
-	DirectX9Holder::device_->SetTexture(0,NULL);
+	DirectX9Holder::device_->SetTexture(0, NULL);
+
+	DirectX9Holder::device_->SetRenderState(D3DRS_ALPHATESTENABLE, FALSE);
 }
 
 
@@ -122,9 +129,7 @@ void Sprite2D::CalculateVertex()
 void Sprite2D::SetTexture(
 	const std::string &path)
 {
-	D3DXCreateTextureFromFile(
-		DirectX9Holder::device_,
-		path.c_str(), &texture_);
+	texture_ = TextureManager::GetTexture(path.c_str());
 }
 
 

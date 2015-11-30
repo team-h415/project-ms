@@ -52,6 +52,18 @@ void ObjectManager::Update()
 			(*it).second->Update();
 		}
 	}
+	for (int i = 0; i < LAYER_MAX; i++){
+		for (auto it = objects_[i].begin(); it != objects_[i].end();){
+			if ((*it).second->this_delete()){
+				SAFE_DELETE((*it).second);
+				objects_[i].erase(it++);
+			}
+			else
+			{
+				it++;
+			}
+		}
+	}
 }
 
 
@@ -129,6 +141,9 @@ bool ObjectManager::Search(
 	for (int i = 0; i < LAYER_MAX; i++){
 		for (auto it = objects_[i].begin(); it != objects_[i].end(); ++it){
 			if ((*it).first == name){
+				if (name == "notice"){
+					continue;
+				}
 				std::string warning;
 				warning = name;
 				warning += ": この名前のオブジェクトは作成済みです";
@@ -138,6 +153,23 @@ bool ObjectManager::Search(
 		}
 	}
 	return false;
+}
+
+
+//-------------------------------------
+// Clear()
+//-------------------------------------
+void ObjectManager::Clear(
+	OBJECT_LAYER layer)
+{
+	for (int i = 0; i < LAYER_MAX; i++){
+		if (i == layer){
+			for (auto it = objects_[i].begin(); it != objects_[i].end(); ++it){
+				SAFE_DELETE((*it).second);
+			}
+			objects_[i].clear();
+		}
+	}
 }
 
 

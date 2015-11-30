@@ -16,6 +16,7 @@
 #include "../../../object.h"
 #include "../fbx_model.h"
 #include "fbx_grandfather.h"
+#include "../../../../resource/texture_manager.h"
 
 
 //-------------------------------------
@@ -31,7 +32,8 @@ FbxGrandfather::FbxGrandfather(const OBJECT_PARAMETER_DESC &parameter) :
 	FbxModel(parameter)
 {
 	// ƒ‚ƒfƒ‹“Ç‚Ýž‚Ý
-	Load("./resource/model/fbx/child_01.fbx");
+	Load("./resource/model/fbx/ogchan.fbx");
+	texture_ = TextureManager::GetTexture("resource/texture/game/ogchan.jpg");
 
 #ifdef _DEBUG
 	int x;
@@ -398,6 +400,28 @@ D3DXVECTOR3 FbxGrandfather::InterpolateBlendScaling(BONE* subject, float prev_ti
 	D3DXVECTOR3 blend((1.0f - t) * prev_scl + t * next_scl);
 
 	return blend;
+}
+
+
+//-------------------------------------
+// Action()
+//-------------------------------------
+void FbxGrandfather::Action(
+	Object *target,
+	const float range)
+{
+	//-------------------------------------
+	// Xƒ‚ƒfƒ‹‚Æ“–‚½‚Á‚½‚ç
+	if (target->parameter().layer_ == LAYER_MODEL_X){
+		Vector3 vec = target->parameter().position_ - parameter_.position_;
+		Vector3 v = vec;
+		Vec3Normalize(vec, vec);
+		float distance = sqrtf(
+			(v.x_ * v.x_) + (v.y_ * v.y_) + (v.z_ * v.z_));
+		float sub = range - distance;
+		vec *= sub;
+		parameter_.position_ -= vec;
+	}
 }
 
 

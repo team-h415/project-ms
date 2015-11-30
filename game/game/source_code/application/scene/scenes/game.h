@@ -30,9 +30,27 @@ public:
 	void Update();
 	void Draw();
 
+<<<<<<< HEAD
 	ObjectManager* GetObjectManager(){return object_manager_;}
 	CameraManager* GetCameraManager(){return camera_manager_;}
 	EffectManager* GetEffectManager(){return effect_manager_;}
+=======
+	//-------------------------------------
+	// ƒpƒ‰ƒ[ƒ^
+	//-------------------------------------
+	CollisionManager *collision_manager(){
+		return collision_manager_;
+	}
+	ObjectManager *object_manager(){
+		return object_manager_;
+	}
+	CameraManager *camera_manager(){
+		return camera_manager_;
+	}
+	EffectManager *effect_manager(){
+		return effect_manager_;
+	}
+>>>>>>> master
 
 private:
 	ObjectManager *object_manager_;

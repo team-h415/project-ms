@@ -19,14 +19,17 @@
 enum OBJECT_LAYER
 {
 	LAYER_NONE = 0,
+	LAYER_MESH_SKYDOME,
 	LAYER_MESH_FIELD,
 	LAYER_MODEL_X,
 	LAYER_MODEL_FBX,
 	LAYER_MODEL_GRANDFATHER,
 	LAYER_MODEL_CHILD,
+	LAYER_BULLET,
 	LAYER_SPRITE_2D,
     LAYER_TIMER,
     LAYER_WATER_GAGE,
+    LAYER_DAMAGE_EFFECT,
 	LAYER_MAX,
 };
 
@@ -57,11 +60,16 @@ public:
 	// 描画
 	virtual void Draw() = 0;
 	// あたり判定
-	virtual void Action();
+	virtual void Action(
+		Object *target, 
+		const float range);
 	
 	// パラメータ取得
 	const OBJECT_PARAMETER_DESC &parameter(){
 		return parameter_;
+	}
+	bool this_delete(){
+		return this_delete_;
 	}
 
 	// パラメータ設定
@@ -80,6 +88,7 @@ public:
 
 protected:
 	OBJECT_PARAMETER_DESC parameter_;
+	bool this_delete_;
 };
 
 

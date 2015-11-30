@@ -25,7 +25,6 @@ WaterGage::WaterGage(
 {
     parameter_ = parameter;
     vertex_ = new Vertex2D[4];
-//    CalculateVertex();
     texture_ = NULL;
 
     gage_volume_ = kMaxGage;
@@ -38,7 +37,7 @@ WaterGage::WaterGage(
 WaterGage::~WaterGage()
 {
     SAFE_DELETE_ARRAY(vertex_);
-    SAFE_RELEASE(texture_);
+	texture_ = NULL;
 }
 
 

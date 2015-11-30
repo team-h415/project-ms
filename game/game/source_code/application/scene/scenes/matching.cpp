@@ -16,8 +16,12 @@
 #include "../../math/vector.h"
 #include "../../input/input.h"
 #include "../../input/inputs/keyboard.h"
+<<<<<<< HEAD
 #include "../../input/inputs/gamepad.h"
 #include "../../debug/debug_font.h"
+=======
+#include "../../font/debug_font.h"
+>>>>>>> master
 #include "../../object/object.h"
 #include "../../object/object_manager.h"
 #include "../../object/objects/mesh/field.h"

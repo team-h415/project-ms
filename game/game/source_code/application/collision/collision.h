@@ -42,18 +42,24 @@ public:
 	Object *parent(){
 		return parent_;
 	}
+	bool this_delete(){
+		return this_delete_;
+	}
 
 	//-------------------------------------
 	// •`‰æ—p
 	void CalculateVertex();
 	void Update();
 	void Draw();
-
+	void SetThisDelete(bool flag){
+		this_delete_ = flag;
+	}
 private:
 	COLLISION_PARAMETER_DESC parameter_;
 	Object *parent_;
 	Vertex3D vertex_[3][11];
 	D3DXMATRIX world_;
+	bool this_delete_;
 };
 
 

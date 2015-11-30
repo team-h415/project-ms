@@ -52,8 +52,16 @@ void CollisionManager::Update()
 	//-------------------------------------
 	// ‘S—v‘f‚ğXV
 	for (auto it = collision_.begin(); it != collision_.end(); ++it){
+		if ((*it)->this_delete()){
+			SAFE_DELETE((*it));
+		}
+	}
+	collision_.remove(nullptr);
+
+	for(auto it = collision_.begin(); it != collision_.end(); ++it){
 		(*it)->Update();
 	}
+
 
 	//-------------------------------------
 	// ‹…Œ`“¯m‚Ì‚ ‚½‚è”»’è‚ğÀ{
@@ -68,7 +76,8 @@ void CollisionManager::Update()
 			if (range > d){
 				//-------------------------------------
 				// “–‚½‚Á‚½‚Ìˆ—
-				(*it)->parent()->Action();
+				(*it)->parent()->Action((*it2)->parent(), range);
+				(*it2)->parent()->Action((*it)->parent(), range);
 			}
 		}
 	}

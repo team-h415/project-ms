@@ -19,7 +19,11 @@
 #include "objects/model/fbx_model.h"
 #include "objects/sprite/timer.h"
 #include "objects/sprite/water_gage.h"
+#include "objects/sprite/damage_effect.h"
 #include "objects/model/fbx/fbx_grandfather.h"
+#include "objects/model/fbx/fbx_child.h"
+#include "objects/notice/bullet.h"
+#include "objects/mesh/skydome.h"
 
 
 //-------------------------------------
@@ -40,8 +44,20 @@ Object *ObjectFactory::Create(
         object = new Timer(parameter);
     }
 
+    else if (param.layer_ == LAYER_DAMAGE_EFFECT){
+        object = new DamageEffect(parameter);
+    }
+
 	else if (param.layer_ == LAYER_MODEL_GRANDFATHER){
 		object = new FbxGrandfather(parameter);
+	}
+
+	else if (param.layer_ == LAYER_MODEL_CHILD){
+		object = new FbxChild(parameter);
+	}
+
+	else if (param.layer_ == LAYER_BULLET){
+		object = new Bullet(parameter);
 	}
 
 	else{
@@ -66,6 +82,12 @@ Object *ObjectFactory::Create(
 		Field *field = dynamic_cast<Field*>(object);
 		field->LoadMesh(object_path);
 	}
+
+	else if (param.layer_ == LAYER_MESH_SKYDOME){
+		object = new SkyDome(parameter);
+		SkyDome *sky = dynamic_cast<SkyDome*>(object);
+		sky->LoadMesh(object_path);
+	}
 	 
 	else if (param.layer_ == LAYER_MODEL_X){
 		object = new XModel(parameter);
@@ -84,11 +106,10 @@ Object *ObjectFactory::Create(
 		Sprite2D *sprite = dynamic_cast<Sprite2D*>(object);
 		sprite->SetTexture(object_path);
 	}
-
+/*
     else if (param.layer_ == LAYER_WATER_GAGE){
         object = new WaterGage(parameter);
-
-    }
+    }*/
 
 	else{
 		ASSERT_ERROR("無効なオブジェクト生成カテゴリです");

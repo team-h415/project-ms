@@ -62,9 +62,6 @@
     <Filter Include="source_code\application\shader">
       <UniqueIdentifier>{d6041757-0270-48bb-970a-c45e00137a72}</UniqueIdentifier>
     </Filter>
-    <Filter Include="source_code\application\debug">
-      <UniqueIdentifier>{eaa7fb8f-9696-46ab-a4d3-135708f9b860}</UniqueIdentifier>
-    </Filter>
     <Filter Include="source_code\application\object\objects\mesh">
       <UniqueIdentifier>{131ebc22-f660-4ec0-b334-b722dcc331ca}</UniqueIdentifier>
     </Filter>
@@ -88,6 +85,15 @@
     </Filter>
     <Filter Include="source_code\application\collision">
       <UniqueIdentifier>{c09705a5-6fd5-416a-a7c8-f5890c109e2e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source_code\application\object\objects\notice">
+      <UniqueIdentifier>{7f67fc37-b121-4bb2-82e8-fd68939f9b56}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source_code\application\config">
+      <UniqueIdentifier>{52a6b0e7-89e4-46d9-9144-769d0090ea01}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source_code\application\font">
+      <UniqueIdentifier>{eaa7fb8f-9696-46ab-a4d3-135708f9b860}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -181,9 +187,6 @@
     <ClCompile Include="source_code\application\shader\shader.cpp">
       <Filter>source_code\application\shader</Filter>
     </ClCompile>
-    <ClCompile Include="source_code\application\debug\debug_font.cpp">
-      <Filter>source_code\application\debug</Filter>
-    </ClCompile>
     <ClCompile Include="source_code\application\object\objects\mesh\field.cpp">
       <Filter>source_code\application\object\objects\mesh</Filter>
     </ClCompile>
@@ -252,6 +255,36 @@
     </ClCompile>
     <ClCompile Include="source_code\application\resource\texture_creator.cpp">
       <Filter>source_code\application\resource</Filter>
+    </ClCompile>
+    <ClCompile Include="source_code\application\resource\fbx_my_container.cpp">
+      <Filter>source_code\application\resource</Filter>
+    </ClCompile>
+    <ClCompile Include="source_code\application\resource\fbx_container_manager.cpp">
+      <Filter>source_code\application\resource</Filter>
+    </ClCompile>
+    <ClCompile Include="source_code\application\resource\x_container_manager.cpp">
+      <Filter>source_code\application\resource</Filter>
+    </ClCompile>
+    <ClCompile Include="source_code\application\resource\x_container.cpp">
+      <Filter>source_code\application\resource</Filter>
+    </ClCompile>
+    <ClCompile Include="source_code\application\math\vector.cpp">
+      <Filter>source_code</Filter>
+    </ClCompile>
+    <ClCompile Include="source_code\application\object\objects\notice\bullet.cpp">
+      <Filter>source_code\application\object\objects\notice</Filter>
+    </ClCompile>
+    <ClCompile Include="source_code\application\object\objects\model\fbx\fbx_child.cpp">
+      <Filter>source_code\application\object\objects\model\fbx</Filter>
+    </ClCompile>
+    <ClCompile Include="source_code\application\object\objects\sprite\damage_effect.cpp">
+      <Filter>source_code\application\object\objects\sprite</Filter>
+    </ClCompile>
+    <ClCompile Include="source_code\application\font\debug_font.cpp">
+      <Filter>source_code\application\font</Filter>
+    </ClCompile>
+    <ClCompile Include="source_code\application\object\objects\mesh\skydome.cpp">
+      <Filter>source_code\application\object\objects\mesh</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -354,9 +387,6 @@
     <ClInclude Include="source_code\application\shader\shader.h">
       <Filter>source_code\application\shader</Filter>
     </ClInclude>
-    <ClInclude Include="source_code\application\debug\debug_font.h">
-      <Filter>source_code\application\debug</Filter>
-    </ClInclude>
     <ClInclude Include="source_code\application\object\objects\mesh\field.h">
       <Filter>source_code\application\object\objects\mesh</Filter>
     </ClInclude>
@@ -428,6 +458,36 @@
     </ClInclude>
     <ClInclude Include="source_code\application\resource\texture_creator.h">
       <Filter>source_code\application\resource</Filter>
+    </ClInclude>
+    <ClInclude Include="source_code\application\resource\fbx_my_container.h">
+      <Filter>source_code\application\resource</Filter>
+    </ClInclude>
+    <ClInclude Include="source_code\application\resource\fbx_container_manager.h">
+      <Filter>source_code\application\resource</Filter>
+    </ClInclude>
+    <ClInclude Include="source_code\application\resource\x_container_manager.h">
+      <Filter>source_code\application\resource</Filter>
+    </ClInclude>
+    <ClInclude Include="source_code\application\resource\x_container.h">
+      <Filter>source_code\application\resource</Filter>
+    </ClInclude>
+    <ClInclude Include="source_code\application\object\objects\notice\bullet.h">
+      <Filter>source_code\application\object\objects\notice</Filter>
+    </ClInclude>
+    <ClInclude Include="source_code\application\config\config.h">
+      <Filter>source_code\application\config</Filter>
+    </ClInclude>
+    <ClInclude Include="source_code\application\object\objects\model\fbx\fbx_child.h">
+      <Filter>source_code\application\object\objects\model\fbx</Filter>
+    </ClInclude>
+    <ClInclude Include="source_code\application\object\objects\sprite\damage_effect.h">
+      <Filter>source_code\application\object\objects\sprite</Filter>
+    </ClInclude>
+    <ClInclude Include="source_code\application\font\debug_font.h">
+      <Filter>source_code\application\font</Filter>
+    </ClInclude>
+    <ClInclude Include="source_code\application\object\objects\mesh\skydome.h">
+      <Filter>source_code\application\object\objects\mesh</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
