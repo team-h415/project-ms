@@ -37,17 +37,12 @@ MyThread *SceneManager::thread_ = nullptr;
 //-------------------------------------
 SceneManager::SceneManager()
 {
-<<<<<<< HEAD
+	loading_scene_ = Create("Loading");
 	#ifdef NETWORK_HOST_MODE
 		current_scene_ = Create("GameServer");
 	#else
-		//current_scene_ = Create("Title");
 		current_scene_ = Create("Matching");
 	#endif
-=======
->>>>>>> master
-	loading_scene_ = Create("Loading");
-	current_scene_ = Create("Matching");
 	fade_ = new Fade();
 	fade_->SetFade(FADE_OUT);
 }

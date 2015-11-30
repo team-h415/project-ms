@@ -30,11 +30,6 @@ public:
 	void Update();
 	void Draw();
 
-<<<<<<< HEAD
-	ObjectManager* GetObjectManager(){return object_manager_;}
-	CameraManager* GetCameraManager(){return camera_manager_;}
-	EffectManager* GetEffectManager(){return effect_manager_;}
-=======
 	//-------------------------------------
 	// ƒpƒ‰ƒ[ƒ^
 	//-------------------------------------
@@ -50,7 +45,6 @@ public:
 	EffectManager *effect_manager(){
 		return effect_manager_;
 	}
->>>>>>> master
 
 private:
 	ObjectManager *object_manager_;

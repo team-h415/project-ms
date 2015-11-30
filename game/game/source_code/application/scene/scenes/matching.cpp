@@ -16,12 +16,8 @@
 #include "../../math/vector.h"
 #include "../../input/input.h"
 #include "../../input/inputs/keyboard.h"
-<<<<<<< HEAD
 #include "../../input/inputs/gamepad.h"
-#include "../../debug/debug_font.h"
-=======
 #include "../../font/debug_font.h"
->>>>>>> master
 #include "../../object/object.h"
 #include "../../object/object_manager.h"
 #include "../../object/objects/mesh/field.h"
@@ -40,11 +36,6 @@
 //-------------------------------------
 Matching::Matching()
 {
-	camera_manager_ = new CameraManager;
-	object_manager_ = new ObjectManager;
-	effect_manager_ = new EffectManager(5000);
-	font_ = new DebugFont;
-
 	camera_manager_ = new CameraManager;
 	object_manager_ = new ObjectManager;
 	effect_manager_ = new EffectManager(5000);
@@ -86,7 +77,7 @@ Matching::Matching()
 	object_manager_->Create(
 		"field",
 		param,
-		"resource/mesh/field.heightmap");
+		"resource/mesh/map.heightmap");
 
 	OBJECT_PARAMETER_DESC player_param;
 	player_param.layer_ = LAYER_MODEL_X;
@@ -146,9 +137,9 @@ Matching::Matching()
 
 #ifdef NETWORK_HOST_MODE
 #else
-	NETWORK_DATA network_data;
-	network_data.type_ = DATA_COMPLETE_SCENE_CHANGE;
-	NetworkGuest::SendTo(network_data);
+	//NETWORK_DATA network_data;
+	//network_data.type_ = DATA_COMPLETE_SCENE_CHANGE;
+	//NetworkGuest::SendTo(network_data);
 #endif
 }
 
