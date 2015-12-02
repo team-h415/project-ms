@@ -68,7 +68,7 @@ private:
 	DebugFont			*font_;
 	int					bullet_count;
 	bool				guest_scene_change_[MAX_GUEST];
-
+	int					time;
 };
 
 

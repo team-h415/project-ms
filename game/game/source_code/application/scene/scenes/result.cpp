@@ -7,6 +7,9 @@
 //-------------------------------------
 // include
 //-------------------------------------
+#include "../../network/network.h"
+#include "../../network/network_guest.h"
+#include "../../network/network_host.h"
 #include "../../../common/common.h"
 #include "../../render/renderer.h"
 #include "../../render/directx9/directx9.h"
@@ -60,6 +63,25 @@ Result::Result()
 	object_manager_->Create(
 		"test", param,
 		"resource/texture/result/logo.png");
+
+	param.position_ = {
+		SCREEN_WIDTH * 0.25f,
+		SCREEN_HEIGHT * 0.75f,
+		0.0f
+	};
+
+	if(NetworkGuest::winner() == OBJ_GRANDFATHER)
+	{
+		object_manager_->Create(
+			"winner", param,
+			"resource/texture/matching/logo.png");
+	}
+	else
+	{
+		object_manager_->Create(
+			"winner", param,
+			"resource/texture/title/logo.png");
+	}
 }
 
 

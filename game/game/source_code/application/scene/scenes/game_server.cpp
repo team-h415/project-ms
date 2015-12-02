@@ -150,8 +150,6 @@ GameServer::~GameServer()
 //-------------------------------------
 void GameServer::Update()
 {
-#ifdef NETWORK_HOST_MODE
-
 	// 状態分岐
 	switch(state)
 	{
@@ -174,14 +172,39 @@ void GameServer::Update()
 		case STATE_GAME:
 			{
 				MatchingAndGame();
+#ifdef _DEBUG
+				
+#endif
+				NETWORK_DATA send_data;
+				time--;
+				if(time > 0)
+				{
+					send_data.object_param_.type_ = OBJ_UI;
+					strcpy_s(send_data.name, MAX_NAME_LEN, "timer");
+					send_data.ui_param_.value_ = time / 60;
+					NetworkHost::SendTo(DELI_MULTI, send_data);
+				}
+
 				font_->Add("シーン名:");
 				font_->Add("Game\n");
-				if(KeyBoard::isTrigger(DIK_RETURN))
+				// 勝者じじい
+				if(KeyBoard::isTrigger(DIK_9))
 				{
 					ChangeState(STATE_RESULT);
 					// シーンチェンジ命令送信
 					NETWORK_DATA send_data;
 					send_data.type_ = DATA_SCENE_CHANGE_RESULT;
+					send_data.object_param_.type_ = OBJ_GRANDFATHER;
+					NetworkHost::SendTo(DELI_MULTI, send_data);
+				}
+				// 勝者ガキ
+				else if(KeyBoard::isTrigger(DIK_0))
+				{
+					ChangeState(STATE_RESULT);
+					// シーンチェンジ命令送信
+					NETWORK_DATA send_data;
+					send_data.type_ = DATA_SCENE_CHANGE_RESULT;
+					send_data.object_param_.type_ = OBJ_CHILD;
 					NetworkHost::SendTo(DELI_MULTI, send_data);
 				}
 			}
@@ -210,9 +233,6 @@ void GameServer::Update()
 	camera_manager_->Update();
 	object_manager_->Update();
 	collision_manager_->Update();
-
-#else
-#endif
 }
 
 
@@ -221,6 +241,9 @@ void GameServer::Update()
 //-------------------------------------
 void GameServer::Draw()
 {
+#ifndef _DEBUG
+	return;
+#endif
 	RECT rect = {
 		0, 0,
 		static_cast<LONG>(SCREEN_WIDTH),
@@ -238,10 +261,6 @@ void GameServer::Draw()
 	Fade::Draw();
 	DirectX9Holder::DrawEnd();
 	DirectX9Holder::SwapBuffer();
-
-	#ifdef NETWORK_HOST_MODE
-	#else
-	#endif
 }
 
 //-------------------------------------
@@ -457,6 +476,7 @@ void GameServer::ChangeState(SERVER_STATE next)
 
 		case STATE_GAME:
 			{
+				time = GAME_TIME * 60;
 				std::string player_str;
 				Object *player;
 				Vector3 pos(0.0f, 0.0f, 0.0f), rot(0.0f, 0.0f, 0.0f);

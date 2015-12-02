@@ -42,6 +42,11 @@ public:
 	static void SendTo(NETWORK_DATA network_data);			// データ送信
 	static void CloseCommunication();						// 通信を終了します
 
+	//-------------------------------------
+	// パラメータ
+	//-------------------------------------
+	static int winner(){ return winner_; }
+
 private:
 	static unsigned __stdcall Communication();				// ホストからの受信を行います、基本的にサブスレッドで稼働します
 	static void ObjDataAdaptation(
@@ -52,6 +57,7 @@ private:
 	static int			id_;								// 自分のID
 	static MyThread		*thread_;							// スレッド
 	static SceneManager	*scene_manager_;					// シーンマネージャー
+	static int			winner_;							// 勝者
 
 	NetworkGuest(){}
 	~NetworkGuest(){}

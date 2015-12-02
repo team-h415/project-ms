@@ -21,7 +21,11 @@
 #include "../object/object.h"
 #include "../object/object_manager.h"
 #include "../object/objects/mesh/field.h"
+#include "../object/objects/sprite/sprite2d.h"
+#include "../object/objects/sprite/number.h"
 #include "../object/objects/sprite/timer.h"
+#include "../object/objects/sprite/damage_effect.h"
+#include "../object/objects/sprite/water_gage.h"
 #include "../object/objects/model/fbx_model.h"
 #include "../object/objects/model/fbx/fbx_grandfather.h"
 #include "../object/objects/model/fbx/fbx_child.h"
@@ -44,7 +48,7 @@ ULONG			NetworkGuest::host_addr_(0);								// ホストアドレス
 MyThread		*NetworkGuest::thread_(nullptr);							// スレッド
 int				NetworkGuest::id_(ID_NONE);									// ID
 SceneManager	*NetworkGuest::scene_manager_(nullptr);						// シーンマネージャー
-
+int				NetworkGuest::winner_(OBJ_GRANDFATHER);						// 勝者
 
 //-------------------------------------
 // StartCommunication()
@@ -253,11 +257,13 @@ unsigned __stdcall NetworkGuest::Communication()
 					scene_name = scene_manager_->GetCurrentSceneName();
 					if("Game" == scene_name)
 					{
+						// 勝者保存
+						winner_ = rec_data.object_param_.type_;
 						SceneManager::RequestScene("Result");
 					}
 					break;
 
-				case DATA_SCENE_CHANGE_MATCHING:	// タイトル画面からマッチング画面への遷移命令
+				case DATA_SCENE_CHANGE_MATCHING:	// リザルト画面からマッチング画面への遷移命令
 					scene_name = scene_manager_->GetCurrentSceneName();
 					if("Result" == scene_name)
 					{
