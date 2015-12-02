@@ -30,7 +30,8 @@ public:
 		const D3DXVECTOR3 &position);
 private:
 	void CalculateVertex(
-		D3DXVECTOR3 *source_buffer);
+		D3DXVECTOR3 *source_buffer,
+		D3DXVECTOR4 *texture_alpha);
 	void CalculateIndex();
 	void CalculateNormal();
 	void CalculatePanelNormal();
@@ -55,7 +56,7 @@ private:
 	D3DXVECTOR2 mesh_division_;
 	D3DXMATRIX world_;
 	Shader *shader_;
-	LPDIRECT3DTEXTURE9 texture_;
+	LPDIRECT3DTEXTURE9 texture_[4];
 };
 
 

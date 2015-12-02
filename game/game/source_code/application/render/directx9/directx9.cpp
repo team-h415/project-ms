@@ -165,6 +165,22 @@ DirectX9::DirectX9()
 		ASSERT_ERROR("fbx用頂点宣言生成に失敗");
 	}
 
+	D3DVERTEXELEMENT9 velementfield[] = {
+		{ 0, 0, D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_POSITION, 0 },
+		{ 0, 12, D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_NORMAL, 0 },
+		{ 0, 24, D3DDECLTYPE_D3DCOLOR, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_COLOR, 0 },
+		{ 0, 28, D3DDECLTYPE_FLOAT2, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 0 },
+		{ 0, 36, D3DDECLTYPE_FLOAT4, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 1 },
+		D3DDECL_END(),
+	};
+
+	if (FAILED(device->CreateVertexDeclaration(
+		velementfield,
+		&DirectX9Holder::vertex_declaration_field_)))
+	{
+		ASSERT_ERROR("field用頂点宣言生成に失敗");
+	}
+
 	DirectX9Holder::directx9_ = directx9;
 	DirectX9Holder::device_ = device;
 }
