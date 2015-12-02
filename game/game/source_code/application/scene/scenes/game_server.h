@@ -30,6 +30,7 @@ class ObjectManager;
 class CameraManager;
 class EffectManager;
 class DebugFont;
+class CollisionManager;
 class GameServer : public Scene
 {
 public:
@@ -40,14 +41,34 @@ public:
 
 	void SetGuestSceneChange(int i, bool set){ guest_scene_change_[i] = set; }
 
+	//-------------------------------------
+	// ÉpÉâÉÅÅ[É^
+	//-------------------------------------
+	CollisionManager *collision_manager(){
+		return collision_manager_;
+	}
+	ObjectManager *object_manager(){
+		return object_manager_;
+	}
+	CameraManager *camera_manager(){
+		return camera_manager_;
+	}
+	//EffectManager *effect_manager(){
+	//	return effect_manager_;
+	//}
+
 private:
+	void MatchingAndGame();
 	void ChangeState(SERVER_STATE next);
 
-	SERVER_STATE	state;
-	ObjectManager	*object_manager_;
-	CameraManager	*camera_manager_;
-	DebugFont		*font_;
-	bool			guest_scene_change_[MAX_GUEST];
+	SERVER_STATE		state;
+	ObjectManager		*object_manager_;
+	CameraManager		*camera_manager_;
+	CollisionManager	*collision_manager_;
+	DebugFont			*font_;
+	int					bullet_count;
+	bool				guest_scene_change_[MAX_GUEST];
+
 };
 
 

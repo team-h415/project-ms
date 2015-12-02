@@ -21,7 +21,7 @@
 #define PORT_NUMBER_1 20001						// ホストからゲストへの送信時のポート
 #define MULTICAST_ADDRESS "239.0.0.25"			// マルチキャスト用のアドレス
 #define MAX_GUEST 5								// 接続ゲスト最大数
-
+#define MAX_NAME_LEN 100						// 最大文字数
 
 //-------------------------------------
 // enum
@@ -93,6 +93,7 @@ struct NETWORK_DATA
 {
 	int			id_;
 	DATA_TYPE	type_;
+	char		name[MAX_NAME_LEN];
 
 	union
 	{

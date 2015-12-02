@@ -121,12 +121,12 @@ Game::Game()
 	player_param.scaling_ = { 1.0f, 1.0f, 1.0f };
 
 	object_manager_->Create(
-		"player",
+		"x_model",
 		player_param,
 		"resource/model/x/pone_red.x");
 
 	COLLISION_PARAMETER_DESC player_collision_param;
-	Object *obj = object_manager_->Get("player");
+	Object *obj = object_manager_->Get("x_model");
 	player_collision_param.position_ = {
 		obj->parameter().position_.x_,
 		obj->parameter().position_.y_ + 0.5f,
@@ -134,7 +134,7 @@ Game::Game()
 	player_collision_param.range_ = 1.0f;
 	player_collision_param.offset_ = { 0.0f, 0.5f, 0.0f };
 
-	collision_manager_->Create(object_manager_->Get("player"),
+	collision_manager_->Create(object_manager_->Get("x_model"),
 		player_collision_param);
 
 
@@ -148,11 +148,11 @@ Game::Game()
 	fbx_param.scaling_ = { 1.0f, 1.0f, 1.0f };
 
 	object_manager_->Create(
-		"fbx",
+		"player1",
 		fbx_param);
 
 	COLLISION_PARAMETER_DESC fbx_collision_param;
-	Object *obj2 = object_manager_->Get("fbx");
+	Object *obj2 = object_manager_->Get("player1");
 	fbx_collision_param.position_ = {
 		obj2->parameter().position_.x_,
 		obj2->parameter().position_.y_,
@@ -160,7 +160,7 @@ Game::Game()
 	fbx_collision_param.range_ = 1.0f;
 	fbx_collision_param.offset_ = { 0.0f, 0.5f, 0.0f };
 
-	collision_manager_->Create(object_manager_->Get("fbx"),
+	collision_manager_->Create(object_manager_->Get("player1"),
 		fbx_collision_param);
 
 	//-------------------------------------
@@ -171,21 +171,25 @@ Game::Game()
 	child_param.rotation_ = { 0.0f, 0.0f, 0.0f };
 	child_param.scaling_ = { 1.0f, 1.0f, 1.0f };
 
-	object_manager_->Create(
-		"child",
-		child_param);
+	for(int i = 1; i < MAX_GUEST; i++)
+	{
+		std::string name = "player" + std::to_string(i + 1);
+		object_manager_->Create(
+			name,
+			child_param);
 
-	COLLISION_PARAMETER_DESC child_collision_param;
-	Object *obj3 = object_manager_->Get("child");
-	child_collision_param.position_ = {
-		obj3->parameter().position_.x_,
-		obj3->parameter().position_.y_,
-		obj3->parameter().position_.z_ };
-	child_collision_param.range_ = 1.0f;
-	child_collision_param.offset_ = { 0.0f, 0.5f, 0.0f };
+		COLLISION_PARAMETER_DESC child_collision_param;
+		Object *obj3 = object_manager_->Get(name);
+		child_collision_param.position_ = {
+			obj3->parameter().position_.x_,
+			obj3->parameter().position_.y_,
+			obj3->parameter().position_.z_ };
+		child_collision_param.range_ = 1.0f;
+		child_collision_param.offset_ = { 0.0f, 0.5f, 0.0f };
 
-	collision_manager_->Create(object_manager_->Get("child"),
-		child_collision_param);
+		collision_manager_->Create(object_manager_->Get(name),
+			child_collision_param);
+	}
 
 
 	//-------------------------------------

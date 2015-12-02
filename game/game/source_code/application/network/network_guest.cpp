@@ -21,6 +21,10 @@
 #include "../object/object.h"
 #include "../object/object_manager.h"
 #include "../object/objects/mesh/field.h"
+#include "../object/objects/sprite/timer.h"
+#include "../object/objects/model/fbx_model.h"
+#include "../object/objects/model/fbx/fbx_grandfather.h"
+#include "../object/objects/model/fbx/fbx_child.h"
 #include "../effect/effect.h"
 #include "../effect/effect_manager.h"
 #include "../camera/camera.h"
@@ -334,6 +338,34 @@ void NetworkGuest::ObjDataAdaptation(
 	switch(rec_data.object_param_.type_)
 	{
 		case OBJ_GRANDFATHER:			// ‚¨‚¶‚¢‚¿‚á‚ñ
+			{
+				if(object_manager == nullptr)
+				{
+					return;
+				}
+				Object *object = object_manager->Get("player1");
+				if(object == nullptr)
+				{
+					return;
+				}
+				FbxGrandfather *grandfather = dynamic_cast<FbxGrandfather*>(object);
+				Vector3 set_param;
+				// À•W
+				set_param.x_ = rec_data.object_param_.position_.x_;
+				set_param.y_ = rec_data.object_param_.position_.y_;
+				set_param.z_ = rec_data.object_param_.position_.z_;
+				object->SetPosition(set_param);
+				// ‰ñ“]
+				set_param.x_ = rec_data.object_param_.rotation_.x_;
+				set_param.y_ = rec_data.object_param_.rotation_.y_;
+				set_param.z_ = rec_data.object_param_.rotation_.z_;
+				grandfather->SetRotation(set_param);
+				if(grandfather->GetCurrentAnimationId() != rec_data.object_param_.ex_id_)
+				{
+					grandfather->PlayAnimation(rec_data.object_param_.ex_id_);
+				}
+			}
+			break;
 		case OBJ_CHILD:					// Žq‹Ÿ
 			{
 				if(object_manager == nullptr)
@@ -346,6 +378,7 @@ void NetworkGuest::ObjDataAdaptation(
 				{
 					return;
 				}
+				FbxChild *child = dynamic_cast<FbxChild*>(object);
 				Vector3 set_param;
 				// À•W
 				set_param.x_ = rec_data.object_param_.position_.x_;
@@ -356,7 +389,11 @@ void NetworkGuest::ObjDataAdaptation(
 				set_param.x_ = rec_data.object_param_.rotation_.x_;
 				set_param.y_ = rec_data.object_param_.rotation_.y_;
 				set_param.z_ = rec_data.object_param_.rotation_.z_;
-				object->SetRotation(set_param);
+				child->SetRotation(set_param);
+				if(child->GetCurrentAnimationId() != rec_data.object_param_.ex_id_)
+				{
+					child->PlayAnimation(rec_data.object_param_.ex_id_);
+				}
 			}
 			break;
 
@@ -367,7 +404,8 @@ void NetworkGuest::ObjDataAdaptation(
 					return;
 				}
 				EFFECT_PARAMETER_DESC effect_param;
-				MyEffect *effect = effect_manager->Get("water");
+				std::string name = rec_data.name;
+				MyEffect *effect = effect_manager->Get(name);
 				if(effect == nullptr)
 				{
 					return;
@@ -383,7 +421,21 @@ void NetworkGuest::ObjDataAdaptation(
 
 		case OBJ_UI:					// UI
 			{
-
+				if(object_manager == nullptr)
+				{
+					return;
+				}
+				std::string name = rec_data.name;
+				if(name == "time")
+				{
+					Object *object = object_manager->Get(name);
+					if(object == nullptr)
+					{
+						return;
+					}
+					Timer *timer = dynamic_cast<Timer*>(object);
+					//timer->
+				}
 			}
 			break;
 
