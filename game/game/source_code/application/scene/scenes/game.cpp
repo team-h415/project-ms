@@ -105,9 +105,16 @@ Game::Game()
 	param.layer_ = LAYER_MESH_SKYDOME;
 
 	object_manager_->Create(
-		"skydome",
+		"skydome_up",
 		param,
-		"resource/mesh/skydome.txt");
+		"resource/mesh/skydome_up.txt");
+
+	param.rotation_ = { 0.0f, 0.0f, D3DX_PI };
+
+	object_manager_->Create(
+		"skydome_bottom",
+		param,
+		"resource/mesh/skydome_bottom.txt");
 
 	//-------------------------------------
 	// Xƒ‚ƒfƒ‹

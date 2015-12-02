@@ -39,6 +39,7 @@ private:
 	D3DXMATRIX world_;
 	Shader *shader_;
 	LPDIRECT3DTEXTURE9 texture_;
+	D3DXCOLOR mesh_diffuse_;
 	
 };
 
