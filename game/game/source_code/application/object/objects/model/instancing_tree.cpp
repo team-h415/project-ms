@@ -32,7 +32,7 @@ InstancingTree::InstancingTree(
 	count_face_ = 0;
 	object_count_ = 0;
 	shader_ = new Shader("resource/shader/instancing.hlsl");
-	texture_ = TextureManager::GetTexture("resource/texture/tree.png");
+	texture_ = TextureManager::GetTexture("resource/texture/game/tree.png");
 
 	XContainer* container = XContainerManager::GetContainer("./resource/model/x/tree.x");
 
@@ -90,6 +90,10 @@ void InstancingTree::Update()
 //-------------------------------------
 void InstancingTree::Draw()
 {
+	DirectX9Holder::device_->SetRenderState(D3DRS_ALPHATESTENABLE, TRUE);
+	DirectX9Holder::device_->SetRenderState(D3DRS_ALPHAREF, 0x01);
+	DirectX9Holder::device_->SetRenderState(D3DRS_ALPHAFUNC, D3DCMP_GREATEREQUAL);
+
 	D3DXMATRIX world, view, projection;
 	D3DXMatrixIdentity(&world);
 	DirectX9Holder::device_->GetTransform(D3DTS_VIEW, &view);
@@ -146,6 +150,7 @@ void InstancingTree::Draw()
 	DirectX9Holder::device_->SetStreamSourceFreq(0, 1);
 	DirectX9Holder::device_->SetStreamSourceFreq(1, 1);
 	DirectX9Holder::device_->SetStreamSourceFreq(2, 1);
+	DirectX9Holder::device_->SetRenderState(D3DRS_ALPHATESTENABLE, FALSE);
 }
 
 

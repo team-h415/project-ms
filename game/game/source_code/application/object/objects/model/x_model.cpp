@@ -75,6 +75,10 @@ void XModel::Update()
 //-------------------------------------
 void XModel::Draw()
 {
+	DirectX9Holder::device_->SetRenderState(D3DRS_ALPHATESTENABLE, TRUE);
+	DirectX9Holder::device_->SetRenderState(D3DRS_ALPHAREF, 0x01);
+	DirectX9Holder::device_->SetRenderState(D3DRS_ALPHAFUNC, D3DCMP_GREATEREQUAL);
+
 	DirectX9Holder::device_->SetTransform(D3DTS_WORLD, &world_);
 	DirectX9Holder::device_->SetVertexDeclaration(
 		DirectX9Holder::vertex_declaration_3d_);
@@ -126,6 +130,7 @@ void XModel::Draw()
 
 	DirectX9Holder::device_->SetVertexShader(NULL);
 	DirectX9Holder::device_->SetPixelShader(NULL);
+	DirectX9Holder::device_->SetRenderState(D3DRS_ALPHATESTENABLE, FALSE);
 }
 
 
