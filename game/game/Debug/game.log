@@ -1,4 +1,4 @@
-﻿2015/12/02 10:55:03 にビルドを開始しました。
+﻿2015/12/03 14:51:23 にビルドを開始しました。
      1>ノード 2 上のプロジェクト "C:\other\HAL\2015\未来創造展\プログラム\SourceTree\game\game\game.vcxproj" (Build ターゲット)。
      1>Link:
          C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\other\HAL\2015\未来創造展\プログラム\SourceTree\game\game\Debug\game.exe" /INCREMENTAL /NOLOGO /LIBPATH:"C:\Program Files\Autodesk\FBX\FBX SDK\2016.1.2\lib\vs2013\x86\debug" /LIBPATH:../lib/x86 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib "libfbxsdk-mt.lib" kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\other\HAL\2015\未来創造展\プログラム\SourceTree\game\game\Debug\game.pdb" /SUBSYSTEM:WINDOWS /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\other\HAL\2015\未来創造展\プログラム\SourceTree\game\game\Debug\game.lib" /MACHINE:X86 Debug\application.obj
@@ -61,9 +61,10 @@
          Debug\window.obj
          Debug\window_holder.obj
          Debug\main.obj
+         LINK : 前回のインクリメンタル リンクで C:\other\HAL\2015\未来創造展\プログラム\SourceTree\game\game\Debug\game.exe が見つからなかったか、ビルドされませんでした。フル リンクを行います。
          game.vcxproj -> C:\other\HAL\2015\未来創造展\プログラム\SourceTree\game\game\Debug\game.exe
      1>プロジェクト "C:\other\HAL\2015\未来創造展\プログラム\SourceTree\game\game\game.vcxproj" (Build ターゲット) のビルドが完了しました。
 
 ビルドに成功しました。
 
-経過時間 00:00:00.81
+経過時間 00:00:02.58
