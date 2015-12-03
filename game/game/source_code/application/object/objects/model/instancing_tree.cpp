@@ -43,7 +43,7 @@ InstancingTree::InstancingTree(
 	count_face_ = mesh->GetNumFaces();		// 面数をゲット
 
 	// テスト用オブジェクト数
-	object_count_ = 1;
+	object_count_ = 50;
 	DirectX9Holder::device_->CreateVertexBuffer(
 		sizeof(D3DXVECTOR3) * object_count_,
 		D3DUSAGE_WRITEONLY,
@@ -57,8 +57,8 @@ InstancingTree::InstancingTree(
 	world_buffer_->Lock(0, 0, (void**)&world, 0);
 	for(int i = 0; i < object_count_; i++)
 	{
-		world[i].x = i * 1.0f;
-		world[i].y = 6.0f;
+		world[i].x = i * 3.0f;
+		world[i].y = 0.0f;
 		world[i].z = 0.0f;
 	}
 	world_buffer_->Unlock();
