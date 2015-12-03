@@ -53,6 +53,7 @@ private:
 	CollisionManager *collision_manager_;
 	DebugFont *font_;
 	int current_id_;
+	float camera_pos_len_;
 };
 
 

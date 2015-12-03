@@ -77,6 +77,7 @@ Game::Game()
 	camera_param.up_ = { 0.0f, 1.0f, 0.0f };
 	camera_param.near_ = 0.1f;
 	camera_param.far_ = 100000.0f;
+	camera_pos_len_ = CAMERA_POS_LEN;
 
 	camera_manager_->Create(
 		"Perspective", "MainCamera", camera_param);
@@ -466,6 +467,11 @@ void Game::Update()
 		}
 	}
 
+
+	//-------------------------------------
+	// カメラ計算
+	//-------------------------------------
+
 	// モデルの回転Yをそのままカメラの回転Yへ
 	camera_rotation.y = fbx_rotation.y_;
 	// 一旦モデルを注視点に
@@ -479,10 +485,41 @@ void Game::Update()
 
 	// 注視点を基準にカメラ座標を設定
 	camera_position = camera_focus;
-	camera_position.x -= sinf(camera_rotation.y) * CAMERA_POS_LEN * cosf(camera_rotation.x);
-	camera_position.z -= cosf(camera_rotation.y) * CAMERA_POS_LEN * cosf(camera_rotation.x);
-	camera_position.y -= sinf(camera_rotation.x) * CAMERA_POS_LEN;
+	camera_position.x -= sinf(camera_rotation.y) * camera_pos_len_ * cosf(camera_rotation.x);
+	camera_position.z -= cosf(camera_rotation.y) * camera_pos_len_ * cosf(camera_rotation.x);
+	camera_position.y -= sinf(camera_rotation.x) * camera_pos_len_;
 
+
+	// カメラの地面めり込み回避処理
+	D3DXVECTOR3	vec_camera_to_focus = camera_focus - camera_position;
+	
+	// 中間にカメラがめり込みそうなところが無いか検査
+	bool camera_re_calculate = false;
+	for (int i = 0; i < 10; ++i){
+		// 中間地点を計算
+		D3DXVECTOR3 lay_point = camera_position+vec_camera_to_focus*i*0.1f;
+		float pos_y = field->GetHeight(lay_point);
+		// 回避処理
+		if (lay_point.y < pos_y+0.1f){
+			camera_re_calculate = true;
+			camera_pos_len_ -= CAMARA_LEN_SPEED;
+		}
+	}
+
+	//カメラ座標再計算
+	if (camera_re_calculate==true){ 
+		camera_position = camera_focus;
+		camera_position.x -= sinf(camera_rotation.y) * camera_pos_len_ * cosf(camera_rotation.x);
+		camera_position.z -= cosf(camera_rotation.y) * camera_pos_len_ * cosf(camera_rotation.x);
+		camera_position.y -= sinf(camera_rotation.x) * camera_pos_len_;
+		camera_position.y = field->GetHeight(camera_position) + 0.1f;
+	}
+
+	camera_pos_len_ += CAMARA_LEN_SPEED;
+	if (camera_pos_len_ > CAMERA_POS_LEN){
+		camera_pos_len_ = CAMERA_POS_LEN;
+	}
+	
 	// カメラにパラメータを再セット
 	main_camera->SetPosition(camera_position);
 	main_camera->SetFocus(camera_focus);
