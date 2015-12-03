@@ -61,6 +61,13 @@ struct Vertex3D
 	D3DXVECTOR2 texture_;
 };
 
+struct VertexInstancing3D
+{
+	D3DXVECTOR3 position_;
+	D3DXVECTOR3 normal_;
+	D3DXVECTOR2 texture_;
+};
+
 struct VertexBlend3D
 {
 	D3DXVECTOR3 position;
@@ -88,6 +95,7 @@ struct VertexBlend3D
 		return memcmp(this, &src, sizeof(VertexBlend3D)) == 0;
 	}
 };
+
 
 //-------------------------------------
 // class

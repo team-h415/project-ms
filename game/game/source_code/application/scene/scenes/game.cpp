@@ -297,6 +297,14 @@ Game::Game()
     object_manager_->Create(
         "damage_effect", hit_point_param);
 
+	//-------------------------------------
+	// インスタンシングテスト
+	//-------------------------------------
+	OBJECT_PARAMETER_DESC wood_param;
+	wood_param.layer_ = LAYER_TREE;
+	object_manager_->Create(
+		"wood", wood_param);
+
 }
 
 
