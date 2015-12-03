@@ -112,40 +112,12 @@ DirectX9::DirectX9()
 	device->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
 	device->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
 	device->SetSamplerState(0, D3DSAMP_MIPFILTER, D3DTEXF_LINEAR);
-	device->SetSamplerState(1, D3DSAMP_ADDRESSU, D3DTADDRESS_WRAP);
-	device->SetSamplerState(1, D3DSAMP_ADDRESSV, D3DTADDRESS_WRAP);
-	device->SetSamplerState(1, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
-	device->SetSamplerState(1, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
-	device->SetSamplerState(1, D3DSAMP_MIPFILTER, D3DTEXF_LINEAR);
-	device->SetSamplerState(2, D3DSAMP_ADDRESSU, D3DTADDRESS_WRAP);
-	device->SetSamplerState(2, D3DSAMP_ADDRESSV, D3DTADDRESS_WRAP);
-	device->SetSamplerState(2, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
-	device->SetSamplerState(2, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
-	device->SetSamplerState(2, D3DSAMP_MIPFILTER, D3DTEXF_LINEAR);
-	device->SetSamplerState(3, D3DSAMP_ADDRESSU, D3DTADDRESS_WRAP);
-	device->SetSamplerState(3, D3DSAMP_ADDRESSV, D3DTADDRESS_WRAP);
-	device->SetSamplerState(3, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
-	device->SetSamplerState(3, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
-	device->SetSamplerState(3, D3DSAMP_MIPFILTER, D3DTEXF_LINEAR);
 	device->SetSamplerState(0, D3DSAMP_MIPMAPLODBIAS, 1);
-	device->SetSamplerState(1, D3DSAMP_MIPMAPLODBIAS, 1);
-	device->SetSamplerState(2, D3DSAMP_MIPMAPLODBIAS, 1);
-	device->SetSamplerState(3, D3DSAMP_MIPMAPLODBIAS, 1);
-
-
 
 	device->SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_MODULATE);
 	device->SetTextureStageState(0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE);
 	device->SetTextureStageState(0, D3DTSS_ALPHAARG2, D3DTA_CURRENT);
-	device->SetTextureStageState(1, D3DTSS_ALPHAOP, D3DTOP_MODULATE);
-	device->SetTextureStageState(1, D3DTSS_ALPHAARG1, D3DTA_TEXTURE);
-	device->SetTextureStageState(1, D3DTSS_ALPHAARG2, D3DTA_CURRENT);
-	device->SetTextureStageState(2, D3DTSS_ALPHAOP, D3DTOP_MODULATE);
-	device->SetTextureStageState(2, D3DTSS_ALPHAARG1, D3DTA_TEXTURE);
-	device->SetTextureStageState(2, D3DTSS_ALPHAARG2, D3DTA_CURRENT);
-	device->SetTextureStageState(3, D3DTSS_ALPHAOP, D3DTOP_MODULATE);
-	device->SetTextureStageState(3, D3DTSS_ALPHAARG1, D3DTA_TEXTURE);
-	device->SetTextureStageState(3, D3DTSS_ALPHAARG2, D3DTA_CURRENT);
+
 
 	D3DVERTEXELEMENT9 velement2d[] = {
 		{ 0, 0, D3DDECLTYPE_FLOAT4, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_POSITIONT, 0 },
@@ -193,21 +165,21 @@ DirectX9::DirectX9()
 		ASSERT_ERROR("fbx用頂点宣言生成に失敗");
 	}
 
-	D3DVERTEXELEMENT9 velementfield[] = {
-		{ 0, 0, D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_POSITION, 0 },
-		{ 0, 12, D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_NORMAL, 0 },
-		{ 0, 24, D3DDECLTYPE_D3DCOLOR, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_COLOR, 0 },
-		{ 0, 28, D3DDECLTYPE_FLOAT2, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 0 },
-		{ 0, 36, D3DDECLTYPE_FLOAT4, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 1 },
+	D3DVERTEXELEMENT9 velementins[] = {
+		{0, 0, D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_POSITION, 0},
+		{0, 12, D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_NORMAL, 0},
+		{0, 24, D3DDECLTYPE_FLOAT2, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 0},
+		{1, 0, D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 1},
 		D3DDECL_END(),
 	};
 
-	if (FAILED(device->CreateVertexDeclaration(
-		velementfield,
-		&DirectX9Holder::vertex_declaration_field_)))
+	if(FAILED(device->CreateVertexDeclaration(
+		velementins,
+		&DirectX9Holder::vertex_declaration_instancing_)))
 	{
-		ASSERT_ERROR("field用頂点宣言生成に失敗");
+		ASSERT_ERROR("インスタンシング用頂点宣言生成に失敗");
 	}
+
 
 	DirectX9Holder::directx9_ = directx9;
 	DirectX9Holder::device_ = device;
@@ -221,8 +193,8 @@ DirectX9::~DirectX9()
 {
 	SAFE_RELEASE(DirectX9Holder::vertex_declaration_2d_);
 	SAFE_RELEASE(DirectX9Holder::vertex_declaration_3d_);
-	SAFE_RELEASE(DirectX9Holder::vertex_declaration_field_);
 	SAFE_RELEASE(DirectX9Holder::vertex_declaration_fbx_);
+	SAFE_RELEASE(DirectX9Holder::vertex_declaration_instancing_);
 	SAFE_RELEASE(DirectX9Holder::device_);
 	SAFE_RELEASE(DirectX9Holder::directx9_);
 }

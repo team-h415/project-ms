@@ -274,6 +274,9 @@
     <ClCompile Include="source_code\application\object\objects\mesh\skydome.cpp">
       <Filter>source_code\application\object\objects\mesh</Filter>
     </ClCompile>
+    <ClCompile Include="source_code\application\object\objects\model\instancing_tree.cpp">
+      <Filter>source_code\application\object\objects\model</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source_code\main.h">
@@ -464,6 +467,9 @@
     </ClInclude>
     <ClInclude Include="source_code\application\object\objects\mesh\skydome.h">
       <Filter>source_code\application\object\objects\mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="source_code\application\object\objects\model\instancing_tree.h">
+      <Filter>source_code\application\object\objects\model</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
