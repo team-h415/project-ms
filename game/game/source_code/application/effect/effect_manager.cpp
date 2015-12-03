@@ -88,10 +88,43 @@ void EffectManager::Draw()
 	DirectX9Holder::device_->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
 	DirectX9Holder::device_->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
 	DirectX9Holder::device_->SetSamplerState(0, D3DSAMP_MIPFILTER, D3DTEXF_LINEAR);
+
+	DirectX9Holder::device_->SetSamplerState(1, D3DSAMP_ADDRESSU, D3DTADDRESS_WRAP);
+	DirectX9Holder::device_->SetSamplerState(1, D3DSAMP_ADDRESSV, D3DTADDRESS_WRAP);
+	DirectX9Holder::device_->SetSamplerState(1, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
+	DirectX9Holder::device_->SetSamplerState(1, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
+	DirectX9Holder::device_->SetSamplerState(1, D3DSAMP_MIPFILTER, D3DTEXF_LINEAR);
+
+	DirectX9Holder::device_->SetSamplerState(2, D3DSAMP_ADDRESSU, D3DTADDRESS_WRAP);
+	DirectX9Holder::device_->SetSamplerState(2, D3DSAMP_ADDRESSV, D3DTADDRESS_WRAP);
+	DirectX9Holder::device_->SetSamplerState(2, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
+	DirectX9Holder::device_->SetSamplerState(2, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
+	DirectX9Holder::device_->SetSamplerState(2, D3DSAMP_MIPFILTER, D3DTEXF_LINEAR);
+
+	DirectX9Holder::device_->SetSamplerState(3, D3DSAMP_ADDRESSU, D3DTADDRESS_WRAP);
+	DirectX9Holder::device_->SetSamplerState(3, D3DSAMP_ADDRESSV, D3DTADDRESS_WRAP);
+	DirectX9Holder::device_->SetSamplerState(3, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
+	DirectX9Holder::device_->SetSamplerState(3, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
+	DirectX9Holder::device_->SetSamplerState(3, D3DSAMP_MIPFILTER, D3DTEXF_LINEAR);
 	DirectX9Holder::device_->SetSamplerState(0, D3DSAMP_MIPMAPLODBIAS, 1);
+	DirectX9Holder::device_->SetSamplerState(1, D3DSAMP_MIPMAPLODBIAS, 1);
+	DirectX9Holder::device_->SetSamplerState(2, D3DSAMP_MIPMAPLODBIAS, 1);
+	DirectX9Holder::device_->SetSamplerState(3, D3DSAMP_MIPMAPLODBIAS, 1);
 	DirectX9Holder::device_->SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_MODULATE);
 	DirectX9Holder::device_->SetTextureStageState(0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE);
 	DirectX9Holder::device_->SetTextureStageState(0, D3DTSS_ALPHAARG2, D3DTA_CURRENT);
+
+	DirectX9Holder::device_->SetTextureStageState(1, D3DTSS_ALPHAOP, D3DTOP_MODULATE);
+	DirectX9Holder::device_->SetTextureStageState(1, D3DTSS_ALPHAARG1, D3DTA_TEXTURE);
+	DirectX9Holder::device_->SetTextureStageState(1, D3DTSS_ALPHAARG2, D3DTA_CURRENT);
+
+	DirectX9Holder::device_->SetTextureStageState(2, D3DTSS_ALPHAOP, D3DTOP_MODULATE);
+	DirectX9Holder::device_->SetTextureStageState(2, D3DTSS_ALPHAARG1, D3DTA_TEXTURE);
+	DirectX9Holder::device_->SetTextureStageState(2, D3DTSS_ALPHAARG2, D3DTA_CURRENT);
+
+	DirectX9Holder::device_->SetTextureStageState(3, D3DTSS_ALPHAOP, D3DTOP_MODULATE);
+	DirectX9Holder::device_->SetTextureStageState(3, D3DTSS_ALPHAARG1, D3DTA_TEXTURE);
+	DirectX9Holder::device_->SetTextureStageState(3, D3DTSS_ALPHAARG2, D3DTA_CURRENT);
 }
 
 

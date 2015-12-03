@@ -112,12 +112,40 @@ DirectX9::DirectX9()
 	device->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
 	device->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
 	device->SetSamplerState(0, D3DSAMP_MIPFILTER, D3DTEXF_LINEAR);
+	device->SetSamplerState(1, D3DSAMP_ADDRESSU, D3DTADDRESS_WRAP);
+	device->SetSamplerState(1, D3DSAMP_ADDRESSV, D3DTADDRESS_WRAP);
+	device->SetSamplerState(1, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
+	device->SetSamplerState(1, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
+	device->SetSamplerState(1, D3DSAMP_MIPFILTER, D3DTEXF_LINEAR);
+	device->SetSamplerState(2, D3DSAMP_ADDRESSU, D3DTADDRESS_WRAP);
+	device->SetSamplerState(2, D3DSAMP_ADDRESSV, D3DTADDRESS_WRAP);
+	device->SetSamplerState(2, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
+	device->SetSamplerState(2, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
+	device->SetSamplerState(2, D3DSAMP_MIPFILTER, D3DTEXF_LINEAR);
+	device->SetSamplerState(3, D3DSAMP_ADDRESSU, D3DTADDRESS_WRAP);
+	device->SetSamplerState(3, D3DSAMP_ADDRESSV, D3DTADDRESS_WRAP);
+	device->SetSamplerState(3, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
+	device->SetSamplerState(3, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
+	device->SetSamplerState(3, D3DSAMP_MIPFILTER, D3DTEXF_LINEAR);
 	device->SetSamplerState(0, D3DSAMP_MIPMAPLODBIAS, 1);
+	device->SetSamplerState(1, D3DSAMP_MIPMAPLODBIAS, 1);
+	device->SetSamplerState(2, D3DSAMP_MIPMAPLODBIAS, 1);
+	device->SetSamplerState(3, D3DSAMP_MIPMAPLODBIAS, 1);
+
+
 
 	device->SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_MODULATE);
 	device->SetTextureStageState(0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE);
 	device->SetTextureStageState(0, D3DTSS_ALPHAARG2, D3DTA_CURRENT);
-
+	device->SetTextureStageState(1, D3DTSS_ALPHAOP, D3DTOP_MODULATE);
+	device->SetTextureStageState(1, D3DTSS_ALPHAARG1, D3DTA_TEXTURE);
+	device->SetTextureStageState(1, D3DTSS_ALPHAARG2, D3DTA_CURRENT);
+	device->SetTextureStageState(2, D3DTSS_ALPHAOP, D3DTOP_MODULATE);
+	device->SetTextureStageState(2, D3DTSS_ALPHAARG1, D3DTA_TEXTURE);
+	device->SetTextureStageState(2, D3DTSS_ALPHAARG2, D3DTA_CURRENT);
+	device->SetTextureStageState(3, D3DTSS_ALPHAOP, D3DTOP_MODULATE);
+	device->SetTextureStageState(3, D3DTSS_ALPHAARG1, D3DTA_TEXTURE);
+	device->SetTextureStageState(3, D3DTSS_ALPHAARG2, D3DTA_CURRENT);
 
 	D3DVERTEXELEMENT9 velement2d[] = {
 		{ 0, 0, D3DDECLTYPE_FLOAT4, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_POSITIONT, 0 },
@@ -193,6 +221,7 @@ DirectX9::~DirectX9()
 {
 	SAFE_RELEASE(DirectX9Holder::vertex_declaration_2d_);
 	SAFE_RELEASE(DirectX9Holder::vertex_declaration_3d_);
+	SAFE_RELEASE(DirectX9Holder::vertex_declaration_field_);
 	SAFE_RELEASE(DirectX9Holder::vertex_declaration_fbx_);
 	SAFE_RELEASE(DirectX9Holder::device_);
 	SAFE_RELEASE(DirectX9Holder::directx9_);

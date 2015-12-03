@@ -225,7 +225,8 @@ void Field::LoadMesh(
 	CalculateVertex(vertex_buffer, texture_alpha);
 	CalculateNormal();
 	CalculateIndex();
-	SAFE_DELETE(vertex_buffer);
+	SAFE_DELETE_ARRAY(vertex_buffer);
+	SAFE_DELETE_ARRAY(texture_alpha);
 }
 
 

@@ -93,7 +93,7 @@ Game::Game()
 	object_manager_->Create(
 		"field",
 		param,
-		"resource/mesh/test.heightmap");
+		"resource/mesh/map.heightmap");
 
 
 	//-------------------------------------
