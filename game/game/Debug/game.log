@@ -1,19 +1,12 @@
-<<<<<<< HEAD
-﻿2015/12/03 23:59:03 にビルドを開始しました。
+﻿2015/12/04 0:07:45 にビルドを開始しました。
      1>ノード 2 上のプロジェクト "C:\Users\RyuyaNakamura\Documents\project-ms\game\game\game.vcxproj" (Build ターゲット)。
      1>ClCompile:
-         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /I"C:\Program Files\Autodesk\FBX\FBX SDK\2016.1.2\include" /I../include /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D WIN32 /D _DEBUG /D _WINDOWS /D _MBCS /Gm /EHsc /RTC1 /MTd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt source_code\application\object\objects\model\instancing_tree.cpp source_code\application\object\objects\model\x_model.cpp
-         x_model.cpp
-         instancing_tree.cpp
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /I"C:\Program Files\Autodesk\FBX\FBX SDK\2016.1.2\include" /I../include /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D WIN32 /D _DEBUG /D _WINDOWS /D _MBCS /Gm /EHsc /RTC1 /MTd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt source_code\application\object\objects\mesh\skydome.cpp source_code\application\resource\texture.cpp
+         texture.cpp
+         skydome.cpp
          コードを生成中...
        Link:
          C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\RyuyaNakamura\Documents\project-ms\game\game\Debug\game.exe" /INCREMENTAL /NOLOGO /LIBPATH:"C:\Program Files\Autodesk\FBX\FBX SDK\2016.1.2\lib\vs2013\x86\debug" /LIBPATH:../lib/x86 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib "libfbxsdk-mt.lib" kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\Users\RyuyaNakamura\Documents\project-ms\game\game\Debug\game.pdb" /SUBSYSTEM:WINDOWS /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\RyuyaNakamura\Documents\project-ms\game\game\Debug\game.lib" /MACHINE:X86 Debug\application.obj
-=======
-﻿2015/12/03 14:51:23 にビルドを開始しました。
-     1>ノード 2 上のプロジェクト "C:\other\HAL\2015\未来創造展\プログラム\SourceTree\game\game\game.vcxproj" (Build ターゲット)。
-     1>Link:
-         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\other\HAL\2015\未来創造展\プログラム\SourceTree\game\game\Debug\game.exe" /INCREMENTAL /NOLOGO /LIBPATH:"C:\Program Files\Autodesk\FBX\FBX SDK\2016.1.2\lib\vs2013\x86\debug" /LIBPATH:../lib/x86 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib "libfbxsdk-mt.lib" kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\other\HAL\2015\未来創造展\プログラム\SourceTree\game\game\Debug\game.pdb" /SUBSYSTEM:WINDOWS /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\other\HAL\2015\未来創造展\プログラム\SourceTree\game\game\Debug\game.lib" /MACHINE:X86 Debug\application.obj
->>>>>>> origin/fuka
          Debug\camera.obj
          Debug\oltho_camera.obj
          Debug\perspective_camera.obj
@@ -74,19 +67,10 @@
          Debug\window.obj
          Debug\window_holder.obj
          Debug\main.obj
-<<<<<<< HEAD
+         LINK : 前回のインクリメンタル リンクで C:\Users\RyuyaNakamura\Documents\project-ms\game\game\Debug\game.exe が見つからなかったか、ビルドされませんでした。フル リンクを行います。
          game.vcxproj -> C:\Users\RyuyaNakamura\Documents\project-ms\game\game\Debug\game.exe
      1>プロジェクト "C:\Users\RyuyaNakamura\Documents\project-ms\game\game\game.vcxproj" (Build ターゲット) のビルドが完了しました。
 
 ビルドに成功しました。
 
-経過時間 00:00:04.33
-=======
-         LINK : 前回のインクリメンタル リンクで C:\other\HAL\2015\未来創造展\プログラム\SourceTree\game\game\Debug\game.exe が見つからなかったか、ビルドされませんでした。フル リンクを行います。
-         game.vcxproj -> C:\other\HAL\2015\未来創造展\プログラム\SourceTree\game\game\Debug\game.exe
-     1>プロジェクト "C:\other\HAL\2015\未来創造展\プログラム\SourceTree\game\game\game.vcxproj" (Build ターゲット) のビルドが完了しました。
-
-ビルドに成功しました。
-
-経過時間 00:00:02.58
->>>>>>> origin/fuka
+経過時間 00:00:05.51
