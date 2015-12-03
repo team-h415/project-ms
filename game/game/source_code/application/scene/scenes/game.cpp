@@ -497,17 +497,17 @@ void Game::Update()
 	bool camera_re_calculate = false;
 	for (int i = 0; i < 10; ++i){
 		// 中間地点を計算
-		D3DXVECTOR3 lay_point = camera_position+vec_camera_to_focus*i*0.1f;
+		D3DXVECTOR3 lay_point = camera_position + vec_camera_to_focus * static_cast<float>(i) * 0.1f;
 		float pos_y = field->GetHeight(lay_point);
 		// 回避処理
-		if (lay_point.y < pos_y+0.1f){
+		if (lay_point.y < pos_y + 0.1f){
 			camera_re_calculate = true;
 			camera_pos_len_ -= CAMARA_LEN_SPEED;
 		}
 	}
 
 	//カメラ座標再計算
-	if (camera_re_calculate==true){ 
+	if (camera_re_calculate == true){ 
 		camera_position = camera_focus;
 		camera_position.x -= sinf(camera_rotation.y) * camera_pos_len_ * cosf(camera_rotation.x);
 		camera_position.z -= cosf(camera_rotation.y) * camera_pos_len_ * cosf(camera_rotation.x);
@@ -531,7 +531,7 @@ void Game::Update()
 	if (KeyBoard::isTrigger(DIK_1)){
 		effect_manager_->Play("water");
 	}
-	if (GamePad::isTrigger(GAMEPAD_GRANDFATHER, PAD_BUTTON_8)){
+	if (GamePad::isPress(GAMEPAD_GRANDFATHER, PAD_BUTTON_8)){
 		EFFECT_PARAMETER_DESC effect_param;
 		MyEffect *effect = effect_manager_->Get("water");
 		effect_param = effect->parameter();

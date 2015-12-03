@@ -23,6 +23,7 @@ DirectX9::DirectX9()
 	D3DDISPLAYMODE display;
 	LPDIRECT3D9 directx9;
 	LPDIRECT3DDEVICE9 device;
+	DWORD multisample_quality;
 
 	directx9 = Direct3DCreate9(D3D_SDK_VERSION);
 	if (!directx9)
@@ -50,6 +51,17 @@ DirectX9::DirectX9()
 	parameters.Windowed = TRUE;
 	parameters.EnableAutoDepthStencil = TRUE;
 	parameters.AutoDepthStencilFormat = D3DFMT_D24S8;
+	parameters.MultiSampleType = D3DMULTISAMPLE_4_SAMPLES;
+
+	directx9->CheckDeviceMultiSampleType(
+		D3DADAPTER_DEFAULT,
+		D3DDEVTYPE_HAL,
+		display.Format,
+		TRUE,
+		D3DMULTISAMPLE_4_SAMPLES,
+		&multisample_quality);
+
+	parameters.MultiSampleQuality = multisample_quality - 1;
 
 	if (parameters.Windowed)
 	{
