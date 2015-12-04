@@ -23,19 +23,19 @@ std::list<FbxMyContainer*>		FbxContainerManager::fbx_container_list_;
 //================================================================================
 // FBXコンテナの取得
 //================================================================================
-FbxMyContainer* FbxContainerManager::GetContainer(const std::string &file_pass)
+FbxMyContainer* FbxContainerManager::GetContainer(const std::string &file_path)
 {
 	for(auto it = fbx_container_list_.begin(); it != fbx_container_list_.end(); it++)
 	{
 		// ファイルパス比較
-		if(file_pass == (*it)->file_pass_)
+		if(file_path == (*it)->file_path_)
 		{
 			return (*it);
 		}
 	}
 
 	// 新しく追加
-	FbxMyContainer* fbx_container = new FbxMyContainer(file_pass);
+	FbxMyContainer* fbx_container = new FbxMyContainer(file_path);
 	fbx_container_list_.push_back(fbx_container);
 
 	return fbx_container;

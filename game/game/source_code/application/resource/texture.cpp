@@ -16,26 +16,26 @@
 //================================================================================
 // コンストラクタ
 //================================================================================
-Texture::Texture(const char* pass) :
+Texture::Texture(const char* path) :
 	tex_(nullptr),
-	tex_pass_(nullptr)
+	tex_path_(nullptr)
 {
 	// パスnullptrチェック
-	if(pass == nullptr)
+	if(path == nullptr)
 	{
 		return;
 	}
 
 	// テクスチャロード
-	if(!Load(pass))
+	if(!Load(path))
 	{
 		return;
 	}
 
 	// テクスチャネーム置き換え
-	int name_len(strnlen(pass, 255) + sizeof(char));
-	tex_pass_ = new char[name_len];
-	strcpy_s(tex_pass_, name_len, pass);
+	int name_len(strnlen(path, 255) + sizeof(char));
+	tex_path_ = new char[name_len];
+	strcpy_s(tex_path_, name_len, path);
 }
 
 //================================================================================
@@ -45,24 +45,24 @@ Texture::~Texture(void)
 {
 	// 解放
 	SAFE_RELEASE(tex_);
-	SAFE_DELETE_ARRAY(tex_pass_);
+	SAFE_DELETE_ARRAY(tex_path_);
 }
 
 //================================================================================
 // テクスチャ取得
 //================================================================================
-bool Texture::Load(const char* pass)
+bool Texture::Load(const char* path)
 {
 	// デバイスの取得
 	IDirect3DDevice9* device = DirectX9Holder::device_;
 
 	// テクスチャ情報取得
 	D3DXIMAGE_INFO	info;
-	D3DXGetImageInfoFromFile(pass, &info);
+	D3DXGetImageInfoFromFile(path, &info);
 
 	// 読み込み
 	if(FAILED(D3DXCreateTextureFromFileEx(	device,
-											pass,
+											path,
 											info.Width,
 											info.Height,
 											1,
@@ -77,7 +77,7 @@ bool Texture::Load(const char* pass)
 											&tex_)))
 	{
 		std::string warning;
-		warning = pass;
+		warning = path;
 		warning += ": このファイルが見つかりません";
 		ASSERT_WARNING(warning.c_str());
 

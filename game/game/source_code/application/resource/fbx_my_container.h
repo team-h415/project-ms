@@ -72,7 +72,7 @@ class FbxMyContainer
 		float cur_time_;
 		int bone_cursor_;
 
-		std::string file_pass_;
+		std::string file_path_;
 
 	private:
 		void Load(const std::string &path);

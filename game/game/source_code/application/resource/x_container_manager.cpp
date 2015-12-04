@@ -23,19 +23,19 @@ std::list<XContainer*>		XContainerManager::x_container_list_;
 //================================================================================
 // FBXコンテナの取得
 //================================================================================
-XContainer* XContainerManager::GetContainer(const std::string &file_pass)
+XContainer* XContainerManager::GetContainer(const std::string &file_path)
 {
 	for(auto it = x_container_list_.begin(); it != x_container_list_.end(); it++)
 	{
 		// ファイルパス比較
-		if(file_pass == (*it)->file_pass_)
+		if(file_path == (*it)->file_path_)
 		{
 			return (*it);
 		}
 	}
 
 	// 新しく追加
-	XContainer* x_container = new XContainer(file_pass);
+	XContainer* x_container = new XContainer(file_path);
 	x_container_list_.push_back(x_container);
 
 	return x_container;

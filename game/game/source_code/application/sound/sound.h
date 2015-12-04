@@ -50,7 +50,7 @@ public:
 	// 引数1 : サウンドネーム
 	// 引数2 : サウンドの最大ボリューム
 	//================================================================================
-	static Sound* LoadSound(const char* sound_pass, const float set_max = 1.0f);
+	static Sound* LoadSound(const char* sound_path, const float set_max = 1.0f);
 
 	//================================================================================
 	// サウンドのロードと再生
@@ -59,7 +59,7 @@ public:
 	// 引数1 : サウンドネーム
 	// 引数2 : サウンドボリューム
 	//================================================================================
-	static void LoadAndPlaySE(const char* sound_pass, float set_volume = 1.0f);
+	static void LoadAndPlaySE(const char* sound_path, float set_volume = 1.0f);
 
 	//================================================================================
 	// サウンドの解放

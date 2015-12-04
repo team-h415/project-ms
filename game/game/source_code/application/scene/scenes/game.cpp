@@ -34,6 +34,8 @@
 #include "game.h"
 #include "../fade/fade.h"
 
+#include "../../object/objects/sprite/timer.h"
+
 
 //-------------------------------------
 // Game()
@@ -210,7 +212,7 @@ Game::Game()
     object_manager_->Create(
         "time",
 		time_param,
-		"resource / texture / figure_all.png");
+		"resource/texture/figure_all.png");
 
 
 	//-------------------------------------
@@ -303,10 +305,10 @@ Game::Game()
 	//-------------------------------------
 	// インスタンシングテスト
 	//-------------------------------------
-	OBJECT_PARAMETER_DESC wood_param;
+	/*OBJECT_PARAMETER_DESC wood_param;
 	wood_param.layer_ = LAYER_TREE;
 	object_manager_->Create(
-		"wood", wood_param);
+		"wood", wood_param);*/
 
 }
 

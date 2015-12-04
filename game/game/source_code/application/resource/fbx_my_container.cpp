@@ -25,7 +25,7 @@
 //-------------------------------------
 FbxMyContainer::FbxMyContainer(const std::string &path)
 {
-	file_pass_ = path;
+	file_path_ = path;
 	Load(path);
 }
 

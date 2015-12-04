@@ -24,7 +24,7 @@ class XContainerManager
 		// 戻り値 : FBXコンテナ
 		// 引数1 : ファイルパス
 		//================================================================================
-		static XContainer* GetContainer(const std::string &file_pass);
+		static XContainer* GetContainer(const std::string &file_path);
 
 		//================================================================================
 		// 全FBX解放

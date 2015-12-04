@@ -97,10 +97,10 @@ void Sound::End(void)
 //================================================================================
 // サウンドのロード
 //================================================================================
-Sound* Sound::LoadSound(const char* sound_pass, const float set_max)
+Sound* Sound::LoadSound(const char* sound_path, const float set_max)
 {
 	Sound* pNewSound = nullptr;
-	pNewSound = new Sound(sound_pass);
+	pNewSound = new Sound(sound_path);
 	pNewSound->SetMaxVolume(set_max);
 	pNewSound->master_flag_ = false;
 	sound_array_.push_back(pNewSound);
@@ -110,10 +110,10 @@ Sound* Sound::LoadSound(const char* sound_pass, const float set_max)
 //================================================================================
 // サウンドのロードと再生
 //================================================================================
-void Sound::LoadAndPlaySE(const char* sound_pass, float set_volume)
+void Sound::LoadAndPlaySE(const char* sound_path, float set_volume)
 {
 	Sound* pNewSound = nullptr;
-	pNewSound = new Sound(sound_pass);
+	pNewSound = new Sound(sound_path);
 	pNewSound->SetMaxVolume(set_volume);
 	pNewSound->SetCurrentVolume(set_volume);
 	pNewSound->master_flag_ = true;
