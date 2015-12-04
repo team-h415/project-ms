@@ -421,7 +421,7 @@ void NetworkGuest::ObjDataAdaptation(
 				effect_param.position_.y_ = rec_data.object_param_.position_.y_;
 				effect_param.position_.z_ = rec_data.object_param_.position_.z_;
 				effect->SetParameter(effect_param);
-				effect_manager->Play("water");
+				effect_manager->Play(name);
 			}
 			break;
 

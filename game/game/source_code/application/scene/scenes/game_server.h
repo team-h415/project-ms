@@ -66,9 +66,10 @@ private:
 	CameraManager		*camera_manager_;
 	CollisionManager	*collision_manager_;
 	DebugFont			*font_;
-	int					bullet_count;
 	bool				guest_scene_change_[MAX_GUEST];
-	int					time;
+	float				camera_pos_len_[MAX_GUEST];
+	int					bullet_count_;
+	int					time_;
 };
 
 

@@ -86,7 +86,8 @@ struct OBJ_PARAM
 struct UI_PARAM
 {
 	UI_TYPE		type_;			// UIタイプ
-	float		value_;			// 値
+	int			value_i_;		// 値
+	float		value_f_;		// 値
 };
 
 struct NETWORK_DATA

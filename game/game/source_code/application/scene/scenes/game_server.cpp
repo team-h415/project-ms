@@ -44,7 +44,7 @@ GameServer::GameServer()
 	{
 		guest_scene_change_[i] = false;
 	}
-	bullet_count = 0;
+	bullet_count_ = 0;
 
 	camera_manager_ = new CameraManager;
 	object_manager_ = new ObjectManager;
@@ -79,30 +79,31 @@ GameServer::GameServer()
 	camera_manager_->Create(
 		"Perspective", "camera5", camera_param);
 
-	OBJECT_PARAMETER_DESC param;
-	param.position_ = { 0.0f, 0.0f, 0.0f };
-	param.rotation_ = { 0.0f, 0.0f, 0.0f };
-	param.scaling_ = { 500.0f, 1.0f, 500.0f };
-	param.layer_ = LAYER_MESH_FIELD;
 
 	//-------------------------------------
 	// 地形
 	//-------------------------------------
+	OBJECT_PARAMETER_DESC param;
+	param.position_ = {0.0f, 0.0f, 0.0f};
+	param.rotation_ = {0.0f, 0.0f, 0.0f};
+	param.scaling_ = {200.0f, 1.0f, 200.0f};
+	param.layer_ = LAYER_MESH_FIELD;
+
 	object_manager_->Create(
 		"field",
 		param,
 		"resource/mesh/map.heightmap");
 
+	//-------------------------------------
+	// プレイヤー
+	//-------------------------------------
 	OBJECT_PARAMETER_DESC player_param;
 	player_param.layer_ = LAYER_MODEL_X;
 	player_param.position_ = { 0.0f, 0.0f, 0.0f };
 	player_param.rotation_ = { 0.0f, 0.0f, 0.0f };
 	player_param.scaling_ = { 1.0f, 1.0f, 1.0f };
-
-	//-------------------------------------
-	// プレイヤー
-	//-------------------------------------
 	COLLISION_PARAMETER_DESC collision_param;
+
 	for(int i = 0; i < MAX_GUEST; i++)
 	{
 		std::string player_str = "player" + std::to_string(i + 1);
@@ -172,16 +173,14 @@ void GameServer::Update()
 		case STATE_GAME:
 			{
 				MatchingAndGame();
-#ifdef _DEBUG
-				
-#endif
+
 				NETWORK_DATA send_data;
-				time--;
-				if(time > 0)
+				time_--;
+				if(time_ > 0)
 				{
 					send_data.object_param_.type_ = OBJ_UI;
 					strcpy_s(send_data.name, MAX_NAME_LEN, "timer");
-					send_data.ui_param_.value_ = time / 60;
+					send_data.ui_param_.value_i_ = time_ / 60;
 					NetworkHost::SendTo(DELI_MULTI, send_data);
 				}
 
@@ -360,9 +359,39 @@ void GameServer::MatchingAndGame()
 
 		// 注視点を基準にカメラ座標を設定
 		camera_position = camera_focus;
-		camera_position.x -= sinf(camera_rotation.y) * CAMERA_POS_LEN * cosf(camera_rotation.x);
-		camera_position.z -= cosf(camera_rotation.y) * CAMERA_POS_LEN * cosf(camera_rotation.x);
-		camera_position.y -= sinf(camera_rotation.x) * CAMERA_POS_LEN;
+		camera_position.x -= sinf(camera_rotation.y) * camera_pos_len_[i] * cosf(camera_rotation.x);
+		camera_position.z -= cosf(camera_rotation.y) * camera_pos_len_[i] * cosf(camera_rotation.x);
+		camera_position.y -= sinf(camera_rotation.x) * camera_pos_len_[i];
+
+		// カメラの地面めり込み回避処理
+		D3DXVECTOR3	vec_camera_to_focus = camera_focus - camera_position;
+			
+		// 中間にカメラがめり込みそうなところが無いか検査
+		bool camera_re_calculate = false;
+		for (int j = 0; j < 10; ++j){
+			// 中間地点を計算
+			D3DXVECTOR3 lay_point = camera_position + vec_camera_to_focus * (0.1f * j);
+			float pos_y = field->GetHeight(lay_point);
+			// 回避処理
+			if (lay_point.y < pos_y + 0.1f){
+				camera_re_calculate = true;
+				camera_pos_len_[i] -= CAMARA_LEN_SPEED;
+			}
+		}
+		
+		//カメラ座標再計算
+		if (camera_re_calculate == true){ 
+			camera_position = camera_focus;
+			camera_position.x -= sinf(camera_rotation.y) * camera_pos_len_[i] * cosf(camera_rotation.x);
+			camera_position.z -= cosf(camera_rotation.y) * camera_pos_len_[i] * cosf(camera_rotation.x);
+			camera_position.y -= sinf(camera_rotation.x) * camera_pos_len_[i];
+			camera_position.y = field->GetHeight(camera_position) + 0.1f;
+		}
+		
+		camera_pos_len_[i] += CAMARA_LEN_SPEED;
+		if (camera_pos_len_[i] > CAMERA_POS_LEN){
+			camera_pos_len_[i] = CAMERA_POS_LEN;
+		}
 
 		// カメラにパラメータを再セット
 		main_camera->SetPosition(camera_position);
@@ -372,7 +401,7 @@ void GameServer::MatchingAndGame()
 		//-------------------------------------
 		// バレット発射
 		//-------------------------------------
-		if(GamePad::isTrigger(i, PAD_BUTTON_6)){
+		if(GamePad::isTrigger(i, PAD_BUTTON_8)){
 			OBJECT_PARAMETER_DESC bullet_param;
 			bullet_param.layer_ = LAYER_BULLET;
 			bullet_param.position_ = player_position;
@@ -382,11 +411,11 @@ void GameServer::MatchingAndGame()
 			bullet_param.rotation_.x_ = camera_rotation.x;
 
 			bullet_param.scaling_ = {1.0f, 1.0f, 1.0f};
-			std::string str = "notice" + std::to_string(bullet_count);
+			std::string str = "notice" + std::to_string(bullet_count_);
 			object_manager_->Create(
 				str,
 				bullet_param);
-			bullet_count++;
+			bullet_count_++;
 
 			// エフェクト再生
 			send_data.type_ = DATA_OBJ_PARAM;
@@ -454,7 +483,12 @@ void GameServer::MatchingAndGame()
 //-------------------------------------
 void GameServer::ChangeState(SERVER_STATE next)
 {
-	bullet_count = 0;
+	// 各種設定初期化
+	for(int i = 0; i < MAX_GUEST; i++)
+	{
+		camera_pos_len_[i] = CAMERA_POS_LEN;
+	}
+	bullet_count_ = 0;
 	object_manager_->Clear(LAYER_BULLET);
 	state = next;
 	switch(state)
@@ -464,7 +498,7 @@ void GameServer::ChangeState(SERVER_STATE next)
 				std::string player_str;
 				Object *player;
 				Vector3 pos(0.0f, 0.0f, 0.0f), rot(0.0f, 0.0f, 0.0f);
-				for(int i = 0; i < 5; i++){
+				for(int i = 0; i < MAX_GUEST; i++){
 					player_str = "player" + std::to_string(i + 1);
 					player = object_manager_->Get(player_str);
 
@@ -476,11 +510,11 @@ void GameServer::ChangeState(SERVER_STATE next)
 
 		case STATE_GAME:
 			{
-				time = GAME_TIME * 60;
+				time_ = GAME_TIME * 60;
 				std::string player_str;
 				Object *player;
 				Vector3 pos(0.0f, 0.0f, 0.0f), rot(0.0f, 0.0f, 0.0f);
-				for(int i = 0; i < 5; i++){
+				for(int i = 0; i < MAX_GUEST; i++){
 					player_str = "player" + std::to_string(i + 1);
 					player = object_manager_->Get(player_str);
 

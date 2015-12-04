@@ -660,10 +660,6 @@ void Game::Draw()
 	Fade::Draw();
 	DirectX9Holder::DrawEnd();
 	DirectX9Holder::SwapBuffer();
-
-	#ifdef NETWORK_HOST_MODE
-	#else
-	#endif
 }
 
 
