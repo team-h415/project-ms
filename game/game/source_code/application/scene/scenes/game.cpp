@@ -208,7 +208,9 @@ Game::Game()
     time_param.layer_ = LAYER_TIMER;
 
     object_manager_->Create(
-        "time", time_param);
+        "time",
+		time_param,
+		"resource / texture / figure_all.png");
 
 
 	//-------------------------------------
