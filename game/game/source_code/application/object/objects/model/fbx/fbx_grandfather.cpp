@@ -34,6 +34,8 @@ FbxGrandfather::FbxGrandfather(const OBJECT_PARAMETER_DESC &parameter) :
 	// ƒ‚ƒfƒ‹“Ç‚İ‚İ
 	Load("./resource/model/fbx/ogchan.fbx");
 	texture_ = TextureManager::GetTexture("resource/texture/game/ogchan.jpg");
+	life_ = 100;
+	water_gauge_ = 100;
 
 #ifdef _DEBUG
 	int x;

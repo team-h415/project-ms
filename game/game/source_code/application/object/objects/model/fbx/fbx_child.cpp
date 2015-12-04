@@ -34,6 +34,8 @@ FbxModel(parameter)
 	// ƒ‚ƒfƒ‹“Ç‚İ‚İ
 	Load("./resource/model/fbx/child_01.fbx");
 	texture_ = TextureManager::GetTexture("resource/texture/game/child_01.jpg");
+	life_ = 100;
+	water_gauge_ = 100;
 
 #ifdef _DEBUG
 	int x;

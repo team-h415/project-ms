@@ -22,6 +22,7 @@
 #include "../../object/objects/model/x_model.h"
 #include "../../object/objects/model/fbx_model.h"
 #include "../../object/objects/model/fbx/fbx_grandfather.h"
+#include "../../object/objects/model/fbx/fbx_child.h"
 #include "../../effect/effect.h"
 #include "../../effect/effect_manager.h"
 #include "../../camera/camera.h"
@@ -544,6 +545,7 @@ void Game::Update()
 
 		OBJECT_PARAMETER_DESC bullet_param;
 		bullet_param.layer_ = LAYER_BULLET;
+		bullet_param.parent_layer_ = LAYER_MODEL_GRANDFATHER;
 		bullet_param.position_ = fbx_position;
 		bullet_param.rotation_ = fbx_rotation;
 
@@ -570,6 +572,7 @@ void Game::Update()
 
 		OBJECT_PARAMETER_DESC bullet_param;
 		bullet_param.layer_ = LAYER_BULLET;
+		bullet_param.parent_layer_ = LAYER_MODEL_GRANDFATHER;
 		bullet_param.position_ = fbx_position;
 		bullet_param.rotation_ = fbx_rotation;
 		bullet_param.scaling_ = {1.0f, 1.0f, 1.0f};
@@ -584,7 +587,6 @@ void Game::Update()
 		bullet_count++;
 	}
 #endif //_DEBUG
-
 
 	//-------------------------------------
 	// アニメーション制御
@@ -612,6 +614,11 @@ void Game::Update()
 		grandfather->PlayAnimation(FbxGrandfather::DOWN);
 	}
 
+	FbxGrandfather *father = dynamic_cast<FbxGrandfather*>(fbx);
+	FbxChild *child_ = dynamic_cast<FbxChild*>(child);
+	int father_life = father->GetLife();
+	int child_life = child_->GetLife();
+
 	//-------------------------------------
 	// 実更新処理
 	//-------------------------------------
@@ -622,6 +629,8 @@ void Game::Update()
 
 	font_->Add("シーン名:");
 	font_->Add("Game\n");
+	font_->Add("GrandFather : %d\n", father_life);
+	font_->Add("Child       : %d\n", child_life);
 
 	if (KeyBoard::isTrigger(DIK_RETURN))
 	{
@@ -639,7 +648,7 @@ void Game::Draw()
 		0, 0,
 		static_cast<LONG>(SCREEN_WIDTH),
 		static_cast<LONG>(SCREEN_HEIGHT) };
-	D3DXCOLOR font_color(0.0f, 1.0f, 1.0f, 1.0f);
+	D3DXCOLOR font_color(0.0f, 0.2f, 0.0f, 1.0f);
 	MaterialColor color(32, 32, 32, 0);
 	DirectX9Holder::DrawBegin();
 	DirectX9Holder::Clear(color);

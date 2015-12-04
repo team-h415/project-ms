@@ -14,6 +14,9 @@
 #include "../../../math/vector.h"
 #include "../../object.h"
 #include "../../object_manager.h"
+#include "../model/fbx_model.h"
+#include "../model/fbx/fbx_child.h"
+#include "../model/fbx/fbx_grandfather.h"
 #include "../../../collision/collision.h"
 #include "../../../collision/collision_manager.h"
 #include "../../../effect/effect.h"
@@ -116,28 +119,55 @@ void Bullet::Action(
 {
 	//-------------------------------------
 	// もしXモデルと当たったら
-	if (target->parameter().layer_ == LAYER_MODEL_X){
+	if (target->parameter().layer_ == LAYER_MODEL_X ||
+		target->parameter().layer_ == LAYER_MODEL_GRANDFATHER ||
+		target->parameter().layer_ == LAYER_MODEL_CHILD){
+
 		//-------------------------------------
-		// シーン取得
-		Scene *scene = SceneManager::GetCurrentScene();
-		std::string str = SceneManager::GetCurrentSceneName();
-		if (str == "Game"){
-			Game *game = dynamic_cast<Game*>(scene);
+		// 自分の親のレイヤーを確認
+		if (parameter_.parent_layer_ != target->parameter().layer_){
+
 			//-------------------------------------
-			// シーンからエフェクト取得
-			EFFECT_PARAMETER_DESC effect_param;
-			MyEffect *effect = game->effect_manager()->Get("damage");
-			effect_param = effect->parameter();
-			effect_param.position_ = parameter_.position_;
-			effect_param.position_.y_ += 0.5f;
-			effect_param.rotation_ = parameter_.rotation_;
-			effect->SetParameter(effect_param);
+			// 当たった対象にパラメータ反映
+			// おじ
+			if (target->parameter().layer_ == LAYER_MODEL_GRANDFATHER){
+				FbxGrandfather *father = dynamic_cast<FbxGrandfather*>(target);
+				int life = father->GetLife();
+				life -= 1;
+				father->SetLife(life);
+			}
+			// 子供
+			else if (target->parameter().layer_ == LAYER_MODEL_CHILD){
+				FbxChild *child = dynamic_cast<FbxChild*>(target);
+				int life = child->GetLife();
+				life -= 1;
+				child->SetLife(life);
+			}
+
 			//-------------------------------------
-			// エフェクト再生
-			game->effect_manager()->Play("damage");
+			// シーン取得
+			Scene *scene = SceneManager::GetCurrentScene();
+			std::string str = SceneManager::GetCurrentSceneName();
+			if (str == "Game"){
+				Game *game = dynamic_cast<Game*>(scene);
+
+				//-------------------------------------
+				// シーンからエフェクト取得
+				EFFECT_PARAMETER_DESC effect_param;
+				MyEffect *effect = game->effect_manager()->Get("damage");
+				effect_param = effect->parameter();
+				effect_param.position_ = parameter_.position_;
+				effect_param.position_.y_ += 0.5f;
+				effect_param.rotation_ = parameter_.rotation_;
+				effect->SetParameter(effect_param);
+
+				//-------------------------------------
+				// エフェクト再生
+				game->effect_manager()->Play("damage");
+			}
+			this_delete_ = true;
+			collision_->SetThisDelete(true);
 		}
-		this_delete_ = true;
-		collision_->SetThisDelete(true);
 	}
 }
 
