@@ -29,6 +29,7 @@ public:
     virtual ~DamageEffect();
     void Update();
     void Draw();
+    // Max‚Ì’l‚Í100‚ÉI
     void SetPoint(const int point);
 private:
     void CalculateVertex();

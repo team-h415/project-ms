@@ -27,18 +27,26 @@ namespace{
 //-------------------------------------
 // class
 //-------------------------------------
-class WaterGage : public Sprite2D
+class WaterGage : public Object
 {
 public:
     WaterGage(
         const OBJECT_PARAMETER_DESC &parameter);
     virtual ~WaterGage();
-
+    void Update();
+    void Draw();
+    // ÉQÅ[ÉWÇÃïœçXäÑçáÇì¸ÇÍÇÈ
+    void SetChangeValue(const float value){ gage_value_ += value; }
+    void SetTexture(
+        const std::string &path);
 private:
     void CalculateVertex();
     Vertex2D *vertex_;
-    LPDIRECT3DTEXTURE9 texture_;
-    int gage_volume_;
+    LPDIRECT3DTEXTURE9 diffuse_texture_;
+    LPDIRECT3DTEXTURE9 alpha_texture_;
+    Shader *shader_;
+//    LPDIRECT3DTEXTURE9 texture_;
+    float gage_value_;
 };
 
 
