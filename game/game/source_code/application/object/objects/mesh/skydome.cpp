@@ -38,8 +38,9 @@ SkyDome::SkyDome(
 	mesh_division_ = { 0, 0 };
 	D3DXMatrixIdentity(&world_);
 	shader_ = nullptr;
-	shader_ = new Shader("resource/shader/halflambert_lighting.hlsl");
+	shader_ = new Shader("resource/shader/no_lighting.hlsl");
 	texture_ = NULL;
+	mesh_diffuse_ = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
 }
 
 
@@ -169,8 +170,19 @@ void SkyDome::LoadMesh(
 	char texture_path[256];
 	D3DXVECTOR3 *vertex_buffer;
 
-	fscanf(file, "%d %d %f %s", &div_x, &div_y, &mesh_radius_, texture_path);
-	
+	if (file == nullptr)
+	{
+		std::string warning;
+		warning = path;
+		warning += ": ‚±‚Ìƒtƒ@ƒCƒ‹‚ªŒ©‚Â‚©‚è‚Ü‚¹‚ñ";
+		ASSERT_WARNING(warning.c_str());
+	}
+
+	fscanf(file, "%d %d", &div_x, &div_y);
+	fscanf(file, "%f", &mesh_radius_);
+	fscanf(file, "%f %f %f %f", &mesh_diffuse_.r, &mesh_diffuse_.g, &mesh_diffuse_.b, &mesh_diffuse_.a);
+	fscanf(file, "%s", &texture_path);
+
 	// CalculateVertexNum
 	vertex_count = (div_x + 1)*(div_y+1);
 
@@ -247,7 +259,7 @@ void SkyDome::CalculateVertex(
 				cosf(-angle) * mesh_radius_ * cosf(height)
 			};
 
-			vertex[num].diffuse_ = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+			vertex[num].diffuse_ = mesh_diffuse_;
 			vertex[num].normal_ = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
 
 			vertex[num].texture_ = {

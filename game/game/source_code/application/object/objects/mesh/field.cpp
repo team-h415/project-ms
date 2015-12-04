@@ -38,9 +38,12 @@ Field::Field(
 	mesh_division_ = { 0, 0 };
 	D3DXMatrixIdentity(&world_);
 	shader_ = nullptr;
-	shader_ = new Shader("resource/shader/halflambert_lighting.hlsl");
+	shader_ = new Shader("resource/shader/field.hlsl");
 
-	texture_ = TextureManager::GetTexture("resource/texture/game/map.png");
+	texture_[0] = TextureManager::GetTexture("resource/texture/game/field_1.png");
+	texture_[1] = TextureManager::GetTexture("resource/texture/game/field_2.png");
+	texture_[2] = TextureManager::GetTexture("resource/texture/game/field_3.png");
+	texture_[3] = TextureManager::GetTexture("resource/texture/game/field_4.png");
 }
 
 
@@ -53,7 +56,9 @@ Field::~Field()
 	SAFE_RELEASE(index_buffer_);
 	SAFE_DELETE_ARRAY(normal_buffer_);
 	SAFE_DELETE(shader_);
-	texture_ = NULL;
+	for (int i = 0; i < 4; i++){
+		texture_[i] = NULL;
+	}
 }
 
 
@@ -127,7 +132,14 @@ void Field::Draw()
 		reinterpret_cast<float*>(&light_diffuse),
 		4);
 
-	DirectX9Holder::device_->SetTexture(0, texture_);
+	DirectX9Holder::device_->SetTexture(
+		shader_->pixel_table()->GetSamplerIndex("texture_0"), texture_[0]);
+	DirectX9Holder::device_->SetTexture(
+		shader_->pixel_table()->GetSamplerIndex("texture_1"), texture_[1]);
+	DirectX9Holder::device_->SetTexture(
+		shader_->pixel_table()->GetSamplerIndex("texture_2"), texture_[2]);
+	DirectX9Holder::device_->SetTexture(
+		shader_->pixel_table()->GetSamplerIndex("texture_3"), texture_[3]);
 
 	DirectX9Holder::device_->SetVertexShader(shader_->vertex_shader());
 	DirectX9Holder::device_->SetPixelShader(shader_->pixel_shader());
@@ -136,10 +148,10 @@ void Field::Draw()
 		0,
 		vertex_buffer_,
 		0,
-		sizeof(Vertex3D));
+		sizeof(Vertex3DField));
 	DirectX9Holder::device_->SetIndices(index_buffer_);
 	DirectX9Holder::device_->SetVertexDeclaration(
-		DirectX9Holder::vertex_declaration_3d_);
+		DirectX9Holder::vertex_declaration_field_);
 	DirectX9Holder::device_->DrawIndexedPrimitive(
 		D3DPT_TRIANGLESTRIP,
 		0,
@@ -166,6 +178,7 @@ void Field::LoadMesh(
 	FILE *file = fopen(path.c_str(), "rb");
 	int div_x(0), div_z(0), vertex_count(0);
 	D3DXVECTOR3 *vertex_buffer;
+	D3DXVECTOR4 *texture_alpha;
 	D3DXVECTOR2 scale_(0.0f, 0.0f);
 	fread(&div_x, sizeof(int), 1, file);
 	fread(&div_z, sizeof(int), 1, file);
@@ -173,7 +186,9 @@ void Field::LoadMesh(
 	fread(&vertex_count, sizeof(unsigned int), 1, file);
 
 	vertex_buffer = new D3DXVECTOR3[vertex_count];
+	texture_alpha = new D3DXVECTOR4[vertex_count];
 	fread(vertex_buffer, sizeof(D3DXVECTOR3), vertex_count, file);
+	fread(texture_alpha, sizeof(D3DXVECTOR4), vertex_count, file);
 
 	fclose(file);
 
@@ -184,7 +199,7 @@ void Field::LoadMesh(
 	};
 
 	if (FAILED(DirectX9Holder::device_->CreateVertexBuffer(
-		sizeof(Vertex3D)* vertex_count,
+		sizeof(Vertex3DField)* vertex_count,
 		D3DUSAGE_WRITEONLY,
 		0,
 		D3DPOOL_MANAGED,
@@ -207,10 +222,11 @@ void Field::LoadMesh(
 
 	normal_buffer_ = new D3DXVECTOR3[(div_x * 2) * div_z];
 
-	CalculateVertex(vertex_buffer);
+	CalculateVertex(vertex_buffer, texture_alpha);
 	CalculateNormal();
 	CalculateIndex();
-	SAFE_DELETE(vertex_buffer);
+	SAFE_DELETE_ARRAY(vertex_buffer);
+	SAFE_DELETE_ARRAY(texture_alpha);
 }
 
 
@@ -218,9 +234,10 @@ void Field::LoadMesh(
 // CalculateVertex()
 //-------------------------------------
 void Field::CalculateVertex(
-	D3DXVECTOR3 *source_buffer)
+	D3DXVECTOR3 *source_buffer,
+	D3DXVECTOR4 *texture_alpha)
 {
-	Vertex3D *vertex;
+	Vertex3DField *vertex;
 	vertex_buffer_->Lock(0, 0, (void**)&vertex, 0);
 	for (int z = 0; z < static_cast<int>(mesh_division_.y + 1); z++)
 	{
@@ -232,11 +249,12 @@ void Field::CalculateVertex(
 				source_buffer[num].y * parameter_.scaling_.y_,
 				(parameter_.scaling_.z_ / 2.0f) - (z * (parameter_.scaling_.z_ / mesh_division_.y))
 			};
-			vertex[num].diffuse_ = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+			vertex[num].color_ = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
 			vertex[num].texture_ = {
-				static_cast<float>(x) / mesh_division_.x,
-				static_cast<float>(z) / mesh_division_.y
+				static_cast<float>(x),
+				static_cast<float>(z)
 			};
+			vertex[num].texturealpha_ = texture_alpha[num];
 		}
 	}
 	vertex_buffer_->Unlock();
@@ -287,7 +305,7 @@ void Field::CalculateNormal()
 //-------------------------------------
 void Field::CalculatePanelNormal()
 {
-	Vertex3D *vertex;
+	Vertex3DField *vertex;
 	D3DXVECTOR3 *normal = normal_buffer_;
 
 	vertex_buffer_->Lock(0, 0, (void**)&vertex, 0);
@@ -332,7 +350,7 @@ void Field::CalculatePanelNormal()
 //-------------------------------------
 void Field::CalculateVertexNormal()
 {
-	Vertex3D *vertex;
+	Vertex3DField *vertex;
 	D3DXVECTOR3 *normal = normal_buffer_;
 
 	vertex_buffer_->Lock(0, 0, (void**)&vertex, 0);
@@ -436,7 +454,7 @@ float Field::GetHeight(const D3DXVECTOR3 &position)
 	D3DXVECTOR3 vec1, vec2, vec3;
 	D3DXVECTOR3 vec_p1, vec_p2, vec_p3;
 	float height = 0.0f;
-	Vertex3D *vertex;
+	Vertex3DField *vertex;
 
 	vertex_buffer_->Lock(0, 0, (void**)&vertex, 0);
 	for (int z = 0; z < static_cast<int>(mesh_division_.y); z++)

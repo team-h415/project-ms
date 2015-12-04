@@ -76,6 +76,11 @@ bool Texture::Load(const char* pass)
 											nullptr,
 											&tex_)))
 	{
+		std::string warning;
+		warning = pass;
+		warning += ": ‚±‚Ìƒtƒ@ƒCƒ‹‚ªŒ©‚Â‚©‚è‚Ü‚¹‚ñ";
+		ASSERT_WARNING(warning.c_str());
+
 		return false;
 	}
 

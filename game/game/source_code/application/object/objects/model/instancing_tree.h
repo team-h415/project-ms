@@ -1,51 +1,41 @@
 //=========================================================
-// skydome.h
-// author:fuka takahashi
+// instancing_tree.h
+// author:takeshi iwasawa
 //=========================================================
+
 
 //-------------------------------------
 // include guard
 //-------------------------------------
 #pragma once
-#ifndef __SkyDome_H__
-#define __SkyDome_H__
+#ifndef __InstancingTree_H__
+#define __InstancingTree_H__
 
 
 //-------------------------------------
 // class
 //-------------------------------------
-class Shader;
-class SkyDome : public Object
+class InstancingTree : public Object
 {
 public:
-	SkyDome(
+	InstancingTree(
 		const OBJECT_PARAMETER_DESC &parameter);
-	virtual ~SkyDome();
+	virtual ~InstancingTree();
 	void Update();
 	void Draw();
-	void LoadMesh(
-		const std::string &path);
 private:
-	void CalculateVertex(
-		D3DXVECTOR3 *source_buffer);
-	void CalculateIndex();
-
+	LPDIRECT3DTEXTURE9 texture_;
+	Shader *shader_;
 	LPDIRECT3DVERTEXBUFFER9 vertex_buffer_;
 	LPDIRECT3DINDEXBUFFER9 index_buffer_;
-	D3DXVECTOR3 *normal_buffer_;
-	unsigned int index_count_;
-	float mesh_radius_;
-	D3DXVECTOR2 mesh_division_;
-	D3DXMATRIX world_;
-	Shader *shader_;
-	LPDIRECT3DTEXTURE9 texture_;
-	D3DXCOLOR mesh_diffuse_;
-	
+	LPDIRECT3DVERTEXBUFFER9 world_buffer_;
+	int object_count_;
+	int count_vertex_;
+	int count_face_;
 };
 
 
-#endif //__SkyDome_H__
-
+#endif //__InstancingTree_H__
 
 
 //-------------------------------------

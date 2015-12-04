@@ -30,7 +30,9 @@ public:
 	static LPDIRECT3DDEVICE9 device_;
 	static LPDIRECT3DVERTEXDECLARATION9 vertex_declaration_2d_;
 	static LPDIRECT3DVERTEXDECLARATION9 vertex_declaration_3d_;
+	static LPDIRECT3DVERTEXDECLARATION9 vertex_declaration_field_;
 	static LPDIRECT3DVERTEXDECLARATION9 vertex_declaration_fbx_;
+	static LPDIRECT3DVERTEXDECLARATION9 vertex_declaration_instancing_;
 };
 
 

@@ -23,6 +23,7 @@ DirectX9::DirectX9()
 	D3DDISPLAYMODE display;
 	LPDIRECT3D9 directx9;
 	LPDIRECT3DDEVICE9 device;
+	DWORD multisample_quality;
 
 	directx9 = Direct3DCreate9(D3D_SDK_VERSION);
 	if (!directx9)
@@ -50,6 +51,17 @@ DirectX9::DirectX9()
 	parameters.Windowed = TRUE;
 	parameters.EnableAutoDepthStencil = TRUE;
 	parameters.AutoDepthStencilFormat = D3DFMT_D24S8;
+	parameters.MultiSampleType = D3DMULTISAMPLE_4_SAMPLES;
+
+	directx9->CheckDeviceMultiSampleType(
+		D3DADAPTER_DEFAULT,
+		D3DDEVTYPE_HAL,
+		display.Format,
+		TRUE,
+		D3DMULTISAMPLE_4_SAMPLES,
+		&multisample_quality);
+
+	parameters.MultiSampleQuality = multisample_quality - 1;
 
 	if (parameters.Windowed)
 	{
@@ -165,6 +177,37 @@ DirectX9::DirectX9()
 		ASSERT_ERROR("fbx用頂点宣言生成に失敗");
 	}
 
+	D3DVERTEXELEMENT9 velementins[] = {
+		{0, 0, D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_POSITION, 0},
+		{0, 12, D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_NORMAL, 0},
+		{0, 24, D3DDECLTYPE_FLOAT2, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 0},
+		{1, 0, D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 1},
+		D3DDECL_END(),
+	};
+
+	if(FAILED(device->CreateVertexDeclaration(
+		velementins,
+		&DirectX9Holder::vertex_declaration_instancing_)))
+	{
+		ASSERT_ERROR("インスタンシング用頂点宣言生成に失敗");
+	}
+
+	D3DVERTEXELEMENT9 velementfield[] = {
+		{ 0, 0, D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_POSITION, 0 },
+		{ 0, 12, D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_NORMAL, 0 },
+		{ 0, 24, D3DDECLTYPE_D3DCOLOR, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_COLOR, 0 },
+		{ 0, 28, D3DDECLTYPE_FLOAT2, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 0 },
+		{ 0, 36, D3DDECLTYPE_FLOAT4, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 1 },
+		D3DDECL_END(),
+	};
+
+	if (FAILED(device->CreateVertexDeclaration(
+		velementfield,
+		&DirectX9Holder::vertex_declaration_field_)))
+	{
+		ASSERT_ERROR("地形用頂点宣言生成に失敗");
+	}
+
 	DirectX9Holder::directx9_ = directx9;
 	DirectX9Holder::device_ = device;
 }
@@ -177,7 +220,9 @@ DirectX9::~DirectX9()
 {
 	SAFE_RELEASE(DirectX9Holder::vertex_declaration_2d_);
 	SAFE_RELEASE(DirectX9Holder::vertex_declaration_3d_);
+	SAFE_RELEASE(DirectX9Holder::vertex_declaration_field_);
 	SAFE_RELEASE(DirectX9Holder::vertex_declaration_fbx_);
+	SAFE_RELEASE(DirectX9Holder::vertex_declaration_instancing_);
 	SAFE_RELEASE(DirectX9Holder::device_);
 	SAFE_RELEASE(DirectX9Holder::directx9_);
 }

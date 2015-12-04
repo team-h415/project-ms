@@ -259,9 +259,6 @@
     <ClCompile Include="source_code\application\resource\x_container.cpp">
       <Filter>source_code\application\resource</Filter>
     </ClCompile>
-    <ClCompile Include="source_code\application\math\vector.cpp">
-      <Filter>source_code</Filter>
-    </ClCompile>
     <ClCompile Include="source_code\application\object\objects\notice\bullet.cpp">
       <Filter>source_code\application\object\objects\notice</Filter>
     </ClCompile>
@@ -285,6 +282,12 @@
     </ClCompile>
     <ClCompile Include="source_code\application\scene\scenes\game_server.cpp">
       <Filter>source_code\application\scene\scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="source_code\application\object\objects\model\instancing_tree.cpp">
+      <Filter>source_code\application\object\objects\model</Filter>
+    </ClCompile>
+    <ClCompile Include="source_code\application\math\vector.cpp">
+      <Filter>source_code\application\math</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -488,6 +491,9 @@
     </ClInclude>
     <ClInclude Include="source_code\application\scene\scenes\game_server.h">
       <Filter>source_code\application\scene\scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="source_code\application\object\objects\model\instancing_tree.h">
+      <Filter>source_code\application\object\objects\model</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
