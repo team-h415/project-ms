@@ -36,7 +36,7 @@ public:
     void Update();
     void Draw();
     // ƒQ[ƒW‚Ì•ÏXŠ„‡‚ğ“ü‚ê‚é
-    void SetChangeValue(const float value){ gage_value_ += value; }
+    void SetChangeValue(const float value){ gauge_value_ = value; }
     void SetTexture(
         const std::string &path);
 private:
@@ -46,7 +46,7 @@ private:
     LPDIRECT3DTEXTURE9 alpha_texture_;
     Shader *shader_;
 //    LPDIRECT3DTEXTURE9 texture_;
-    float gage_value_;
+    float gauge_value_;
 };
 
 

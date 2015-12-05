@@ -29,7 +29,7 @@ public:
     virtual ~DamageEffect();
     void Update();
     void Draw();
-	void SetHP(const int hp){
+	void SetHP(const float hp){
 		hp_ = hp;
 	}
 private:
@@ -45,7 +45,9 @@ private:
     FLASH_MODE flash_mode_;
     float flash_alpha_;
 
-    int hp_;
+	//-------------------------------------
+	// ‘Ì—Í
+    float hp_;
 };
 
 

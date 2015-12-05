@@ -81,22 +81,22 @@ public:
 	//-------------------------------------
 	// パラメータリセット
 	void ResetGameParameters(){
-		life_ = 100;
-		water_gauge_ = 100;
+		life_ = 1.0f;
+		water_gauge_ = 1.0f;
 	}
 	// 体力
-	const int &GetLife(){
+	const float &GetLife(){
 		return life_;
 	}
-	void SetLife(const int &life){
+	void SetLife(const float &life){
 		life_ = life;
 	}
 
 	//水ゲージ
-	const int &GetWaterGauge(){
+	const float &GetWaterGauge(){
 		return water_gauge_;
 	}
-	void SetWaterGauge(const int &gauge){
+	void SetWaterGauge(const float &gauge){
 		water_gauge_ = gauge;
 	}
 
@@ -116,9 +116,9 @@ private:
 	// ゲーム用パラメータ
 	//-------------------------------------
 	// 体力
-	int life_;
+	float life_;
 	// 水ゲージ
-	int water_gauge_;
+	float water_gauge_;
 
 };
 

@@ -34,7 +34,7 @@ WaterGage::WaterGage(
     const OBJECT_PARAMETER_DESC &parameter)
 {
     parameter_ = parameter;
-    gage_value_ = 1.0f;
+    gauge_value_ = 1.0f;
     vertex_ = new Vertex2D[4];
     CalculateVertex();
     diffuse_texture_ = NULL;
@@ -66,8 +66,8 @@ void WaterGage::Update()
 {
 	//-------------------------------------
 	// ç≈è¨ÅEç≈ëÂílê›íË
-	gage_value_ = std::min<float>(gage_value_, 1.0f);
-	gage_value_ = std::max<float>(gage_value_, 0.0f);
+	gauge_value_ = std::min<float>(gauge_value_, 1.0f);
+	gauge_value_ = std::max<float>(gauge_value_, 0.0f);
 }
 
 
@@ -86,7 +86,7 @@ void WaterGage::Draw()
     DirectX9Holder::device_->SetTexture(shader_->pixel_table()->GetSamplerIndex("diffuse_texture"), diffuse_texture_);
     DirectX9Holder::device_->SetTexture(shader_->pixel_table()->GetSamplerIndex("alpha_texture"), alpha_texture_);
 
-    shader_->pixel_table()->SetFloat(DirectX9Holder::device_, "current_gage", gage_value_);
+    shader_->pixel_table()->SetFloat(DirectX9Holder::device_, "current_gage", gauge_value_);
 
     DirectX9Holder::device_->SetVertexShader(shader_->vertex_shader());
     DirectX9Holder::device_->SetPixelShader(shader_->pixel_shader());

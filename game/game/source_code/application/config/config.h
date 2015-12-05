@@ -35,11 +35,12 @@
 // おじ
 
 // 体力
-#define GRANDFATHER_LIFE 100
+#define GRANDFATHER_LIFE 1.0f
 // 水ゲージ
-#define GRANDFATHER_WATERGAUGE 100
+#define GRANDFATHER_WATERGAUGE 1.0f
+#define GRANDFATHER_SUB_WATERGAUGE 0.01f
 // くらうダメージ量
-#define GRANDFATHER_DAMAGE 1
+#define GRANDFATHER_DAMAGE 0.01f
 // 座標
 #define POSITION_STAGE1 { 1.0f,1.0f,1.0f }
 
@@ -48,11 +49,12 @@
 // 子供
 
 // 体力
-#define CHILD_LIFE 100
+#define CHILD_LIFE 1.0f
 // 水ゲージ
-#define CHILD_WATERGAUGE 100
+#define CHILD_WATERGAUGE 1.0f
+#define CHILD_SUB_wATERGAUGE 0.01f
 // くらうダメージ量
-#define CHILD_DAMAGE 2
+#define CHILD_DAMAGE 0.02f
 
 
 //-=--=--=--=--=--=--=--=--=--=--=--=--=--=--=-//

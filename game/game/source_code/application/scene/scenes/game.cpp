@@ -44,6 +44,9 @@
 //-------------------------------------
 Game::Game()
 {
+	//-------------------------------------
+	// 各マネージャ・デバッグシステム初期化
+	//-------------------------------------
 	camera_manager_ = new CameraManager;
 	object_manager_ = new ObjectManager;
 	effect_manager_ = new EffectManager(5000);
@@ -149,20 +152,20 @@ Game::Game()
 
 
 	//-------------------------------------
-	// FBXモデル
+	// FBXおじ
 	//-------------------------------------
-	OBJECT_PARAMETER_DESC fbx_param;
-	fbx_param.layer_ = LAYER_MODEL_GRANDFATHER;
-	fbx_param.position_ = { 1.0f, 0.0f, 0.0f };
-	fbx_param.rotation_ = { 0.0f, 0.0f, 0.0f };
-	fbx_param.scaling_ = { 1.0f, 1.0f, 1.0f };
+	OBJECT_PARAMETER_DESC grandfather_param;
+	grandfather_param.layer_ = LAYER_MODEL_GRANDFATHER;
+	grandfather_param.position_ = { 1.0f, 0.0f, 0.0f };
+	grandfather_param.rotation_ = { 0.0f, 0.0f, 0.0f };
+	grandfather_param.scaling_ = { 1.0f, 1.0f, 1.0f };
 
 	object_manager_->Create(
-		"fbx",
-		fbx_param);
+		"grandfather",
+		grandfather_param);
 
 	COLLISION_PARAMETER_DESC fbx_collision_param;
-	Object *obj2 = object_manager_->Get("fbx");
+	Object *obj2 = object_manager_->Get("grandfather");
 	fbx_collision_param.position_ = {
 		obj2->parameter().position_.x_,
 		obj2->parameter().position_.y_,
@@ -170,11 +173,12 @@ Game::Game()
 	fbx_collision_param.range_ = 1.0f;
 	fbx_collision_param.offset_ = { 0.0f, 0.5f, 0.0f };
 
-	collision_manager_->Create(object_manager_->Get("fbx"),
+	collision_manager_->Create(object_manager_->Get("grandfather"),
 		fbx_collision_param);
 
 	//-------------------------------------
 	// FBX子供
+	//-------------------------------------
 	OBJECT_PARAMETER_DESC child_param;
 	child_param.layer_ = LAYER_MODEL_CHILD;
 	child_param.position_ = { -1.0f, 0.0f, 0.0f };
@@ -218,7 +222,7 @@ Game::Game()
 
 
 	//-------------------------------------
-	// 砦
+	// 砦UI
 	//-------------------------------------
     OBJECT_PARAMETER_DESC fort_state_param;
     fort_state_param.position_ = {
@@ -236,7 +240,7 @@ Game::Game()
 
 
 	//-------------------------------------
-	// ミニマップ
+	// ミニマップUI
 	//-------------------------------------
     OBJECT_PARAMETER_DESC mini_map_param;
     mini_map_param.position_ = {
@@ -254,7 +258,7 @@ Game::Game()
 
 
     //-------------------------------------
-    // 水ゲージ下地
+    // 水ゲージ下地UI
     //-------------------------------------
     OBJECT_PARAMETER_DESC water_design_param;
     water_design_param.position_ = {
@@ -271,7 +275,7 @@ Game::Game()
         "resource/texture/game/water_gage_background.png");
 
     //-------------------------------------
-    // 水ゲージ（ゲージ本体）
+    // 水ゲージ（ゲージ本体）UI
     //-------------------------------------
     OBJECT_PARAMETER_DESC water_gage_param;
     water_gage_param.position_ = {
@@ -288,7 +292,7 @@ Game::Game()
         "resource/texture/game/water_gage_diffuse.png");
 
     //-------------------------------------
-    // 水ゲージ（周り）
+    // 水ゲージ（周り）UI
     //-------------------------------------
     OBJECT_PARAMETER_DESC water_gage_around_param;
     water_gage_around_param.position_ = {
@@ -305,7 +309,7 @@ Game::Game()
         "resource/texture/game/water_gage_around.png");
 
     //-------------------------------------
-    // 水ポリゴン
+    // 水ポリゴンUI
     //-------------------------------------
     OBJECT_PARAMETER_DESC water_poly_param;
     water_poly_param.position_ = {
@@ -322,7 +326,7 @@ Game::Game()
         "resource/texture/game/water_desine.png");
 
     //-------------------------------------
-    // ダメージエフェクト
+    // ダメージエフェクトUI
     //-------------------------------------
     OBJECT_PARAMETER_DESC hit_point_param;
     hit_point_param.position_ = {
@@ -369,19 +373,19 @@ void Game::Update()
 	//-------------------------------------
 	// 変数宣言
 	//-------------------------------------
-	Object *player = object_manager_->Get("player");
-	Object *fbx = object_manager_->Get("fbx");
-	Object *child = object_manager_->Get("child");
-	Vector3 player_position(player->parameter().position_);
-	Vector3 player_rotation(player->parameter().rotation_);
-	Vector3 fbx_position(fbx->parameter().position_);
-	Vector3 fbx_rotation(fbx->parameter().rotation_);
-	Vector3 child_position(child->parameter().position_);
+	Object *player_object = object_manager_->Get("player");
+	Object *grandfather_object = object_manager_->Get("grandfather");
+	Object *child_object = object_manager_->Get("child");
+	Vector3 player_position(player_object->parameter().position_);
+	Vector3 player_rotation(player_object->parameter().rotation_);
+	Vector3 grandfather_position(grandfather_object->parameter().position_);
+	Vector3 grandfather_rotation(grandfather_object->parameter().rotation_);
+	Vector3 child_position(child_object->parameter().position_);
 
 	Field *field = dynamic_cast<Field*>(
 		object_manager_->Get("field"));
-	FbxGrandfather *father = dynamic_cast<FbxGrandfather*>(fbx);
-	FbxChild *child_ = dynamic_cast<FbxChild*>(child);
+	FbxGrandfather *grandfather = dynamic_cast<FbxGrandfather*>(grandfather_object);
+	FbxChild *child = dynamic_cast<FbxChild*>(child_object);
     WaterGage *waterGage = dynamic_cast<WaterGage*>(
 		object_manager_->Get("water_gage"));
 	DamageEffect *damage_effect = dynamic_cast<DamageEffect*>(
@@ -390,9 +394,10 @@ void Game::Update()
 	static const float player_speed_value = 0.05f;
 	static int bullet_count = 0;
 	float player_speed = player_speed_value;
-	int father_life = father->GetLife();
-	int child_life = child_->GetLife();
-	int child_watergauge = child_->GetWaterGauge();
+	float father_life = grandfather->GetLife();
+	float father_watergauge = grandfather->GetWaterGauge();
+	float child_life = child->GetLife();
+	float child_watergauge = child->GetWaterGauge();
 
 
 	//-------------------------------------
@@ -401,67 +406,55 @@ void Game::Update()
 	if (GamePad::isPress(GAMEPAD_GRANDFATHER, PAD_BUTTON_11)){
 		player_speed = player_speed_value * 2.0f;
 	}
-	fbx_position.x_ += (
-		cosf(fbx_rotation.y_) * GamePad::isStick(GAMEPAD_GRANDFATHER).lsx_ +
-		sinf(-fbx_rotation.y_) * GamePad::isStick(GAMEPAD_GRANDFATHER).lsy_) * player_speed;
-	fbx_position.z_ -= (
-		sinf(fbx_rotation.y_) * GamePad::isStick(GAMEPAD_GRANDFATHER).lsx_ +
-		cosf(-fbx_rotation.y_) * GamePad::isStick(GAMEPAD_GRANDFATHER).lsy_) * player_speed;
+	grandfather_position.x_ += (
+		cosf(grandfather_rotation.y_) * GamePad::isStick(GAMEPAD_GRANDFATHER).lsx_ +
+		sinf(-grandfather_rotation.y_) * GamePad::isStick(GAMEPAD_GRANDFATHER).lsy_) * player_speed;
+	grandfather_position.z_ -= (
+		sinf(grandfather_rotation.y_) * GamePad::isStick(GAMEPAD_GRANDFATHER).lsx_ +
+		cosf(-grandfather_rotation.y_) * GamePad::isStick(GAMEPAD_GRANDFATHER).lsy_) * player_speed;
 
 	if (GamePad::isPress(GAMEPAD_GRANDFATHER, PAD_RS_LEFT)){
-		fbx_rotation.y_ -= CHAR_ROT_SPEED;
-		if (fbx_rotation.y_ < D3DX_PI){
-			fbx_rotation.y_ += D3DX_PI * 2.0f;
+		grandfather_rotation.y_ -= CHAR_ROT_SPEED;
+		if (grandfather_rotation.y_ < D3DX_PI){
+			grandfather_rotation.y_ += D3DX_PI * 2.0f;
 		}
 	}
 	if (GamePad::isPress(GAMEPAD_GRANDFATHER, PAD_RS_RIGHT)){
-		fbx_rotation.y_ += CHAR_ROT_SPEED;
-		if (fbx_rotation.y_ > D3DX_PI){
-			fbx_rotation.y_ -= D3DX_PI * 2.0f;
+		grandfather_rotation.y_ += CHAR_ROT_SPEED;
+		if (grandfather_rotation.y_ > D3DX_PI){
+			grandfather_rotation.y_ -= D3DX_PI * 2.0f;
 		}
 	}
-    //-------------------------------------
-    // 水ゲージの変化
-    //-------------------------------------
-#ifdef _DEBUG
-    if (KeyBoard::isPress(DIK_8)){
-        waterGage->SetChangeValue(0.01f);
-    }
-
-    else if (KeyBoard::isPress(DIK_9)){
-        waterGage->SetChangeValue(-0.01f);
-    }
-#endif
 	//-------------------------------------
 	// デバッグ時のプレイヤー操作
 	//-------------------------------------
 #ifdef _DEBUG
 	if (KeyBoard::isPress(DIK_W)){
-		fbx_position.x_ += sinf(fbx_rotation.y_) * player_speed;
-		fbx_position.z_ += cosf(fbx_rotation.y_) * player_speed;
+		grandfather_position.x_ += sinf(grandfather_rotation.y_) * player_speed;
+		grandfather_position.z_ += cosf(grandfather_rotation.y_) * player_speed;
 	}
 	if (KeyBoard::isPress(DIK_A)){
-		fbx_position.x_ += sinf(fbx_rotation.y_ - (D3DX_PI * 0.5f)) * player_speed;
-		fbx_position.z_ += cosf(fbx_rotation.y_ - (D3DX_PI * 0.5f)) * player_speed;
+		grandfather_position.x_ += sinf(grandfather_rotation.y_ - (D3DX_PI * 0.5f)) * player_speed;
+		grandfather_position.z_ += cosf(grandfather_rotation.y_ - (D3DX_PI * 0.5f)) * player_speed;
 	}
 	if (KeyBoard::isPress(DIK_S)){
-		fbx_position.x_ += sinf(fbx_rotation.y_ + (D3DX_PI)) * player_speed;
-		fbx_position.z_ += cosf(fbx_rotation.y_ + (D3DX_PI)) * player_speed;
+		grandfather_position.x_ += sinf(grandfather_rotation.y_ + (D3DX_PI)) * player_speed;
+		grandfather_position.z_ += cosf(grandfather_rotation.y_ + (D3DX_PI)) * player_speed;
 	}
 	if (KeyBoard::isPress(DIK_D)){
-		fbx_position.x_ += sinf(fbx_rotation.y_ + (D3DX_PI * 0.5f)) * player_speed;
-		fbx_position.z_ += cosf(fbx_rotation.y_ + (D3DX_PI * 0.5f)) * player_speed;
+		grandfather_position.x_ += sinf(grandfather_rotation.y_ + (D3DX_PI * 0.5f)) * player_speed;
+		grandfather_position.z_ += cosf(grandfather_rotation.y_ + (D3DX_PI * 0.5f)) * player_speed;
 	}
 	if (KeyBoard::isPress(DIK_RIGHT)){
-		fbx_rotation.y_ += CHAR_ROT_SPEED;
-		if (fbx_rotation.y_ > D3DX_PI){
-			fbx_rotation.y_ -= D3DX_PI * 2.0f;
+		grandfather_rotation.y_ += CHAR_ROT_SPEED;
+		if (grandfather_rotation.y_ > D3DX_PI){
+			grandfather_rotation.y_ -= D3DX_PI * 2.0f;
 		}
 	}
 	if (KeyBoard::isPress(DIK_LEFT)){
-		fbx_rotation.y_ -= CHAR_ROT_SPEED;
-		if (fbx_rotation.y_ < -D3DX_PI){
-			fbx_rotation.y_ += D3DX_PI * 2.0f;
+		grandfather_rotation.y_ -= CHAR_ROT_SPEED;
+		if (grandfather_rotation.y_ < -D3DX_PI){
+			grandfather_rotation.y_ += D3DX_PI * 2.0f;
 		}
 	}
 
@@ -474,10 +467,10 @@ void Game::Update()
 	player_position.y_ = field->GetHeight(pos);
 
 	D3DXVECTOR3 fbx_pos(
-		fbx_position.x_,
-		fbx_position.y_,
-		fbx_position.z_);
-	fbx_position.y_ = field->GetHeight(fbx_pos);
+		grandfather_position.x_,
+		grandfather_position.y_,
+		grandfather_position.z_);
+	grandfather_position.y_ = field->GetHeight(fbx_pos);
 	
 	D3DXVECTOR3 child_pos(
 		child_position.x_,
@@ -485,11 +478,11 @@ void Game::Update()
 		child_position.z_);
 	child_position.y_ = field->GetHeight(child_pos);
 
-	player->SetPosition(player_position);
-	player->SetRotation(player_rotation);
-	fbx->SetPosition(fbx_position);
-	fbx->SetRotation(fbx_rotation);
-	child->SetPosition(child_position);
+	player_object->SetPosition(player_position);
+	player_object->SetRotation(player_rotation);
+	grandfather_object->SetPosition(grandfather_position);
+	grandfather_object->SetRotation(grandfather_rotation);
+	child_object->SetPosition(child_position);
 
 	//-------------------------------------
 	// カメラ追従
@@ -533,7 +526,7 @@ void Game::Update()
 	//-------------------------------------
 
 	// モデルの回転Yをそのままカメラの回転Yへ
-	camera_rotation.y = fbx_rotation.y_;
+	camera_rotation.y = grandfather_rotation.y_;
 	// 一旦モデルを注視点に
 	camera_focus = fbx_pos;
 	// 足元基準から体の中心辺りを基準に
@@ -588,15 +581,14 @@ void Game::Update()
 	//-------------------------------------
 	// 弾発射
 	//-------------------------------------
-	int father_watergauge = father->GetWaterGauge();
 	if (GamePad::isPress(GAMEPAD_GRANDFATHER, PAD_BUTTON_8) &&
 		father_watergauge > 0){
 		EFFECT_PARAMETER_DESC effect_param;
 		MyEffect *effect = effect_manager_->Get("water");
 		effect_param = effect->parameter();
-		effect_param.position_ = fbx_position;
+		effect_param.position_ = grandfather_position;
 		effect_param.position_.y_ += 0.5f;
-		effect_param.rotation_ = fbx_rotation;
+		effect_param.rotation_ = grandfather_rotation;
 		effect->SetParameter(effect_param);
 		effect_manager_->Play("water");
 
@@ -604,8 +596,8 @@ void Game::Update()
 		OBJECT_PARAMETER_DESC bullet_param;
 		bullet_param.layer_ = LAYER_BULLET;
 		bullet_param.parent_layer_ = LAYER_MODEL_GRANDFATHER;
-		bullet_param.position_ = fbx_position;
-		bullet_param.rotation_ = fbx_rotation;
+		bullet_param.position_ = grandfather_position;
+		bullet_param.rotation_ = grandfather_rotation;
 
 		// カメラの回転Xを利用
 		bullet_param.rotation_.x_ = camera_rotation.x;
@@ -619,10 +611,11 @@ void Game::Update()
 
 		//-------------------------------------
 		// 水ゲージを減少させる
-		father_watergauge -= 1;
-		father_watergauge = std::max<int>(father_watergauge, 0);
-		father->SetWaterGauge(father_watergauge);
-		waterGage->SetChangeValue(-0.01f);
+		//-------------------------------------
+		father_watergauge -= GRANDFATHER_SUB_WATERGAUGE;
+		father_watergauge = std::max<float>(father_watergauge, 0.0f);
+		grandfather->SetWaterGauge(father_watergauge);
+		waterGage->SetChangeValue(father_watergauge);
 
 	}
 #ifdef _DEBUG
@@ -630,17 +623,17 @@ void Game::Update()
 		EFFECT_PARAMETER_DESC effect_param;
 		MyEffect *effect = effect_manager_->Get("water");
 		effect_param = effect->parameter();
-		effect_param.position_ = fbx_position;
+		effect_param.position_ = grandfather_position;
 		effect_param.position_.y_ += 0.5f;
-		effect_param.rotation_ = fbx_rotation;
+		effect_param.rotation_ = grandfather_rotation;
 		effect->SetParameter(effect_param);
 		effect_manager_->Play("water");
 
 		OBJECT_PARAMETER_DESC bullet_param;
 		bullet_param.layer_ = LAYER_BULLET;
 		bullet_param.parent_layer_ = LAYER_MODEL_GRANDFATHER;
-		bullet_param.position_ = fbx_position;
-		bullet_param.rotation_ = fbx_rotation;
+		bullet_param.position_ = grandfather_position;
+		bullet_param.rotation_ = grandfather_rotation;
 		bullet_param.scaling_ = {1.0f, 1.0f, 1.0f};
 
 		// カメラの回転Xを利用
@@ -661,23 +654,20 @@ void Game::Update()
 		GamePad::isPress(GAMEPAD_GRANDFATHER, PAD_LS_UP) || 
 		GamePad::isPress(GAMEPAD_GRANDFATHER, PAD_LS_LEFT) || 
 		GamePad::isPress(GAMEPAD_GRANDFATHER, PAD_LS_RIGHT)){
-		FbxGrandfather *grandfather = dynamic_cast<FbxGrandfather*>(fbx);
 		if(grandfather->GetCurrentAnimationId() != FbxGrandfather::WALK)
 		{
 			grandfather->PlayAnimation(FbxGrandfather::WALK);
 		}
 	}
 	else{
-		FbxGrandfather *grandfather = dynamic_cast<FbxGrandfather*>(fbx);
 		if(grandfather->GetCurrentAnimationId() != FbxGrandfather::IDLE)
 		{
 			grandfather->PlayAnimation(FbxGrandfather::IDLE);
 		}
 	}
 	
-	if (KeyBoard::isTrigger(DIK_5)){
-		FbxGrandfather *grandfather = dynamic_cast<FbxGrandfather*>(fbx);
-		grandfather->PlayAnimation(FbxGrandfather::DOWN);
+	if (child_life == 0){
+		child->PlayAnimation(FbxGrandfather::DOWN);
 	}
 
 	//-------------------------------------
@@ -697,10 +687,12 @@ void Game::Update()
 
 	font_->Add("シーン名:");
 	font_->Add("Game\n");
-	font_->Add("LIFE(GrandFather) : %d\n", father_life);
-	font_->Add("LIFE(Child)       : %d\n", child_life);
-	font_->Add("GAUGE(GrandFather) : %d\n", father_watergauge);
-	font_->Add("GAUGE(Child)       : %d\n", child_watergauge);
+	font_->Add("LIFE(GrandFather) : %3.2f\n", father_life);
+	font_->Add("LIFE(Child)       : %3.2f\n", child_life);
+	font_->Add("GAUGE(GrandFather) : %3.2f\n", father_watergauge);
+	font_->Add("GAUGE(Child)       : %3.2f\n", child_watergauge);
+	font_->Add("POSITION(Grandfather) : %3.2f %3.2f %3.2f",
+		grandfather_position.x_, grandfather_position.y_, grandfather_position.z_);
 
 	if (KeyBoard::isTrigger(DIK_RETURN))
 	{

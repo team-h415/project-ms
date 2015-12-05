@@ -20,14 +20,6 @@
 
 
 //-------------------------------------
-// macoro
-//-------------------------------------
-namespace {
-    const float kPointPercent = 0.01f;
-}
-
-
-//-------------------------------------
 // HitPoint()
 //-------------------------------------
 DamageEffect::DamageEffect(
@@ -37,8 +29,7 @@ DamageEffect::DamageEffect(
     flash_flg_ = false;
     flash_mode_ = FLASH_IN;
     flash_alpha_ = 0.7f;
-    hp_ = 100;
-    SetPoint(hp_);
+    hp_ = 1.0f;
     vertex_ = new Vertex2D[4];
     CalculateVertex();
     diffuse_texture_ = NULL;
@@ -71,24 +62,10 @@ DamageEffect::~DamageEffect()
 //-------------------------------------
 void DamageEffect::Update()
 {
-    if (KeyBoard::isPress(DIK_6))
-    {
-        ++hp_;
-        if (hp_ > 100)
-            hp_ = 100;
-    }
-    else if (KeyBoard::isPress(DIK_7))
-    {
-        --hp_;
-        if (hp_ < 0)
-            hp_ = 0;
-    }
-
     // ダメージを食らいすぎる
-    if (hp_ < 30){
+    if (hp_ < 0.3f){
         // 点滅フラグON
         flash_flg_ = true;
-        SetPoint(30);
         if (flash_alpha_ <= 0.3f){
             flash_mode_ = FLASH_OUT;
         }
@@ -120,8 +97,10 @@ void DamageEffect::Update()
         }
         else
             flash_alpha_ = damage_value_;
-        SetPoint(hp_);
     }
+
+	damage_value_ = 1.0f - hp_;
+	damage_value_ = std::min<float>(damage_value_, 0.7f);
 }
 
 
@@ -198,24 +177,10 @@ void DamageEffect::CalculateVertex()
     vertex_[2].rhw_ = 1.0f;
     vertex_[3].rhw_ = 1.0f;
 
-    //vertex_[0].diffuse_ = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-    //vertex_[1].diffuse_ = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-    //vertex_[2].diffuse_ = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-    //vertex_[3].diffuse_ = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-
     vertex_[0].texture_ = { 0.0f, 0.0f };
     vertex_[1].texture_ = { 1.0f, 0.0f };
     vertex_[2].texture_ = { 0.0f, 1.0f };
     vertex_[3].texture_ = { 1.0f, 1.0f };
-}
-
-
-//-------------------------------------
-// SetPoint
-//-------------------------------------
-void DamageEffect::SetPoint(const int point)
-{
-    damage_value_ = 1.0f - point * kPointPercent;
 }
 
 

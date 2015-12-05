@@ -132,15 +132,15 @@ void Bullet::Action(
 			// ‚¨‚¶
 			if (target->parameter().layer_ == LAYER_MODEL_GRANDFATHER){
 				FbxGrandfather *father = dynamic_cast<FbxGrandfather*>(target);
-				int life = father->GetLife();
-				life -= 1;
+				float life = father->GetLife();
+				life -= GRANDFATHER_DAMAGE;
 				father->SetLife(life);
 			}
 			// Žq‹Ÿ
 			else if (target->parameter().layer_ == LAYER_MODEL_CHILD){
 				FbxChild *child = dynamic_cast<FbxChild*>(target);
-				int life = child->GetLife();
-				life -= 1;
+				float life = child->GetLife();
+				life -= CHILD_DAMAGE;
 				child->SetLife(life);
 			}
 
