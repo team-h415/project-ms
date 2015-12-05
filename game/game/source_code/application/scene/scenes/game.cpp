@@ -35,7 +35,6 @@
 #include "game.h"
 #include "../fade/fade.h"
 
-
 //-------------------------------------
 // Game()
 //-------------------------------------
@@ -343,6 +342,9 @@ void Game::Update()
 	Field *field = dynamic_cast<Field*>(
 		object_manager_->Get("field"));
 
+	FbxGrandfather *father = dynamic_cast<FbxGrandfather*>(fbx);
+	FbxChild *child_ = dynamic_cast<FbxChild*>(child);
+
 	static const float player_speed_value = 0.05f;
 	static int bullet_count = 0;
 	float player_speed = player_speed_value;
@@ -527,12 +529,11 @@ void Game::Update()
 	main_camera->SetRotation(camera_rotation);
 
 	//-------------------------------------
-	// エフェクト再生
+	// 弾発射
 	//-------------------------------------
-	if (KeyBoard::isTrigger(DIK_1)){
-		effect_manager_->Play("water");
-	}
-	if (GamePad::isPress(GAMEPAD_GRANDFATHER, PAD_BUTTON_8)){
+	int father_watergauge = father->GetWaterGauge();
+	if (GamePad::isPress(GAMEPAD_GRANDFATHER, PAD_BUTTON_8) &&
+		father_watergauge > 0){
 		EFFECT_PARAMETER_DESC effect_param;
 		MyEffect *effect = effect_manager_->Get("water");
 		effect_param = effect->parameter();
@@ -558,6 +559,11 @@ void Game::Update()
 			str,
 			bullet_param);
 		bullet_count++;
+
+		father_watergauge -= 1;
+		father_watergauge = std::max<int>(father_watergauge, 0);
+		father->SetWaterGauge(father_watergauge);
+
 	}
 #ifdef _DEBUG
 	if(KeyBoard::isPress(DIK_SPACE)){
@@ -614,10 +620,9 @@ void Game::Update()
 		grandfather->PlayAnimation(FbxGrandfather::DOWN);
 	}
 
-	FbxGrandfather *father = dynamic_cast<FbxGrandfather*>(fbx);
-	FbxChild *child_ = dynamic_cast<FbxChild*>(child);
 	int father_life = father->GetLife();
 	int child_life = child_->GetLife();
+	int child_watergauge = child_->GetWaterGauge();
 
 	//-------------------------------------
 	// 実更新処理
@@ -629,8 +634,10 @@ void Game::Update()
 
 	font_->Add("シーン名:");
 	font_->Add("Game\n");
-	font_->Add("GrandFather : %d\n", father_life);
-	font_->Add("Child       : %d\n", child_life);
+	font_->Add("LIFE(GrandFather) : %d\n", father_life);
+	font_->Add("LIFE(Child)       : %d\n", child_life);
+	font_->Add("GAUGE(GrandFather) : %d\n", father_watergauge);
+	font_->Add("GAUGE(Child)       : %d\n", child_watergauge);
 
 	if (KeyBoard::isTrigger(DIK_RETURN))
 	{
