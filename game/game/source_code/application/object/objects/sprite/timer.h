@@ -51,6 +51,8 @@ public:
     void Update();
     void Draw();
     int GetValue(void){ return value_; }
+    // •\¦‚·‚éŒ»İ‚Ì•b”‚ğ“ü‚ê‚é
+    void SetValue(int value){ value_ = value; }
 private:
     int count_;
     int value_;

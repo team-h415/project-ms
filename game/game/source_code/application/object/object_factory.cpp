@@ -106,15 +106,17 @@ Object *ObjectFactory::Create(
 		model->Load(object_path);
 	}
 
+    else if (param.layer_ == LAYER_WATER_GAGE){
+        object = new WaterGage(parameter);
+        WaterGage *sprite = dynamic_cast<WaterGage*>(object);
+        sprite->SetTexture(object_path);
+    }
+
 	else if (param.layer_ == LAYER_SPRITE_2D){
 		object = new Sprite2D(parameter);
 		Sprite2D *sprite = dynamic_cast<Sprite2D*>(object);
 		sprite->SetTexture(object_path);
 	}
-/*
-    else if (param.layer_ == LAYER_WATER_GAGE){
-        object = new WaterGage(parameter);
-    }*/
 
 	else{
 		ASSERT_ERROR("無効なオブジェクト生成カテゴリです");

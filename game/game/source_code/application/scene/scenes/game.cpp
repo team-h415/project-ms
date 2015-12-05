@@ -25,6 +25,7 @@
 #include "../../object/objects/model/fbx/fbx_child.h"
 #include "../../effect/effect.h"
 #include "../../effect/effect_manager.h"
+#include "../../object/objects/sprite/water_gage.h"
 #include "../../camera/camera.h"
 #include "../../camera/camera_manager.h"
 #include "../../collision/collision.h"
@@ -247,40 +248,73 @@ Game::Game()
         "resource/texture/title/logo.png");
 
 
-	//-------------------------------------
-	// 水
-	//-------------------------------------
+    //-------------------------------------
+    // 水ゲージ下地
+    //-------------------------------------
     OBJECT_PARAMETER_DESC water_design_param;
     water_design_param.position_ = {
-        40.0f,
-        680.0f,
+        128.0f,
+        624.0f,
         0.0f
     };
     water_design_param.rotation_ = { 0.0f, 0.0f, 0.0f };
-    water_design_param.scaling_ = { 75.0f, 75.0f, 0.0f };
-    water_design_param.layer_ = LAYER_SPRITE_2D;
+    water_design_param.scaling_ = { 192.0f, 192.0f, 0.0f };
+    water_design_param.layer_ = LAYER_WATER_GAGE;
 
     object_manager_->Create(
         "water_design", water_design_param,
-        "resource/texture/title/logo.png");
+        "resource/texture/game/water_gage_background.png");
 
-
-	//-------------------------------------
-	// 水ゲージ
-	//-------------------------------------
+    //-------------------------------------
+    // 水ゲージ（ゲージ本体）
+    //-------------------------------------
     OBJECT_PARAMETER_DESC water_gage_param;
     water_gage_param.position_ = {
-        250.0f,
-        680.0f,
+        128.0f,
+        624.0f,
         0.0f
     };
     water_gage_param.rotation_ = { 0.0f, 0.0f, 0.0f };
-    water_gage_param.scaling_ = { 300.0f, 50.0f, 0.0f };
-    water_gage_param.layer_ = LAYER_SPRITE_2D;
+    water_gage_param.scaling_ = { 192.0f, 192.0f, 0.0f };
+    water_gage_param.layer_ = LAYER_WATER_GAGE;
 
     object_manager_->Create(
-        "water_gage", water_gage_param);
+        "water_gage", water_gage_param,
+        "resource/texture/game/water_gage_diffuse.png");
 
+    //-------------------------------------
+    // 水ゲージ（周り）
+    //-------------------------------------
+    OBJECT_PARAMETER_DESC water_gage_around_param;
+    water_gage_around_param.position_ = {
+        128.0f,
+        624.0f,
+        0.0f
+    };
+    water_gage_around_param.rotation_ = { 0.0f, 0.0f, 0.0f };
+    water_gage_around_param.scaling_ = { 192.0f, 192.0f, 0.0f };
+    water_gage_around_param.layer_ = LAYER_SPRITE_2D;
+
+    object_manager_->Create(
+        "water_gage_around", water_gage_around_param,
+        "resource/texture/game/water_gage_around.png");
+
+    //-------------------------------------
+    // 水ポリゴン
+    //-------------------------------------
+    OBJECT_PARAMETER_DESC water_poly_param;
+    water_poly_param.position_ = {
+        128.0f,
+        624.0f,
+        0.0f
+    };
+    water_poly_param.rotation_ = { 0.0f, 0.0f, 0.0f };
+    water_poly_param.scaling_ = { 192.0f, 192.0f, 0.0f };
+    water_poly_param.layer_ = LAYER_SPRITE_2D;
+
+    object_manager_->Create(
+        "water_poly", water_poly_param,
+        "resource/texture/game/water_desine.png");
 
     //-------------------------------------
     // ダメージエフェクト
@@ -342,8 +376,13 @@ void Game::Update()
 	Field *field = dynamic_cast<Field*>(
 		object_manager_->Get("field"));
 
+<<<<<<< HEAD
 	FbxGrandfather *father = dynamic_cast<FbxGrandfather*>(fbx);
 	FbxChild *child_ = dynamic_cast<FbxChild*>(child);
+=======
+    WaterGage *waterGage = dynamic_cast<WaterGage*>(
+        object_manager_->Get("water_gage"));
+>>>>>>> origin/rockman
 
 	static const float player_speed_value = 0.05f;
 	static int bullet_count = 0;
@@ -374,7 +413,18 @@ void Game::Update()
 			fbx_rotation.y_ -= D3DX_PI * 2.0f;
 		}
 	}
+    //-------------------------------------
+    // 水ゲージの変化
+    //-------------------------------------
+#ifdef _DEBUG
+    if (KeyBoard::isPress(DIK_8)){
+        waterGage->SetChangeValue(0.01f);
+    }
 
+    else if (KeyBoard::isPress(DIK_9)){
+        waterGage->SetChangeValue(-0.01f);
+    }
+#endif
 	//-------------------------------------
 	// デバッグ時のプレイヤー操作
 	//-------------------------------------
