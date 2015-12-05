@@ -36,6 +36,12 @@
 #include "game.h"
 #include "../fade/fade.h"
 
+<<<<<<< HEAD
+=======
+#include "../../object/objects/sprite/timer.h"
+
+
+>>>>>>> origin/fuka
 //-------------------------------------
 // Game()
 //-------------------------------------
@@ -209,7 +215,9 @@ Game::Game()
     time_param.layer_ = LAYER_TIMER;
 
     object_manager_->Create(
-        "time", time_param);
+        "time",
+		time_param,
+		"resource/texture/figure_all.png");
 
 
 	//-------------------------------------
@@ -335,10 +343,10 @@ Game::Game()
 	//-------------------------------------
 	// インスタンシングテスト
 	//-------------------------------------
-	OBJECT_PARAMETER_DESC wood_param;
+	/*OBJECT_PARAMETER_DESC wood_param;
 	wood_param.layer_ = LAYER_TREE;
 	object_manager_->Create(
-		"wood", wood_param);
+		"wood", wood_param);*/
 
 }
 

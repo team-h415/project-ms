@@ -24,7 +24,7 @@ class XContainer
 		LPD3DXBUFFER material_buffer_;
 		DWORD material_count_;
 
-		std::string file_pass_;
+		std::string file_path_;
 
 	private:
 		void Load(const std::string &path);

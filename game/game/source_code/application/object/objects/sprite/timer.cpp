@@ -38,7 +38,6 @@ Timer::Timer(
         parameter_.position_.x_ = -kSpace + parameter.position_.x_ + kSpace * num;
         // 値をセット
         p_number_[num] = new Number(parameter_, value);
-        p_number_[num]->SetTexture("resource/texture/figure_all.png");
         p_number_[num]->SetValue(value);
         // 桁ずらし
         figure /= kFigureDefine;
@@ -95,6 +94,37 @@ void Timer::Draw()
     {
         p_number_[num]->Draw();
     }
+}
+
+//-------------------------------------
+// SetValue()
+//-------------------------------------
+void Timer::SetValue(int value_)
+{
+	unsigned int figure = (unsigned int)pow((float)kFigureDefine, kMaxFigure);
+	for (int num = 0; num < kMaxFigure; num++)
+	{
+		// 特定の桁の値を入れる
+		int value = (value_ % figure) / (figure / kFigureDefine);
+
+		// 値をセット
+		p_number_[num]->SetValue(value);
+		// 桁ずらし
+		figure /= kFigureDefine;
+	}
+}
+
+//-------------------------------------
+// SetTexture()
+//-------------------------------------
+void Timer::SetTexture(
+	const std::string &path)
+{
+	for (int num = 0; num < kMaxFigure; num++)
+	{
+		// テクスチャをセット
+		p_number_[num]->SetTexture(path);
+	}
 }
 
 

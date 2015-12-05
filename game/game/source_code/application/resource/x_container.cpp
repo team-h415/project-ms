@@ -18,7 +18,7 @@
 //-------------------------------------
 XContainer::XContainer(const std::string &path)
 {
-	file_pass_ = path;
+	file_path_ = path;
 	Load(path);
 }
 
@@ -49,6 +49,10 @@ void XContainer::Load(const std::string &path)
 		&material_count_,
 		&mesh_)))
 	{
+		std::string warning;
+		warning = path;
+		warning += ": このファイルが見つかりません";
+		ASSERT_WARNING(warning.c_str());
 		ASSERT_ERROR("モデル読み込みに失敗");
 		return;
 	}
