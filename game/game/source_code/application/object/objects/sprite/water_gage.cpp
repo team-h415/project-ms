@@ -64,10 +64,10 @@ WaterGage::~WaterGage()
 //-------------------------------------
 void WaterGage::Update()
 {
-    if (gage_value_ > 1.0f)
-        gage_value_ = 1.0f;
-    else if (gage_value_ < 0.0f)
-        gage_value_ = 0.0f;
+	//-------------------------------------
+	// Å¬EÅ‘å’lÝ’è
+	gage_value_ = std::min<float>(gage_value_, 1.0f);
+	gage_value_ = std::max<float>(gage_value_, 0.0f);
 }
 
 

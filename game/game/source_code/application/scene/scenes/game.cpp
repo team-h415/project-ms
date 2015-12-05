@@ -23,6 +23,8 @@
 #include "../../object/objects/model/fbx_model.h"
 #include "../../object/objects/model/fbx/fbx_grandfather.h"
 #include "../../object/objects/model/fbx/fbx_child.h"
+#include "../../object/objects/sprite/timer.h"
+#include "../../object/objects/sprite/damage_effect.h"
 #include "../../effect/effect.h"
 #include "../../effect/effect_manager.h"
 #include "../../object/objects/sprite/water_gage.h"
@@ -36,12 +38,7 @@
 #include "game.h"
 #include "../fade/fade.h"
 
-<<<<<<< HEAD
-=======
-#include "../../object/objects/sprite/timer.h"
 
-
->>>>>>> origin/fuka
 //-------------------------------------
 // Game()
 //-------------------------------------
@@ -383,15 +380,20 @@ void Game::Update()
 
 	Field *field = dynamic_cast<Field*>(
 		object_manager_->Get("field"));
-
 	FbxGrandfather *father = dynamic_cast<FbxGrandfather*>(fbx);
 	FbxChild *child_ = dynamic_cast<FbxChild*>(child);
     WaterGage *waterGage = dynamic_cast<WaterGage*>(
-        object_manager_->Get("water_gage"));
+		object_manager_->Get("water_gage"));
+	DamageEffect *damage_effect = dynamic_cast<DamageEffect*>(
+		object_manager_->Get("damage_effect"));
 
 	static const float player_speed_value = 0.05f;
 	static int bullet_count = 0;
 	float player_speed = player_speed_value;
+	int father_life = father->GetLife();
+	int child_life = child_->GetLife();
+	int child_watergauge = child_->GetWaterGauge();
+
 
 	//-------------------------------------
 	// プレイヤーを地形に沿って移動させる
@@ -615,9 +617,12 @@ void Game::Update()
 			bullet_param);
 		bullet_count++;
 
+		//-------------------------------------
+		// 水ゲージを減少させる
 		father_watergauge -= 1;
 		father_watergauge = std::max<int>(father_watergauge, 0);
 		father->SetWaterGauge(father_watergauge);
+		waterGage->SetChangeValue(-0.01f);
 
 	}
 #ifdef _DEBUG
@@ -675,9 +680,12 @@ void Game::Update()
 		grandfather->PlayAnimation(FbxGrandfather::DOWN);
 	}
 
-	int father_life = father->GetLife();
-	int child_life = child_->GetLife();
-	int child_watergauge = child_->GetWaterGauge();
+	//-------------------------------------
+	// ダメージエフェクトの処理
+	//-------------------------------------
+	// 今はテスト用に、子供に当てたら主観(おじ)のUIを現象させている
+	damage_effect->SetHP(child_life);
+
 
 	//-------------------------------------
 	// 実更新処理

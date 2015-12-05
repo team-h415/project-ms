@@ -29,10 +29,13 @@ public:
     virtual ~DamageEffect();
     void Update();
     void Draw();
-    // Maxの値は100に！
-    void SetPoint(const int point);
+	void SetHP(const int hp){
+		hp_ = hp;
+	}
 private:
-    void CalculateVertex();
+	void CalculateVertex();
+	// Maxの値は100に！
+	void SetPoint(const int point);
     Vertex2D *vertex_;
     LPDIRECT3DTEXTURE9 diffuse_texture_;
     LPDIRECT3DTEXTURE9 alpha_texture_;

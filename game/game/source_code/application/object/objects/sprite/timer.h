@@ -51,14 +51,11 @@ public:
     void Update();
     void Draw();
     int GetValue(void){ return value_; }
-<<<<<<< HEAD
     // •\Ž¦‚·‚éŒ»Ý‚Ì•b”‚ð“ü‚ê‚é
-    void SetValue(int value){ value_ = value; }
-=======
+//    void SetValue(int value){ value_ = value; }
 	void SetValue(int value_);
 	void SetTexture(const std::string &path);
 
->>>>>>> origin/fuka
 private:
     int count_;
     int value_;

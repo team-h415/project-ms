@@ -37,8 +37,8 @@ DamageEffect::DamageEffect(
     flash_flg_ = false;
     flash_mode_ = FLASH_IN;
     flash_alpha_ = 0.7f;
-    hp_ = 0;
-    SetPoint(0);
+    hp_ = 100;
+    SetPoint(hp_);
     vertex_ = new Vertex2D[4];
     CalculateVertex();
     diffuse_texture_ = NULL;
@@ -85,20 +85,20 @@ void DamageEffect::Update()
     }
 
     // ダメージを食らいすぎる
-    if (hp_ > 70){
+    if (hp_ < 30){
         // 点滅フラグON
         flash_flg_ = true;
-        SetPoint(70);
-        if (flash_alpha_ >= 0.7f){
+        SetPoint(30);
+        if (flash_alpha_ <= 0.3f){
             flash_mode_ = FLASH_OUT;
         }
-        else if (flash_alpha_ <= 0.2f){
+        else if (flash_alpha_ >= 0.8f){
             flash_mode_ = FLASH_IN;
         }
         if (flash_mode_ == FLASH_IN)
-            flash_alpha_ += 0.005f;
-        else
             flash_alpha_ -= 0.005f;
+        else
+            flash_alpha_ += 0.005f;
 
     }
     else{
@@ -215,7 +215,7 @@ void DamageEffect::CalculateVertex()
 //-------------------------------------
 void DamageEffect::SetPoint(const int point)
 {
-    damage_value_ = point * kPointPercent;
+    damage_value_ = 1.0f - point * kPointPercent;
 }
 
 

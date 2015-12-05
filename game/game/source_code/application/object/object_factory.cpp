@@ -113,8 +113,6 @@ Object *ObjectFactory::Create(
 		Sprite2D *sprite = dynamic_cast<Sprite2D*>(object);
 		sprite->SetTexture(object_path);
 	}
-<<<<<<< HEAD
-=======
 	else if (param.layer_ == LAYER_TIMER){
 		object = new Timer(parameter);
 		Timer *timer = dynamic_cast<Timer*>(object);
@@ -125,7 +123,6 @@ Object *ObjectFactory::Create(
     else if (param.layer_ == LAYER_WATER_GAGE){
         object = new WaterGage(parameter);
     }*/
->>>>>>> origin/fuka
 
 	else{
 		ASSERT_ERROR("無効なオブジェクト生成カテゴリです");
