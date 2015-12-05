@@ -51,7 +51,8 @@ Game::Game()
 	object_manager_ = new ObjectManager;
 	effect_manager_ = new EffectManager(5000);
 	collision_manager_ = new CollisionManager;
-	font_ = new DebugFont;
+	font1_ = new DebugFont;
+	font2_ = new DebugFont;
 
 	//-------------------------------------
 	// エフェクトの読み込み
@@ -349,6 +350,18 @@ Game::Game()
 	object_manager_->Create(
 		"wood", wood_param);*/
 
+
+	//-------------------------------------
+	// ゲームルール用パラメータ初期化
+	//-------------------------------------
+	// ステージ
+	stage_ = 1;
+	// おじデバフフラグ
+	grandfather_debuff_ = false;
+	// 子供死亡フラグ
+	child_death_ = false;
+	// 子供リスポーン待ち時間
+	child_respawn_waittime_ = 0;
 }
 
 
@@ -360,7 +373,8 @@ Game::~Game()
 	SAFE_DELETE(object_manager_);
 	SAFE_DELETE(camera_manager_);
 	SAFE_DELETE(effect_manager_);
-	SAFE_DELETE(font_);
+	SAFE_DELETE(font1_);
+	SAFE_DELETE(font2_);
 	SAFE_DELETE(collision_manager_);
 }
 
@@ -381,6 +395,7 @@ void Game::Update()
 	Vector3 grandfather_position(grandfather_object->parameter().position_);
 	Vector3 grandfather_rotation(grandfather_object->parameter().rotation_);
 	Vector3 child_position(child_object->parameter().position_);
+	static Vector3 grandfather_prevposition(grandfather_object->parameter().position_);
 
 	Field *field = dynamic_cast<Field*>(
 		object_manager_->Get("field"));
@@ -401,7 +416,20 @@ void Game::Update()
 
 
 	//-------------------------------------
-	// プレイヤーを地形に沿って移動させる
+	// ゲームステージデバッグ
+	//-------------------------------------
+	if (KeyBoard::isTrigger(DIK_1)){
+		stage_ = 1;
+	}
+	else if (KeyBoard::isTrigger(DIK_2)){
+		stage_ = 2;
+	}
+	else if (KeyBoard::isTrigger(DIK_3)){
+		stage_ = 3;
+	}
+
+	//-------------------------------------
+	// プレイヤー移動処理
 	//-------------------------------------
 	if (GamePad::isPress(GAMEPAD_GRANDFATHER, PAD_BUTTON_11)){
 		player_speed = player_speed_value * 2.0f;
@@ -425,6 +453,23 @@ void Game::Update()
 			grandfather_rotation.y_ -= D3DX_PI * 2.0f;
 		}
 	}
+	if (GamePad::isTrigger(GAMEPAD_GRANDFATHER, PAD_BUTTON_7)){
+		switch(stage_){
+		case 1:
+			grandfather_position = GRANDFATHER_POSITION_STAGE1;
+			grandfather_rotation.y_ = GRANDFATHER_ROTATION_STAGE1;
+			break;
+		case 2:
+			grandfather_position = GRANDFATHER_POSITION_STAGE2;
+			grandfather_rotation.y_ = GRANDFATHER_ROTATION_STAGE2;
+			break;
+		case 3:
+			grandfather_position = GRANDFATHER_POSITION_STAGE3;
+			grandfather_rotation.y_ = GRANDFATHER_ROTATION_STAGE3;
+			break;
+		}
+	}
+
 	//-------------------------------------
 	// デバッグ時のプレイヤー操作
 	//-------------------------------------
@@ -471,6 +516,9 @@ void Game::Update()
 		grandfather_position.y_,
 		grandfather_position.z_);
 	grandfather_position.y_ = field->GetHeight(fbx_pos);
+	if (grandfather_position.y_ > 0.5f){
+		grandfather_position = grandfather_prevposition;
+	}
 	
 	D3DXVECTOR3 child_pos(
 		child_position.x_,
@@ -666,15 +714,38 @@ void Game::Update()
 		}
 	}
 	
-	if (child_life == 0){
-		child->PlayAnimation(FbxGrandfather::DOWN);
+
+	//-------------------------------------
+	// 子供死亡時制御
+	//-------------------------------------
+	if (child_life < 0 && !child_death_){
+		child->PlayAnimation(FbxChild::DOWN);
+		child_death_ = true;
+		child_respawn_waittime_ = CHILD_RESPAWN_WAITTIME;
 	}
+	else if (child_death_ && !child_respawn_waittime_){
+		child->PlayAnimation(FbxChild::IDLE);
+		child_death_ = false;
+		child_life = CHILD_LIFE;
+		child->SetLife(child_life);
+		child_position = CHILD_POSITION1;
+		child->SetPosition(child_position);
+	}
+
+	child_respawn_waittime_--;
+	child_respawn_waittime_ = std::max<int>(child_respawn_waittime_, 0);
 
 	//-------------------------------------
 	// ダメージエフェクトの処理
 	//-------------------------------------
 	// 今はテスト用に、子供に当てたら主観(おじ)のUIを現象させている
 	damage_effect->SetHP(child_life);
+
+
+	//-------------------------------------
+	// 各キャラクタ座標保存
+	//-------------------------------------
+	grandfather_prevposition = grandfather_position;
 
 
 	//-------------------------------------
@@ -685,14 +756,29 @@ void Game::Update()
 	effect_manager_->Update();
 	collision_manager_->Update();
 
-	font_->Add("シーン名:");
-	font_->Add("Game\n");
-	font_->Add("LIFE(GrandFather) : %3.2f\n", father_life);
-	font_->Add("LIFE(Child)       : %3.2f\n", child_life);
-	font_->Add("GAUGE(GrandFather) : %3.2f\n", father_watergauge);
-	font_->Add("GAUGE(Child)       : %3.2f\n", child_watergauge);
-	font_->Add("POSITION(Grandfather) : %3.2f %3.2f %3.2f",
+	font1_->Add("シーン名:");
+	font1_->Add("Game\n");
+	font1_->Add("STAGE : %d\n", stage_);
+	font1_->Add("LIFE(GrandFather) : %3.2f\n", father_life);
+	font1_->Add("LIFE(Child)       : %3.2f\n", child_life);
+	font1_->Add("GAUGE(GrandFather) : %3.2f\n", father_watergauge);
+	font1_->Add("GAUGE(Child)       : %3.2f\n", child_watergauge);
+	font1_->Add("POSITION(Grandfather) : %3.2f %3.2f %3.2f\n",
 		grandfather_position.x_, grandfather_position.y_, grandfather_position.z_);
+	font1_->Add("ROTATION(Grandfather) : %3.2f %3.2f %3.2f\n",
+		grandfather_rotation.x_, grandfather_rotation.y_, grandfather_rotation.z_);
+
+
+	font2_->Add("----------操作説明----------\n");
+	font2_->Add("【ゲームパッド使用時】\n");
+	font2_->Add("左スティック：移動\n");
+	font2_->Add("右スティック：エイム移動\n");
+	font2_->Add("8ボタン：射撃\n");
+	font2_->Add("7ボタン：拠点に戻る ※おじいちゃんのみ\n");
+	font2_->Add("【キーボード使用時】\n");
+	font2_->Add("WASDキー：移動\n");
+	font2_->Add("方向キー：エイム移動\n");
+	font2_->Add("SPACEキー：射撃\n");
 
 	if (KeyBoard::isTrigger(DIK_RETURN))
 	{
@@ -706,11 +792,17 @@ void Game::Update()
 //-------------------------------------
 void Game::Draw()
 {
-	RECT rect = {
+	RECT rect1 = {
 		0, 0,
+		static_cast<LONG>(SCREEN_WIDTH) / 2,
+		static_cast<LONG>(SCREEN_HEIGHT) / 2 };
+	RECT rect2 = {
+		static_cast<LONG>(SCREEN_WIDTH)-400,
+		static_cast<LONG>(SCREEN_HEIGHT)-200,
 		static_cast<LONG>(SCREEN_WIDTH),
 		static_cast<LONG>(SCREEN_HEIGHT) };
-	D3DXCOLOR font_color(0.0f, 0.2f, 0.0f, 1.0f);
+	D3DXCOLOR font1_color(0.0f, 0.2f, 0.0f, 1.0f);
+	D3DXCOLOR font2_color(0.0f, 0.0f, 1.0f, 1.0f);
 	MaterialColor color(32, 32, 32, 0);
 	DirectX9Holder::DrawBegin();
 	DirectX9Holder::Clear(color);
@@ -718,7 +810,8 @@ void Game::Draw()
 	object_manager_->Draw();
 	effect_manager_->Draw();
 	collision_manager_->Draw();
-	font_->Draw(rect, font_color);
+	font1_->Draw(rect1, font1_color);
+	font2_->Draw(rect2, font2_color);
 	Fade::Draw();
 	DirectX9Holder::DrawEnd();
 	DirectX9Holder::SwapBuffer();

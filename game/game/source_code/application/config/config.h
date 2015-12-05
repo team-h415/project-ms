@@ -13,7 +13,7 @@
 
 
 //-=--=--=--=--=--=--=--=--=--=--=--=--=--=--=-//
-// Game / Matching
+// Game
 //-=--=--=--=--=--=--=--=--=--=--=--=--=--=--=-//
 
 #define CHAR_ROT_SPEED (D3DX_PI * 0.01f)			// キャラクター回転速度
@@ -31,6 +31,7 @@
 #define BULLET_ADD_SPEED_Y 0.3f						// 発射角からバレットに加算される速度の調整値
 #define BULLET_GRAVITY 0.003f						// バレットに毎フレームかかる重量値
 
+
 //-------------------------------------
 // おじ
 
@@ -42,7 +43,14 @@
 // くらうダメージ量
 #define GRANDFATHER_DAMAGE 0.01f
 // 座標
-#define POSITION_STAGE1 { 1.0f,1.0f,1.0f }
+#define GRANDFATHER_POSITION_STAGE1 {  40.0f,  0.0f, -40.0f }
+#define GRANDFATHER_POSITION_STAGE2 { -60.0f,  0.0f,  55.0f }
+#define GRANDFATHER_POSITION_STAGE3 {  40.0f,  0.0f,  65.0f }
+// 角度
+#define GRANDFATHER_ROTATION_STAGE1 -0.82f
+#define GRANDFATHER_ROTATION_STAGE2  3.14f
+#define GRANDFATHER_ROTATION_STAGE3  4.30f
+
 
 
 //-------------------------------------
@@ -52,9 +60,21 @@
 #define CHILD_LIFE 1.0f
 // 水ゲージ
 #define CHILD_WATERGAUGE 1.0f
-#define CHILD_SUB_wATERGAUGE 0.01f
+#define CHILD_SUB_WATERGAUGE 0.01f
 // くらうダメージ量
 #define CHILD_DAMAGE 0.02f
+// 座標
+#define CHILD_POSITION1 { -55.0f,  0.0f, -50.0f }
+#define CHILD_POSITION2 { -50.0f,  0.0f, -50.0f }
+#define CHILD_POSITION3 { -55.0f,  0.0f, -55.0f }
+#define CHILD_POSITION4 { -50.0f,  0.0f, -55.0f }
+// 角度
+#define CHILD_ROTATION1 0.79f
+#define CHILD_ROTATION2 0.79f
+#define CHILD_ROTATION3 0.79f
+#define CHILD_ROTATION4 0.79f
+// リスポーン待ち時間
+#define CHILD_RESPAWN_WAITTIME 120
 
 
 //-=--=--=--=--=--=--=--=--=--=--=--=--=--=--=-//

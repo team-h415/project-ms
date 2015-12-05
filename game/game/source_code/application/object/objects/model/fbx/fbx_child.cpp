@@ -413,8 +413,9 @@ void FbxChild::Action(
 	const float range)
 {
 	//-------------------------------------
-	// Xƒ‚ƒfƒ‹‚Æ“–‚½‚Á‚½‚ç
-	if (target->parameter().layer_ == LAYER_MODEL_X){
+	// ƒ‚ƒfƒ‹‚Æ“–‚½‚Á‚½‚ç
+	if (target->parameter().layer_ == LAYER_MODEL_X ||
+		target->parameter().layer_ == LAYER_MODEL_GRANDFATHER){
 		Vector3 vec = target->parameter().position_ - parameter_.position_;
 		Vector3 v = vec;
 		Vec3Normalize(vec, vec);
