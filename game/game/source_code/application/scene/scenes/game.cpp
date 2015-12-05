@@ -376,13 +376,10 @@ void Game::Update()
 	Field *field = dynamic_cast<Field*>(
 		object_manager_->Get("field"));
 
-<<<<<<< HEAD
 	FbxGrandfather *father = dynamic_cast<FbxGrandfather*>(fbx);
 	FbxChild *child_ = dynamic_cast<FbxChild*>(child);
-=======
     WaterGage *waterGage = dynamic_cast<WaterGage*>(
         object_manager_->Get("water_gage"));
->>>>>>> origin/rockman
 
 	static const float player_speed_value = 0.05f;
 	static int bullet_count = 0;

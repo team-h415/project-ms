@@ -142,11 +142,6 @@ void WaterGage::CalculateVertex()
     vertex_[2].rhw_ = 1.0f;
     vertex_[3].rhw_ = 1.0f;
 
-    //vertex_[0].diffuse_ = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-    //vertex_[1].diffuse_ = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-    //vertex_[2].diffuse_ = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-    //vertex_[3].diffuse_ = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-
     vertex_[0].texture_ = { 0.0f, 0.0f };
     vertex_[1].texture_ = { 1.0f, 0.0f };
     vertex_[2].texture_ = { 0.0f, 1.0f };
