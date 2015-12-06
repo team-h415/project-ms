@@ -414,7 +414,7 @@ void FbxGrandfather::Action(
 {
 	//-------------------------------------
 	// Xƒ‚ƒfƒ‹‚Æ“–‚½‚Á‚½‚ç
-	if (target->parameter().layer_ == LAYER_MODEL_X ||
+	if (target->parameter().layer_ == LAYER_MODEL_FORT ||
 		target->parameter().layer_ == LAYER_MODEL_CHILD){
 		Vector3 vec = target->parameter().position_ - parameter_.position_;
 		Vector3 v = vec;

@@ -17,6 +17,7 @@
 #include "../model/fbx_model.h"
 #include "../model/fbx/fbx_child.h"
 #include "../model/fbx/fbx_grandfather.h"
+#include "../model/x/x_fort.h"
 #include "../../../collision/collision.h"
 #include "../../../collision/collision_manager.h"
 #include "../../../effect/effect.h"
@@ -119,7 +120,7 @@ void Bullet::Action(
 {
 	//-------------------------------------
 	// ‚à‚µXƒ‚ƒfƒ‹‚Æ“–‚½‚Á‚½‚ç
-	if (target->parameter().layer_ == LAYER_MODEL_X ||
+	if (target->parameter().layer_ == LAYER_MODEL_FORT ||
 		target->parameter().layer_ == LAYER_MODEL_GRANDFATHER ||
 		target->parameter().layer_ == LAYER_MODEL_CHILD){
 
@@ -142,6 +143,14 @@ void Bullet::Action(
 				float life = child->GetLife();
 				life -= CHILD_DAMAGE;
 				child->SetLife(life);
+			}
+			// Ô(¦Žq‹Ÿ‚É·‚µ‘Ö‚¦‚é‚±‚Æ!)
+			else if (target->parameter().layer_ == LAYER_MODEL_FORT &&
+				parameter_.parent_layer_ == LAYER_MODEL_GRANDFATHER){
+				XFort *fort = dynamic_cast<XFort*>(target);
+				float life = fort->GetLife();
+				life -= FORT_DAMAGE;
+				fort->SetLife(life);
 			}
 
 			//-------------------------------------

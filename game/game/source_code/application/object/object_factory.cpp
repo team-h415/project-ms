@@ -25,6 +25,7 @@
 #include "objects/model/fbx/fbx_child.h"
 #include "objects/notice/bullet.h"
 #include "objects/mesh/skydome.h"
+#include "objects/model/x/x_fort.h"
 
 
 //-------------------------------------
@@ -94,6 +95,12 @@ Object *ObjectFactory::Create(
 		object = new XModel(parameter);
 		XModel *model = dynamic_cast<XModel*>(object);
 		model->LoadMesh(object_path);
+	}
+
+	else if (param.layer_ == LAYER_MODEL_FORT){
+		object = new XFort(parameter);
+		XFort *fort = dynamic_cast<XFort*>(object);
+		fort->LoadMesh(object_path);
 	}
 
 	else if (param.layer_ == LAYER_MODEL_FBX){

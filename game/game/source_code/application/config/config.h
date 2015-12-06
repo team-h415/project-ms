@@ -77,6 +77,21 @@
 #define CHILD_RESPAWN_WAITTIME 120
 
 
+//-------------------------------------
+// 砦
+
+// 座標
+#define FORT1_POSITION {  50.0f,  0.0f, -50.0f }
+#define FORT2_POSITION { -56.0f,  0.0f,  63.0f }
+#define FORT3_POSITION {  53.0f,  0.0f,  62.0f }
+// 体力
+#define FORT1_LiFE 0.5f
+#define FORT2_LiFE 0.5f
+#define FORT3_LiFE 0.5f
+// くらうダメージ量
+#define FORT_DAMAGE 0.01f;
+
+
 //-=--=--=--=--=--=--=--=--=--=--=--=--=--=--=-//
 // Result
 //-=--=--=--=--=--=--=--=--=--=--=--=--=--=--=-//

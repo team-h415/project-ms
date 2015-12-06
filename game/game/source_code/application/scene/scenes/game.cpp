@@ -20,6 +20,7 @@
 #include "../../object/object_manager.h"
 #include "../../object/objects/mesh/field.h"
 #include "../../object/objects/model/x_model.h"
+#include "../../object/objects/model/x/x_fort.h"
 #include "../../object/objects/model/fbx_model.h"
 #include "../../object/objects/model/fbx/fbx_grandfather.h"
 #include "../../object/objects/model/fbx/fbx_child.h"
@@ -126,30 +127,87 @@ Game::Game()
 		"resource/mesh/skydome_bottom.txt");
 
 	//-------------------------------------
-	// Xモデル
+	// 砦
 	//-------------------------------------
-	OBJECT_PARAMETER_DESC player_param;
-	player_param.layer_ = LAYER_MODEL_X;
-	player_param.position_ = { -5.0f, 0.0f, 0.0f };
-	player_param.rotation_ = { 0.0f, 0.0f, 0.0f };
-	player_param.scaling_ = { 1.0f, 1.0f, 1.0f };
+	// 砦1
+	OBJECT_PARAMETER_DESC fort1_param;
+	fort1_param.layer_ = LAYER_MODEL_FORT;
+	fort1_param.position_ = FORT1_POSITION;
+	fort1_param.rotation_ = { 0.0f, 0.0f, 0.0f };
+	fort1_param.scaling_ = { 1.0f, 1.0f, 1.0f };
 
 	object_manager_->Create(
-		"player",
-		player_param,
-		"resource/model/x/pone_red.x");
+		"fort1",
+		fort1_param,
+		"resource/model/x/test.x");
 
-	COLLISION_PARAMETER_DESC player_collision_param;
-	Object *obj = object_manager_->Get("player");
-	player_collision_param.position_ = {
-		obj->parameter().position_.x_,
-		obj->parameter().position_.y_ + 0.5f,
-		obj->parameter().position_.z_ };
-	player_collision_param.range_ = 1.0f;
-	player_collision_param.offset_ = { 0.0f, 0.5f, 0.0f };
+	COLLISION_PARAMETER_DESC fort1_collision_param;
+	Object *fort1_obj = object_manager_->Get("fort1");
+	fort1_collision_param.position_ = {
+		fort1_obj->parameter().position_.x_,
+		fort1_obj->parameter().position_.y_ + 0.5f,
+		fort1_obj->parameter().position_.z_ };
+	fort1_collision_param.range_ = 1.0f;
+	fort1_collision_param.offset_ = { 0.0f, 0.5f, 0.0f };
 
-	collision_manager_->Create(object_manager_->Get("player"),
-		player_collision_param);
+	collision_manager_->Create(fort1_obj,
+		fort1_collision_param);
+	XFort *fort1 = dynamic_cast<XFort*>(fort1_obj);
+	fort1->SetLife(FORT1_LiFE);
+
+
+	// 砦2
+	OBJECT_PARAMETER_DESC fort2_param;
+	fort2_param.layer_ = LAYER_MODEL_FORT;
+	fort2_param.position_ = FORT2_POSITION;
+	fort2_param.rotation_ = { 0.0f, 0.0f, 0.0f };
+	fort2_param.scaling_ = { 1.0f, 1.0f, 1.0f };
+
+	object_manager_->Create(
+		"fort2",
+		fort2_param,
+		"resource/model/x/test.x");
+
+	COLLISION_PARAMETER_DESC fort2_collision_param;
+	Object *fort2_obj = object_manager_->Get("fort2");
+	fort2_collision_param.position_ = {
+		fort2_obj->parameter().position_.x_,
+		fort2_obj->parameter().position_.y_ + 0.5f,
+		fort2_obj->parameter().position_.z_ };
+	fort2_collision_param.range_ = 1.0f;
+	fort2_collision_param.offset_ = { 0.0f, 0.5f, 0.0f };
+
+	collision_manager_->Create(fort2_obj,
+		fort2_collision_param);
+	XFort *fort2 = dynamic_cast<XFort*>(fort2_obj);
+	fort2->SetLife(FORT2_LiFE);
+
+
+	// 砦3
+	OBJECT_PARAMETER_DESC fort3_param;
+	fort3_param.layer_ = LAYER_MODEL_FORT;
+	fort3_param.position_ = FORT3_POSITION;
+	fort3_param.rotation_ = { 0.0f, 0.0f, 0.0f };
+	fort3_param.scaling_ = { 1.0f, 1.0f, 1.0f };
+
+	object_manager_->Create(
+		"fort3",
+		fort3_param,
+		"resource/model/x/test.x");
+
+	COLLISION_PARAMETER_DESC fort3_collision_param;
+	Object *fort3_obj = object_manager_->Get("fort3");
+	fort3_collision_param.position_ = {
+		fort3_obj->parameter().position_.x_,
+		fort3_obj->parameter().position_.y_ + 0.5f,
+		fort3_obj->parameter().position_.z_ };
+	fort3_collision_param.range_ = 1.0f;
+	fort3_collision_param.offset_ = { 0.0f, 0.5f, 0.0f };
+
+	collision_manager_->Create(fort3_obj,
+		fort3_collision_param);
+	XFort *fort3 = dynamic_cast<XFort*>(fort3_obj);
+	fort3->SetLife(FORT3_LiFE);
 
 
 	//-------------------------------------
@@ -387,14 +445,18 @@ void Game::Update()
 	//-------------------------------------
 	// 変数宣言
 	//-------------------------------------
-	Object *player_object = object_manager_->Get("player");
+	Object *fort1_object = object_manager_->Get("fort1");
+	Object *fort2_object = object_manager_->Get("fort2");
+	Object *fort3_object = object_manager_->Get("fort3");
 	Object *grandfather_object = object_manager_->Get("grandfather");
 	Object *child_object = object_manager_->Get("child");
-	Vector3 player_position(player_object->parameter().position_);
-	Vector3 player_rotation(player_object->parameter().rotation_);
+	Vector3 fort1_position(fort1_object->parameter().position_);
+	Vector3 fort2_position(fort2_object->parameter().position_);
+	Vector3 fort3_position(fort3_object->parameter().position_);
 	Vector3 grandfather_position(grandfather_object->parameter().position_);
 	Vector3 grandfather_rotation(grandfather_object->parameter().rotation_);
 	Vector3 child_position(child_object->parameter().position_);
+	Vector3 child_rotation(child_object->parameter().rotation_);
 	static Vector3 grandfather_prevposition(grandfather_object->parameter().position_);
 
 	Field *field = dynamic_cast<Field*>(
@@ -405,28 +467,33 @@ void Game::Update()
 		object_manager_->Get("water_gage"));
 	DamageEffect *damage_effect = dynamic_cast<DamageEffect*>(
 		object_manager_->Get("damage_effect"));
+	XFort *fort1 = dynamic_cast<XFort*>(fort1_object);
+	XFort *fort2 = dynamic_cast<XFort*>(fort2_object);
+	XFort *fort3 = dynamic_cast<XFort*>(fort3_object);
 
 	static const float player_speed_value = 0.05f;
 	static int bullet_count = 0;
+	static D3DXVECTOR3 fort_underground(0.0f, 0.0f, 0.0f);
 	float player_speed = player_speed_value;
 	float father_life = grandfather->GetLife();
 	float father_watergauge = grandfather->GetWaterGauge();
 	float child_life = child->GetLife();
 	float child_watergauge = child->GetWaterGauge();
+	float fort1_life = fort1->GetLife();
+	float fort2_life = fort2->GetLife();
+	float fort3_life = fort3->GetLife();
 
 
 	//-------------------------------------
 	// ゲームステージデバッグ
 	//-------------------------------------
-	if (KeyBoard::isTrigger(DIK_1)){
-		stage_ = 1;
-	}
-	else if (KeyBoard::isTrigger(DIK_2)){
+	if (fort1_life == 0.0f){
 		stage_ = 2;
+		if (fort2_life == 0.0f){
+			stage_ = 3;
+		}
 	}
-	else if (KeyBoard::isTrigger(DIK_3)){
-		stage_ = 3;
-	}
+
 
 	//-------------------------------------
 	// プレイヤー移動処理
@@ -505,17 +572,61 @@ void Game::Update()
 
 #endif //_DEBUG
 
-	D3DXVECTOR3 pos(
-		player_position.x_,
-		player_position.y_,
-		player_position.z_);
-	player_position.y_ = field->GetHeight(pos);
 
-	D3DXVECTOR3 fbx_pos(
+	//-------------------------------------
+	// 砦の座標管理
+	//-------------------------------------
+	switch (stage_)
+	{
+	case 1:
+		fort_underground.x += 0.01f;
+		fort_underground.y -= 0.01f;
+		fort_underground.z -= 0.01f;
+		fort_underground.x = std::min<float>(fort_underground.x, 0.0f);
+		fort_underground.y = std::max<float>(fort_underground.y, -3.0f);
+		fort_underground.z = std::max<float>(fort_underground.z, -3.0f);
+		break;
+	case 2:
+		fort_underground.x -= 0.01f;
+		fort_underground.y += 0.01f;
+		fort_underground.z -= 0.01f;
+		fort_underground.x = std::max<float>(fort_underground.x, -3.0f);
+		fort_underground.y = std::min<float>(fort_underground.y, 0.0f);
+		fort_underground.z = std::max<float>(fort_underground.z, -3.0f);
+		break;
+	case 3:
+		fort_underground.x -= 0.01f;
+		fort_underground.y -= 0.01f;
+		fort_underground.z += 0.01f;
+		fort_underground.x = std::max<float>(fort_underground.x, -3.0f);
+		fort_underground.y = std::max<float>(fort_underground.y, -3.0f);
+		fort_underground.z = std::min<float>(fort_underground.z, 0.0f);
+		break;
+	}
+
+	D3DXVECTOR3 fort1_pos(
+		fort1_position.x_,
+		fort1_position.y_,
+		fort1_position.z_);
+	fort1_position.y_ = field->GetHeight(fort1_pos) + fort_underground.x;
+
+	D3DXVECTOR3 fort2_pos(
+		fort2_position.x_,
+		fort2_position.y_,
+		fort2_position.z_);
+	fort2_position.y_ = field->GetHeight(fort2_pos) + fort_underground.y;
+
+	D3DXVECTOR3 fort3_pos(
+		fort3_position.x_,
+		fort3_position.y_,
+		fort3_position.z_);
+	fort3_position.y_ = field->GetHeight(fort3_pos) + fort_underground.z;
+
+	D3DXVECTOR3 grandfather_pos(
 		grandfather_position.x_,
 		grandfather_position.y_,
 		grandfather_position.z_);
-	grandfather_position.y_ = field->GetHeight(fbx_pos);
+	grandfather_position.y_ = field->GetHeight(grandfather_pos);
 	if (grandfather_position.y_ > 0.5f){
 		grandfather_position = grandfather_prevposition;
 	}
@@ -526,8 +637,9 @@ void Game::Update()
 		child_position.z_);
 	child_position.y_ = field->GetHeight(child_pos);
 
-	player_object->SetPosition(player_position);
-	player_object->SetRotation(player_rotation);
+	fort1_object->SetPosition(fort1_position);
+	fort2_object->SetPosition(fort2_position);
+	fort3_object->SetPosition(fort3_position);
 	grandfather_object->SetPosition(grandfather_position);
 	grandfather_object->SetRotation(grandfather_rotation);
 	child_object->SetPosition(child_position);
@@ -576,7 +688,7 @@ void Game::Update()
 	// モデルの回転Yをそのままカメラの回転Yへ
 	camera_rotation.y = grandfather_rotation.y_;
 	// 一旦モデルを注視点に
-	camera_focus = fbx_pos;
+	camera_focus = grandfather_pos;
 	// 足元基準から体の中心辺りを基準に
 	camera_focus.y += CAMERA_FOCUS_OFFSET_Y;
 	// モデルの少し先を見るように調整
@@ -693,6 +805,16 @@ void Game::Update()
 			bullet_param);
 		bullet_count++;
 	}
+
+	//-------------------------------------
+	// デバッグ時のみ、水ゲージ回復
+	//-------------------------------------
+	if (KeyBoard::isPress(DIK_1)){
+		father_watergauge += GRANDFATHER_SUB_WATERGAUGE;
+		father_watergauge = std::min<float>(father_watergauge, 1.0f);
+		grandfather->SetWaterGauge(father_watergauge);
+		waterGage->SetChangeValue(father_watergauge);
+	}
 #endif //_DEBUG
 
 	//-------------------------------------
@@ -729,7 +851,9 @@ void Game::Update()
 		child_life = CHILD_LIFE;
 		child->SetLife(child_life);
 		child_position = CHILD_POSITION1;
+		child_rotation.y_ = CHILD_ROTATION1;
 		child->SetPosition(child_position);
+		child->SetRotation(child_rotation);
 	}
 
 	child_respawn_waittime_--;
@@ -738,7 +862,7 @@ void Game::Update()
 	//-------------------------------------
 	// ダメージエフェクトの処理
 	//-------------------------------------
-	// 今はテスト用に、子供に当てたら主観(おじ)のUIを現象させている
+	// 今はテスト用に、子供に当てたら主観(おじ)のUIを反映させている
 	damage_effect->SetHP(child_life);
 
 
