@@ -1,5 +1,5 @@
 //=========================================================
-// x_model.h
+// x_fort.h
 // author:ryuya nakamura
 //=========================================================
 
@@ -8,37 +8,43 @@
 // include guard
 //-------------------------------------
 #pragma once
-#ifndef __XModel_H__
-#define __XModel_H__
+#ifndef __XFort_H__
+#define __XFort_H__
 
+#include "../x_model.h"
 
 //-------------------------------------
 // class
 //-------------------------------------
-class XModel : public Object
+class XFort : public XModel
 {
 public:
-	XModel(
+	XFort(
 		const OBJECT_PARAMETER_DESC &parameter);
-	virtual ~XModel();
-	virtual void Update();
-	void Draw();
-	void LoadMesh(
-		const std::string &path);
-	virtual void Action(
+	virtual ~XFort();
+	void Update();
+	void Action(
 		Object *target,
 		const float range);
-protected:
-	LPD3DXMESH mesh_;
-	LPD3DXBUFFER material_buffer_;
-	DWORD material_count_;
-	D3DXMATRIX world_;
-	LPDIRECT3DTEXTURE9 texture_;
-	Shader *shader_;
+
+	//-------------------------------------
+	// ÉpÉâÉÅÅ[É^
+	//-------------------------------------
+	// ëÃóÕ
+	const float GetLife(){
+		return life_;
+	}
+	void SetLife(const float life){
+		life_ = life;
+	}
+private:
+	// ëÃóÕ
+	float life_;
+
 };
 
 
-#endif //__XModel_H__
+#endif //__XFort_H__
 
 
 //-------------------------------------

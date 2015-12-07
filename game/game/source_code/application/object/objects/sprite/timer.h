@@ -53,7 +53,6 @@ public:
     int GetValue(void){ return value_; }
 	void SetValue(int value);
 	void SetTexture(const std::string &path);
-
 	void SetFigureOffset(float Offset);
 	float SetFigureOffset(void){ return figure_offset_; }
 	void GenerateNumber(void);

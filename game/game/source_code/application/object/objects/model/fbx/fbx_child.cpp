@@ -34,6 +34,8 @@ FbxModel(parameter)
 	// ƒ‚ƒfƒ‹“Ç‚Ýž‚Ý
 	Load("./resource/model/fbx/child_01.fbx");
 	texture_ = TextureManager::GetTexture("resource/texture/game/child_01.jpg");
+	life_ = 1.0f;
+	water_gauge_ = 1.0f;
 
 #ifdef _DEBUG
 	int x;
@@ -411,8 +413,9 @@ void FbxChild::Action(
 	const float range)
 {
 	//-------------------------------------
-	// Xƒ‚ƒfƒ‹‚Æ“–‚½‚Á‚½‚ç
-	if (target->parameter().layer_ == LAYER_MODEL_X){
+	// ƒ‚ƒfƒ‹‚Æ“–‚½‚Á‚½‚ç
+	if (target->parameter().layer_ == LAYER_MODEL_FORT ||
+		target->parameter().layer_ == LAYER_MODEL_GRANDFATHER){
 		Vector3 vec = target->parameter().position_ - parameter_.position_;
 		Vector3 v = vec;
 		Vec3Normalize(vec, vec);

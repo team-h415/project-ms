@@ -51,9 +51,23 @@ private:
 	CameraManager *camera_manager_;
 	EffectManager *effect_manager_;
 	CollisionManager *collision_manager_;
-	DebugFont *font_;
+	DebugFont *font1_;
+	DebugFont *font2_;
 	int current_id_;
 	float camera_pos_len_;
+
+	//-------------------------------------
+	// ゲームルール用パラメータ
+	//-------------------------------------
+	// ステージ(砦が壊されるごとに進行/1からスタート)
+	int stage_;
+	// おじデバフフラグ
+	bool grandfather_debuff_;
+	// 子供死亡フラグ
+	bool child_death_;
+	// 子供リスポーンタイマー
+	int child_respawn_waittime_;
+
 };
 
 

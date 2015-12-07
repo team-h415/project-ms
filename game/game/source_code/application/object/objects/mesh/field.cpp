@@ -261,8 +261,8 @@ void Field::CalculateVertex(
 			};
 			vertex[num].color_ = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
 			vertex[num].texture_ = {
-				static_cast<float>(x),
-				static_cast<float>(z)
+				static_cast<float>(x) / 5.0f,
+				static_cast<float>(z) / 5.0f
 			};
 			vertex[num].texturealpha_ = texture_alpha[num];
 		}

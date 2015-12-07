@@ -76,6 +76,30 @@ public:
 		Object *target,
 		const float range);
 
+	//-------------------------------------
+	// パラメータ系
+	//-------------------------------------
+	// パラメータリセット
+	void ResetGameParameters(){
+		life_ = 1.0f;
+		water_gauge_ = 1.0f;
+	}
+	// 体力
+	const float &GetLife(){
+		return life_;
+	}
+	void SetLife(const float &life){
+		life_ = life;
+	}
+
+	//水ゲージ
+	const float &GetWaterGauge(){
+		return water_gauge_;
+	}
+	void SetWaterGauge(const float &gauge){
+		water_gauge_ = gauge;
+	}
+
 private:
 	void UpdateBoneMatrix(BONE *subject, D3DXMATRIX *parent);
 
@@ -88,6 +112,13 @@ private:
 	D3DXQUATERNION InterpolateBlendQuaternion(BONE* subject, float prev_time, float next_time, float t);
 	D3DXVECTOR3 InterpolateBlendScaling(BONE* subject, float prev_time, float next_time, float t);
 
+	//-------------------------------------
+	// ゲーム用パラメータ
+	//-------------------------------------
+	// 体力
+	float life_;
+	// 水ゲージ
+	float water_gauge_;
 };
 
 
