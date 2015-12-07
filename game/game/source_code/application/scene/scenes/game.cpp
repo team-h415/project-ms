@@ -306,6 +306,15 @@ Game::Game()
 	object_manager_->Create(
 		"wood", wood_param);
 
+	//-------------------------------------
+	// ‰e
+	//-------------------------------------
+	OBJECT_PARAMETER_DESC shadow_param;
+	shadow_param.layer_ = LAYER_SHADOW;
+	shadow_param.scaling_ = Vector3(1.0f, 1.0f, 1.0f);
+	object_manager_->Create(
+		"shadow", shadow_param);
+
 }
 
 
@@ -611,6 +620,15 @@ void Game::Update()
 		FbxGrandfather *grandfather = dynamic_cast<FbxGrandfather*>(fbx);
 		grandfather->PlayAnimation(FbxGrandfather::DOWN);
 	}
+
+	//-------------------------------------
+	// ‰eÀ•W
+	//-------------------------------------
+	Object *shadow = object_manager_->Get("shadow");
+	Vector3 shadow_pos;
+	shadow_pos = fbx->parameter().position_;
+	shadow_pos.y_ += 0.001f;
+	shadow->SetPosition(shadow_pos);
 
 	//-------------------------------------
 	// ÀXVˆ—

@@ -17,6 +17,7 @@
 #include "objects/mesh/field.h"
 #include "objects/model/x_model.h"
 #include "objects/model/instancing_tree.h"
+#include "objects/sprite3d/shadow.h"
 #include "objects/model/fbx_model.h"
 #include "objects/sprite/timer.h"
 #include "objects/sprite/water_gage.h"
@@ -63,6 +64,10 @@ Object *ObjectFactory::Create(
 
 	else if(param.layer_ == LAYER_TREE){
 		object = new InstancingTree(parameter);
+	}
+
+	else if(param.layer_ == LAYER_SHADOW){
+		object = new Shadow(parameter);
 	}
 
 	else{
