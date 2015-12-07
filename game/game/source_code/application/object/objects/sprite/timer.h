@@ -38,6 +38,13 @@ namespace{
     static const float kSpace = 40.0f;
 }
 
+typedef enum TIMER_STATE
+{
+	TIMER_COUNT = 0,
+	TIMER_STOP,
+	TIMER_END,
+	TIMER_MAX
+};
 
 //-------------------------------------
 // class
@@ -56,6 +63,8 @@ public:
 	void SetFigureOffset(float Offset);
 	float SetFigureOffset(void){ return figure_offset_; }
 	void GenerateNumber(void);
+	void SetState(TIMER_STATE state){ state_ = state; }
+	TIMER_STATE GetState(void){ return state_; }
 
 private:
     int count_;
@@ -65,8 +74,7 @@ private:
 
 	float figure_offset_;
 	unsigned int figure_;
-
-
+	TIMER_STATE state_;
 };
 
 

@@ -34,9 +34,9 @@ Timer::Timer(
     unsigned int figure = (unsigned int)pow((float)kFigureDefine, figure_);
 	
 	
-
 	figure_offset_ = 0.0f;
 	figure_ = 0;
+	state_ = TIMER_COUNT;
 }
 
 
@@ -58,37 +58,22 @@ Timer::~Timer()
 //-------------------------------------
 void Timer::Update()
 {
-    ++count_;
-    if ((count_ % 60) == 0)
-    {
-        --value_;
-        // 終了条件
-        if (value_ < 0)
-            value_ = kTimerCount;
-        count_ = 0;
-    }
-    //unsigned int figure = (unsigned int)pow((float)kFigureDefine, figure_);
-    //for (int num = 0; num < figure_; num++)
-    //{
-    //    // 特定の桁の値を入れる
-    //    int value = (value_ % figure) / (figure / kFigureDefine);
-    //    // 値をセット
-    //    p_number_[num]->SetValue(value);
-    //    // 桁ずらし
-    //    figure /= kFigureDefine;
-    //}
-
-
-	int value = value_;
-	for (int num = 0; num < figure_; num++)
-	{
-		// 特定の桁の値を入れる
-		int figure_value = value % 10;
-		// 値をセット
-		p_number_[num]->SetValue(figure_value);
-		// 桁ずらし
-		value /= 10;
+    
+	if (state_ == TIMER_COUNT){
+		++count_;
+		if ((count_ % 60) == 0)
+		{
+			--value_;
+			// 終了条件
+			if (value_ < 0)
+				value_ = kTimerCount;
+			count_ = 0;
+			state_ == TIMER_END;
+		}
 	}
+
+	// 値更新
+	this->SetValue(value_);
 }
 
 
@@ -112,17 +97,17 @@ void Timer::SetValue(int value)
 {
 	value_ = value;
 	if (p_number_ == NULL){ return; }
-
-	unsigned int figure = (unsigned int)pow((float)kFigureDefine, figure_);
+	
+	int sub_value = value;
 	for (int num = 0; num < figure_; num++)
 	{
 		// 特定の桁の値を入れる
-		int value = (value_ % figure) / (figure / kFigureDefine);
+		int figure_value = sub_value % 10;
+		
+		// 値をセット;
+		p_number_[num]->SetValue(figure_value);
 
-		// 値をセット
-		p_number_[num]->SetValue(value);
-		// 桁ずらし
-		figure /= kFigureDefine;
+		sub_value /= 10;
 	}
 }
 
@@ -152,22 +137,21 @@ void Timer::SetFigureOffset(float Offset)
 
 	if (p_number_ == NULL){ return; }
 
-	float right_center_offset = static_cast<float>(figure_)
-		* 0.5f
-		* parameter_.scaling_.x_
-		+ parameter_.scaling_.x_
-		* 0.5f
-		+ static_cast<float>(figure_)
-		* 0.5f
-		* figure_offset_;
+	float right_center_offset =
+		static_cast<float>(figure_ / 2) * parameter_.scaling_.x_
+			+ static_cast<float>(figure_ / 2) * figure_offset_
+			- static_cast<float>((figure_ + 1) % 2) * parameter_.scaling_.x_ * 0.5f
+			- static_cast<float>((figure_ + 1) % 2) * figure_offset_ * 0.5f;
+
 
 	for (int num = 0; num < figure_; num++)
 	{
 		Vector3 pos = parameter_.position_;
 		
 		// 座標修正
-		pos.x_ += right_center_offset - parameter_.scaling_.x_ * num
-			+ static_cast<float>(figure_)* 0.5f * figure_offset_ * num;
+		pos.x_ += right_center_offset
+					- parameter_.scaling_.x_ * num
+					- figure_offset_ * num;
 
 		// 座標をセット
 		p_number_[num]->SetPosition(pos);
@@ -194,20 +178,11 @@ void Timer::GenerateNumber(void)
 
 	p_number_ = new Number *[figure_];
 
-	/*float left_center = static_cast<float>(figure_)
-		* 0.5f 
-		* parameter_.scaling_.x_ 
-		- parameter_.scaling_.x_
-		* 0.5f
-		- static_cast<float>(figure_)
-		* 0.5f
-		* figure_offset_;
-*/
-
 	float right_center_offset = 
-		static_cast<float>(figure_) * 0.5f * parameter_.scaling_.x_
-		- parameter_.scaling_.x_ * 0.5f
-		+ static_cast<float>(figure_) * 0.5f * figure_offset_;
+		static_cast<float>(figure_/2) * parameter_.scaling_.x_
+		+ static_cast<float>(figure_ / 2) * figure_offset_
+		- static_cast<float>((figure_ + 1) % 2) * parameter_.scaling_.x_ * 0.5f
+		- static_cast<float>((figure_ + 1) % 2) * figure_offset_ * 0.5f;
 
 	int value = value_;
 	for (int num = 0; num < figure_; num++)
@@ -216,9 +191,9 @@ void Timer::GenerateNumber(void)
 		// 特定の桁の値を入れる
 		int figure_value = value % 10;
 		// 座標修正
-		param.position_.x_ += right_center_offset 
+		param.position_.x_ += right_center_offset
 								- parameter_.scaling_.x_ * num
-								+ figure_offset_ * num;
+								- figure_offset_ * num;
 
 		// 値をセット
 		p_number_[num] = new Number(param, value);
