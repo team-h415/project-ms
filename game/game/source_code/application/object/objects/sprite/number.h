@@ -25,6 +25,8 @@ public:
     void Draw();
     void SetTexture(
         const std::string &path);
+	void SetTexture(
+		LPDIRECT3DTEXTURE9 texture);
     void SetValue(int value){ value_ = value; }
     int GetValue(void){ return value_; }
 private:

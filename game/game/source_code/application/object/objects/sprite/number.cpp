@@ -139,6 +139,14 @@ void Number::SetTexture(
 	texture_ = TextureManager::GetTexture(path.c_str());
 }
 
+//-------------------------------------
+// SetTexture()
+//-------------------------------------
+void Number::SetTexture(
+	LPDIRECT3DTEXTURE9 texture)
+{
+	texture_ = texture;
+}
 
 //-------------------------------------
 // end of file

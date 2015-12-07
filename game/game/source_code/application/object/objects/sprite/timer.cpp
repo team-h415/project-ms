@@ -12,8 +12,10 @@
 #include "../../../render/directx9/directx9.h"
 #include "../../../render/directx9/directx9_holder.h"
 #include "../../../math/vector.h"
+#include "../../../resource/texture_manager.h"
 #include "../../object.h"
 #include "Timer.h"
+
 
 
 //-------------------------------------
@@ -23,25 +25,18 @@ Timer::Timer(
     const OBJECT_PARAMETER_DESC &parameter)
 {
     parameter_ = parameter;
-    parameter_.scaling_ = { 80.0f, 80.0f, 0.0f };
-    value_ = kTimerCount;
+	parameter_.scaling_ = parameter.scaling_;
+    value_ = 0;
     count_ = 0;
+	texture_ = NULL;
+	p_number_ = NULL;
 
-    p_number_ = new Number *[kMaxFigure];
+    unsigned int figure = (unsigned int)pow((float)kFigureDefine, figure_);
+	
+	
 
-    unsigned int figure = (unsigned int)pow((float)kFigureDefine, kMaxFigure);
-    for (int num = 0; num < kMaxFigure; num++)
-    {
-        // 特定の桁の値を入れる
-        int value = (value_ % figure) / (figure / kFigureDefine);
-
-        parameter_.position_.x_ = -kSpace + parameter.position_.x_ + kSpace * num;
-        // 値をセット
-        p_number_[num] = new Number(parameter_, value);
-        p_number_[num]->SetValue(value);
-        // 桁ずらし
-        figure /= kFigureDefine;
-    }
+	figure_offset_ = 0.0f;
+	figure_ = 0;
 }
 
 
@@ -50,10 +45,11 @@ Timer::Timer(
 //-------------------------------------
 Timer::~Timer()
 {
-    for (int num = 0; num < kMaxFigure; num++){
+    for (int num = 0; num < figure_; num++){
         SAFE_DELETE(p_number_[num]);
     }
     SAFE_DELETE_ARRAY(p_number_);
+	texture_ = NULL;
 }
 
 
@@ -71,17 +67,28 @@ void Timer::Update()
             value_ = kTimerCount;
         count_ = 0;
     }
-    unsigned int figure = (unsigned int)pow((float)kFigureDefine, kMaxFigure);
-    for (int num = 0; num < kMaxFigure; num++)
-    {
-        // 特定の桁の値を入れる
-        int value = (value_ % figure) / (figure / kFigureDefine);
-        // 値をセット
-        p_number_[num]->SetValue(value);
-        // 桁ずらし
-        figure /= kFigureDefine;
-    }
+    //unsigned int figure = (unsigned int)pow((float)kFigureDefine, figure_);
+    //for (int num = 0; num < figure_; num++)
+    //{
+    //    // 特定の桁の値を入れる
+    //    int value = (value_ % figure) / (figure / kFigureDefine);
+    //    // 値をセット
+    //    p_number_[num]->SetValue(value);
+    //    // 桁ずらし
+    //    figure /= kFigureDefine;
+    //}
 
+
+	int value = value_;
+	for (int num = 0; num < figure_; num++)
+	{
+		// 特定の桁の値を入れる
+		int figure_value = value % 10;
+		// 値をセット
+		p_number_[num]->SetValue(figure_value);
+		// 桁ずらし
+		value /= 10;
+	}
 }
 
 
@@ -90,7 +97,9 @@ void Timer::Update()
 //-------------------------------------
 void Timer::Draw()
 {
-    for (int num = 0; num < kMaxFigure; num++)
+	if (p_number_ == NULL){ return; }
+
+    for (int num = 0; num < figure_; num++)
     {
         p_number_[num]->Draw();
     }
@@ -99,10 +108,13 @@ void Timer::Draw()
 //-------------------------------------
 // SetValue()
 //-------------------------------------
-void Timer::SetValue(int value_)
+void Timer::SetValue(int value)
 {
-	unsigned int figure = (unsigned int)pow((float)kFigureDefine, kMaxFigure);
-	for (int num = 0; num < kMaxFigure; num++)
+	value_ = value;
+	if (p_number_ == NULL){ return; }
+
+	unsigned int figure = (unsigned int)pow((float)kFigureDefine, figure_);
+	for (int num = 0; num < figure_; num++)
 	{
 		// 特定の桁の値を入れる
 		int value = (value_ % figure) / (figure / kFigureDefine);
@@ -120,13 +132,105 @@ void Timer::SetValue(int value_)
 void Timer::SetTexture(
 	const std::string &path)
 {
-	for (int num = 0; num < kMaxFigure; num++)
+
+	texture_ = TextureManager::GetTexture(path.c_str());
+
+	if (p_number_ == NULL){ return; }
+
+	for (int num = 0; num < figure_; num++)
 	{
 		// テクスチャをセット
-		p_number_[num]->SetTexture(path);
+		p_number_[num]->SetTexture(texture_);
 	}
 }
+//-------------------------------------
+// SetFigureOffset()
+//-------------------------------------
+void Timer::SetFigureOffset(float Offset)
+{
+	figure_offset_ = Offset;
 
+	if (p_number_ == NULL){ return; }
+
+	float right_center_offset = static_cast<float>(figure_)
+		* 0.5f
+		* parameter_.scaling_.x_
+		+ parameter_.scaling_.x_
+		* 0.5f
+		+ static_cast<float>(figure_)
+		* 0.5f
+		* figure_offset_;
+
+	for (int num = 0; num < figure_; num++)
+	{
+		Vector3 pos = parameter_.position_;
+		
+		// 座標修正
+		pos.x_ += right_center_offset - parameter_.scaling_.x_ * num
+			+ static_cast<float>(figure_)* 0.5f * figure_offset_ * num;
+
+		// 座標をセット
+		p_number_[num]->SetPosition(pos);
+	}
+
+}
+
+//-------------------------------------
+// GenerateNumber()
+//-------------------------------------
+void Timer::GenerateNumber(void)
+{
+	// 桁数計算
+	figure_ = static_cast<unsigned int>(log10(static_cast<double>(value_))+1);
+	
+	if (figure_ == 0){ figure_ = 1; }
+
+	if (p_number_){
+		for (int num = 0; num < figure_; num++){
+			SAFE_DELETE(p_number_[num]);
+		}
+		SAFE_DELETE_ARRAY(p_number_);
+	}
+
+	p_number_ = new Number *[figure_];
+
+	/*float left_center = static_cast<float>(figure_)
+		* 0.5f 
+		* parameter_.scaling_.x_ 
+		- parameter_.scaling_.x_
+		* 0.5f
+		- static_cast<float>(figure_)
+		* 0.5f
+		* figure_offset_;
+*/
+
+	float right_center_offset = 
+		static_cast<float>(figure_) * 0.5f * parameter_.scaling_.x_
+		- parameter_.scaling_.x_ * 0.5f
+		+ static_cast<float>(figure_) * 0.5f * figure_offset_;
+
+	int value = value_;
+	for (int num = 0; num < figure_; num++)
+	{
+		OBJECT_PARAMETER_DESC param = parameter_;
+		// 特定の桁の値を入れる
+		int figure_value = value % 10;
+		// 座標修正
+		param.position_.x_ += right_center_offset 
+								- parameter_.scaling_.x_ * num
+								+ figure_offset_ * num;
+
+		// 値をセット
+		p_number_[num] = new Number(param, value);
+		p_number_[num]->SetValue(figure_value);
+		if (texture_ != NULL){
+			p_number_[num]->SetTexture(texture_);
+		}
+
+		value /= 10;
+	}
+
+}
 
 //-------------------------------------
 // end of file

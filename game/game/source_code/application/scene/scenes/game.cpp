@@ -206,14 +206,18 @@ Game::Game()
         0.0f
     };
     time_param.rotation_ = { 0.0f, 0.0f, 0.0f };
-    time_param.scaling_ = { 160.0f, 80.0f, 0.0f };
+    time_param.scaling_ = { 80.0f, 80.0f, 0.0f };
     time_param.layer_ = LAYER_TIMER;
 
-    object_manager_->Create(
-        "time",
-		time_param,
-		"resource/texture/figure_all.png");
+	Timer* timer = static_cast<Timer*>(
+		object_manager_->Create(
+		"time",
+		time_param));
 
+	timer->SetTexture("resource/texture/figure_all.png");
+	timer->SetFigureOffset(-10.0f);
+	timer->SetValue(100);
+	timer->GenerateNumber();
 
 	//-------------------------------------
 	// ç‘

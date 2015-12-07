@@ -51,13 +51,23 @@ public:
     void Update();
     void Draw();
     int GetValue(void){ return value_; }
-	void SetValue(int value_);
+	void SetValue(int value);
 	void SetTexture(const std::string &path);
+
+	void SetFigureOffset(float Offset);
+	float SetFigureOffset(void){ return figure_offset_; }
+	void GenerateNumber(void);
 
 private:
     int count_;
     int value_;
     Number **p_number_;
+	LPDIRECT3DTEXTURE9 texture_;
+
+	float figure_offset_;
+	unsigned int figure_;
+
+
 };
 
 
