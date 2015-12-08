@@ -110,6 +110,7 @@
     <ClCompile Include="source_code\application\object\objects\mesh\skydome.cpp" />
     <ClCompile Include="source_code\application\object\objects\model\fbx\fbx_child.cpp" />
     <ClCompile Include="source_code\application\object\objects\model\fbx\fbx_grandfather.cpp" />
+    <ClCompile Include="source_code\application\object\objects\model\fbx\fbx_player.cpp" />
     <ClCompile Include="source_code\application\object\objects\model\fbx_model.cpp" />
     <ClCompile Include="source_code\application\object\objects\model\instancing_tree.cpp" />
     <ClCompile Include="source_code\application\object\objects\model\x\x_fort.cpp" />
@@ -177,6 +178,7 @@
     <ClInclude Include="source_code\application\object\objects\mesh\skydome.h" />
     <ClInclude Include="source_code\application\object\objects\model\fbx\fbx_child.h" />
     <ClInclude Include="source_code\application\object\objects\model\fbx\fbx_grandfather.h" />
+    <ClInclude Include="source_code\application\object\objects\model\fbx\fbx_player.h" />
     <ClInclude Include="source_code\application\object\objects\model\fbx_model.h" />
     <ClInclude Include="source_code\application\object\objects\model\instancing_tree.h" />
     <ClInclude Include="source_code\application\object\objects\model\x\x_fort.h" />

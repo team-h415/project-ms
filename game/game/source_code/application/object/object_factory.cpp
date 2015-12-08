@@ -22,6 +22,7 @@
 #include "objects/sprite/timer.h"
 #include "objects/sprite/water_gage.h"
 #include "objects/sprite/damage_effect.h"
+#include "objects/model/fbx/fbx_player.h"
 #include "objects/model/fbx/fbx_grandfather.h"
 #include "objects/model/fbx/fbx_child.h"
 #include "objects/notice/bullet.h"
