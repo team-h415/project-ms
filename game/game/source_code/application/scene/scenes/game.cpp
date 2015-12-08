@@ -408,7 +408,6 @@ Game::Game()
 	object_manager_->Create(
 		"wood", wood_param);*/
 
-<<<<<<< HEAD
 
 	//-------------------------------------
 	// ゲームルール用パラメータ初期化
@@ -421,7 +420,6 @@ Game::Game()
 	child_death_ = false;
 	// 子供リスポーン待ち時間
 	child_respawn_waittime_ = 0;
-=======
 	//-------------------------------------
 	// 影
 	//-------------------------------------
@@ -431,7 +429,6 @@ Game::Game()
 	object_manager_->Create(
 		"shadow", shadow_param);
 
->>>>>>> origin/shadow
 }
 
 
@@ -889,7 +886,7 @@ void Game::Update()
 	//-------------------------------------
 	Object *shadow = object_manager_->Get("shadow");
 	Vector3 shadow_pos;
-	shadow_pos = fbx->parameter().position_;
+	shadow_pos = grandfather->parameter().position_;
 	shadow_pos.y_ += 0.001f;
 	shadow->SetPosition(shadow_pos);
 
