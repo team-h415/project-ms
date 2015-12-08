@@ -46,6 +46,7 @@ const OBJECT_PARAMETER_DESC &parameter)
 	current_animation_id_ = 0;
 	animation_switching_ = 0;
 	animation_blending_ = false;
+	animation_count_ = 0;
 	texture_ = NULL;
 }
 
