@@ -24,9 +24,12 @@
 #include "../object/objects/sprite/sprite2d.h"
 #include "../object/objects/sprite/number.h"
 #include "../object/objects/sprite/timer.h"
+#include "../object/objects/sprite/water_gage.h"
+#include "../object/objects/sprite/damage_effect.h"
 #include "../object/objects/sprite/damage_effect.h"
 #include "../object/objects/sprite/water_gage.h"
 #include "../object/objects/model/fbx_model.h"
+#include "../object/objects/model/fbx/fbx_player.h"
 #include "../object/objects/model/fbx/fbx_grandfather.h"
 #include "../object/objects/model/fbx/fbx_child.h"
 #include "../effect/effect.h"
@@ -316,6 +319,49 @@ unsigned __stdcall NetworkGuest::Communication()
 					scene_name = scene_manager_->GetCurrentSceneName();
 					if("Game" == scene_name)
 					{
+						Game *game = dynamic_cast<Game*>(scene_manager_->GetCurrentScene());
+						if(game == nullptr)
+						{
+							continue;
+						}
+						ObjectManager* object_manager = game->object_manager();
+						if(object_manager == nullptr)
+						{
+							continue;
+						}
+						std::string name = rec_data.name;
+						if(name == "time")
+						{
+							Object *object = object_manager->Get(name);
+							if(object == nullptr)
+							{
+								continue;
+							}
+							Timer *timer = dynamic_cast<Timer*>(object);
+							//timer->
+						}
+
+						else if(name == "water_gage")
+						{
+							Object *object = object_manager->Get(name);
+							if(object == nullptr)
+							{
+								continue;
+							}
+							WaterGage *water_gage = dynamic_cast<WaterGage*>(object);
+							water_gage->SetChangeValue(rec_data.ui_param_.value_f_);
+						}
+
+						else if(name == "damage_effect")
+						{
+							Object *object = object_manager->Get(name);
+							if(object == nullptr)
+							{
+								continue;
+							}
+							DamageEffect *damage_effect = dynamic_cast<DamageEffect*>(object);
+							damage_effect->SetHP(rec_data.ui_param_.value_f_);
+						}
 
 					}
 					break;
@@ -442,6 +488,29 @@ void NetworkGuest::ObjDataAdaptation(
 					Timer *timer = dynamic_cast<Timer*>(object);
 					//timer->
 				}
+
+				else if(name == "water_gage")
+				{
+					Object *object = object_manager->Get(name);
+					if(object == nullptr)
+					{
+						return;
+					}
+					WaterGage *water_gage = dynamic_cast<WaterGage*>(object);
+					water_gage->SetChangeValue(rec_data.ui_param_.value_f_);
+				}
+
+				else if(name == "damage_effect")
+				{
+					Object *object = object_manager->Get(name);
+					if(object == nullptr)
+					{
+						return;
+					}
+					DamageEffect *damage_effect = dynamic_cast<DamageEffect*>(object);
+					damage_effect->SetHP(rec_data.ui_param_.value_f_);
+				}
+
 			}
 			break;
 

@@ -1176,7 +1176,7 @@ void Game::Update()
 	camera_manager_->Update();
 	object_manager_->Update();
 	effect_manager_->Update();
-	collision_manager_->Update();
+	//collision_manager_->Update();
 
 	// デバッグ表示
 	font1_->Add("シーン名:");
@@ -1233,7 +1233,8 @@ void Game::Draw()
 	camera_manager_->Set("MainCamera");
 	object_manager_->Draw();
 	effect_manager_->Draw();
-	collision_manager_->Draw();
+	//collision_manager_->Draw();
+	
 	font1_->Draw(rect1, font1_color);
 	font2_->Draw(rect2, font2_color);
 	Fade::Draw();

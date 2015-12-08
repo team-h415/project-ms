@@ -25,6 +25,7 @@
 #include "../../object/objects/model/x_model.h"
 #include "../../object/objects/model/x/x_fort.h"
 #include "../../object/objects/model/fbx_model.h"
+#include "../../object/objects/model/fbx/fbx_player.h"
 #include "../../object/objects/model/fbx/fbx_grandfather.h"
 #include "../../object/objects/model/fbx/fbx_child.h"
 #include "../../effect/effect.h"
@@ -406,7 +407,8 @@ void GameServer::MatchingAndGame()
 		// 変数宣言
 		//-------------------------------------
 		std::string player_str = "player" + std::to_string(i + 1);
-		Object *player = object_manager_->Get(player_str);
+		Object *player_obj = object_manager_->Get(player_str);
+		FbxPlayer *player = dynamic_cast<FbxPlayer*>(player_obj);
 		Vector3 player_position(player->parameter().position_);
 		Vector3 player_rotation(player->parameter().rotation_);
 		Field *field = dynamic_cast<Field*>(
@@ -529,85 +531,56 @@ void GameServer::MatchingAndGame()
 		//-------------------------------------
 		// バレット発射
 		//-------------------------------------
+		float watergauge = player->GetWaterGauge();
 
-		if(GamePad::isTrigger(i, PAD_BUTTON_8)){
-			float watergauge = 0.0f;
-			if(i == 0)
-			{
-				FbxGrandfather* grandfather = dynamic_cast<FbxGrandfather*>(player);
-				watergauge = grandfather->GetWaterGauge();
-			}
-			else
-			{
-				FbxChild* child = dynamic_cast<FbxChild*>(player);
-				watergauge = child->GetWaterGauge();
-			}
-			if(watergauge > 0.0f)
-			{
-				OBJECT_PARAMETER_DESC bullet_param;
-				bullet_param.layer_ = LAYER_BULLET;
-				bullet_param.position_ = player_position;
-				bullet_param.rotation_ = player_position;
+		if(GamePad::isTrigger(i, PAD_BUTTON_8) && watergauge > 0.0f){
+			OBJECT_PARAMETER_DESC bullet_param;
+			bullet_param.layer_ = LAYER_BULLET;
+			bullet_param.position_ = player_position;
+			bullet_param.rotation_ = player_position;
 
-				// カメラの回転Xを利用
-				bullet_param.rotation_.x_ = camera_rotation.x;
+			// カメラの回転Xを利用
+			bullet_param.rotation_.x_ = camera_rotation.x;
 
-				bullet_param.scaling_ = {1.0f, 1.0f, 1.0f};
-				std::string str = "notice" + std::to_string(bullet_count_);
-				object_manager_->Create(
-					str,
-					bullet_param);
-				bullet_count_++;
+			bullet_param.scaling_ = {1.0f, 1.0f, 1.0f};
+			std::string str = "notice" + std::to_string(bullet_count_);
+			object_manager_->Create(
+				str,
+				bullet_param);
+			bullet_count_++;
 
-				// エフェクト再生
-				send_data.type_ = DATA_OBJ_PARAM;
-				send_data.object_param_.type_ = OBJ_EFFECT;
-				send_data.object_param_.position_.x_ = player_position.x_;
-				send_data.object_param_.position_.y_ = player_position.y_;
-				send_data.object_param_.position_.z_ = player_position.z_;
-				strcpy_s(send_data.name, MAX_NAME_LEN, "water");
+			// エフェクト再生
+			send_data.type_ = DATA_OBJ_PARAM;
+			send_data.object_param_.type_ = OBJ_EFFECT;
+			send_data.object_param_.position_.x_ = player_position.x_;
+			send_data.object_param_.position_.y_ = player_position.y_;
+			send_data.object_param_.position_.z_ = player_position.z_;
+			strcpy_s(send_data.name, MAX_NAME_LEN, "water");
 
-				// オブジェクトデータ転送
-				NetworkHost::SendTo(DELI_MULTI, send_data);
+			// オブジェクトデータ転送
+			NetworkHost::SendTo(DELI_MULTI, send_data);
 
-				//-------------------------------------
-				// 水ゲージを減少させる
-				//-------------------------------------
-				watergauge -= GRANDFATHER_SUB_WATERGAUGE;
-				watergauge = std::max<float>(watergauge, 0.0f);
-				if(i == 0)
-				{
-					FbxGrandfather* grandfather = dynamic_cast<FbxGrandfather*>(player);
-					grandfather->SetWaterGauge(watergauge);
-				}
-				else
-				{
-					FbxChild* child = dynamic_cast<FbxChild*>(player);
-					child->SetWaterGauge(watergauge);
-				}
-			}
+			//-------------------------------------
+			// 水ゲージを減少させる
+			//-------------------------------------
+			watergauge -= GRANDFATHER_SUB_WATERGAUGE;
+			watergauge = std::max<float>(watergauge, 0.0f);
+			player->SetWaterGauge(watergauge);
 		}
 
 		//-------------------------------------
 		// デバッグ時のみ、水ゲージ回復
 		//-------------------------------------
 		if (KeyBoard::isPress(DIK_1)){
-			if(i == 0)
-			{
-				FbxGrandfather* grandfather = dynamic_cast<FbxGrandfather*>(player);
-				float watergauge = grandfather->GetWaterGauge();
-				watergauge += GRANDFATHER_SUB_WATERGAUGE;
-				watergauge = std::min<float>(watergauge, 1.0f);
-				grandfather->SetWaterGauge(watergauge);
-			}
-			else
-			{
-				FbxChild* child = dynamic_cast<FbxChild*>(player);
-				float watergauge = child->GetWaterGauge();
-				watergauge += GRANDFATHER_SUB_WATERGAUGE;
-				watergauge = std::min<float>(watergauge, 1.0f);
-				child->SetWaterGauge(watergauge);
-			}
+			watergauge += GRANDFATHER_SUB_WATERGAUGE;
+			watergauge = std::min<float>(watergauge, 1.0f);
+			player->SetWaterGauge(watergauge);
+		}
+		else
+		{
+			watergauge -= GRANDFATHER_SUB_WATERGAUGE;
+			watergauge = std::min<float>(watergauge, 1.0f);
+			player->SetWaterGauge(watergauge);
 		}
 
 		//------------------------------------------------
@@ -660,32 +633,20 @@ void GameServer::MatchingAndGame()
 		//------------------------------------------------
 		// UIデータ転送
 		//------------------------------------------------
-		if(i == 0)
-		{
-			FbxGrandfather* grandfather = dynamic_cast<FbxGrandfather*>(player);
-			// 水ゲージ
-			send_data.type_ = DATA_UI_PARAM;
-			send_data.ui_param_.value_f_ = grandfather->GetWaterGauge();
-			strcpy_s(send_data.name, MAX_NAME_LEN, "water_gage");
-			NetworkHost::SendTo((DELI_TYPE)i, send_data);
-			// ダメージエフェクト
-			send_data.ui_param_.value_f_ = grandfather->GetLife();
-			strcpy_s(send_data.name, MAX_NAME_LEN, "damage_effect");
-			NetworkHost::SendTo((DELI_TYPE)i, send_data);
-		}
-		else
-		{
-			FbxChild* child = dynamic_cast<FbxChild*>(player);
-			// 水ゲージ
-			send_data.type_ = DATA_UI_PARAM;
-			send_data.ui_param_.value_f_ = child->GetWaterGauge();
-			strcpy_s(send_data.name, MAX_NAME_LEN, "water_gage");
-			NetworkHost::SendTo((DELI_TYPE)i, send_data);
-			// ダメージエフェクト
-			send_data.ui_param_.value_f_ = child->GetLife();
-			strcpy_s(send_data.name, MAX_NAME_LEN, "damage_effect");
-			NetworkHost::SendTo((DELI_TYPE)i, send_data);
-		}
+		// 水ゲージ
+		send_data.type_ = DATA_UI_PARAM;
+		send_data.object_param_.type_ = OBJ_UI;
+		send_data.ui_param_.value_f_ = player->GetWaterGauge();
+		strcpy_s(send_data.name, MAX_NAME_LEN, "water_gage");
+		NetworkHost::SendTo((DELI_TYPE)i, send_data);
+
+		// ダメージエフェクト
+		send_data.ui_param_.value_f_ = player->GetLife();
+		strcpy_s(send_data.name, MAX_NAME_LEN, "damage_effect");
+		NetworkHost::SendTo((DELI_TYPE)i, send_data);
+
+		Vector3 param = player->parameter().position_;
+		font_->Add("POSITION(player) : %3.2f %3.2f %3.2f\n", param.x_, param.y_, param.z_);
 	}
 }
 
@@ -708,11 +669,12 @@ void GameServer::ChangeState(SERVER_STATE next)
 			{
 				std::string player_str;
 				Object *player;
-				Vector3 pos(0.0f, 0.0f, 0.0f), rot(0.0f, 0.0f, 0.0f);
+				Vector3 pos(-55.0f, 0.0f, -50.0f), rot(0.0f, 0.0f, 0.0f);
 				for(int i = 0; i < MAX_GUEST; i++){
 					player_str = "player" + std::to_string(i + 1);
 					player = object_manager_->Get(player_str);
 
+					pos.x_ += 2.0f;
 					player->SetPosition(pos);
 					player->SetRotation(rot);
 				}
@@ -735,11 +697,12 @@ void GameServer::ChangeState(SERVER_STATE next)
 				time_ = GAME_TIME * 60;
 				std::string player_str;
 				Object *player;
-				Vector3 pos(0.0f, 0.0f, 0.0f), rot(0.0f, 0.0f, 0.0f);
+				Vector3 pos(-55.0f, 0.0f, -50.0f), rot(0.0f, 0.0f, 0.0f);
 				for(int i = 0; i < MAX_GUEST; i++){
 					player_str = "player" + std::to_string(i + 1);
 					player = object_manager_->Get(player_str);
 
+					pos.x_ += 2.0f;
 					player->SetPosition(pos);
 					player->SetRotation(rot);
 				}
