@@ -23,9 +23,9 @@ list<TextureManager::TEXTURE_BOX>		TextureManager::texture_box_list_;		// テクス
 //================================================================================
 // テクスチャの取得
 //================================================================================
-IDirect3DTexture9* TextureManager::GetTexture(const char* file_pass)
+IDirect3DTexture9* TextureManager::GetTexture(const char* file_path)
 {
-	if(file_pass == nullptr)
+	if(file_path == nullptr)
 	{
 		return nullptr;
 	}
@@ -33,20 +33,20 @@ IDirect3DTexture9* TextureManager::GetTexture(const char* file_pass)
 	// イテレータ変数の確保
 	int i(0);
 	list<TEXTURE_BOX>::iterator it(texture_box_list_.begin());
-	char* get_pass(nullptr);
+	char* get_path(nullptr);
 	for(i = 0; it != texture_box_list_.end(); i++, it++)
 	{
-		get_pass = nullptr;
+		get_path = nullptr;
 		switch(it->class_type_)
 		{
 			case TYPE_LOAD:
-				get_pass = (it->texture_)->GetTexturePass();
-				if(get_pass == nullptr)
+				get_path = (it->texture_)->GetTexturePath();
+				if(get_path == nullptr)
 				{
 					continue;
 				}
 				// ファイルパス比較
-				if(strcmp(file_pass, get_pass) == 0)
+				if(strcmp(file_path, get_path) == 0)
 				{
 					return it->texture_->GetTexture();
 				}
@@ -58,7 +58,7 @@ IDirect3DTexture9* TextureManager::GetTexture(const char* file_pass)
 	}
 	// 新しく追加
 	TEXTURE_BOX textureBox;
-	textureBox.texture_ = new Texture(file_pass);
+	textureBox.texture_ = new Texture(file_path);
 	textureBox.class_type_ = TYPE_LOAD;
 	texture_box_list_.push_back(textureBox);
 	
@@ -74,10 +74,10 @@ int TextureManager::CreateTextureCreator(const unsigned int& w, const unsigned i
 	// イテレータ変数の確保
 	int i(0);
 	list<TEXTURE_BOX>::iterator it(texture_box_list_.begin());
-	char* get_pass(nullptr);
+	char* get_path(nullptr);
 	for(i = 0; it != texture_box_list_.end(); i++, it++)
 	{
-		get_pass = nullptr;
+		get_path = nullptr;
 		switch(it->class_type_)
 		{
 			case TYPE_NONE:

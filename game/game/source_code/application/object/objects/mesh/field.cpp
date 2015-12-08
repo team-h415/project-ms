@@ -176,6 +176,16 @@ void Field::LoadMesh(
 	const std::string &path)
 {
 	FILE *file = fopen(path.c_str(), "rb");
+
+	if (file == nullptr)
+	{
+		std::string warning;
+		warning = path;
+		warning += ": ÉtÉ@ÉCÉãÇÃì«Ç›çûÇ›Ç…é∏îsÇµÇ‹ÇµÇΩ";
+		ASSERT_ERROR(warning.c_str());
+	}
+
+
 	int div_x(0), div_z(0), vertex_count(0);
 	D3DXVECTOR3 *vertex_buffer;
 	D3DXVECTOR4 *texture_alpha;
@@ -251,8 +261,8 @@ void Field::CalculateVertex(
 			};
 			vertex[num].color_ = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
 			vertex[num].texture_ = {
-				static_cast<float>(x),
-				static_cast<float>(z)
+				static_cast<float>(x) / 5.0f,
+				static_cast<float>(z) / 5.0f
 			};
 			vertex[num].texturealpha_ = texture_alpha[num];
 		}

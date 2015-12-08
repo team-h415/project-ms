@@ -95,6 +95,9 @@
     <Filter Include="source_code\application\font">
       <UniqueIdentifier>{eaa7fb8f-9696-46ab-a4d3-135708f9b860}</UniqueIdentifier>
     </Filter>
+    <Filter Include="source_code\application\object\objects\model\x">
+      <UniqueIdentifier>{77f6d0bc-0c3b-403c-91dc-f72496126fc3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source_code\main.cpp">
@@ -288,6 +291,9 @@
     </ClCompile>
     <ClCompile Include="source_code\application\math\vector.cpp">
       <Filter>source_code\application\math</Filter>
+    </ClCompile>
+    <ClCompile Include="source_code\application\object\objects\model\x\x_fort.cpp">
+      <Filter>source_code\application\object\objects\model\x</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -494,6 +500,9 @@
     </ClInclude>
     <ClInclude Include="source_code\application\object\objects\model\instancing_tree.h">
       <Filter>source_code\application\object\objects\model</Filter>
+    </ClInclude>
+    <ClInclude Include="source_code\application\object\objects\model\x\x_fort.h">
+      <Filter>source_code\application\object\objects\model\x</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

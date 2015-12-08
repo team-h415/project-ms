@@ -36,7 +36,7 @@ class TextureManager
 		// 戻り値 : テクスチャポインタ
 		// 引数1 : ファイルパス
 		//================================================================================
-		static IDirect3DTexture9* GetTexture(const char* file_pass);
+		static IDirect3DTexture9* GetTexture(const char* file_path);
 
 		//================================================================================
 		// テクスチャクリエーターの作成と取得

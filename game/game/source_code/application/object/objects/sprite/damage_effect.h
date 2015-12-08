@@ -29,9 +29,13 @@ public:
     virtual ~DamageEffect();
     void Update();
     void Draw();
-    void SetPoint(const int point);
+	void SetHP(const float hp){
+		hp_ = hp;
+	}
 private:
-    void CalculateVertex();
+	void CalculateVertex();
+	// MaxÇÃílÇÕ100Ç…ÅI
+	void SetPoint(const int point);
     Vertex2D *vertex_;
     LPDIRECT3DTEXTURE9 diffuse_texture_;
     LPDIRECT3DTEXTURE9 alpha_texture_;
@@ -41,7 +45,9 @@ private:
     FLASH_MODE flash_mode_;
     float flash_alpha_;
 
-    int hp_;
+	//-------------------------------------
+	// ëÃóÕ
+    float hp_;
 };
 
 

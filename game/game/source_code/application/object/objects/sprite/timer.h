@@ -46,11 +46,16 @@ class Timer : public Object
 {
 public:
     Timer(
-        const OBJECT_PARAMETER_DESC &parameter);
+		const OBJECT_PARAMETER_DESC &parameter);
     virtual ~Timer();
     void Update();
     void Draw();
     int GetValue(void){ return value_; }
+    // •\¦‚·‚éŒ»İ‚Ì•b”‚ğ“ü‚ê‚é
+//    void SetValue(int value){ value_ = value; }
+	void SetValue(int value_);
+	void SetTexture(const std::string &path);
+
 private:
     int count_;
     int value_;

@@ -25,6 +25,7 @@
 #include "objects/model/fbx/fbx_child.h"
 #include "objects/notice/bullet.h"
 #include "objects/mesh/skydome.h"
+#include "objects/model/x/x_fort.h"
 
 
 //-------------------------------------
@@ -40,10 +41,6 @@ Object *ObjectFactory::Create(
 	if (param.layer_ == LAYER_SPRITE_2D){
 		object = new Sprite2D(parameter);
 	}
-
-    else if (param.layer_ == LAYER_TIMER){
-        object = new Timer(parameter);
-    }
 
     else if (param.layer_ == LAYER_DAMAGE_EFFECT){
         object = new DamageEffect(parameter);
@@ -100,17 +97,35 @@ Object *ObjectFactory::Create(
 		model->LoadMesh(object_path);
 	}
 
+	else if (param.layer_ == LAYER_MODEL_FORT){
+		object = new XFort(parameter);
+		XFort *fort = dynamic_cast<XFort*>(object);
+		fort->LoadMesh(object_path);
+	}
+
 	else if (param.layer_ == LAYER_MODEL_FBX){
 		object = new FbxModel(parameter);
 		FbxModel *model = dynamic_cast<FbxModel*>(object);
 		model->Load(object_path);
 	}
 
+    else if (param.layer_ == LAYER_WATER_GAGE){
+        object = new WaterGage(parameter);
+        WaterGage *sprite = dynamic_cast<WaterGage*>(object);
+        sprite->SetTexture(object_path);
+    }
+
 	else if (param.layer_ == LAYER_SPRITE_2D){
 		object = new Sprite2D(parameter);
 		Sprite2D *sprite = dynamic_cast<Sprite2D*>(object);
 		sprite->SetTexture(object_path);
 	}
+	else if (param.layer_ == LAYER_TIMER){
+		object = new Timer(parameter);
+		Timer *timer = dynamic_cast<Timer*>(object);
+		timer->SetTexture(object_path);
+	}
+
 /*
     else if (param.layer_ == LAYER_WATER_GAGE){
         object = new WaterGage(parameter);

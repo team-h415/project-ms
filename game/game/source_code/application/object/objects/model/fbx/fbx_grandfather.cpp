@@ -34,6 +34,8 @@ FbxGrandfather::FbxGrandfather(const OBJECT_PARAMETER_DESC &parameter) :
 	// ƒ‚ƒfƒ‹“Ç‚Ýž‚Ý
 	Load("./resource/model/fbx/ogchan.fbx");
 	texture_ = TextureManager::GetTexture("resource/texture/game/ogchan.jpg");
+	life_ = 1.0f;
+	water_gauge_ = 1.0f;
 
 #ifdef _DEBUG
 	int x;
@@ -412,7 +414,8 @@ void FbxGrandfather::Action(
 {
 	//-------------------------------------
 	// Xƒ‚ƒfƒ‹‚Æ“–‚½‚Á‚½‚ç
-	if (target->parameter().layer_ == LAYER_MODEL_X){
+	if (target->parameter().layer_ == LAYER_MODEL_FORT ||
+		target->parameter().layer_ == LAYER_MODEL_CHILD){
 		Vector3 vec = target->parameter().position_ - parameter_.position_;
 		Vector3 v = vec;
 		Vec3Normalize(vec, vec);

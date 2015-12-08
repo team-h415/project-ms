@@ -175,7 +175,7 @@ void SkyDome::LoadMesh(
 		std::string warning;
 		warning = path;
 		warning += ": ‚±‚Ìƒtƒ@ƒCƒ‹‚ªŒ©‚Â‚©‚è‚Ü‚¹‚ñ";
-		ASSERT_WARNING(warning.c_str());
+		ASSERT_ERROR(warning.c_str());
 	}
 
 	fscanf(file, "%d %d", &div_x, &div_y);

@@ -31,7 +31,7 @@ XModel::XModel(
 	material_buffer_ = NULL;
 	shader_ = nullptr;
 	shader_ = new Shader("resource/shader/halflambert_lighting.hlsl");
-	texture_ = TextureManager::GetTexture("resource/texture/red.png");
+	texture_ = TextureManager::GetTexture("resource/texture/game/flag.png");
 }
 
 
@@ -154,18 +154,19 @@ void XModel::Action(
 	Object *target,
 	const float range)
 {
-	//-------------------------------------
-	// Xƒ‚ƒfƒ‹‚Æ“–‚½‚Á‚½‚ç
-	if (target->parameter().layer_ == LAYER_MODEL_GRANDFATHER){
-		Vector3 vec = target->parameter().position_ - parameter_.position_;
-		Vector3 v = vec;
-		Vec3Normalize(vec, vec);
-		float distance = sqrtf(
-			(v.x_ * v.x_) + (v.y_ * v.y_) + (v.z_ * v.z_));
-		float sub = range - distance;
-		vec *= sub;
-		parameter_.position_ -= vec;
-	}
+	////-------------------------------------
+	//// FBXƒ‚ƒfƒ‹‚Æ“–‚½‚Á‚½‚ç
+	//if (target->parameter().layer_ == LAYER_MODEL_GRANDFATHER ||
+	//	target->parameter().layer_ == LAYER_MODEL_CHILD){
+	//	Vector3 vec = target->parameter().position_ - parameter_.position_;
+	//	Vector3 v = vec;
+	//	Vec3Normalize(vec, vec);
+	//	float distance = sqrtf(
+	//		(v.x_ * v.x_) + (v.y_ * v.y_) + (v.z_ * v.z_));
+	//	float sub = range - distance;
+	//	vec *= sub;
+	//	parameter_.position_ -= vec;
+	//}
 }
 
 
