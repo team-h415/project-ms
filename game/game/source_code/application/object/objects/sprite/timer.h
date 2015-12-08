@@ -21,23 +21,6 @@
 //-------------------------------------
 // macro
 //-------------------------------------
-namespace{
-    // 1•ª
-    static const int kOneMinute = 60;
-    // ‰½•ª‚©
-    static const int kMinuteNum = 3;
-    // ‰½•b‚©
-    static const int kSecondNum = 0;
-    // ‰½i”‚©
-    static const int kFigureDefine = 10;
-    // ‰½Œ…‚©
-    static const int kMaxFigure = 3;
-    // ƒQ[ƒ€ƒ^ƒCƒ€
-    static const int kTimerCount = kMinuteNum * kOneMinute + kSecondNum;
-    // •¶š‚ÌŠÔŠu
-    static const float kSpace = 40.0f;
-}
-
 typedef enum TIMER_STATE
 {
 	TIMER_COUNT = 0,

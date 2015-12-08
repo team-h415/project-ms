@@ -281,8 +281,8 @@ Game::Game()
 
 	timer->SetTexture("resource/texture/figure_all.png");
 	timer->SetFigureOffset(-30.0f);
-	timer->SetValue(100);
-	timer->SetState(TIMER_STATE::TIMER_STOP);
+	timer->SetValue(GAME_TIMER);
+	timer->SetState(TIMER_STOP);
 	//パラメータ設定後に実行
 	timer->GenerateNumber();
 

@@ -31,9 +31,6 @@ Timer::Timer(
 	texture_ = NULL;
 	p_number_ = NULL;
 
-    unsigned int figure = (unsigned int)pow((float)kFigureDefine, figure_);
-	
-	
 	figure_offset_ = 0.0f;
 	figure_ = 0;
 	state_ = TIMER_COUNT;
@@ -66,7 +63,7 @@ void Timer::Update()
 			--value_;
 			// 終了条件
 			if (value_ < 0)
-				value_ = kTimerCount;
+				value_ = 0;
 			count_ = 0;
 			state_ == TIMER_END;
 		}
@@ -117,7 +114,6 @@ void Timer::SetValue(int value)
 void Timer::SetTexture(
 	const std::string &path)
 {
-
 	texture_ = TextureManager::GetTexture(path.c_str());
 
 	if (p_number_ == NULL){ return; }
@@ -138,10 +134,8 @@ void Timer::SetFigureOffset(float Offset)
 	if (p_number_ == NULL){ return; }
 
 	float right_center_offset =
-		static_cast<float>(figure_ / 2) * parameter_.scaling_.x_
-			+ static_cast<float>(figure_ / 2) * figure_offset_
-			- static_cast<float>((figure_ + 1) % 2) * parameter_.scaling_.x_ * 0.5f
-			- static_cast<float>((figure_ + 1) % 2) * figure_offset_ * 0.5f;
+		parameter_.scaling_.x_ * (static_cast<float>(figure_ / 2) - static_cast<float>((figure_ + 1) % 2) * 0.5f)
+			+ figure_offset_ * (static_cast<float>(figure_ / 2) - static_cast<float>((figure_ + 1) % 2) * 0.5f);
 
 
 	for (int num = 0; num < figure_; num++)
@@ -149,9 +143,7 @@ void Timer::SetFigureOffset(float Offset)
 		Vector3 pos = parameter_.position_;
 		
 		// 座標修正
-		pos.x_ += right_center_offset
-					- parameter_.scaling_.x_ * num
-					- figure_offset_ * num;
+		pos.x_ += right_center_offset - num * (parameter_.scaling_.x_ + figure_offset_);
 
 		// 座標をセット
 		p_number_[num]->SetPosition(pos);
@@ -179,10 +171,8 @@ void Timer::GenerateNumber(void)
 	p_number_ = new Number *[figure_];
 
 	float right_center_offset = 
-		static_cast<float>(figure_/2) * parameter_.scaling_.x_
-		+ static_cast<float>(figure_ / 2) * figure_offset_
-		- static_cast<float>((figure_ + 1) % 2) * parameter_.scaling_.x_ * 0.5f
-		- static_cast<float>((figure_ + 1) % 2) * figure_offset_ * 0.5f;
+		parameter_.scaling_.x_ * (static_cast<float>(figure_ / 2) - static_cast<float>((figure_ + 1) % 2) * 0.5f)
+			+ figure_offset_ * (static_cast<float>(figure_ / 2) - static_cast<float>((figure_ + 1) % 2) * 0.5f);
 
 	int value = value_;
 	for (int num = 0; num < figure_; num++)
@@ -191,9 +181,7 @@ void Timer::GenerateNumber(void)
 		// 特定の桁の値を入れる
 		int figure_value = value % 10;
 		// 座標修正
-		param.position_.x_ += right_center_offset
-								- parameter_.scaling_.x_ * num
-								- figure_offset_ * num;
+		param.position_.x_ += right_center_offset - num * (parameter_.scaling_.x_ + figure_offset_);
 
 		// 値をセット
 		p_number_[num] = new Number(param, value);
