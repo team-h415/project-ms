@@ -20,6 +20,7 @@ LPDIRECT3DDEVICE9 DirectX9Holder::device_ = NULL;
 LPDIRECT3DVERTEXDECLARATION9 DirectX9Holder::vertex_declaration_2d_ = NULL;
 LPDIRECT3DVERTEXDECLARATION9 DirectX9Holder::vertex_declaration_3d_ = NULL;
 LPDIRECT3DVERTEXDECLARATION9 DirectX9Holder::vertex_declaration_field_ = NULL;
+LPDIRECT3DVERTEXDECLARATION9 DirectX9Holder::vertex_declaration_shadow_ = NULL;
 LPDIRECT3DVERTEXDECLARATION9 DirectX9Holder::vertex_declaration_fbx_ = NULL;
 LPDIRECT3DVERTEXDECLARATION9 DirectX9Holder::vertex_declaration_instancing_ = NULL;
 
