@@ -49,7 +49,7 @@ public:
 	void SetState(TIMER_STATE state){ state_ = state; }
 	TIMER_STATE GetState(void){ return state_; }
 	int GetFigure(void){ return figure_; }
-	Number* GetNumberPointer(int num);
+	Number* GetNumberPointer(unsigned int num);
 
 private:
 	void UpdateNumber();

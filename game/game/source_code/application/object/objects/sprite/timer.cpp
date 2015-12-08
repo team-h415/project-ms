@@ -42,7 +42,7 @@ Timer::Timer(
 //-------------------------------------
 Timer::~Timer()
 {
-    for (int num = 0; num < figure_; num++)
+    for (unsigned int num = 0; num < figure_; num++)
 	{
         SAFE_DELETE(p_number_[num]);
     }
@@ -68,7 +68,7 @@ void Timer::Update()
 			{
 				value_ = 0;
 				count_ = 0;
-				state_ == TIMER_END;
+				state_ = TIMER_END;
 			}
 			// 値更新
 			this->SetValue(value_);
@@ -87,7 +87,7 @@ void Timer::Draw()
 {
 	if (p_number_ == NULL){ return; }
 
-    for (int num = 0; num < figure_; num++)
+    for (unsigned int num = 0; num < figure_; num++)
     {
         p_number_[num]->Draw();
     }
@@ -103,7 +103,7 @@ void Timer::SetValue(int value)
 	if (p_number_ == NULL){ return; }
 	
 	int sub_value = value;
-	for (int num = 0; num < figure_; num++)
+	for (unsigned int num = 0; num < figure_; num++)
 	{
 		// 特定の桁の値を入れる
 		int figure_value = sub_value % 10;
@@ -125,7 +125,7 @@ void Timer::SetTexture(
 
 	if (p_number_ == NULL){ return; }
 
-	for (int num = 0; num < figure_; num++)
+	for (unsigned int num = 0; num < figure_; num++)
 	{
 		// テクスチャをセット
 		p_number_[num]->SetTexture(texture_);
@@ -145,7 +145,7 @@ void Timer::SetFigureOffset(float Offset)
 			+ figure_offset_ * (static_cast<float>(figure_ / 2) - static_cast<float>((figure_ + 1) % 2) * 0.5f);
 
 
-	for (int num = 0; num < figure_; num++)
+	for (unsigned int num = 0; num < figure_; num++)
 	{
 		Vector3 pos = parameter_.position_;
 		
@@ -169,7 +169,7 @@ void Timer::GenerateNumber(void)
 	if (figure_ == 0){ figure_ = 1; }
 
 	if (p_number_){
-		for (int num = 0; num < figure_; num++){
+		for (unsigned int num = 0; num < figure_; num++){
 			SAFE_DELETE(p_number_[num]);
 		}
 		SAFE_DELETE_ARRAY(p_number_);
@@ -182,7 +182,7 @@ void Timer::GenerateNumber(void)
 			+ figure_offset_ * (static_cast<float>(figure_ / 2) - static_cast<float>((figure_ + 1) % 2) * 0.5f);
 
 	int value = value_;
-	for (int num = 0; num < figure_; num++)
+	for (unsigned int num = 0; num < figure_; num++)
 	{
 		OBJECT_PARAMETER_DESC param = parameter_;
 		// 特定の桁の値を入れる
@@ -205,7 +205,7 @@ void Timer::GenerateNumber(void)
 //-------------------------------------
 // GetNumberPointer()
 //-------------------------------------
-Number* Timer::GetNumberPointer(int num)
+Number* Timer::GetNumberPointer(unsigned int  num)
 {
 	if (num >= figure_ || p_number_ == NULL){ return NULL; }
 
@@ -220,7 +220,7 @@ void Timer::UpdateNumber(void)
 {
 	if (p_number_ == NULL){ return; }
 	
-	for (int num = 0; num < figure_; num++)
+	for (unsigned int num = 0; num < figure_; num++)
 	{
 		p_number_[num]->Update();
 	}
