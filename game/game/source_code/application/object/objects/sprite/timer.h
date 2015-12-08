@@ -48,8 +48,11 @@ public:
 	void GenerateNumber(void);
 	void SetState(TIMER_STATE state){ state_ = state; }
 	TIMER_STATE GetState(void){ return state_; }
+	int GetFigure(void){ return figure_; }
+	Number* GetNumberPointer(int num);
 
 private:
+	void UpdateNumber();
     int count_;
     int value_;
     Number **p_number_;

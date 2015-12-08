@@ -28,6 +28,7 @@ Number::Number(
     value_ = value;
     CalculateVertex();
     texture_ = NULL;
+	color_ = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
 }
 
 
@@ -118,10 +119,10 @@ void Number::CalculateVertex()
     vertex_[2].rhw_ = 1.0f;
     vertex_[3].rhw_ = 1.0f;
 
-    vertex_[0].diffuse_ = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-    vertex_[1].diffuse_ = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-    vertex_[2].diffuse_ = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-    vertex_[3].diffuse_ = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+	vertex_[0].diffuse_ = color_;
+    vertex_[1].diffuse_ = color_;
+    vertex_[2].diffuse_ = color_;
+    vertex_[3].diffuse_ = color_;
 
     vertex_[0].texture_ = { (value_ * 0.1f), 0.0f };
     vertex_[1].texture_ = { (value_ * 0.1f + 0.1f), 0.0f };

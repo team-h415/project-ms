@@ -42,7 +42,8 @@ Timer::Timer(
 //-------------------------------------
 Timer::~Timer()
 {
-    for (int num = 0; num < figure_; num++){
+    for (int num = 0; num < figure_; num++)
+	{
         SAFE_DELETE(p_number_[num]);
     }
     SAFE_DELETE_ARRAY(p_number_);
@@ -55,22 +56,27 @@ Timer::~Timer()
 //-------------------------------------
 void Timer::Update()
 {
-    
-	if (state_ == TIMER_COUNT){
+	
+	if (state_ == TIMER_COUNT)
+	{
 		++count_;
 		if ((count_ % 60) == 0)
 		{
 			--value_;
 			// 終了条件
 			if (value_ < 0)
+			{
 				value_ = 0;
-			count_ = 0;
-			state_ == TIMER_END;
+				count_ = 0;
+				state_ == TIMER_END;
+			}
+			// 値更新
+			this->SetValue(value_);
 		}
 	}
 
-	// 値更新
-	this->SetValue(value_);
+	this->UpdateNumber();
+	
 }
 
 
@@ -93,6 +99,7 @@ void Timer::Draw()
 void Timer::SetValue(int value)
 {
 	value_ = value;
+
 	if (p_number_ == NULL){ return; }
 	
 	int sub_value = value;
@@ -194,6 +201,32 @@ void Timer::GenerateNumber(void)
 	}
 
 }
+
+//-------------------------------------
+// GetNumberPointer()
+//-------------------------------------
+Number* Timer::GetNumberPointer(int num)
+{
+	if (num >= figure_ || p_number_ == NULL){ return NULL; }
+
+	return p_number_[num];
+
+}
+
+//-------------------------------------
+// UpdateNumber()
+//-------------------------------------
+void Timer::UpdateNumber(void)
+{
+	if (p_number_ == NULL){ return; }
+	
+	for (int num = 0; num < figure_; num++)
+	{
+		p_number_[num]->Update();
+	}
+
+}
+
 
 //-------------------------------------
 // end of file
