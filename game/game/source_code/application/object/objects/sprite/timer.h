@@ -44,7 +44,7 @@ public:
 	void SetValue(int value);
 	void SetTexture(const std::string &path);
 	void SetFigureOffset(float Offset);
-	float SetFigureOffset(void){ return figure_offset_; }
+	float GetFigureOffset(void){ return figure_offset_; }
 	void GenerateNumber(void);
 	void SetState(TIMER_STATE state){ state_ = state; }
 	TIMER_STATE GetState(void){ return state_; }
