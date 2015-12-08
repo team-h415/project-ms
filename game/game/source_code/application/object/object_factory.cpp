@@ -44,6 +44,10 @@ Object *ObjectFactory::Create(
 		object = new Sprite2D(parameter);
 	}
 
+	else if (param.layer_ == LAYER_TIMER){
+		object = new Timer(parameter);
+	}
+
     else if (param.layer_ == LAYER_DAMAGE_EFFECT){
         object = new DamageEffect(parameter);
     }
@@ -125,11 +129,6 @@ Object *ObjectFactory::Create(
 		object = new Sprite2D(parameter);
 		Sprite2D *sprite = dynamic_cast<Sprite2D*>(object);
 		sprite->SetTexture(object_path);
-	}
-	else if (param.layer_ == LAYER_TIMER){
-		object = new Timer(parameter);
-		Timer *timer = dynamic_cast<Timer*>(object);
-		timer->SetTexture(object_path);
 	}
 
 /*
