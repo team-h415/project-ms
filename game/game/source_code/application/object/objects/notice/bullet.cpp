@@ -184,29 +184,29 @@ void Bullet::Action(
 			this_delete_ = true;
 			collision_->SetThisDelete(true);
 
-			-------------------------------------
-			 シーン取得
-			Scene *scene = SceneManager::GetCurrentScene();
-			std::string str = SceneManager::GetCurrentSceneName();
-			if (str == "Game"){
-				Game *game = dynamic_cast<Game*>(scene);
+			//-------------------------------------
+			// シーン取得
+			//Scene *scene = SceneManager::GetCurrentScene();
+			//std::string str = SceneManager::GetCurrentSceneName();
+			//if (str == "Game"){
+			//	Game *game = dynamic_cast<Game*>(scene);
 
-				-------------------------------------
-				 シーンからエフェクト取得
-				EFFECT_PARAMETER_DESC effect_param;
-				MyEffect *effect = game->effect_manager()->Get("damage");
-				effect_param = effect->parameter();
-				effect_param.position_ = parameter_.position_;
-				effect_param.position_.y_ += 0.5f;
-				effect_param.rotation_ = parameter_.rotation_;
-				effect->SetParameter(effect_param);
+			//	//-------------------------------------
+			//	// シーンからエフェクト取得
+			//	EFFECT_PARAMETER_DESC effect_param;
+			//	MyEffect *effect = game->effect_manager()->Get("damage");
+			//	effect_param = effect->parameter();
+			//	effect_param.position_ = parameter_.position_;
+			//	effect_param.position_.y_ += 0.5f;
+			//	effect_param.rotation_ = parameter_.rotation_;
+			//	effect->SetParameter(effect_param);
 
-				-------------------------------------
-				 エフェクト再生
-				game->effect_manager()->Play("damage");
-			}
-			this_delete_ = true;
-			collision_->SetThisDelete(true);
+			//	//-------------------------------------
+			//	// エフェクト再生
+			//	game->effect_manager()->Play("damage");
+			//}
+			//this_delete_ = true;
+			//collision_->SetThisDelete(true);
 		}
 	}
 #else

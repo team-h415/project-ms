@@ -70,6 +70,18 @@ private:
 	float				camera_pos_len_[MAX_GUEST];
 	int					bullet_count_;
 	int					time_;
+
+	//-------------------------------------
+	// ゲームルール用パラメータ
+	//-------------------------------------
+	// ステージ(砦が壊されるごとに進行/1からスタート)
+	int stage_;
+	// おじデバフフラグ
+	bool grandfather_debuff_;
+	// 子供死亡フラグ
+	bool child_death_[MAX_GUEST];
+	// 子供リスポーンタイマー
+	int child_respawn_waittime_[MAX_GUEST];
 };
 
 

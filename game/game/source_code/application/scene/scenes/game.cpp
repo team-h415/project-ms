@@ -223,7 +223,7 @@ Game::Game()
 
 	object_manager_->Create(
 		"player1",
-		fbx_param);
+		grandfather_param);
 
 	COLLISION_PARAMETER_DESC fbx_collision_param;
 	Object *obj2 = object_manager_->Get("player1");
@@ -1181,14 +1181,14 @@ void Game::Update()
 	font1_->Add("ƒV[ƒ“–¼:");
 	font1_->Add("Game\n");
 	font1_->Add("STAGE : %d\n", stage_);
-	font1_->Add("LIFE(GrandFather) : %3.2f\n", father_life);
-	font1_->Add("LIFE(Child)       : %3.2f\n", child_life);
-	font1_->Add("GAUGE(GrandFather) : %3.2f\n", father_watergauge);
-	font1_->Add("GAUGE(Child)       : %3.2f\n", child_watergauge);
-	font1_->Add("POSITION(Grandfather) : %3.2f %3.2f %3.2f\n",
-		grandfather_position.x_, grandfather_position.y_, grandfather_position.z_);
-	font1_->Add("ROTATION(Grandfather) : %3.2f %3.2f %3.2f\n",
-		grandfather_rotation.x_, grandfather_rotation.y_, grandfather_rotation.z_);
+	//font1_->Add("LIFE(GrandFather) : %3.2f\n", father_life);
+	//font1_->Add("LIFE(Child)       : %3.2f\n", child_life);
+	//font1_->Add("GAUGE(GrandFather) : %3.2f\n", father_watergauge);
+	//font1_->Add("GAUGE(Child)       : %3.2f\n", child_watergauge);
+	//font1_->Add("POSITION(Grandfather) : %3.2f %3.2f %3.2f\n",
+	//	grandfather_position.x_, grandfather_position.y_, grandfather_position.z_);
+	//font1_->Add("ROTATION(Grandfather) : %3.2f %3.2f %3.2f\n",
+	//	grandfather_rotation.x_, grandfather_rotation.y_, grandfather_rotation.z_);
 
 
 	font2_->Add("----------‘€ìà–¾----------\n");

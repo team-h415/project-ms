@@ -22,6 +22,11 @@
 #include "../../object/object.h"
 #include "../../object/object_manager.h"
 #include "../../object/objects/mesh/field.h"
+#include "../../object/objects/model/x_model.h"
+#include "../../object/objects/model/x/x_fort.h"
+#include "../../object/objects/model/fbx_model.h"
+#include "../../object/objects/model/fbx/fbx_grandfather.h"
+#include "../../object/objects/model/fbx/fbx_child.h"
 #include "../../effect/effect.h"
 #include "../../effect/effect_manager.h"
 #include "../../camera/camera.h"
@@ -40,12 +45,9 @@
 //-------------------------------------
 GameServer::GameServer()
 {
-	for(int i = 0; i < MAX_GUEST; i++)
-	{
-		guest_scene_change_[i] = false;
-	}
-	bullet_count_ = 0;
-
+	//-------------------------------------
+	// 各マネージャ・デバッグシステム初期化
+	//-------------------------------------
 	camera_manager_ = new CameraManager;
 	object_manager_ = new ObjectManager;
 	collision_manager_ = new CollisionManager;
@@ -94,37 +96,163 @@ GameServer::GameServer()
 		param,
 		"resource/mesh/map.heightmap");
 
-	//-------------------------------------
-	// プレイヤー
-	//-------------------------------------
-	OBJECT_PARAMETER_DESC player_param;
-	player_param.layer_ = LAYER_MODEL_X;
-	player_param.position_ = { 0.0f, 0.0f, 0.0f };
-	player_param.rotation_ = { 0.0f, 0.0f, 0.0f };
-	player_param.scaling_ = { 1.0f, 1.0f, 1.0f };
-	COLLISION_PARAMETER_DESC collision_param;
 
+	//-------------------------------------
+	// 砦
+	//-------------------------------------
+	// 砦1
+	OBJECT_PARAMETER_DESC fort1_param;
+	fort1_param.layer_ = LAYER_MODEL_FORT;
+	fort1_param.position_ = FORT1_POSITION;
+	fort1_param.rotation_ = {0.0f, 0.0f, 0.0f};
+	fort1_param.scaling_ = {1.0f, 1.0f, 1.0f};
+
+	object_manager_->Create(
+		"fort1",
+		fort1_param,
+		"resource/model/x/test.x");
+
+	COLLISION_PARAMETER_DESC fort1_collision_param;
+	Object *fort1_obj = object_manager_->Get("fort1");
+	fort1_collision_param.position_ = {
+		fort1_obj->parameter().position_.x_,
+		fort1_obj->parameter().position_.y_ + 0.5f,
+		fort1_obj->parameter().position_.z_};
+	fort1_collision_param.range_ = 1.0f;
+	fort1_collision_param.offset_ = {0.0f, 0.5f, 0.0f};
+
+	collision_manager_->Create(fort1_obj,
+		fort1_collision_param);
+	XFort *fort1 = dynamic_cast<XFort*>(fort1_obj);
+	fort1->SetLife(FORT1_LiFE);
+
+
+	// 砦2
+	OBJECT_PARAMETER_DESC fort2_param;
+	fort2_param.layer_ = LAYER_MODEL_FORT;
+	fort2_param.position_ = FORT2_POSITION;
+	fort2_param.rotation_ = {0.0f, 0.0f, 0.0f};
+	fort2_param.scaling_ = {1.0f, 1.0f, 1.0f};
+
+	object_manager_->Create(
+		"fort2",
+		fort2_param,
+		"resource/model/x/test.x");
+
+	COLLISION_PARAMETER_DESC fort2_collision_param;
+	Object *fort2_obj = object_manager_->Get("fort2");
+	fort2_collision_param.position_ = {
+		fort2_obj->parameter().position_.x_,
+		fort2_obj->parameter().position_.y_ + 0.5f,
+		fort2_obj->parameter().position_.z_};
+	fort2_collision_param.range_ = 1.0f;
+	fort2_collision_param.offset_ = {0.0f, 0.5f, 0.0f};
+
+	collision_manager_->Create(fort2_obj,
+		fort2_collision_param);
+	XFort *fort2 = dynamic_cast<XFort*>(fort2_obj);
+	fort2->SetLife(FORT2_LiFE);
+
+
+	// 砦3
+	OBJECT_PARAMETER_DESC fort3_param;
+	fort3_param.layer_ = LAYER_MODEL_FORT;
+	fort3_param.position_ = FORT3_POSITION;
+	fort3_param.rotation_ = {0.0f, 0.0f, 0.0f};
+	fort3_param.scaling_ = {1.0f, 1.0f, 1.0f};
+
+	object_manager_->Create(
+		"fort3",
+		fort3_param,
+		"resource/model/x/test.x");
+
+	COLLISION_PARAMETER_DESC fort3_collision_param;
+	Object *fort3_obj = object_manager_->Get("fort3");
+	fort3_collision_param.position_ = {
+		fort3_obj->parameter().position_.x_,
+		fort3_obj->parameter().position_.y_ + 0.5f,
+		fort3_obj->parameter().position_.z_};
+	fort3_collision_param.range_ = 1.0f;
+	fort3_collision_param.offset_ = {0.0f, 0.5f, 0.0f};
+
+	collision_manager_->Create(fort3_obj,
+		fort3_collision_param);
+	XFort *fort3 = dynamic_cast<XFort*>(fort3_obj);
+	fort3->SetLife(FORT3_LiFE);
+
+
+	//-------------------------------------
+	// FBXおじ
+	//-------------------------------------
+	OBJECT_PARAMETER_DESC grandfather_param;
+	grandfather_param.layer_ = LAYER_MODEL_GRANDFATHER;
+	grandfather_param.position_ = {1.0f, 0.0f, 0.0f};
+	grandfather_param.rotation_ = {0.0f, 0.0f, 0.0f};
+	grandfather_param.scaling_ = {1.0f, 1.0f, 1.0f};
+
+	object_manager_->Create(
+		"player1",
+		grandfather_param);
+
+	COLLISION_PARAMETER_DESC fbx_collision_param;
+	Object *obj2 = object_manager_->Get("player1");
+
+	fbx_collision_param.position_ = {
+		obj2->parameter().position_.x_,
+		obj2->parameter().position_.y_,
+		obj2->parameter().position_.z_};
+	fbx_collision_param.range_ = 1.0f;
+	fbx_collision_param.offset_ = {0.0f, 0.5f, 0.0f};
+
+	collision_manager_->Create(object_manager_->Get("player1"), fbx_collision_param);
+
+	//-------------------------------------
+	// FBX子供
+	//-------------------------------------
+	OBJECT_PARAMETER_DESC child_param;
+	child_param.layer_ = LAYER_MODEL_CHILD;
+	child_param.position_ = {-1.0f, 0.0f, 0.0f};
+	child_param.rotation_ = {0.0f, 0.0f, 0.0f};
+	child_param.scaling_ = {1.0f, 1.0f, 1.0f};
+
+	for(int i = 1; i < MAX_GUEST; i++)
+	{
+		std::string name = "player" + std::to_string(i + 1);
+		object_manager_->Create(
+			name,
+			child_param);
+
+		COLLISION_PARAMETER_DESC child_collision_param;
+		Object *obj3 = object_manager_->Get(name);
+		child_collision_param.position_ = {
+			obj3->parameter().position_.x_,
+			obj3->parameter().position_.y_,
+			obj3->parameter().position_.z_};
+		child_collision_param.range_ = 1.0f;
+		child_collision_param.offset_ = {0.0f, 0.5f, 0.0f};
+
+		collision_manager_->Create(object_manager_->Get(name),
+			child_collision_param);
+	}
+
+	//-------------------------------------
+	// ゲームルール用パラメータ初期化
+	//-------------------------------------
 	for(int i = 0; i < MAX_GUEST; i++)
 	{
-		std::string player_str = "player" + std::to_string(i + 1);
-
-		player_param.position_.x_ += 0.01f;
-
-		object_manager_->Create(
-		player_str,
-		player_param,
-		"resource/model/x/pone.x");
-
-		Object *obj = object_manager_->Get(player_str);
-		collision_param.position_ = {
-			obj->parameter().position_.x_,
-			obj->parameter().position_.y_,
-			obj->parameter().position_.z_};
-		collision_param.range_ = 1.0f;
-		collision_param.offset_ = {0.0f, 0.5f, 0.0f};
-
-		collision_manager_->Create(object_manager_->Get(player_str),
-			collision_param);
+		guest_scene_change_[i] = false;
+	}
+	bullet_count_ = 0;
+	// ステージ
+	stage_ = 1;
+	// おじデバフフラグ
+	grandfather_debuff_ = false;
+	for(int i = 0; i < (MAX_GUEST - 1); i++)
+	{
+		// 子供死亡フラグ
+		child_death_[i] = false;
+		// 子供リスポーン待ち時間
+		child_respawn_waittime_[i] = 0;
 	}
 
 	//-------------------------------------
@@ -401,32 +529,85 @@ void GameServer::MatchingAndGame()
 		//-------------------------------------
 		// バレット発射
 		//-------------------------------------
+
 		if(GamePad::isTrigger(i, PAD_BUTTON_8)){
-			OBJECT_PARAMETER_DESC bullet_param;
-			bullet_param.layer_ = LAYER_BULLET;
-			bullet_param.position_ = player_position;
-			bullet_param.rotation_ = player_position;
+			float watergauge = 0.0f;
+			if(i == 0)
+			{
+				FbxGrandfather* grandfather = dynamic_cast<FbxGrandfather*>(player);
+				watergauge = grandfather->GetWaterGauge();
+			}
+			else
+			{
+				FbxChild* child = dynamic_cast<FbxChild*>(player);
+				watergauge = child->GetWaterGauge();
+			}
+			if(watergauge > 0.0f)
+			{
+				OBJECT_PARAMETER_DESC bullet_param;
+				bullet_param.layer_ = LAYER_BULLET;
+				bullet_param.position_ = player_position;
+				bullet_param.rotation_ = player_position;
 
-			// カメラの回転Xを利用
-			bullet_param.rotation_.x_ = camera_rotation.x;
+				// カメラの回転Xを利用
+				bullet_param.rotation_.x_ = camera_rotation.x;
 
-			bullet_param.scaling_ = {1.0f, 1.0f, 1.0f};
-			std::string str = "notice" + std::to_string(bullet_count_);
-			object_manager_->Create(
-				str,
-				bullet_param);
-			bullet_count_++;
+				bullet_param.scaling_ = {1.0f, 1.0f, 1.0f};
+				std::string str = "notice" + std::to_string(bullet_count_);
+				object_manager_->Create(
+					str,
+					bullet_param);
+				bullet_count_++;
 
-			// エフェクト再生
-			send_data.type_ = DATA_OBJ_PARAM;
-			send_data.object_param_.type_ = OBJ_EFFECT;
-			send_data.object_param_.position_.x_ = player_position.x_;
-			send_data.object_param_.position_.y_ = player_position.y_;
-			send_data.object_param_.position_.z_ = player_position.z_;
-			strcpy_s(send_data.name, MAX_NAME_LEN, "water");
+				// エフェクト再生
+				send_data.type_ = DATA_OBJ_PARAM;
+				send_data.object_param_.type_ = OBJ_EFFECT;
+				send_data.object_param_.position_.x_ = player_position.x_;
+				send_data.object_param_.position_.y_ = player_position.y_;
+				send_data.object_param_.position_.z_ = player_position.z_;
+				strcpy_s(send_data.name, MAX_NAME_LEN, "water");
 
-			// オブジェクトデータ転送
-			NetworkHost::SendTo(DELI_MULTI, send_data);
+				// オブジェクトデータ転送
+				NetworkHost::SendTo(DELI_MULTI, send_data);
+
+				//-------------------------------------
+				// 水ゲージを減少させる
+				//-------------------------------------
+				watergauge -= GRANDFATHER_SUB_WATERGAUGE;
+				watergauge = std::max<float>(watergauge, 0.0f);
+				if(i == 0)
+				{
+					FbxGrandfather* grandfather = dynamic_cast<FbxGrandfather*>(player);
+					grandfather->SetWaterGauge(watergauge);
+				}
+				else
+				{
+					FbxChild* child = dynamic_cast<FbxChild*>(player);
+					child->SetWaterGauge(watergauge);
+				}
+			}
+		}
+
+		//-------------------------------------
+		// デバッグ時のみ、水ゲージ回復
+		//-------------------------------------
+		if (KeyBoard::isPress(DIK_1)){
+			if(i == 0)
+			{
+				FbxGrandfather* grandfather = dynamic_cast<FbxGrandfather*>(player);
+				float watergauge = grandfather->GetWaterGauge();
+				watergauge += GRANDFATHER_SUB_WATERGAUGE;
+				watergauge = std::min<float>(watergauge, 1.0f);
+				grandfather->SetWaterGauge(watergauge);
+			}
+			else
+			{
+				FbxChild* child = dynamic_cast<FbxChild*>(player);
+				float watergauge = child->GetWaterGauge();
+				watergauge += GRANDFATHER_SUB_WATERGAUGE;
+				watergauge = std::min<float>(watergauge, 1.0f);
+				child->SetWaterGauge(watergauge);
+			}
 		}
 
 		//------------------------------------------------
@@ -475,6 +656,36 @@ void GameServer::MatchingAndGame()
 		send_data.object_param_.rotation_.z_ = camera_focus.z;
 
 		NetworkHost::SendTo((DELI_TYPE)i, send_data);
+
+		//------------------------------------------------
+		// UIデータ転送
+		//------------------------------------------------
+		if(i == 0)
+		{
+			FbxGrandfather* grandfather = dynamic_cast<FbxGrandfather*>(player);
+			// 水ゲージ
+			send_data.type_ = DATA_UI_PARAM;
+			send_data.ui_param_.value_f_ = grandfather->GetWaterGauge();
+			strcpy_s(send_data.name, MAX_NAME_LEN, "water_gage");
+			NetworkHost::SendTo((DELI_TYPE)i, send_data);
+			// ダメージエフェクト
+			send_data.ui_param_.value_f_ = grandfather->GetLife();
+			strcpy_s(send_data.name, MAX_NAME_LEN, "damage_effect");
+			NetworkHost::SendTo((DELI_TYPE)i, send_data);
+		}
+		else
+		{
+			FbxChild* child = dynamic_cast<FbxChild*>(player);
+			// 水ゲージ
+			send_data.type_ = DATA_UI_PARAM;
+			send_data.ui_param_.value_f_ = child->GetWaterGauge();
+			strcpy_s(send_data.name, MAX_NAME_LEN, "water_gage");
+			NetworkHost::SendTo((DELI_TYPE)i, send_data);
+			// ダメージエフェクト
+			send_data.ui_param_.value_f_ = child->GetLife();
+			strcpy_s(send_data.name, MAX_NAME_LEN, "damage_effect");
+			NetworkHost::SendTo((DELI_TYPE)i, send_data);
+		}
 	}
 }
 
@@ -510,6 +721,17 @@ void GameServer::ChangeState(SERVER_STATE next)
 
 		case STATE_GAME:
 			{
+				// ステージ
+				stage_ = 1;
+				// おじデバフフラグ
+				grandfather_debuff_ = false;
+				for(int i = 0; i < (MAX_GUEST - 1); i++)
+				{
+					// 子供死亡フラグ
+					child_death_[i] = false;
+					// 子供リスポーン待ち時間
+					child_respawn_waittime_[i] = 0;
+				}
 				time_ = GAME_TIME * 60;
 				std::string player_str;
 				Object *player;
