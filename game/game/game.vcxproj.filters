@@ -286,13 +286,11 @@
     <ClCompile Include="source_code\application\object\objects\model\x\x_fort.cpp">
       <Filter>source_code\application\object\objects\model\x</Filter>
     </ClCompile>
-<<<<<<< HEAD
     <ClCompile Include="source_code\application\object\objects\sprite3d\shadow.cpp">
       <Filter>source_code\application\object\objects\sprite3d</Filter>
-=======
+    </ClCompile>
     <ClCompile Include="source_code\application\object\objects\model\fbx\fbx_player.cpp">
       <Filter>source_code\application\object\objects\model\fbx</Filter>
->>>>>>> origin/add_fbx_player
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -491,13 +489,11 @@
     <ClInclude Include="source_code\application\object\objects\model\x\x_fort.h">
       <Filter>source_code\application\object\objects\model\x</Filter>
     </ClInclude>
-<<<<<<< HEAD
     <ClInclude Include="source_code\application\object\objects\sprite3d\shadow.h">
       <Filter>source_code\application\object\objects\sprite3d</Filter>
-=======
+    </ClInclude>
     <ClInclude Include="source_code\application\object\objects\model\fbx\fbx_player.h">
       <Filter>source_code\application\object\objects\model\fbx</Filter>
->>>>>>> origin/add_fbx_player
     </ClInclude>
   </ItemGroup>
 </Project>
