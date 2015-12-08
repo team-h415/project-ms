@@ -22,6 +22,7 @@
 #include "../../object/objects/model/x_model.h"
 #include "../../object/objects/model/x/x_fort.h"
 #include "../../object/objects/model/fbx_model.h"
+#include "../../object/objects/model/fbx/fbx_player.h"
 #include "../../object/objects/model/fbx/fbx_grandfather.h"
 #include "../../object/objects/model/fbx/fbx_child.h"
 #include "../../object/objects/sprite/timer.h"

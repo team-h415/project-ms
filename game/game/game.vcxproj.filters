@@ -283,6 +283,9 @@
     <ClCompile Include="source_code\application\object\objects\model\x\x_fort.cpp">
       <Filter>source_code\application\object\objects\model\x</Filter>
     </ClCompile>
+    <ClCompile Include="source_code\application\object\objects\model\fbx\fbx_player.cpp">
+      <Filter>source_code\application\object\objects\model\fbx</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source_code\main.h">
@@ -479,6 +482,9 @@
     </ClInclude>
     <ClInclude Include="source_code\application\object\objects\model\x\x_fort.h">
       <Filter>source_code\application\object\objects\model\x</Filter>
+    </ClInclude>
+    <ClInclude Include="source_code\application\object\objects\model\fbx\fbx_player.h">
+      <Filter>source_code\application\object\objects\model\fbx</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

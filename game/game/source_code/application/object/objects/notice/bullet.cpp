@@ -15,6 +15,7 @@
 #include "../../object.h"
 #include "../../object_manager.h"
 #include "../model/fbx_model.h"
+#include "../model/fbx/fbx_player.h"
 #include "../model/fbx/fbx_child.h"
 #include "../model/fbx/fbx_grandfather.h"
 #include "../model/x/x_fort.h"
