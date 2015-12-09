@@ -278,14 +278,20 @@ Game::Game()
         0.0f
     };
     time_param.rotation_ = { 0.0f, 0.0f, 0.0f };
-    time_param.scaling_ = { 160.0f, 80.0f, 0.0f };
+    time_param.scaling_ = { 80.0f, 80.0f, 0.0f };
     time_param.layer_ = LAYER_TIMER;
 
-    object_manager_->Create(
-        "time",
-		time_param,
-		"resource/texture/figure_all.png");
+	Timer* timer = static_cast<Timer*>(
+		object_manager_->Create(
+		"time",
+		time_param));
 
+	timer->SetTexture("resource/texture/figure_all.png");
+	timer->SetFigureOffset(-30.0f);
+	timer->SetValue(GAME_TIMER);
+	timer->SetState(TIMER_STOP);
+	//パラメータ設定後に実行
+	timer->GenerateNumber();
 
 	//-------------------------------------
 	// 砦UI
@@ -427,6 +433,15 @@ Game::Game()
 	// 子供リスポーン待ち時間
 	child_respawn_waittime_ = 0;
 
+	//-------------------------------------
+	// 影
+	//-------------------------------------
+	OBJECT_PARAMETER_DESC shadow_param;
+	shadow_param.layer_ = LAYER_SHADOW;
+	shadow_param.scaling_ = Vector3(1.0f, 1.0f, 1.0f);
+	object_manager_->Create(
+		"shadow", shadow_param);
+
 #ifdef NETWORK_HOST_MODE
 #else
 	NETWORK_DATA network_data;
@@ -455,291 +470,6 @@ Game::~Game()
 //-------------------------------------
 void Game::Update()
 {
-////	//-------------------------------------
-////	// 変数宣言
-////	//-------------------------------------
-////	Object *player = object_manager_->Get("player");
-////	Object *fbx = object_manager_->Get("fbx");
-////	Object *child = object_manager_->Get("child");
-////	Vector3 player_position(player->parameter().position_);
-////	Vector3 player_rotation(player->parameter().rotation_);
-////	Vector3 fbx_position(fbx->parameter().position_);
-////	Vector3 fbx_rotation(fbx->parameter().rotation_);
-////	Vector3 child_position(child->parameter().position_);
-////
-////	Field *field = dynamic_cast<Field*>(
-////		object_manager_->Get("field"));
-////
-////	static const float player_speed_value = 0.05f;
-////	static int bullet_count = 0;
-////	float player_speed = player_speed_value;
-////
-////	//-------------------------------------
-////	// プレイヤーを地形に沿って移動させる
-////	//-------------------------------------
-////	if (GamePad::isPress(GAMEPAD_GRANDFATHER, PAD_BUTTON_11)){
-////		player_speed = player_speed_value * 2.0f;
-////	}
-////	fbx_position.x_ += (
-////		cosf(fbx_rotation.y_) * GamePad::isStick(GAMEPAD_GRANDFATHER).lsx_ +
-////		sinf(-fbx_rotation.y_) * GamePad::isStick(GAMEPAD_GRANDFATHER).lsy_) * player_speed;
-////	fbx_position.z_ -= (
-////		sinf(fbx_rotation.y_) * GamePad::isStick(GAMEPAD_GRANDFATHER).lsx_ +
-////		cosf(-fbx_rotation.y_) * GamePad::isStick(GAMEPAD_GRANDFATHER).lsy_) * player_speed;
-////
-////	if (GamePad::isPress(GAMEPAD_GRANDFATHER, PAD_RS_LEFT)){
-////		fbx_rotation.y_ -= CHAR_ROT_SPEED;
-////		if (fbx_rotation.y_ < D3DX_PI){
-////			fbx_rotation.y_ += D3DX_PI * 2.0f;
-////		}
-////	}
-////	if (GamePad::isPress(GAMEPAD_GRANDFATHER, PAD_RS_RIGHT)){
-////		fbx_rotation.y_ += CHAR_ROT_SPEED;
-////		if (fbx_rotation.y_ > D3DX_PI){
-////			fbx_rotation.y_ -= D3DX_PI * 2.0f;
-////		}
-////	}
-////
-////	//-------------------------------------
-////	// デバッグ時のプレイヤー操作
-////	//-------------------------------------
-////#ifdef _DEBUG
-////	if (KeyBoard::isPress(DIK_W)){
-////		fbx_position.x_ += sinf(fbx_rotation.y_) * player_speed;
-////		fbx_position.z_ += cosf(fbx_rotation.y_) * player_speed;
-////	}
-////	if (KeyBoard::isPress(DIK_A)){
-////		fbx_position.x_ += sinf(fbx_rotation.y_ - (D3DX_PI * 0.5f)) * player_speed;
-////		fbx_position.z_ += cosf(fbx_rotation.y_ - (D3DX_PI * 0.5f)) * player_speed;
-////	}
-////	if (KeyBoard::isPress(DIK_S)){
-////		fbx_position.x_ += sinf(fbx_rotation.y_ + (D3DX_PI)) * player_speed;
-////		fbx_position.z_ += cosf(fbx_rotation.y_ + (D3DX_PI)) * player_speed;
-////	}
-////	if (KeyBoard::isPress(DIK_D)){
-////		fbx_position.x_ += sinf(fbx_rotation.y_ + (D3DX_PI * 0.5f)) * player_speed;
-////		fbx_position.z_ += cosf(fbx_rotation.y_ + (D3DX_PI * 0.5f)) * player_speed;
-////	}
-////	if (KeyBoard::isPress(DIK_RIGHT)){
-////		fbx_rotation.y_ += CHAR_ROT_SPEED;
-////		if (fbx_rotation.y_ > D3DX_PI){
-////			fbx_rotation.y_ -= D3DX_PI * 2.0f;
-////		}
-////	}
-////	if (KeyBoard::isPress(DIK_LEFT)){
-////		fbx_rotation.y_ -= CHAR_ROT_SPEED;
-////		if (fbx_rotation.y_ < -D3DX_PI){
-////			fbx_rotation.y_ += D3DX_PI * 2.0f;
-////		}
-////	}
-////
-////#endif //_DEBUG
-////
-////	D3DXVECTOR3 pos(
-////		player_position.x_,
-////		player_position.y_,
-////		player_position.z_);
-////	player_position.y_ = field->GetHeight(pos);
-////
-////	D3DXVECTOR3 fbx_pos(
-////		fbx_position.x_,
-////		fbx_position.y_,
-////		fbx_position.z_);
-////	fbx_position.y_ = field->GetHeight(fbx_pos);
-////	
-////	D3DXVECTOR3 child_pos(
-////		child_position.x_,
-////		child_position.y_,
-////		child_position.z_);
-////	child_position.y_ = field->GetHeight(child_pos);
-////
-////	player->SetPosition(player_position);
-////	player->SetRotation(player_rotation);
-////	fbx->SetPosition(fbx_position);
-////	fbx->SetRotation(fbx_rotation);
-////	child->SetPosition(child_position);
-////
-////	//-------------------------------------
-////	// カメラ追従
-////	//-------------------------------------
-////	Camera *main_camera = camera_manager_->Get("MainCamera");
-////	D3DXVECTOR3 camera_position, camera_focus;
-////	D3DXVECTOR3 camera_rotation(main_camera->rotation());
-////
-////	// 入力
-////#ifdef _DEBUG
-////	if(KeyBoard::isPress(DIK_UP)){
-////		camera_rotation.x -= CAMERA_ROT_SPEED;
-////		if(camera_rotation.x < -CAMERA_ROT_X_LIMIT){
-////			camera_rotation.x = -CAMERA_ROT_X_LIMIT;
-////		}
-////	}
-////	if(KeyBoard::isPress(DIK_DOWN)){
-////		camera_rotation.x += CAMERA_ROT_SPEED;
-////		if(camera_rotation.x > CAMERA_ROT_X_LIMIT){
-////			camera_rotation.x = CAMERA_ROT_X_LIMIT;
-////		}
-////	}
-////#endif
-////	
-////	if(GamePad::isPress(GAMEPAD_GRANDFATHER, PAD_RS_UP)){
-////		camera_rotation.x -= CAMERA_ROT_SPEED;
-////		if(camera_rotation.x < -CAMERA_ROT_X_LIMIT){
-////			camera_rotation.x = -CAMERA_ROT_X_LIMIT;
-////		}
-////	}
-////	if(GamePad::isPress(GAMEPAD_GRANDFATHER, PAD_RS_DOWN)){
-////		camera_rotation.x += CAMERA_ROT_SPEED;
-////		if(camera_rotation.x > CAMERA_ROT_X_LIMIT){
-////			camera_rotation.x = CAMERA_ROT_X_LIMIT;
-////		}
-////	}
-////
-////
-////	//-------------------------------------
-////	// カメラ計算
-////	//-------------------------------------
-////
-////	// モデルの回転Yをそのままカメラの回転Yへ
-////	camera_rotation.y = fbx_rotation.y_;
-////	// 一旦モデルを注視点に
-////	camera_focus = fbx_pos;
-////	// 足元基準から体の中心辺りを基準に
-////	camera_focus.y += CAMERA_FOCUS_OFFSET_Y;
-////	// モデルの少し先を見るように調整
-////	camera_focus.x += sinf(camera_rotation.y) * CAMERA_FOCUS_OFFSET * cosf(camera_rotation.x);
-////	camera_focus.z += cosf(camera_rotation.y) * CAMERA_FOCUS_OFFSET * cosf(camera_rotation.x);
-////	camera_focus.y += sinf(camera_rotation.x) * CAMERA_FOCUS_OFFSET;
-////
-////	// 注視点を基準にカメラ座標を設定
-////	camera_position = camera_focus;
-////	camera_position.x -= sinf(camera_rotation.y) * camera_pos_len_ * cosf(camera_rotation.x);
-////	camera_position.z -= cosf(camera_rotation.y) * camera_pos_len_ * cosf(camera_rotation.x);
-////	camera_position.y -= sinf(camera_rotation.x) * camera_pos_len_;
-////
-////
-////	// カメラの地面めり込み回避処理
-////	D3DXVECTOR3	vec_camera_to_focus = camera_focus - camera_position;
-////	
-////	// 中間にカメラがめり込みそうなところが無いか検査
-////	bool camera_re_calculate = false;
-////	for (int i = 0; i < 10; ++i){
-////		// 中間地点を計算
-////		D3DXVECTOR3 lay_point = camera_position + vec_camera_to_focus * static_cast<float>(i) * 0.1f;
-////		float pos_y = field->GetHeight(lay_point);
-////		// 回避処理
-////		if (lay_point.y < pos_y + 0.1f){
-////			camera_re_calculate = true;
-////			camera_pos_len_ -= CAMARA_LEN_SPEED;
-////		}
-////	}
-////
-////	//カメラ座標再計算
-////	if (camera_re_calculate == true){ 
-////		camera_position = camera_focus;
-////		camera_position.x -= sinf(camera_rotation.y) * camera_pos_len_ * cosf(camera_rotation.x);
-////		camera_position.z -= cosf(camera_rotation.y) * camera_pos_len_ * cosf(camera_rotation.x);
-////		camera_position.y -= sinf(camera_rotation.x) * camera_pos_len_;
-////		camera_position.y = field->GetHeight(camera_position) + 0.1f;
-////	}
-////
-////	camera_pos_len_ += CAMARA_LEN_SPEED;
-////	if (camera_pos_len_ > CAMERA_POS_LEN){
-////		camera_pos_len_ = CAMERA_POS_LEN;
-////	}
-////	
-////	// カメラにパラメータを再セット
-////	main_camera->SetPosition(camera_position);
-////	main_camera->SetFocus(camera_focus);
-////	main_camera->SetRotation(camera_rotation);
-////
-////	//-------------------------------------
-////	// エフェクト再生
-////	//-------------------------------------
-////	if (KeyBoard::isTrigger(DIK_1)){
-////		effect_manager_->Play("water");
-////	}
-////	if (GamePad::isPress(GAMEPAD_GRANDFATHER, PAD_BUTTON_8)){
-////		EFFECT_PARAMETER_DESC effect_param;
-////		MyEffect *effect = effect_manager_->Get("water");
-////		effect_param = effect->parameter();
-////		effect_param.position_ = fbx_position;
-////		effect_param.position_.y_ += 0.5f;
-////		effect_param.rotation_ = fbx_rotation;
-////		effect->SetParameter(effect_param);
-////		effect_manager_->Play("water");
-////
-////
-////		OBJECT_PARAMETER_DESC bullet_param;
-////		bullet_param.layer_ = LAYER_BULLET;
-////		bullet_param.position_ = fbx_position;
-////		bullet_param.rotation_ = fbx_rotation;
-////
-////		// カメラの回転Xを利用
-////		bullet_param.rotation_.x_ = camera_rotation.x;
-////
-////		bullet_param.scaling_ = { 1.0f, 1.0f, 1.0f };
-////		std::string str = "notice" + std::to_string(bullet_count);
-////		object_manager_->Create(
-////			str,
-////			bullet_param);
-////		bullet_count++;
-////	}
-////#ifdef _DEBUG
-////	if(KeyBoard::isPress(DIK_SPACE)){
-////		EFFECT_PARAMETER_DESC effect_param;
-////		MyEffect *effect = effect_manager_->Get("water");
-////		effect_param = effect->parameter();
-////		effect_param.position_ = fbx_position;
-////		effect_param.position_.y_ += 0.5f;
-////		effect_param.rotation_ = fbx_rotation;
-////		effect->SetParameter(effect_param);
-////		effect_manager_->Play("water");
-////
-////		OBJECT_PARAMETER_DESC bullet_param;
-////		bullet_param.layer_ = LAYER_BULLET;
-////		bullet_param.position_ = fbx_position;
-////		bullet_param.rotation_ = fbx_rotation;
-////		bullet_param.scaling_ = {1.0f, 1.0f, 1.0f};
-////
-////		// カメラの回転Xを利用
-////		bullet_param.rotation_.x_ = camera_rotation.x;
-////
-////		std::string str = "notice" + std::to_string(bullet_count);
-////		object_manager_->Create(
-////			str,
-////			bullet_param);
-////		bullet_count++;
-////	}
-////#endif //_DEBUG
-////
-////
-////	//-------------------------------------
-////	// アニメーション制御
-////	//-------------------------------------
-////	if (GamePad::isPress(GAMEPAD_GRANDFATHER, PAD_LS_DOWN) || 
-////		GamePad::isPress(GAMEPAD_GRANDFATHER, PAD_LS_UP) || 
-////		GamePad::isPress(GAMEPAD_GRANDFATHER, PAD_LS_LEFT) || 
-////		GamePad::isPress(GAMEPAD_GRANDFATHER, PAD_LS_RIGHT)){
-////		FbxGrandfather *grandfather = dynamic_cast<FbxGrandfather*>(fbx);
-////		if(grandfather->GetCurrentAnimationId() != FbxGrandfather::WALK)
-////		{
-////			grandfather->PlayAnimation(FbxGrandfather::WALK);
-////		}
-////	}
-////	else{
-////		FbxGrandfather *grandfather = dynamic_cast<FbxGrandfather*>(fbx);
-////		if(grandfather->GetCurrentAnimationId() != FbxGrandfather::IDLE)
-////		{
-////			grandfather->PlayAnimation(FbxGrandfather::IDLE);
-////		}
-////	}
-////	
-////	if (KeyBoard::isTrigger(DIK_5)){
-////		FbxGrandfather *grandfather = dynamic_cast<FbxGrandfather*>(fbx);
-////		grandfather->PlayAnimation(FbxGrandfather::DOWN);
-////	}
-
 //	//-------------------------------------
 //	// 変数宣言
 //	//-------------------------------------
@@ -1169,6 +899,15 @@ void Game::Update()
 	////-------------------------------------
 	//grandfather_prevposition = grandfather_position;
 
+
+	//-------------------------------------
+	// 影座標
+	//-------------------------------------
+	Object *shadow = object_manager_->Get("shadow");
+	Vector3 shadow_pos;
+	shadow_pos = grandfather->parameter().position_;
+	shadow_pos.y_ += 0.001f;
+	shadow->SetPosition(shadow_pos);
 
 	//-------------------------------------
 	// 実更新処理

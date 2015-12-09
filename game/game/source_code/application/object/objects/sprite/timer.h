@@ -21,23 +21,13 @@
 //-------------------------------------
 // macro
 //-------------------------------------
-namespace{
-    // 1•ª
-    static const int kOneMinute = 60;
-    // ‰½•ª‚©
-    static const int kMinuteNum = 3;
-    // ‰½•b‚©
-    static const int kSecondNum = 0;
-    // ‰½i”‚©
-    static const int kFigureDefine = 10;
-    // ‰½Œ…‚©
-    static const int kMaxFigure = 3;
-    // ƒQ[ƒ€ƒ^ƒCƒ€
-    static const int kTimerCount = kMinuteNum * kOneMinute + kSecondNum;
-    // •¶š‚ÌŠÔŠu
-    static const float kSpace = 40.0f;
-}
-
+typedef enum TIMER_STATE
+{
+	TIMER_COUNT = 0,
+	TIMER_STOP,
+	TIMER_END,
+	TIMER_MAX
+};
 
 //-------------------------------------
 // class
@@ -51,15 +41,26 @@ public:
     void Update();
     void Draw();
     int GetValue(void){ return value_; }
-    // •\¦‚·‚éŒ»İ‚Ì•b”‚ğ“ü‚ê‚é
-//    void SetValue(int value){ value_ = value; }
-	void SetValue(int value_);
+	void SetValue(int value);
 	void SetTexture(const std::string &path);
+	void SetFigureOffset(float Offset);
+	float GetFigureOffset(void){ return figure_offset_; }
+	void GenerateNumber(void);
+	void SetState(TIMER_STATE state){ state_ = state; }
+	TIMER_STATE GetState(void){ return state_; }
+	int GetFigure(void){ return figure_; }
+	Number* GetNumberPointer(unsigned int num);
 
 private:
+	void UpdateNumber();
     int count_;
     int value_;
     Number **p_number_;
+	LPDIRECT3DTEXTURE9 texture_;
+
+	float figure_offset_;
+	unsigned int figure_;
+	TIMER_STATE state_;
 };
 
 

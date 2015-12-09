@@ -25,13 +25,19 @@ public:
     void Draw();
     void SetTexture(
         const std::string &path);
+	void SetTexture(
+		LPDIRECT3DTEXTURE9 texture);
     void SetValue(int value){ value_ = value; }
     int GetValue(void){ return value_; }
+	void SetDiffuse(D3DXCOLOR color){ color_ = color; }
+	D3DXCOLOR GetDiffuse(void){ return color_; }
+
 private:
     void CalculateVertex();
     Vertex2D *vertex_;
     LPDIRECT3DTEXTURE9 texture_;
     int value_;
+	D3DXCOLOR color_;
 };
 
 

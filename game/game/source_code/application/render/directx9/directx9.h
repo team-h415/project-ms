@@ -77,6 +77,12 @@ struct Vertex3DField
 	D3DXVECTOR4 texturealpha_;
 };
 
+struct Vertex3DShadow
+{
+	D3DXVECTOR3 position_;
+	D3DXVECTOR2 texture_;
+};
+
 struct VertexBlend3D
 {
 	D3DXVECTOR3 position;

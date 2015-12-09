@@ -31,6 +31,7 @@
 #define BULLET_ADD_SPEED_Y 0.3f						// 発射角からバレットに加算される速度の調整値
 #define BULLET_GRAVITY 0.003f						// バレットに毎フレームかかる重量値
 
+#define GAME_TIMER (100)							// ゲームの時間
 
 //-------------------------------------
 // おじ

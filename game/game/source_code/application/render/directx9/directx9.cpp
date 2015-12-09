@@ -208,6 +208,19 @@ DirectX9::DirectX9()
 		ASSERT_ERROR("地形用頂点宣言生成に失敗");
 	}
 
+	D3DVERTEXELEMENT9 velementshadow[] = {
+		{0, 0, D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_POSITION, 0},
+		{0, 12, D3DDECLTYPE_FLOAT2, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 0},
+		D3DDECL_END(),
+	};
+
+	if(FAILED(device->CreateVertexDeclaration(
+		velementshadow,
+		&DirectX9Holder::vertex_declaration_shadow_)))
+	{
+		ASSERT_ERROR("地形用頂点宣言生成に失敗");
+	}
+
 	DirectX9Holder::directx9_ = directx9;
 	DirectX9Holder::device_ = device;
 }
@@ -221,6 +234,7 @@ DirectX9::~DirectX9()
 	SAFE_RELEASE(DirectX9Holder::vertex_declaration_2d_);
 	SAFE_RELEASE(DirectX9Holder::vertex_declaration_3d_);
 	SAFE_RELEASE(DirectX9Holder::vertex_declaration_field_);
+	SAFE_RELEASE(DirectX9Holder::vertex_declaration_shadow_);
 	SAFE_RELEASE(DirectX9Holder::vertex_declaration_fbx_);
 	SAFE_RELEASE(DirectX9Holder::vertex_declaration_instancing_);
 	SAFE_RELEASE(DirectX9Holder::device_);

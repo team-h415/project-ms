@@ -98,6 +98,9 @@
     <Filter Include="source_code\application\object\objects\model\x">
       <UniqueIdentifier>{77f6d0bc-0c3b-403c-91dc-f72496126fc3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="source_code\application\object\objects\sprite3d">
+      <UniqueIdentifier>{260a024d-bde2-44c6-a71f-35064ad339fe}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source_code\main.cpp">
@@ -294,6 +297,9 @@
     </ClCompile>
     <ClCompile Include="source_code\application\object\objects\model\x\x_fort.cpp">
       <Filter>source_code\application\object\objects\model\x</Filter>
+    </ClCompile>
+    <ClCompile Include="source_code\application\object\objects\sprite3d\shadow.cpp">
+      <Filter>source_code\application\object\objects\sprite3d</Filter>
     </ClCompile>
     <ClCompile Include="source_code\application\object\objects\model\fbx\fbx_player.cpp">
       <Filter>source_code\application\object\objects\model\fbx</Filter>
@@ -506,6 +512,9 @@
     </ClInclude>
     <ClInclude Include="source_code\application\object\objects\model\x\x_fort.h">
       <Filter>source_code\application\object\objects\model\x</Filter>
+    </ClInclude>
+    <ClInclude Include="source_code\application\object\objects\sprite3d\shadow.h">
+      <Filter>source_code\application\object\objects\sprite3d</Filter>
     </ClInclude>
     <ClInclude Include="source_code\application\object\objects\model\fbx\fbx_player.h">
       <Filter>source_code\application\object\objects\model\fbx</Filter>
