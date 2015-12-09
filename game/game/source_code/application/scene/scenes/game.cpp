@@ -127,6 +127,19 @@ Game::Game()
 		param,
 		"resource/mesh/skydome_bottom.txt");
 
+
+	//-------------------------------------
+	// ’r
+	//-------------------------------------
+	param.position_ = { 0.0f, -0.5f, 0.0f };
+	param.rotation_ = { 0.0f, 0.0f, 0.0f };
+	param.scaling_ = { 30.0f, 1.0f, 30.0f };
+	param.layer_ = LAYER_SPRITE_LAKE;
+
+	object_manager_->Create(
+		"lake",
+		param);
+
 	//-------------------------------------
 	// Ô
 	//-------------------------------------
