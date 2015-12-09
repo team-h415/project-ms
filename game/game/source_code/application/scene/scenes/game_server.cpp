@@ -307,8 +307,9 @@ void GameServer::Update()
 				time_--;
 				if(time_ > 0)
 				{
+					send_data.type_ = DATA_UI_PARAM;
 					send_data.object_param_.type_ = OBJ_UI;
-					strcpy_s(send_data.name, MAX_NAME_LEN, "timer");
+					strcpy_s(send_data.name, MAX_NAME_LEN, "time");
 					send_data.ui_param_.value_i_ = time_ / 60;
 					NetworkHost::SendTo(DELI_MULTI, send_data);
 				}
@@ -435,6 +436,7 @@ void GameServer::MatchingAndGame()
 	Field *field = dynamic_cast<Field*>(object_manager_->Get("field"));
 	D3DXVECTOR3 fort_pos;
 	Vector3 fort_position;
+	Vector3 fort_rotation;
 	float fort_life[3];
 	for(int i = 0; i < 3; i++)
 	{
@@ -442,13 +444,39 @@ void GameServer::MatchingAndGame()
 		Object *fort_object = object_manager_->Get(fort_str);
 		XFort *fort = dynamic_cast<XFort*>(fort_object);
 		fort_position = fort_object->parameter().position_;
+		fort_rotation = fort_object->parameter().rotation_;
 		fort_pos.x = fort_position.x_;
 		fort_pos.y = fort_position.y_;
 		fort_pos.z = fort_position.z_;
-		fort_position.y_ = field->GetHeight(fort_pos) + fort_underground.x;
+		switch(i)
+		{
+			case 0:
+				fort_position.y_ = field->GetHeight(fort_pos) + fort_underground.x;
+				break;
+			case 1:
+				fort_position.y_ = field->GetHeight(fort_pos) + fort_underground.y;
+				break;
+			case 2:
+				fort_position.y_ = field->GetHeight(fort_pos) + fort_underground.z;
+				break;
+			default:
+				break;
+		}
 		fort_object->SetPosition(fort_position);
 
 		fort_life[i] = fort->GetLife();
+
+		// オブジェクトデータ転送
+		send_data.type_ = DATA_OBJ_PARAM;
+		send_data.object_param_.type_ = OBJ_FORT;
+		send_data.object_param_.position_.x_ = fort_position.x_;
+		send_data.object_param_.position_.y_ = fort_position.y_;
+		send_data.object_param_.position_.z_ = fort_position.z_;
+		send_data.object_param_.rotation_.x_ = fort_rotation.x_;
+		send_data.object_param_.rotation_.y_ = fort_rotation.y_;
+		send_data.object_param_.rotation_.z_ = fort_rotation.z_;
+		strcpy_s(send_data.name, MAX_NAME_LEN, fort_str.c_str());
+		NetworkHost::SendTo(DELI_MULTI, send_data);
 	}
 
 	//-------------------------------------
@@ -477,29 +505,40 @@ void GameServer::MatchingAndGame()
 		//-------------------------------------
 		// プレイヤーを地形に沿って移動させる
 		//-------------------------------------
-		if(GamePad::isPress(i, PAD_BUTTON_11)){
-			player_speed = player_speed_value * 2.0f;
-		}
-		if(GamePad::isPress(i, PAD_BUTTON_11)){
-			player_speed = player_speed_value * 2.0f;
-		}
-		player_position.x_ += (
-			cosf(player_rotation.y_) * GamePad::isStick(i).lsx_ +
-			sinf(-player_rotation.y_) * GamePad::isStick(i).lsy_) * player_speed;
-		player_position.z_ -= (
-			sinf(player_rotation.y_) * GamePad::isStick(i).lsx_ +
-			cosf(-player_rotation.y_) * GamePad::isStick(i).lsy_) * player_speed;
-
-		if(GamePad::isPress(i, PAD_RS_LEFT)){
-			player_rotation.y_ -= CHAR_ROT_SPEED;
-			if(player_rotation.y_ < D3DX_PI){
-				player_rotation.y_ += D3DX_PI * 2.0f;
+		bool input(true);
+		if(i != 0)
+		{
+			if(child_death_[i - 1])
+			{
+				input = false;
 			}
 		}
-		if(GamePad::isPress(i, PAD_RS_RIGHT)){
-			player_rotation.y_ += CHAR_ROT_SPEED;
-			if(player_rotation.y_ > D3DX_PI){
-				player_rotation.y_ -= D3DX_PI * 2.0f;
+		if(input)
+		{
+			if(GamePad::isPress(i, PAD_BUTTON_11)){
+				player_speed = player_speed_value * 2.0f;
+			}
+			if(GamePad::isPress(i, PAD_BUTTON_11)){
+				player_speed = player_speed_value * 2.0f;
+			}
+			player_position.x_ += (
+				cosf(player_rotation.y_) * GamePad::isStick(i).lsx_ +
+				sinf(-player_rotation.y_) * GamePad::isStick(i).lsy_) * player_speed;
+			player_position.z_ -= (
+				sinf(player_rotation.y_) * GamePad::isStick(i).lsx_ +
+				cosf(-player_rotation.y_) * GamePad::isStick(i).lsy_) * player_speed;
+
+			if(GamePad::isPress(i, PAD_RS_LEFT)){
+				player_rotation.y_ -= CHAR_ROT_SPEED;
+				if(player_rotation.y_ < D3DX_PI){
+					player_rotation.y_ += D3DX_PI * 2.0f;
+				}
+			}
+			if(GamePad::isPress(i, PAD_RS_RIGHT)){
+				player_rotation.y_ += CHAR_ROT_SPEED;
+				if(player_rotation.y_ > D3DX_PI){
+					player_rotation.y_ -= D3DX_PI * 2.0f;
+				}
 			}
 		}
 		if(i == 0)
@@ -508,15 +547,15 @@ void GameServer::MatchingAndGame()
 				switch(stage_){
 				case 1:
 					player_position = GRANDFATHER_POSITION_STAGE1;
-					player_position.y_ = GRANDFATHER_ROTATION_STAGE1;
+					player_rotation.y_ = GRANDFATHER_ROTATION_STAGE1;
 					break;
 				case 2:
 					player_position = GRANDFATHER_POSITION_STAGE2;
-					player_position.y_ = GRANDFATHER_ROTATION_STAGE2;
+					player_rotation.y_ = GRANDFATHER_ROTATION_STAGE2;
 					break;
 				case 3:
 					player_position = GRANDFATHER_POSITION_STAGE3;
-					player_position.y_ = GRANDFATHER_ROTATION_STAGE3;
+					player_rotation.y_ = GRANDFATHER_ROTATION_STAGE3;
 					break;
 				}
 			}
@@ -610,11 +649,20 @@ void GameServer::MatchingAndGame()
 		//-------------------------------------
 		float watergauge = player->GetWaterGauge();
 
-		if(GamePad::isTrigger(i, PAD_BUTTON_8) && watergauge > 0.0f){
+		if(GamePad::isPress(i, PAD_BUTTON_8) && watergauge > 0.0f){
 			OBJECT_PARAMETER_DESC bullet_param;
 			bullet_param.layer_ = LAYER_BULLET;
+			if(i == 0)
+			{
+				bullet_param.parent_layer_ = LAYER_MODEL_GRANDFATHER;
+			}
+			else
+			{
+				bullet_param.parent_layer_ = LAYER_MODEL_CHILD;
+			}
 			bullet_param.position_ = player_position;
-			bullet_param.rotation_ = player_position;
+			bullet_param.position_.y_ += 0.5f;
+			bullet_param.rotation_ = player_rotation;
 
 			// カメラの回転Xを利用
 			bullet_param.rotation_.x_ = camera_rotation.x;
@@ -630,7 +678,7 @@ void GameServer::MatchingAndGame()
 			send_data.type_ = DATA_OBJ_PARAM;
 			send_data.object_param_.type_ = OBJ_EFFECT;
 			send_data.object_param_.position_.x_ = player_position.x_;
-			send_data.object_param_.position_.y_ = player_position.y_;
+			send_data.object_param_.position_.y_ = player_position.y_ + 0.5f;
 			send_data.object_param_.position_.z_ = player_position.z_;
 			strcpy_s(send_data.name, MAX_NAME_LEN, "water");
 
@@ -648,7 +696,7 @@ void GameServer::MatchingAndGame()
 		//-------------------------------------
 		// デバッグ時のみ、水ゲージ回復
 		//-------------------------------------
-		if (KeyBoard::isPress(DIK_1)){
+		if(GamePad::isPress(i, PAD_BUTTON_1)){
 			watergauge += GRANDFATHER_SUB_WATERGAUGE;
 			watergauge = std::min<float>(watergauge, 1.0f);
 			player->SetWaterGauge(watergauge);
@@ -665,7 +713,7 @@ void GameServer::MatchingAndGame()
 				child_death_[i - 1] = true;
 				child_respawn_waittime_[i - 1] = CHILD_RESPAWN_WAITTIME;
 			}
-			else if (child_death_ && !child_respawn_waittime_){
+			else if (child_death_[i - 1] && !child_respawn_waittime_[i - 1]){
 				player->PlayAnimation(FbxChild::IDLE);
 				child_death_[i - 1] = false;
 				child_life = CHILD_LIFE;
@@ -675,7 +723,7 @@ void GameServer::MatchingAndGame()
 			}
 
 			child_respawn_waittime_[i - 1]--;
-			child_respawn_waittime_[i - 1] = std::max<int>(child_respawn_waittime_[i], 0);
+			child_respawn_waittime_[i - 1] = std::max<int>(child_respawn_waittime_[i - 1], 0);
 		}
 
 		//------------------------------------------------
@@ -692,11 +740,17 @@ void GameServer::MatchingAndGame()
 		{
 			send_data.object_param_.type_ = OBJ_CHILD;
 		}
-		if(GamePad::isPress(i, PAD_LS_DOWN) ||
-			GamePad::isPress(i, PAD_LS_UP) ||
-			GamePad::isPress(i, PAD_LS_LEFT) ||
-			GamePad::isPress(i, PAD_LS_RIGHT)){
-			send_data.object_param_.ex_id_ = 1;
+		if(input)
+		{
+			if(GamePad::isPress(i, PAD_LS_DOWN) ||
+				GamePad::isPress(i, PAD_LS_UP) ||
+				GamePad::isPress(i, PAD_LS_LEFT) ||
+				GamePad::isPress(i, PAD_LS_RIGHT)){
+				send_data.object_param_.ex_id_ = 1;
+			}
+		}else
+		{
+			send_data.object_param_.ex_id_ = 2;
 		}
 
 		send_data.object_param_.position_.x_ = player_position.x_;
@@ -757,6 +811,8 @@ void GameServer::ChangeState(SERVER_STATE next)
 	}
 	bullet_count_ = 0;
 	object_manager_->Clear(LAYER_BULLET);
+	collision_manager_->Update();
+	stage_ = 1;
 	state = next;
 	switch(state)
 	{

@@ -81,6 +81,11 @@ Bullet::Bullet(
 //-------------------------------------
 Bullet::~Bullet()
 {
+	if(collision_ != nullptr)
+	{
+		collision_->SetThisDelete(true);
+		collision_ = nullptr;
+	}
 }
 
 
@@ -94,12 +99,12 @@ void Bullet::Update()
 	parameter_.position_.z_ += cosf(parameter_.rotation_.y_) * speed_.z;
 	speed_.y -= BULLET_GRAVITY;
 
-#ifndef NETWORK_HOST_MODE
+#ifdef NETWORK_HOST_MODE
 	Scene *scene = SceneManager::GetCurrentScene();
 	std::string str = SceneManager::GetCurrentSceneName();
-	if (str == "Game"){
-		Game *game = dynamic_cast<Game*>(scene);
-		Object *obj = game->object_manager()->Get("field");
+	if (str == "GameServer"){
+		GameServer *game_server = dynamic_cast<GameServer*>(scene);
+		Object *obj = game_server->object_manager()->Get("field");
 		Field *field = dynamic_cast<Field*>(obj);
 		float height = field->GetHeight(
 			D3DXVECTOR3(
@@ -108,9 +113,29 @@ void Bullet::Update()
 			parameter_.position_.z_));
 		if (parameter_.position_.y_ < height){
 			this_delete_ = true;
-			collision_->SetThisDelete(true);
+			if(collision_ != nullptr)
+			{
+				collision_->SetThisDelete(true);
+			}
 		}
 	}
+#else
+	//Scene *scene = SceneManager::GetCurrentScene();
+	//std::string str = SceneManager::GetCurrentSceneName();
+	//if (str == "Game"){
+	//	Game *game = dynamic_cast<Game*>(scene);
+	//	Object *obj = game->object_manager()->Get("field");
+	//	Field *field = dynamic_cast<Field*>(obj);
+	//	float height = field->GetHeight(
+	//		D3DXVECTOR3(
+	//		parameter_.position_.x_,
+	//		parameter_.position_.y_,
+	//		parameter_.position_.z_));
+	//	if (parameter_.position_.y_ < height){
+	//		this_delete_ = true;
+	//		collision_->SetThisDelete(true);
+	//	}
+	//}
 #endif
 }
 
@@ -183,7 +208,11 @@ void Bullet::Action(
 			NetworkHost::SendTo(DELI_MULTI, send_data);
 
 			this_delete_ = true;
-			collision_->SetThisDelete(true);
+			if(collision_ != nullptr)
+			{
+				collision_->SetThisDelete(true);
+				collision_ = nullptr;
+			}
 
 			//-------------------------------------
 			// ÉVÅ[ÉìéÊìæ

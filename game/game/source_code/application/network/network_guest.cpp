@@ -338,7 +338,7 @@ unsigned __stdcall NetworkGuest::Communication()
 								continue;
 							}
 							Timer *timer = dynamic_cast<Timer*>(object);
-							//timer->
+							timer->SetValue(rec_data.ui_param_.value_i_);
 						}
 
 						else if(name == "water_gage")
@@ -406,7 +406,7 @@ void NetworkGuest::ObjDataAdaptation(
 				set_param.x_ = rec_data.object_param_.rotation_.x_;
 				set_param.y_ = rec_data.object_param_.rotation_.y_;
 				set_param.z_ = rec_data.object_param_.rotation_.z_;
-				grandfather->SetRotation(set_param);
+				object->SetRotation(set_param);
 				// À•W
 				set_param.x_ = rec_data.object_param_.position_.x_;
 				set_param.y_ = rec_data.object_param_.position_.y_;
@@ -444,7 +444,7 @@ void NetworkGuest::ObjDataAdaptation(
 				set_param.x_ = rec_data.object_param_.rotation_.x_;
 				set_param.y_ = rec_data.object_param_.rotation_.y_;
 				set_param.z_ = rec_data.object_param_.rotation_.z_;
-				child->SetRotation(set_param);
+				object->SetRotation(set_param);
 				// À•W
 				set_param.x_ = rec_data.object_param_.position_.x_;
 				set_param.y_ = rec_data.object_param_.position_.y_;
@@ -485,6 +485,32 @@ void NetworkGuest::ObjDataAdaptation(
 				effect_param.position_.z_ = rec_data.object_param_.position_.z_;
 				effect->SetParameter(effect_param);
 				effect_manager->Play(name);
+			}
+			break;
+
+		case OBJ_FORT:					// UI
+			{
+				if(object_manager == nullptr)
+				{
+					return;
+				}
+				std::string name = rec_data.name;
+				Object *object = object_manager->Get(name);
+				if(object == nullptr)
+				{
+					return;
+				}
+				Vector3 set_param;
+				// ‰ñ“]
+				set_param.x_ = rec_data.object_param_.rotation_.x_;
+				set_param.y_ = rec_data.object_param_.rotation_.y_;
+				set_param.z_ = rec_data.object_param_.rotation_.z_;
+				object->SetRotation(set_param);
+				// À•W
+				set_param.x_ = rec_data.object_param_.position_.x_;
+				set_param.y_ = rec_data.object_param_.position_.y_;
+				set_param.z_ = rec_data.object_param_.position_.z_;
+				object->SetPosition(set_param);
 			}
 			break;
 
