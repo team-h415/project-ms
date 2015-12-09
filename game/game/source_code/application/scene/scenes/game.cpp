@@ -439,8 +439,11 @@ Game::Game()
 	OBJECT_PARAMETER_DESC shadow_param;
 	shadow_param.layer_ = LAYER_SHADOW;
 	shadow_param.scaling_ = Vector3(1.0f, 1.0f, 1.0f);
-	object_manager_->Create(
-		"shadow", shadow_param);
+	for(int i = 0; i < MAX_GUEST; i++)
+	{
+		std::string name = "shadow" + std::to_string(i + 1);
+		object_manager_->Create(name, shadow_param);
+	}
 
 #ifdef NETWORK_HOST_MODE
 #else
@@ -899,16 +902,6 @@ void Game::Update()
 	////-------------------------------------
 	//grandfather_prevposition = grandfather_position;
 
-
-	//-------------------------------------
-	// 影座標
-	//-------------------------------------
-	Object *shadow = object_manager_->Get("shadow");
-	Vector3 shadow_pos;
-	shadow_pos = grandfather->parameter().position_;
-	shadow_pos.y_ += 0.001f;
-	shadow->SetPosition(shadow_pos);
-
 	//-------------------------------------
 	// 実更新処理
 	//-------------------------------------
@@ -929,7 +922,6 @@ void Game::Update()
 	//	grandfather_position.x_, grandfather_position.y_, grandfather_position.z_);
 	//font1_->Add("ROTATION(Grandfather) : %3.2f %3.2f %3.2f\n",
 	//	grandfather_rotation.x_, grandfather_rotation.y_, grandfather_rotation.z_);
-
 
 	font2_->Add("----------操作説明----------\n");
 	font2_->Add("【ゲームパッド使用時】\n");

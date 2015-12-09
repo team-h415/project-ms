@@ -65,15 +65,23 @@
 // くらうダメージ量
 #define CHILD_DAMAGE 0.02f
 // 座標
-#define CHILD_POSITION1 { -55.0f,  0.0f, -50.0f }
-#define CHILD_POSITION2 { -50.0f,  0.0f, -50.0f }
-#define CHILD_POSITION3 { -55.0f,  0.0f, -55.0f }
-#define CHILD_POSITION4 { -50.0f,  0.0f, -55.0f }
+static const Vector3 CHILD_POSITION[4]
+{
+	{-55.0f, 0.0f, -50.0f},
+	{-50.0f, 0.0f, -50.0f},
+	{-55.0f, 0.0f, -55.0f},
+	{-50.0f, 0.0f, -55.0f},
+};
+
 // 角度
-#define CHILD_ROTATION1 0.79f
-#define CHILD_ROTATION2 0.79f
-#define CHILD_ROTATION3 0.79f
-#define CHILD_ROTATION4 0.79f
+static const Vector3 CHILD_ROTATION[4]
+{
+	{0.0f, 0.79f, 0.0f},
+	{0.0f, 0.79f, 0.0f},
+	{0.0f, 0.79f, 0.0f},
+	{0.0f, 0.79f, 0.0f},
+};
+
 // リスポーン待ち時間
 #define CHILD_RESPAWN_WAITTIME 120
 

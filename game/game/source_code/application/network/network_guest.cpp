@@ -402,20 +402,28 @@ void NetworkGuest::ObjDataAdaptation(
 				}
 				FbxGrandfather *grandfather = dynamic_cast<FbxGrandfather*>(object);
 				Vector3 set_param;
-				// À•W
-				set_param.x_ = rec_data.object_param_.position_.x_;
-				set_param.y_ = rec_data.object_param_.position_.y_;
-				set_param.z_ = rec_data.object_param_.position_.z_;
-				object->SetPosition(set_param);
 				// ‰ñ“]
 				set_param.x_ = rec_data.object_param_.rotation_.x_;
 				set_param.y_ = rec_data.object_param_.rotation_.y_;
 				set_param.z_ = rec_data.object_param_.rotation_.z_;
 				grandfather->SetRotation(set_param);
+				// À•W
+				set_param.x_ = rec_data.object_param_.position_.x_;
+				set_param.y_ = rec_data.object_param_.position_.y_;
+				set_param.z_ = rec_data.object_param_.position_.z_;
+				object->SetPosition(set_param);
 				if(grandfather->GetCurrentAnimationId() != rec_data.object_param_.ex_id_)
 				{
 					grandfather->PlayAnimation(rec_data.object_param_.ex_id_);
 				}
+				// ‰e
+				Object *shadow = object_manager->Get("shadow1");
+				if(shadow == nullptr)
+				{
+					return;
+				}
+				set_param.y_ += 0.001f;
+				shadow->SetPosition(set_param);
 			}
 			break;
 		case OBJ_CHILD:					// Žq‹Ÿ
@@ -432,20 +440,29 @@ void NetworkGuest::ObjDataAdaptation(
 				}
 				FbxChild *child = dynamic_cast<FbxChild*>(object);
 				Vector3 set_param;
-				// À•W
-				set_param.x_ = rec_data.object_param_.position_.x_;
-				set_param.y_ = rec_data.object_param_.position_.y_;
-				set_param.z_ = rec_data.object_param_.position_.z_;
-				object->SetPosition(set_param);
 				// ‰ñ“]
 				set_param.x_ = rec_data.object_param_.rotation_.x_;
 				set_param.y_ = rec_data.object_param_.rotation_.y_;
 				set_param.z_ = rec_data.object_param_.rotation_.z_;
 				child->SetRotation(set_param);
+				// À•W
+				set_param.x_ = rec_data.object_param_.position_.x_;
+				set_param.y_ = rec_data.object_param_.position_.y_;
+				set_param.z_ = rec_data.object_param_.position_.z_;
+				object->SetPosition(set_param);
 				if(child->GetCurrentAnimationId() != rec_data.object_param_.ex_id_)
 				{
 					child->PlayAnimation(rec_data.object_param_.ex_id_);
 				}
+				// ‰e
+				std::string shadow_str = "shadow" + std::to_string(rec_data.id_ + 1);
+				Object *shadow = object_manager->Get(shadow_str);
+				if(shadow == nullptr)
+				{
+					return;
+				}
+				set_param.y_ += 0.001f;
+				shadow->SetPosition(set_param);
 			}
 			break;
 
@@ -486,7 +503,7 @@ void NetworkGuest::ObjDataAdaptation(
 						return;
 					}
 					Timer *timer = dynamic_cast<Timer*>(object);
-					//timer->
+					timer->SetValue(rec_data.ui_param_.value_i_);
 				}
 
 				else if(name == "water_gage")

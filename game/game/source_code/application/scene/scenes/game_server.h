@@ -79,9 +79,9 @@ private:
 	// おじデバフフラグ
 	bool grandfather_debuff_;
 	// 子供死亡フラグ
-	bool child_death_[MAX_GUEST];
+	bool child_death_[MAX_GUEST - 1];
 	// 子供リスポーンタイマー
-	int child_respawn_waittime_[MAX_GUEST];
+	int child_respawn_waittime_[MAX_GUEST - 1];
 };
 
 

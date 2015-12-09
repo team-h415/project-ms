@@ -8,11 +8,11 @@
 // include
 //-------------------------------------
 #include "../../../../../common/common.h"
-#include "../../../../config/config.h"
 #include "../../../../render/renderer.h"
 #include "../../../../render/directx9/directx9.h"
 #include "../../../../render/directx9/directx9_holder.h"
 #include "../../../../math/vector.h"
+#include "../../../../config/config.h"
 #include "../../../object.h"
 #include "../../../../shader/shader.h"
 #include "../../../object.h"

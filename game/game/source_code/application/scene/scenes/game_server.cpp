@@ -369,9 +369,6 @@ void GameServer::Update()
 //-------------------------------------
 void GameServer::Draw()
 {
-#ifndef _DEBUG
-	return;
-#endif
 	RECT rect = {
 		0, 0,
 		static_cast<LONG>(SCREEN_WIDTH),
@@ -381,9 +378,11 @@ void GameServer::Draw()
 	DirectX9Holder::DrawBegin();
 	DirectX9Holder::Clear(color);
 
+#ifdef _DEBUG
 	camera_manager_->Set("camera1");
 	object_manager_->Draw();
 	collision_manager_->Draw();
+#endif
 
 	font_->Draw(rect, font_color);
 	Fade::Draw();
@@ -401,6 +400,67 @@ void GameServer::MatchingAndGame()
 
 	static const float player_speed_value = 0.05f;
 
+	//-------------------------------------
+	// 砦の座標管理
+	//-------------------------------------
+	static D3DXVECTOR3 fort_underground(0.0f, 0.0f, 0.0f);
+	switch(stage_)
+	{
+	case 1:
+		fort_underground.x += 0.01f;
+		fort_underground.y -= 0.01f;
+		fort_underground.z -= 0.01f;
+		fort_underground.x = std::min<float>(fort_underground.x, 0.0f);
+		fort_underground.y = std::max<float>(fort_underground.y, -3.0f);
+		fort_underground.z = std::max<float>(fort_underground.z, -3.0f);
+		break;
+	case 2:
+		fort_underground.x -= 0.01f;
+		fort_underground.y += 0.01f;
+		fort_underground.z -= 0.01f;
+		fort_underground.x = std::max<float>(fort_underground.x, -3.0f);
+		fort_underground.y = std::min<float>(fort_underground.y, 0.0f);
+		fort_underground.z = std::max<float>(fort_underground.z, -3.0f);
+		break;
+	case 3:
+		fort_underground.x -= 0.01f;
+		fort_underground.y -= 0.01f;
+		fort_underground.z += 0.01f;
+		fort_underground.x = std::max<float>(fort_underground.x, -3.0f);
+		fort_underground.y = std::max<float>(fort_underground.y, -3.0f);
+		fort_underground.z = std::min<float>(fort_underground.z, 0.0f);
+		break;
+	}
+
+	Field *field = dynamic_cast<Field*>(object_manager_->Get("field"));
+	D3DXVECTOR3 fort_pos;
+	Vector3 fort_position;
+	float fort_life[3];
+	for(int i = 0; i < 3; i++)
+	{
+		std::string fort_str = "fort" + std::to_string(i + 1);
+		Object *fort_object = object_manager_->Get(fort_str);
+		XFort *fort = dynamic_cast<XFort*>(fort_object);
+		fort_position = fort_object->parameter().position_;
+		fort_pos.x = fort_position.x_;
+		fort_pos.y = fort_position.y_;
+		fort_pos.z = fort_position.z_;
+		fort_position.y_ = field->GetHeight(fort_pos) + fort_underground.x;
+		fort_object->SetPosition(fort_position);
+
+		fort_life[i] = fort->GetLife();
+	}
+
+	//-------------------------------------
+	// ゲームステージデバッグ
+	//-------------------------------------
+	if(fort_life[0] == 0.0f){
+		stage_ = 2;
+		if(fort_life[1] == 0.0f){
+			stage_ = 3;
+		}
+	}
+
 	for(int i = 0; i < 5; i++){
 
 		//-------------------------------------
@@ -411,8 +471,6 @@ void GameServer::MatchingAndGame()
 		FbxPlayer *player = dynamic_cast<FbxPlayer*>(player_obj);
 		Vector3 player_position(player->parameter().position_);
 		Vector3 player_rotation(player->parameter().rotation_);
-		Field *field = dynamic_cast<Field*>(
-			object_manager_->Get("field"));
 
 		float player_speed = player_speed_value;
 
@@ -442,6 +500,25 @@ void GameServer::MatchingAndGame()
 			player_rotation.y_ += CHAR_ROT_SPEED;
 			if(player_rotation.y_ > D3DX_PI){
 				player_rotation.y_ -= D3DX_PI * 2.0f;
+			}
+		}
+		if(i == 0)
+		{
+			if (GamePad::isTrigger(GAMEPAD_GRANDFATHER, PAD_BUTTON_7)){
+				switch(stage_){
+				case 1:
+					player_position = GRANDFATHER_POSITION_STAGE1;
+					player_position.y_ = GRANDFATHER_ROTATION_STAGE1;
+					break;
+				case 2:
+					player_position = GRANDFATHER_POSITION_STAGE2;
+					player_position.y_ = GRANDFATHER_ROTATION_STAGE2;
+					break;
+				case 3:
+					player_position = GRANDFATHER_POSITION_STAGE3;
+					player_position.y_ = GRANDFATHER_ROTATION_STAGE3;
+					break;
+				}
 			}
 		}
 
@@ -576,11 +653,29 @@ void GameServer::MatchingAndGame()
 			watergauge = std::min<float>(watergauge, 1.0f);
 			player->SetWaterGauge(watergauge);
 		}
-		else
+
+		//-------------------------------------
+		// 子供死亡時制御
+		//-------------------------------------
+		if(i != 0)
 		{
-			watergauge -= GRANDFATHER_SUB_WATERGAUGE;
-			watergauge = std::min<float>(watergauge, 1.0f);
-			player->SetWaterGauge(watergauge);
+			float child_life = player->GetLife();
+			if (child_life < 0 && !child_death_[i - 1]){
+				player->PlayAnimation(FbxChild::DOWN);
+				child_death_[i - 1] = true;
+				child_respawn_waittime_[i - 1] = CHILD_RESPAWN_WAITTIME;
+			}
+			else if (child_death_ && !child_respawn_waittime_){
+				player->PlayAnimation(FbxChild::IDLE);
+				child_death_[i - 1] = false;
+				child_life = CHILD_LIFE;
+				player->SetLife(child_life);
+				player->SetPosition(CHILD_POSITION[i - 1]);
+				player->SetRotation(CHILD_ROTATION[i - 1]);
+			}
+
+			child_respawn_waittime_[i - 1]--;
+			child_respawn_waittime_[i - 1] = std::max<int>(child_respawn_waittime_[i], 0);
 		}
 
 		//------------------------------------------------
@@ -697,12 +792,21 @@ void GameServer::ChangeState(SERVER_STATE next)
 				time_ = GAME_TIME * 60;
 				std::string player_str;
 				Object *player;
-				Vector3 pos(-55.0f, 0.0f, -50.0f), rot(0.0f, 0.0f, 0.0f);
 				for(int i = 0; i < MAX_GUEST; i++){
 					player_str = "player" + std::to_string(i + 1);
 					player = object_manager_->Get(player_str);
 
-					pos.x_ += 2.0f;
+					Vector3 pos, rot;
+					if(i == 0)
+					{
+						pos = GRANDFATHER_POSITION_STAGE1;
+						rot = {0.0f, GRANDFATHER_ROTATION_STAGE1, 0.0f};
+					}
+					else
+					{
+						pos = CHILD_POSITION[i - 1];
+						rot = CHILD_ROTATION[i - 1];
+					}
 					player->SetPosition(pos);
 					player->SetRotation(rot);
 				}
