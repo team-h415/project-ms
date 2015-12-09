@@ -18,6 +18,12 @@
 
 
 //-------------------------------------
+// variable
+//-------------------------------------
+int ObjectManager::object_count_ = 0;
+
+
+//-------------------------------------
 // ObjectManager()
 //-------------------------------------
 ObjectManager::ObjectManager()
@@ -47,11 +53,8 @@ ObjectManager::~ObjectManager()
 //-------------------------------------
 void ObjectManager::Update()
 {
-	for (int i = 0; i < LAYER_MAX; i++){
-		for (auto it = objects_[i].begin(); it != objects_[i].end(); ++it){
-			(*it).second->Update();
-		}
-	}
+	object_count_ = 0;
+	
 	for (int i = 0; i < LAYER_MAX; i++){
 		for (auto it = objects_[i].begin(); it != objects_[i].end();){
 			if ((*it).second->this_delete()){
@@ -62,6 +65,12 @@ void ObjectManager::Update()
 			{
 				it++;
 			}
+		}
+	}
+	for (int i = 0; i < LAYER_MAX; i++){
+		for (auto it = objects_[i].begin(); it != objects_[i].end(); ++it){
+			(*it).second->Update();
+			object_count_++;
 		}
 	}
 }

@@ -20,7 +20,9 @@
 
 //-------------------------------------
 // variable
+//-------------------------------------
 std::list<Collision*> CollisionManager::collision_;
+int CollisionManager::collision_count_ = 0;
 
 
 //-------------------------------------
@@ -49,6 +51,8 @@ CollisionManager::~CollisionManager()
 //-------------------------------------
 void CollisionManager::Update()
 {
+	collision_count_ = 0;
+
 	//-------------------------------------
 	// 全要素を更新
 	for (auto it = collision_.begin(); it != collision_.end(); ++it){
@@ -60,6 +64,7 @@ void CollisionManager::Update()
 
 	for(auto it = collision_.begin(); it != collision_.end(); ++it){
 		(*it)->Update();
+		collision_count_++;
 	}
 
 

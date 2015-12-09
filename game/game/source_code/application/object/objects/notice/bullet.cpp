@@ -71,6 +71,9 @@ Bullet::Bullet(
 //-------------------------------------
 Bullet::~Bullet()
 {
+	if (collision_){
+		collision_->SetThisDelete(true);
+	}
 }
 
 
@@ -98,6 +101,7 @@ void Bullet::Update()
 		if (parameter_.position_.y_ < height){
 			this_delete_ = true;
 			collision_->SetThisDelete(true);
+			collision_ = nullptr;
 		}
 	}
 }

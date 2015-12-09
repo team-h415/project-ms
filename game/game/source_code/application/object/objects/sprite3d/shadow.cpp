@@ -83,7 +83,7 @@ void Shadow::Update()
 //-------------------------------------
 void Shadow::Draw()
 {
-	DWORD zfunc;
+//	DWORD zfunc;
 	LPDIRECT3DDEVICE9 device = DirectX9Holder::device_;
 
 	D3DXMATRIX world, scaling;
@@ -121,7 +121,7 @@ void Shadow::Draw()
 	device->GetRenderState(D3DRS_BLENDOP, &blendop);
 	device->GetRenderState(D3DRS_SRCBLEND, &srcblend);
 	device->GetRenderState(D3DRS_DESTBLEND, &destblend);
-	device->GetRenderState(D3DRS_ZFUNC, &zfunc);
+//	device->GetRenderState(D3DRS_ZFUNC, &zfunc);
 
 	//影用にレンダーステートを減算合成に変更する
 	device->SetRenderState(D3DRS_BLENDOP, D3DBLENDOP_REVSUBTRACT);
@@ -129,13 +129,13 @@ void Shadow::Draw()
 	device->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_ONE);
 
 	//Zバッファの設定を完全描画にする。
-	device->SetRenderState(D3DRS_ZFUNC, D3DCMP_ALWAYS);
+//	device->SetRenderState(D3DRS_ZFUNC, D3DCMP_ALWAYS);
 
 	// 描画
 	device->DrawPrimitive(D3DPT_TRIANGLESTRIP, 0, 2);
 
 	// 変更したレンダースレート修正
-	device->SetRenderState(D3DRS_ZFUNC, zfunc);
+//	device->SetRenderState(D3DRS_ZFUNC, zfunc);
 	device->SetRenderState(D3DRS_BLENDOP, blendop);
 	device->SetRenderState(D3DRS_SRCBLEND, srcblend);
 	device->SetRenderState(D3DRS_DESTBLEND, destblend);

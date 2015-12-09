@@ -21,13 +21,17 @@ public:
 	Fps();
 	virtual ~Fps();
 	bool CheckExecute();
+	static int GetFps(){
+		return fps_;
+	}
 private:
 	void Update();
 	DWORD execute_lasttime_;
 	DWORD fps_lasttime_;
 	DWORD current_time_;
 	DWORD frame_count_;
-	static const int fps_ = 60;
+	static int fps_;
+	static const  int frame_late_ = 60;
 };
 
 

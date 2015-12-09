@@ -62,9 +62,18 @@ public:
 	void Clear(
 		OBJECT_LAYER layer);
 
+	//-------------------------------------
+	// オブジェクトの数を数える
+	//-------------------------------------
+	// ObjectManager::GetCount();
+	static int GetCount(){
+		return object_count_;
+	}
+
 private:
 	bool Search(const std::string &name);
 	std::map<std::string, Object*> objects_[LAYER_MAX];
+	static int object_count_;
 };
 
 
