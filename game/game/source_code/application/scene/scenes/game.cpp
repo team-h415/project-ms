@@ -76,6 +76,16 @@ Game::Game()
 		"resource/effect/Damage3_2.efk",
 		water_param);
 
+	effect_manager_->Create(
+		"warp",
+		"resource/effect/Warp.efk",
+		water_param);
+
+	effect_manager_->Create(
+		"dead",
+		"resource/effect/Dead2.efk",
+		water_param);
+
 	//-------------------------------------
 	// メインカメラ
 	//-------------------------------------
@@ -551,6 +561,15 @@ void Game::Update()
 		}
 	}
 	if (GamePad::isTrigger(GAMEPAD_GRANDFATHER, PAD_BUTTON_7)){
+		// ワープエフェクト再生（移動前）
+		EFFECT_PARAMETER_DESC effect_param;
+		MyEffect *effect = effect_manager_->Get("warp");
+		effect_param = effect->parameter();
+		effect_param.position_ = grandfather_position;
+		effect_param.rotation_ = Vector3(0.0f, 0.0f, 0.0f);
+		effect->SetParameter(effect_param);
+		effect_manager_->Play("warp");
+
 		switch(stage_){
 		case 1:
 			grandfather_position = GRANDFATHER_POSITION_STAGE1;
@@ -565,6 +584,10 @@ void Game::Update()
 			grandfather_rotation.y_ = GRANDFATHER_ROTATION_STAGE3;
 			break;
 		}
+		// ワープエフェクト再生（移動後）
+		effect_param.position_ = grandfather_position;
+		effect->SetParameter(effect_param);
+		effect_manager_->Play("warp");
 	}
 
 	//-------------------------------------
@@ -880,6 +903,14 @@ void Game::Update()
 		child->PlayAnimation(FbxChild::DOWN);
 		child_death_ = true;
 		child_respawn_waittime_ = CHILD_RESPAWN_WAITTIME;
+		EFFECT_PARAMETER_DESC effect_param;
+		MyEffect *effect = effect_manager_->Get("dead");
+		effect_param = effect->parameter();
+		effect_param.position_ = child_position;
+		effect_param.rotation_ = Vector3(0.0f, 0.0f, 0.0f);
+		effect->SetParameter(effect_param);
+		effect_manager_->Play("dead");
+
 	}
 	else if (child_death_ && !child_respawn_waittime_){
 		child->PlayAnimation(FbxChild::IDLE);
