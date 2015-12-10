@@ -78,15 +78,16 @@ Game::Game()
 		water_param);
 
 	effect_manager_->Create(
-		"warp",
-		"resource/effect/Warp.efk",
-		water_param);
-
-	effect_manager_->Create(
 		"dead",
 		"resource/effect/Dead2.efk",
 		water_param);
 
+	effect_manager_->Create(
+		"smoke",
+		"resource/effect/Smoke.efk",
+		water_param);
+
+	
 	//-------------------------------------
 	// メインカメラ
 	//-------------------------------------
@@ -551,12 +552,12 @@ void Game::Update()
 	if (GamePad::isTrigger(GAMEPAD_GRANDFATHER, PAD_BUTTON_7)){
 		// ワープエフェクト再生（移動前）
 		EFFECT_PARAMETER_DESC effect_param;
-		MyEffect *effect = effect_manager_->Get("warp");
+		MyEffect *effect = effect_manager_->Get("smoke");
 		effect_param = effect->parameter();
 		effect_param.position_ = grandfather_position;
 		effect_param.rotation_ = Vector3(0.0f, 0.0f, 0.0f);
 		effect->SetParameter(effect_param);
-		effect_manager_->Play("warp");
+		effect_manager_->Play("smoke");
 
 		switch(stage_){
 		case 1:
@@ -575,7 +576,7 @@ void Game::Update()
 		// ワープエフェクト再生（移動後）
 		effect_param.position_ = grandfather_position;
 		effect->SetParameter(effect_param);
-		effect_manager_->Play("warp");
+		effect_manager_->Play("smoke");
 	}
 
 	//-------------------------------------
@@ -610,6 +611,36 @@ void Game::Update()
 			grandfather_rotation.y_ += D3DX_PI * 2.0f;
 		}
 	}
+	if (KeyBoard::isTrigger(DIK_3)){
+		// ワープエフェクト再生（移動前）
+		EFFECT_PARAMETER_DESC effect_param;
+		MyEffect *effect = effect_manager_->Get("smoke");
+		effect_param = effect->parameter();
+		effect_param.position_ = grandfather_position;
+		effect_param.rotation_ = { 0.0f, 0.0f, 0.0f };
+		effect->SetParameter(effect_param);
+		effect_manager_->Play("smoke");
+
+		switch (stage_){
+		case 1:
+			grandfather_position = GRANDFATHER_POSITION_STAGE1;
+			grandfather_rotation.y_ = GRANDFATHER_ROTATION_STAGE1;
+			break;
+		case 2:
+			grandfather_position = GRANDFATHER_POSITION_STAGE2;
+			grandfather_rotation.y_ = GRANDFATHER_ROTATION_STAGE2;
+			break;
+		case 3:
+			grandfather_position = GRANDFATHER_POSITION_STAGE3;
+			grandfather_rotation.y_ = GRANDFATHER_ROTATION_STAGE3;
+			break;
+		}
+		// ワープエフェクト再生（移動後）
+		effect_param.position_ = grandfather_position;
+		effect->SetParameter(effect_param);
+		effect_manager_->Play("smoke");
+	}
+
 
 #endif //_DEBUG
 
