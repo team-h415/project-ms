@@ -14,6 +14,7 @@
 #include "object.h"
 #include "object_factory.h"
 #include "objects/sprite/sprite2d.h"
+#include "objects/sprite/message.h"
 #include "objects/mesh/field.h"
 #include "objects/model/x_model.h"
 #include "objects/model/instancing_tree.h"
@@ -134,6 +135,12 @@ Object *ObjectFactory::Create(
 		object = new Sprite2D(parameter);
 		Sprite2D *sprite = dynamic_cast<Sprite2D*>(object);
 		sprite->SetTexture(object_path);
+	}
+
+	else if (param.layer_ == LAYER_MESSAGE){
+		object = new Message(parameter);
+		Message *message = dynamic_cast<Message*>(object);
+		message->SetTexture(object_path);
 	}
 
 /*
