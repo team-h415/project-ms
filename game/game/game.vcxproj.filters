@@ -292,6 +292,12 @@
     <ClCompile Include="source_code\application\object\objects\model\fbx\fbx_player.cpp">
       <Filter>source_code\application\object\objects\model\fbx</Filter>
     </ClCompile>
+    <ClCompile Include="source_code\application\object\objects\sprite3d\lake.cpp">
+      <Filter>source_code\application\object\objects\sprite3d</Filter>
+    </ClCompile>
+    <ClCompile Include="source_code\application\object\objects\sprite\message.cpp">
+      <Filter>source_code\application\object\objects\sprite</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source_code\main.h">
@@ -494,6 +500,12 @@
     </ClInclude>
     <ClInclude Include="source_code\application\object\objects\model\fbx\fbx_player.h">
       <Filter>source_code\application\object\objects\model\fbx</Filter>
+    </ClInclude>
+    <ClInclude Include="source_code\application\object\objects\sprite3d\lake.h">
+      <Filter>source_code\application\object\objects\sprite3d</Filter>
+    </ClInclude>
+    <ClInclude Include="source_code\application\object\objects\sprite\message.h">
+      <Filter>source_code\application\object\objects\sprite</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

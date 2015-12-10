@@ -116,8 +116,10 @@
     <ClCompile Include="source_code\application\object\objects\model\x\x_fort.cpp" />
     <ClCompile Include="source_code\application\object\objects\model\x_model.cpp" />
     <ClCompile Include="source_code\application\object\objects\notice\bullet.cpp" />
+    <ClCompile Include="source_code\application\object\objects\sprite3d\lake.cpp" />
     <ClCompile Include="source_code\application\object\objects\sprite3d\shadow.cpp" />
     <ClCompile Include="source_code\application\object\objects\sprite\damage_effect.cpp" />
+    <ClCompile Include="source_code\application\object\objects\sprite\message.cpp" />
     <ClCompile Include="source_code\application\object\objects\sprite\number.cpp" />
     <ClCompile Include="source_code\application\object\objects\sprite\sprite2d.cpp" />
     <ClCompile Include="source_code\application\object\objects\sprite\timer.cpp" />
@@ -184,8 +186,10 @@
     <ClInclude Include="source_code\application\object\objects\model\x\x_fort.h" />
     <ClInclude Include="source_code\application\object\objects\model\x_model.h" />
     <ClInclude Include="source_code\application\object\objects\notice\bullet.h" />
+    <ClInclude Include="source_code\application\object\objects\sprite3d\lake.h" />
     <ClInclude Include="source_code\application\object\objects\sprite3d\shadow.h" />
     <ClInclude Include="source_code\application\object\objects\sprite\damage_effect.h" />
+    <ClInclude Include="source_code\application\object\objects\sprite\message.h" />
     <ClInclude Include="source_code\application\object\objects\sprite\number.h" />
     <ClInclude Include="source_code\application\object\objects\sprite\sprite2d.h" />
     <ClInclude Include="source_code\application\object\objects\sprite\timer.h" />

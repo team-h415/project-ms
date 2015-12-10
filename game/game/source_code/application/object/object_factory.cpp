@@ -18,6 +18,7 @@
 #include "objects/model/x_model.h"
 #include "objects/model/instancing_tree.h"
 #include "objects/sprite3d/shadow.h"
+#include "objects/sprite3d/lake.h"
 #include "objects/model/fbx_model.h"
 #include "objects/sprite/timer.h"
 #include "objects/sprite/water_gage.h"
@@ -70,6 +71,10 @@ Object *ObjectFactory::Create(
 
 	else if(param.layer_ == LAYER_SHADOW){
 		object = new Shadow(parameter);
+	}
+
+	else if (param.layer_ == LAYER_SPRITE_LAKE){
+		object = new Lake(parameter);
 	}
 
 	else{

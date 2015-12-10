@@ -67,6 +67,7 @@ void MyEffect::Update(
 	manager->SetSpeed(
 		handle_,
 		parameter_.speed_);
+
 }
 
 

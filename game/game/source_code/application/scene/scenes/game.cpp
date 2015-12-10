@@ -8,6 +8,7 @@
 // include
 //-------------------------------------
 #include "../../../common/common.h"
+#include "../../fps/fps.h"
 #include "../../render/renderer.h"
 #include "../../render/directx9/directx9.h"
 #include "../../render/directx9/directx9_holder.h"
@@ -52,7 +53,7 @@ Game::Game()
 	//-------------------------------------
 	camera_manager_ = new CameraManager;
 	object_manager_ = new ObjectManager;
-	effect_manager_ = new EffectManager(5000);
+	effect_manager_ = new EffectManager(10000);
 	collision_manager_ = new CollisionManager;
 	font1_ = new DebugFont;
 	font2_ = new DebugFont;
@@ -103,7 +104,7 @@ Game::Game()
 	camera_param.rotation_ = { 0.0f, 0.0f, 0.0f };
 	camera_param.up_ = { 0.0f, 1.0f, 0.0f };
 	camera_param.near_ = 0.1f;
-	camera_param.far_ = 100000.0f;
+	camera_param.far_ = 800.0f;
 	camera_pos_len_ = CAMERA_POS_LEN;
 
 	camera_manager_->Create(
@@ -143,6 +144,19 @@ Game::Game()
 		"skydome_bottom",
 		param,
 		"resource/mesh/skydome_bottom.txt");
+
+
+	//-------------------------------------
+	// 池
+	//-------------------------------------
+	param.position_ = { 0.0f, -0.5f, 0.0f };
+	param.rotation_ = { 0.0f, 0.0f, 0.0f };
+	param.scaling_ = { 30.0f, 1.0f, 30.0f };
+	param.layer_ = LAYER_SPRITE_LAKE;
+
+	object_manager_->Create(
+		"lake",
+		param);
 
 	//-------------------------------------
 	// 砦
@@ -233,7 +247,7 @@ Game::Game()
 	//-------------------------------------
 	OBJECT_PARAMETER_DESC grandfather_param;
 	grandfather_param.layer_ = LAYER_MODEL_GRANDFATHER;
-	grandfather_param.position_ = { 1.0f, 0.0f, 0.0f };
+	grandfather_param.position_ = GRANDFATHER_POSITION_STAGE1;
 	grandfather_param.rotation_ = { 0.0f, 0.0f, 0.0f };
 	grandfather_param.scaling_ = { 1.0f, 1.0f, 1.0f };
 
@@ -258,7 +272,7 @@ Game::Game()
 	//-------------------------------------
 	OBJECT_PARAMETER_DESC child_param;
 	child_param.layer_ = LAYER_MODEL_CHILD;
-	child_param.position_ = { -1.0f, 0.0f, 0.0f };
+	child_param.position_ = CHILD_POSITION1;
 	child_param.rotation_ = { 0.0f, 0.0f, 0.0f };
 	child_param.scaling_ = { 1.0f, 1.0f, 1.0f };
 
@@ -508,6 +522,7 @@ void Game::Update()
 
 	static const float player_speed_value = 0.05f;
 	static int bullet_count = 0;
+	static int shot_late = 0;
 	static D3DXVECTOR3 fort_underground(0.0f, 0.0f, 0.0f);
 	float player_speed = player_speed_value;
 	float father_life = grandfather->GetLife();
@@ -517,7 +532,6 @@ void Game::Update()
 	float fort1_life = fort1->GetLife();
 	float fort2_life = fort2->GetLife();
 	float fort3_life = fort3->GetLife();
-
 
 	//-------------------------------------
 	// ゲームステージデバッグ
@@ -733,7 +747,8 @@ void Game::Update()
 		grandfather_position.y_,
 		grandfather_position.z_);
 	grandfather_position.y_ = field->GetHeight(grandfather_pos);
-	if (grandfather_position.y_ > 0.5f){
+	if (grandfather_position.y_ > 0.5f ||
+		grandfather_position.y_ < -0.5f){
 		grandfather_position = grandfather_prevposition;
 	}
 	
@@ -847,8 +862,11 @@ void Game::Update()
 	//-------------------------------------
 	// 弾発射
 	//-------------------------------------
+	shot_late--;
+	shot_late = std::max<int>(shot_late, 0);
 	if (GamePad::isPress(GAMEPAD_GRANDFATHER, PAD_BUTTON_8) &&
-		father_watergauge > 0){
+		father_watergauge > 0 &&
+		shot_late == 0){
 		EFFECT_PARAMETER_DESC effect_param;
 		MyEffect *effect = effect_manager_->Get("water");
 		effect_param = effect->parameter();
@@ -883,6 +901,8 @@ void Game::Update()
 		father_watergauge = std::max<float>(father_watergauge, 0.0f);
 		grandfather->SetWaterGauge(father_watergauge);
 		waterGage->SetChangeValue(father_watergauge);
+
+		shot_late = 10;
 
 	}
 #ifdef _DEBUG
@@ -1007,6 +1027,7 @@ void Game::Update()
 
 	font1_->Add("シーン名:");
 	font1_->Add("Game\n");
+	font1_->Add("FPS : %d\n", Fps::GetFps());
 	font1_->Add("STAGE : %d\n", stage_);
 	font1_->Add("LIFE(GrandFather) : %3.2f\n", father_life);
 	font1_->Add("LIFE(Child)       : %3.2f\n", child_life);
@@ -1016,7 +1037,9 @@ void Game::Update()
 		grandfather_position.x_, grandfather_position.y_, grandfather_position.z_);
 	font1_->Add("ROTATION(Grandfather) : %3.2f %3.2f %3.2f\n",
 		grandfather_rotation.x_, grandfather_rotation.y_, grandfather_rotation.z_);
-
+	font1_->Add("OBJECT : %d\n", ObjectManager::GetCount());
+	font1_->Add("EFFECT : %d\n", EffectManager::GetCount());
+	font1_->Add("COLLISION : %d\n", CollisionManager::GetCount());
 
 	font2_->Add("----------操作説明----------\n");
 	font2_->Add("【ゲームパッド使用時】\n");

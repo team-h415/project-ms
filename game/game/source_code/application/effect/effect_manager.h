@@ -33,12 +33,17 @@ public:
 		const std::string &name);
 	MyEffect *Get(
 		const std::string &name);
+	static int GetCount(){
+		return effect_count_;
+	}
+
 private:
 	void SetViewMatrix();
 	void SetProjectionMatrix();
 	EffekseerRenderer::Renderer *renderer_;
 	Effekseer::Manager *manager_;
 	std::map<std::string, MyEffect*> effects_;
+	static int effect_count_;
 };
 
 

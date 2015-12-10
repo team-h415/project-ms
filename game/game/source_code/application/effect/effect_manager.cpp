@@ -17,6 +17,12 @@
 
 
 //-------------------------------------
+// variable
+//-------------------------------------
+int EffectManager::effect_count_ = 0;
+
+
+//-------------------------------------
 // EffectManager()
 //-------------------------------------
 EffectManager::EffectManager(
@@ -51,6 +57,7 @@ EffectManager::EffectManager(
 //-------------------------------------
 EffectManager::~EffectManager()
 {
+	manager_->StopAllEffects();
 	for (auto it = effects_.begin(); it != effects_.end(); ++it){
 		SAFE_DELETE((*it).second);
 	}
@@ -71,6 +78,7 @@ void EffectManager::Update()
 		(*it).second->Update(manager_);
 	}
 	manager_->Update();
+	effect_count_ = effects_.size();
 }
 
 

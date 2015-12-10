@@ -90,6 +90,12 @@ Bullet::Bullet(
 //-------------------------------------
 Bullet::~Bullet()
 {
+	if (collision_){
+		collision_->SetThisDelete(true);
+	}
+	if (xmodel_){
+		xmodel_->SetThisDelete(true);
+	}
 }
 
 
@@ -121,6 +127,8 @@ void Bullet::Update()
 			this_delete_ = true;
 			collision_->SetThisDelete(true);
 			xmodel_->SetThisDelete(true);
+			collision_ = nullptr;
+			xmodel_ = nullptr;
 		}
 	}
 }
@@ -185,9 +193,6 @@ void Bullet::Action(
 				Game *game = dynamic_cast<Game*>(scene);
 
 				//-------------------------------------
-
-
-
 				// シーンからエフェクト取得
 				EFFECT_PARAMETER_DESC effect_param;
 				MyEffect *effect = game->effect_manager()->Get("damage");
@@ -204,6 +209,8 @@ void Bullet::Action(
 			this_delete_ = true;
 			xmodel_->SetThisDelete(true);
 			collision_->SetThisDelete(true);
+			collision_ = nullptr;
+			xmodel_ = nullptr;
 		}
 	}
 }
