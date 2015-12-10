@@ -30,6 +30,7 @@
 #include "../../effect/effect.h"
 #include "../../effect/effect_manager.h"
 #include "../../object/objects/sprite/water_gage.h"
+#include "../../object/objects/sprite/fort_gauge_manager.h"
 #include "../../camera/camera.h"
 #include "../../camera/camera_manager.h"
 #include "../../collision/collision.h"
@@ -301,8 +302,22 @@ Game::Game()
     fort_state_param.layer_ = LAYER_SPRITE_2D;
 
     object_manager_->Create(
-        "fort_state", fort_state_param,
-        "resource/texture/title/logo.png");
+        "fort_state", fort_state_param);
+
+
+    OBJECT_PARAMETER_DESC fort_gauge_param;
+    fort_gauge_param.position_ = {
+        SCREEN_WIDTH * 0.5f,
+        100.0f,
+        0.0f
+    };
+    fort_gauge_param.rotation_ = { 0.0f, 0.0f, 0.0f };
+    fort_gauge_param.scaling_ = { 40.0f, 40.0f, 0.0f };
+    fort_gauge_param.layer_ = LAYER_FORT_GAUGE;
+
+    object_manager_->Create(
+        "fort_gauge_manager", fort_gauge_param,
+        "resource/texture/game/Child_01.jpg");
 
 
 	//-------------------------------------
@@ -483,6 +498,8 @@ void Game::Update()
 		object_manager_->Get("water_gage"));
 	DamageEffect *damage_effect = dynamic_cast<DamageEffect*>(
 		object_manager_->Get("damage_effect"));
+    FortGaugeManager *fort_gauge_manager = dynamic_cast<FortGaugeManager*>(
+        object_manager_->Get("fort_gauge_manager"));
 	XFort *fort1 = dynamic_cast<XFort*>(fort1_object);
 	XFort *fort2 = dynamic_cast<XFort*>(fort2_object);
 	XFort *fort3 = dynamic_cast<XFort*>(fort3_object);
@@ -833,6 +850,33 @@ void Game::Update()
 	}
 #endif //_DEBUG
 
+#ifdef _DEBUG
+    //-------------------------------------
+    // 砦ゲージの変動
+    //-------------------------------------
+    if (KeyBoard::isTrigger(DIK_1))
+        fort_gauge_manager->SetFortLife(0 , 0.1f);
+    else if (KeyBoard::isTrigger(DIK_2))
+        fort_gauge_manager->SetFortLife(0 , 0.2f);
+    else if (KeyBoard::isTrigger(DIK_3))
+        fort_gauge_manager->SetFortLife(0, 0.3f);
+    else if (KeyBoard::isTrigger(DIK_4))
+        fort_gauge_manager->SetFortLife(0, 0.4f);
+    else if (KeyBoard::isTrigger(DIK_5))
+        fort_gauge_manager->SetFortLife(0, 0.5f);
+    else if (KeyBoard::isTrigger(DIK_6))
+        fort_gauge_manager->SetFortLife(0, 0.6f);
+    else if (KeyBoard::isTrigger(DIK_7))
+        fort_gauge_manager->SetFortLife(0, 0.7f);
+    else if (KeyBoard::isTrigger(DIK_8))
+        fort_gauge_manager->SetFortLife(0, 0.8f);
+    else if (KeyBoard::isTrigger(DIK_9))
+        fort_gauge_manager->SetFortLife(0, 0.9f);
+    else if (KeyBoard::isTrigger(DIK_0))
+        fort_gauge_manager->SetFortLife(0, 0.0f);
+    else if (KeyBoard::isTrigger(DIK_L))
+        fort_gauge_manager->SetFortLife(0, 1.0f);
+#endif //_DEBUG
 	//-------------------------------------
 	// アニメーション制御
 	//-------------------------------------

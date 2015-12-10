@@ -118,6 +118,8 @@
     <ClCompile Include="source_code\application\object\objects\notice\bullet.cpp" />
     <ClCompile Include="source_code\application\object\objects\sprite3d\shadow.cpp" />
     <ClCompile Include="source_code\application\object\objects\sprite\damage_effect.cpp" />
+    <ClCompile Include="source_code\application\object\objects\sprite\fort_gage.cpp" />
+    <ClCompile Include="source_code\application\object\objects\sprite\fort_gauge_manager.cpp" />
     <ClCompile Include="source_code\application\object\objects\sprite\number.cpp" />
     <ClCompile Include="source_code\application\object\objects\sprite\sprite2d.cpp" />
     <ClCompile Include="source_code\application\object\objects\sprite\timer.cpp" />
@@ -186,6 +188,8 @@
     <ClInclude Include="source_code\application\object\objects\notice\bullet.h" />
     <ClInclude Include="source_code\application\object\objects\sprite3d\shadow.h" />
     <ClInclude Include="source_code\application\object\objects\sprite\damage_effect.h" />
+    <ClInclude Include="source_code\application\object\objects\sprite\fort_gage.h" />
+    <ClInclude Include="source_code\application\object\objects\sprite\fort_gauge_manager.h" />
     <ClInclude Include="source_code\application\object\objects\sprite\number.h" />
     <ClInclude Include="source_code\application\object\objects\sprite\sprite2d.h" />
     <ClInclude Include="source_code\application\object\objects\sprite\timer.h" />

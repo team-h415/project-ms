@@ -23,6 +23,7 @@
 #include "objects/sprite/water_gage.h"
 #include "objects/sprite/damage_effect.h"
 #include "objects/model/fbx/fbx_player.h"
+#include "objects/sprite/fort_gauge_manager.h"
 #include "objects/model/fbx/fbx_grandfather.h"
 #include "objects/model/fbx/fbx_child.h"
 #include "objects/notice/bullet.h"
@@ -125,16 +126,17 @@ Object *ObjectFactory::Create(
         sprite->SetTexture(object_path);
     }
 
+    else if (param.layer_ == LAYER_FORT_GAUGE){
+        object = new FortGaugeManager(parameter);
+        FortGaugeManager *fort_sprite = dynamic_cast<FortGaugeManager*>(object);
+        fort_sprite->SetTexture(object_path);
+    }
+
 	else if (param.layer_ == LAYER_SPRITE_2D){
 		object = new Sprite2D(parameter);
 		Sprite2D *sprite = dynamic_cast<Sprite2D*>(object);
 		sprite->SetTexture(object_path);
 	}
-
-/*
-    else if (param.layer_ == LAYER_WATER_GAGE){
-        object = new WaterGage(parameter);
-    }*/
 
 	else{
 		ASSERT_ERROR("無効なオブジェクト生成カテゴリです");
