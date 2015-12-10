@@ -76,6 +76,8 @@ public:
 		return this_delete_;
 	}
 
+	void SetThisDelete(bool flag){ this_delete_ = flag; }
+
 	// ƒpƒ‰ƒ[ƒ^İ’è
 	void SetPosition(
 		const Vector3 &position){

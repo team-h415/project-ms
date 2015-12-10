@@ -31,7 +31,7 @@ XModel::XModel(
 	material_buffer_ = NULL;
 	shader_ = nullptr;
 	shader_ = new Shader("resource/shader/halflambert_lighting.hlsl");
-	texture_ = TextureManager::GetTexture("resource/texture/game/flag.png");
+	texture_ = NULL;
 }
 
 
@@ -127,7 +127,6 @@ void XModel::Draw()
 
 	DirectX9Holder::device_->SetMaterial(&default_material);
 
-
 	DirectX9Holder::device_->SetVertexShader(NULL);
 	DirectX9Holder::device_->SetPixelShader(NULL);
 	DirectX9Holder::device_->SetRenderState(D3DRS_ALPHATESTENABLE, FALSE);
@@ -167,6 +166,18 @@ void XModel::Action(
 	//	vec *= sub;
 	//	parameter_.position_ -= vec;
 	//}
+}
+
+
+
+//-------------------------------------
+// SetTexture()
+//-------------------------------------
+void XModel::SetTexture(
+	const std::string &path)
+{
+	//LoadTexture
+	texture_ = TextureManager::GetTexture(path.c_str());
 }
 
 

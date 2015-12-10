@@ -16,6 +16,8 @@
 // class
 //-------------------------------------
 class Collision;
+class XModel;
+class MyEffect;
 class Bullet : public Object
 {
 public:
@@ -27,9 +29,13 @@ public:
 	void Action(
 		Object *target,
 		const float range);
+
+	static void Init(){ bullet_num_ = 0; }
 private:
 	Collision *collision_;
 	D3DXVECTOR3 speed_;
+	XModel *xmodel_;
+	static int bullet_num_;
 };
 
 

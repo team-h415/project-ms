@@ -39,6 +39,7 @@
 #include "../../config/config.h"
 #include "game.h"
 #include "../fade/fade.h"
+#include "../../object/objects/notice/bullet.h"
 
 
 //-------------------------------------
@@ -55,6 +56,7 @@ Game::Game()
 	collision_manager_ = new CollisionManager;
 	font1_ = new DebugFont;
 	font2_ = new DebugFont;
+	Bullet::Init();
 
 	//-------------------------------------
 	// エフェクトの読み込み
@@ -786,7 +788,7 @@ void Game::Update()
 		MyEffect *effect = effect_manager_->Get("water");
 		effect_param = effect->parameter();
 		effect_param.position_ = grandfather_position;
-		effect_param.position_.y_ += 0.5f;
+		effect_param.position_.y_ += 0.6f;
 		effect_param.rotation_ = grandfather_rotation;
 		effect->SetParameter(effect_param);
 		effect_manager_->Play("water");
@@ -796,6 +798,7 @@ void Game::Update()
 		bullet_param.layer_ = LAYER_BULLET;
 		bullet_param.parent_layer_ = LAYER_MODEL_GRANDFATHER;
 		bullet_param.position_ = grandfather_position;
+		bullet_param.position_.y_ += 0.6f;
 		bullet_param.rotation_ = grandfather_rotation;
 
 		// カメラの回転Xを利用
@@ -823,7 +826,7 @@ void Game::Update()
 		MyEffect *effect = effect_manager_->Get("water");
 		effect_param = effect->parameter();
 		effect_param.position_ = grandfather_position;
-		effect_param.position_.y_ += 0.5f;
+		effect_param.position_.y_ += 0.6f;
 		effect_param.rotation_ = grandfather_rotation;
 		effect->SetParameter(effect_param);
 		effect_manager_->Play("water");
@@ -832,6 +835,7 @@ void Game::Update()
 		bullet_param.layer_ = LAYER_BULLET;
 		bullet_param.parent_layer_ = LAYER_MODEL_GRANDFATHER;
 		bullet_param.position_ = grandfather_position;
+		bullet_param.position_.y_ += 0.6f;
 		bullet_param.rotation_ = grandfather_rotation;
 		bullet_param.scaling_ = {1.0f, 1.0f, 1.0f};
 

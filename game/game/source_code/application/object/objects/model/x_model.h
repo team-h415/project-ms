@@ -28,6 +28,9 @@ public:
 	virtual void Action(
 		Object *target,
 		const float range);
+	void SetTexture(
+		const std::string &path);
+
 protected:
 	LPD3DXMESH mesh_;
 	LPD3DXBUFFER material_buffer_;
