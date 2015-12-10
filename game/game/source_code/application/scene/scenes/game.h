@@ -67,6 +67,8 @@ private:
 	bool child_death_;
 	// 子供リスポーンタイマー
 	int child_respawn_waittime_;
+	// ダッシュエフェクトタイマー
+	int dash_effect_timer_;
 
 };
 

@@ -87,7 +87,11 @@ Game::Game()
 		"resource/effect/Smoke.efk",
 		water_param);
 
-	
+	effect_manager_->Create(
+		"dash",
+		"resource/effect/Dash.efk",
+		water_param);
+
 	//-------------------------------------
 	// メインカメラ
 	//-------------------------------------
@@ -440,6 +444,8 @@ Game::Game()
 	child_death_ = false;
 	// 子供リスポーン待ち時間
 	child_respawn_waittime_ = 0;
+	// ダッシュエフェクトタイマー初期化
+	dash_effect_timer_ = 0;
 	//-------------------------------------
 	// 影
 	//-------------------------------------
@@ -528,8 +534,21 @@ void Game::Update()
 	// プレイヤー移動処理
 	//-------------------------------------
 	if (GamePad::isPress(GAMEPAD_GRANDFATHER, PAD_BUTTON_11)){
+
 		player_speed = player_speed_value * 2.0f;
+		// ダッシュエフェクト
+		if (dash_effect_timer_ % 10 == 0){
+			EFFECT_PARAMETER_DESC effect_param;
+			MyEffect *effect = effect_manager_->Get("dash");
+			effect_param = effect->parameter();
+			effect_param.position_ = grandfather_position;
+			effect_param.rotation_ = { 0.0f, 0.0f, 0.0f };
+			effect->SetParameter(effect_param);
+			effect_manager_->Play("dash");
+		}
+		dash_effect_timer_++;
 	}
+	else{ dash_effect_timer_ = 0; }
 	grandfather_position.x_ += (
 		cosf(grandfather_rotation.y_) * GamePad::isStick(GAMEPAD_GRANDFATHER).lsx_ +
 		sinf(-grandfather_rotation.y_) * GamePad::isStick(GAMEPAD_GRANDFATHER).lsy_) * player_speed;
@@ -583,6 +602,21 @@ void Game::Update()
 	// デバッグ時のプレイヤー操作
 	//-------------------------------------
 #ifdef _DEBUG
+	if (KeyBoard::isPress(DIK_Z)){
+		player_speed = player_speed_value * 2.0f;
+		// ダッシュエフェクト
+		if (dash_effect_timer_ % 10 == 0){
+			EFFECT_PARAMETER_DESC effect_param;
+			MyEffect *effect = effect_manager_->Get("dash");
+			effect_param = effect->parameter();
+			effect_param.position_ = grandfather_position;
+			effect_param.rotation_ = { 0.0f, 0.0f, 0.0f };
+			effect->SetParameter(effect_param);
+			effect_manager_->Play("dash");
+		}
+		dash_effect_timer_++;
+	}
+	else{ dash_effect_timer_ = 0; }
 	if (KeyBoard::isPress(DIK_W)){
 		grandfather_position.x_ += sinf(grandfather_rotation.y_) * player_speed;
 		grandfather_position.z_ += cosf(grandfather_rotation.y_) * player_speed;
