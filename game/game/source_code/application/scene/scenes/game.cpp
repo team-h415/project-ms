@@ -52,7 +52,7 @@ Game::Game()
 	//-------------------------------------
 	camera_manager_ = new CameraManager;
 	object_manager_ = new ObjectManager;
-	effect_manager_ = new EffectManager(20);
+	effect_manager_ = new EffectManager(10000);
 	collision_manager_ = new CollisionManager;
 	font1_ = new DebugFont;
 	font2_ = new DebugFont;
@@ -97,7 +97,7 @@ Game::Game()
 	camera_param.rotation_ = { 0.0f, 0.0f, 0.0f };
 	camera_param.up_ = { 0.0f, 1.0f, 0.0f };
 	camera_param.near_ = 0.1f;
-	camera_param.far_ = 500.0f;
+	camera_param.far_ = 800.0f;
 	camera_pos_len_ = CAMERA_POS_LEN;
 
 	camera_manager_->Create(
