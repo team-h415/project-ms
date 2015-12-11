@@ -144,7 +144,6 @@ Object *ObjectFactory::Create(
 		sprite->SetTexture(object_path);
 	}
 
-<<<<<<< HEAD
 	else if (param.layer_ == LAYER_MESSAGE){
 		object = new Message(parameter);
 		Message *message = dynamic_cast<Message*>(object);
@@ -156,8 +155,6 @@ Object *ObjectFactory::Create(
         object = new WaterGage(parameter);
     }*/
 
-=======
->>>>>>> origin/rockman
 	else{
 		ASSERT_ERROR("無効なオブジェクト生成カテゴリです");
 	}
