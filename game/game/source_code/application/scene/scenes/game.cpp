@@ -91,6 +91,11 @@ Game::Game()
 		water_param);
 
 	effect_manager_->Create(
+		"smoke2",
+		"resource/effect/Smoke2.efk",
+		water_param);
+
+	effect_manager_->Create(
 		"dash",
 		"resource/effect/Dash.efk",
 		water_param);
@@ -820,6 +825,40 @@ void Game::Update()
 	grandfather_object->SetRotation(grandfather_rotation);
 	child_object->SetPosition(child_position);
 
+
+	//-------------------------------------
+	// 砦にとりあえずエフェクトだす
+	//-------------------------------------
+	if (fort_underground.x != 0.0f && fort_underground.x != -3.0f){
+		EFFECT_PARAMETER_DESC effect_param;
+		MyEffect *effect = effect_manager_->Get("smoke2");
+		effect_param = effect->parameter();
+		effect_param.position_ = { fort1_pos.x, field->GetHeight(fort1_pos), fort1_pos.z };
+		effect_param.rotation_ = { 0.0f, 0.0f, 0.0f };
+		effect->SetParameter(effect_param);
+		effect_manager_->Play("smoke2");
+	}
+	
+	if (fort_underground.y != 0.0f && fort_underground.y != -3.0f){
+		EFFECT_PARAMETER_DESC effect_param;
+		MyEffect *effect = effect_manager_->Get("smoke2");
+		effect_param = effect->parameter();
+		effect_param.position_ = { fort2_pos.x, field->GetHeight(fort2_pos), fort2_pos.z };
+		effect_param.rotation_ = { 0.0f, 0.0f, 0.0f };
+		effect->SetParameter(effect_param);
+		effect_manager_->Play("smoke2");
+	}
+
+	if (fort_underground.z != 0.0f && fort_underground.z != -3.0f){
+		EFFECT_PARAMETER_DESC effect_param;
+		MyEffect *effect = effect_manager_->Get("smoke2");
+		effect_param = effect->parameter();
+		effect_param.position_ = { fort3_pos.x, field->GetHeight(fort3_pos), fort3_pos.z };
+		effect_param.rotation_ = { 0.0f, 0.0f, 0.0f };
+		effect->SetParameter(effect_param);
+		effect_manager_->Play("smoke2");
+	}
+
 	//-------------------------------------
 	// カメラ追従
 	//-------------------------------------
@@ -844,7 +883,7 @@ void Game::Update()
 			camera_rotation.x = CAMERA_ROT_X_LIMIT;
 		}
 	}
-
+	// カメラ切り替えテスト
 	if (KeyBoard::isPress(DIK_4)){
 		use_camera_name_ = "MainCamera";
 	}
