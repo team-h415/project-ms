@@ -964,33 +964,6 @@ void Game::Update()
 	}
 #endif //_DEBUG
 
-#ifdef _DEBUG
-    //-------------------------------------
-    // 砦ゲージの変動
-    //-------------------------------------
-    if (KeyBoard::isTrigger(DIK_1))
-        fort_gauge_manager->SetFortLife(0 , 0.1f);
-    else if (KeyBoard::isTrigger(DIK_2))
-        fort_gauge_manager->SetFortLife(0 , 0.2f);
-    else if (KeyBoard::isTrigger(DIK_3))
-        fort_gauge_manager->SetFortLife(0, 0.3f);
-    else if (KeyBoard::isTrigger(DIK_4))
-        fort_gauge_manager->SetFortLife(0, 0.4f);
-    else if (KeyBoard::isTrigger(DIK_5))
-        fort_gauge_manager->SetFortLife(0, 0.5f);
-    else if (KeyBoard::isTrigger(DIK_6))
-        fort_gauge_manager->SetFortLife(0, 0.6f);
-    else if (KeyBoard::isTrigger(DIK_7))
-        fort_gauge_manager->SetFortLife(0, 0.7f);
-    else if (KeyBoard::isTrigger(DIK_8))
-        fort_gauge_manager->SetFortLife(0, 0.8f);
-    else if (KeyBoard::isTrigger(DIK_9))
-        fort_gauge_manager->SetFortLife(0, 0.9f);
-    else if (KeyBoard::isTrigger(DIK_0))
-        fort_gauge_manager->SetFortLife(0, 0.0f);
-    else if (KeyBoard::isTrigger(DIK_L))
-        fort_gauge_manager->SetFortLife(0, 1.0f);
-#endif //_DEBUG
 	//-------------------------------------
 	// アニメーション制御
 	//-------------------------------------

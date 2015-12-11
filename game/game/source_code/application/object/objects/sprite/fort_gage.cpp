@@ -24,12 +24,14 @@ FortGage::FortGage(
     const OBJECT_PARAMETER_DESC &parameter)
 {
     parameter_ = parameter;
+    state_mode_ = ALIVE;
     vertex_ = new Vertex2D[4];
+    life_ = 1.0f;
     gauge_uv_y_ = 0.0f;
     CalculateVertex();
-    gauge_position_y_ = vertex_[0].position_.y;
-    min_position_y_ = vertex_[0].position_.y;
-    max_position_y_ = vertex_[2].position_.y;
+    origin_top_vertex_y_ = vertex_[0].position_.y;
+    min_top_vertex_y_ = vertex_[0].position_.y;
+    max_top_vertex_y_ = vertex_[2].position_.y;
 }
 
 
@@ -42,17 +44,29 @@ FortGage::~FortGage()
     texture_ = NULL;
 }
 
+
 //-------------------------------------
-// Update
+// Init()
 //-------------------------------------
-void FortGage::Update()
+void FortGage::Init()
 {
     CalculateVertex();
 }
 
+//-------------------------------------
+// Update()
+//-------------------------------------
+void FortGage::Update()
+{
+    if (life_ > 0.0f)
+        state_mode_ = ALIVE;
+    else
+        state_mode_ = DEAD;
+}
+
 
 //-------------------------------------
-// Draw
+// Draw()
 //-------------------------------------
 void FortGage::Draw()
 {
@@ -117,8 +131,8 @@ void FortGage::CalculateVertex()
     vertex_[2].diffuse_ = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
     vertex_[3].diffuse_ = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
 
-    vertex_[0].texture_ = { 0.0f, gauge_uv_y_ };
-    vertex_[1].texture_ = { 1.0f, gauge_uv_y_ };
+    vertex_[0].texture_ = { 0.0f, 0.0f };
+    vertex_[1].texture_ = { 1.0f, 0.0f };
     vertex_[2].texture_ = { 0.0f, 1.0f };
     vertex_[3].texture_ = { 1.0f, 1.0f };
 }
@@ -138,10 +152,10 @@ void FortGage::AddGauge(const float value)
     vertex_[0].position_.y += add_pos_value;
     vertex_[1].position_.y += add_pos_value;
 
-    vertex_[0].position_.y = std::min<float>(vertex_[0].position_.y , max_position_y_);
-    vertex_[0].position_.y = std::max<float>(vertex_[0].position_.y, min_position_y_);
-    vertex_[1].position_.y = std::min<float>(vertex_[1].position_.y, max_position_y_);
-    vertex_[1].position_.y = std::max<float>(vertex_[1].position_.y, min_position_y_);
+    vertex_[0].position_.y = std::min<float>(vertex_[0].position_.y, max_top_vertex_y_);
+    vertex_[0].position_.y = std::max<float>(vertex_[0].position_.y, min_top_vertex_y_);
+    vertex_[1].position_.y = std::min<float>(vertex_[1].position_.y, max_top_vertex_y_);
+    vertex_[1].position_.y = std::max<float>(vertex_[1].position_.y, min_top_vertex_y_);
 
     vertex_[0].texture_ = { 0.0f, gauge_uv_y_ };
     vertex_[1].texture_ = { 1.0f, gauge_uv_y_ };
@@ -154,12 +168,12 @@ void FortGage::AddGauge(const float value)
 //-------------------------------------
 void FortGage::SetGauge(const float life)
 {
-
+    life_= life;
     gauge_uv_y_ = life - 1.0f;
     gauge_uv_y_ = abs(gauge_uv_y_);
 
-    vertex_[0].position_.y = gauge_position_y_ + parameter_.scaling_.y_ * gauge_uv_y_;
-    vertex_[1].position_.y = gauge_position_y_ + parameter_.scaling_.y_ * gauge_uv_y_;
+    vertex_[0].position_.y = origin_top_vertex_y_ + parameter_.scaling_.y_ * gauge_uv_y_;
+    vertex_[1].position_.y = origin_top_vertex_y_ + parameter_.scaling_.y_ * gauge_uv_y_;
 
     vertex_[0].texture_ = { 0.0f, gauge_uv_y_ };
     vertex_[1].texture_ = { 1.0f, gauge_uv_y_ };
