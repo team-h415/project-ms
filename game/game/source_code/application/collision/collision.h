@@ -51,6 +51,7 @@ public:
 	void CalculateVertex();
 	void Update();
 	void Draw();
+	bool GetThisDelete(void){ return this_delete_; }
 	void SetThisDelete(bool flag){
 		this_delete_ = flag;
 	}
