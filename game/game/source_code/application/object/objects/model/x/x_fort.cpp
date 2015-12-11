@@ -27,11 +27,11 @@ XFort::XFort(
 	const OBJECT_PARAMETER_DESC &parameter) :
 	XModel(parameter)
 {
-
 	//-------------------------------------
 	// ƒpƒ‰ƒ[ƒ^‰Šú‰»
 	life_ = 0.0f;
 
+	SetTexture("resource/texture/game/flag.png");
 }
 
 
