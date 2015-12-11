@@ -1,0 +1,231 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{A4CFC03E-70B8-4560-AEE2-93AD32AADB9B}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>game</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v120</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v120</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+    <OutDir>$(SolutionDir)</OutDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <SDLCheck>true</SDLCheck>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <AdditionalIncludeDirectories>C:\Program Files\Autodesk\FBX\FBX SDK\2016.1.2\include;../include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>C:\Program Files\Autodesk\FBX\FBX SDK\2016.1.2\lib\vs2013\x86\debug;../lib/x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;libfbxsdk-mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <SDLCheck>true</SDLCheck>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <AdditionalIncludeDirectories>C:\Program Files\Autodesk\FBX\FBX SDK\2016.1.2\include;../include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalLibraryDirectories>C:\Program Files\Autodesk\FBX\FBX SDK\2016.1.2\lib\vs2013\x86\release;../lib/x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;libfbxsdk-mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="source_code\application\application.cpp" />
+    <ClCompile Include="source_code\application\camera\camera.cpp" />
+    <ClCompile Include="source_code\application\camera\cameras\oltho_camera.cpp" />
+    <ClCompile Include="source_code\application\camera\cameras\perspective_camera.cpp" />
+    <ClCompile Include="source_code\application\camera\camera_factory.cpp" />
+    <ClCompile Include="source_code\application\camera\camera_manager.cpp" />
+    <ClCompile Include="source_code\application\collision\collision.cpp" />
+    <ClCompile Include="source_code\application\collision\collision_factory.cpp" />
+    <ClCompile Include="source_code\application\collision\collision_manager.cpp" />
+    <ClCompile Include="source_code\application\effect\effect.cpp" />
+    <ClCompile Include="source_code\application\effect\effect_manager.cpp" />
+    <ClCompile Include="source_code\application\font\debug_font.cpp" />
+    <ClCompile Include="source_code\application\fps\fps.cpp" />
+    <ClCompile Include="source_code\application\input\input.cpp" />
+    <ClCompile Include="source_code\application\input\inputs\gamepad.cpp" />
+    <ClCompile Include="source_code\application\input\inputs\keyboard.cpp" />
+    <ClCompile Include="source_code\application\input\input_factory.cpp" />
+    <ClCompile Include="source_code\application\math\vector.cpp" />
+    <ClCompile Include="source_code\application\object\object.cpp" />
+    <ClCompile Include="source_code\application\object\objects\mesh\field.cpp" />
+    <ClCompile Include="source_code\application\object\objects\mesh\skydome.cpp" />
+    <ClCompile Include="source_code\application\object\objects\model\fbx\fbx_child.cpp" />
+    <ClCompile Include="source_code\application\object\objects\model\fbx\fbx_grandfather.cpp" />
+    <ClCompile Include="source_code\application\object\objects\model\fbx\fbx_player.cpp" />
+    <ClCompile Include="source_code\application\object\objects\model\fbx_model.cpp" />
+    <ClCompile Include="source_code\application\object\objects\model\instancing_tree.cpp" />
+    <ClCompile Include="source_code\application\object\objects\model\x\x_fort.cpp" />
+    <ClCompile Include="source_code\application\object\objects\model\x_model.cpp" />
+    <ClCompile Include="source_code\application\object\objects\notice\bullet.cpp" />
+    <ClCompile Include="source_code\application\object\objects\sprite3d\shadow.cpp" />
+    <ClCompile Include="source_code\application\object\objects\sprite\damage_effect.cpp" />
+    <ClCompile Include="source_code\application\object\objects\sprite\fort_gage.cpp" />
+    <ClCompile Include="source_code\application\object\objects\sprite\fort_gauge_manager.cpp" />
+    <ClCompile Include="source_code\application\object\objects\sprite\number.cpp" />
+    <ClCompile Include="source_code\application\object\objects\sprite\sprite2d.cpp" />
+    <ClCompile Include="source_code\application\object\objects\sprite\timer.cpp" />
+    <ClCompile Include="source_code\application\object\objects\sprite\water_gage.cpp" />
+    <ClCompile Include="source_code\application\object\object_factory.cpp" />
+    <ClCompile Include="source_code\application\object\object_manager.cpp" />
+    <ClCompile Include="source_code\application\render\directx9\directx9.cpp" />
+    <ClCompile Include="source_code\application\render\directx9\directx9_holder.cpp" />
+    <ClCompile Include="source_code\application\render\renderer.cpp" />
+    <ClCompile Include="source_code\application\render\renderer_factory.cpp" />
+    <ClCompile Include="source_code\application\resource\fbx_container_manager.cpp" />
+    <ClCompile Include="source_code\application\resource\fbx_my_container.cpp" />
+    <ClCompile Include="source_code\application\resource\resource_holder.cpp" />
+    <ClCompile Include="source_code\application\resource\texture.cpp" />
+    <ClCompile Include="source_code\application\resource\texture_creator.cpp" />
+    <ClCompile Include="source_code\application\resource\texture_manager.cpp" />
+    <ClCompile Include="source_code\application\resource\x_container.cpp" />
+    <ClCompile Include="source_code\application\resource\x_container_manager.cpp" />
+    <ClCompile Include="source_code\application\scene\fade\fade.cpp" />
+    <ClCompile Include="source_code\application\scene\scene.cpp" />
+    <ClCompile Include="source_code\application\scene\scenes\game.cpp" />
+    <ClCompile Include="source_code\application\scene\scenes\loading.cpp" />
+    <ClCompile Include="source_code\application\scene\scenes\matching.cpp" />
+    <ClCompile Include="source_code\application\scene\scenes\result.cpp" />
+    <ClCompile Include="source_code\application\scene\scenes\title.cpp" />
+    <ClCompile Include="source_code\application\scene\scene_factory.cpp" />
+    <ClCompile Include="source_code\application\scene\scene_manager.cpp" />
+    <ClCompile Include="source_code\application\shader\shader.cpp" />
+    <ClCompile Include="source_code\application\sound\sound.cpp" />
+    <ClCompile Include="source_code\application\thread\thread.cpp" />
+    <ClCompile Include="source_code\application\window\window.cpp" />
+    <ClCompile Include="source_code\application\window\window_holder.cpp" />
+    <ClCompile Include="source_code\main.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="source_code\application\application.h" />
+    <ClInclude Include="source_code\application\camera\camera.h" />
+    <ClInclude Include="source_code\application\camera\cameras\oltho_camera.h" />
+    <ClInclude Include="source_code\application\camera\cameras\perspective_camera.h" />
+    <ClInclude Include="source_code\application\camera\camera_factory.h" />
+    <ClInclude Include="source_code\application\camera\camera_manager.h" />
+    <ClInclude Include="source_code\application\collision\collision.h" />
+    <ClInclude Include="source_code\application\collision\collision_factory.h" />
+    <ClInclude Include="source_code\application\collision\collision_manager.h" />
+    <ClInclude Include="source_code\application\config\config.h" />
+    <ClInclude Include="source_code\application\effect\effect.h" />
+    <ClInclude Include="source_code\application\effect\effect_manager.h" />
+    <ClInclude Include="source_code\application\font\debug_font.h" />
+    <ClInclude Include="source_code\application\fps\fps.h" />
+    <ClInclude Include="source_code\application\input\input.h" />
+    <ClInclude Include="source_code\application\input\inputs\gamepad.h" />
+    <ClInclude Include="source_code\application\input\inputs\keyboard.h" />
+    <ClInclude Include="source_code\application\input\input_factory.h" />
+    <ClInclude Include="source_code\application\math\my_math.h" />
+    <ClInclude Include="source_code\application\math\vector.h" />
+    <ClInclude Include="source_code\application\object\object.h" />
+    <ClInclude Include="source_code\application\object\objects\mesh\field.h" />
+    <ClInclude Include="source_code\application\object\objects\mesh\skydome.h" />
+    <ClInclude Include="source_code\application\object\objects\model\fbx\fbx_child.h" />
+    <ClInclude Include="source_code\application\object\objects\model\fbx\fbx_grandfather.h" />
+    <ClInclude Include="source_code\application\object\objects\model\fbx\fbx_player.h" />
+    <ClInclude Include="source_code\application\object\objects\model\fbx_model.h" />
+    <ClInclude Include="source_code\application\object\objects\model\instancing_tree.h" />
+    <ClInclude Include="source_code\application\object\objects\model\x\x_fort.h" />
+    <ClInclude Include="source_code\application\object\objects\model\x_model.h" />
+    <ClInclude Include="source_code\application\object\objects\notice\bullet.h" />
+    <ClInclude Include="source_code\application\object\objects\sprite3d\shadow.h" />
+    <ClInclude Include="source_code\application\object\objects\sprite\damage_effect.h" />
+    <ClInclude Include="source_code\application\object\objects\sprite\fort_gage.h" />
+    <ClInclude Include="source_code\application\object\objects\sprite\fort_gauge_manager.h" />
+    <ClInclude Include="source_code\application\object\objects\sprite\number.h" />
+    <ClInclude Include="source_code\application\object\objects\sprite\sprite2d.h" />
+    <ClInclude Include="source_code\application\object\objects\sprite\timer.h" />
+    <ClInclude Include="source_code\application\object\objects\sprite\water_gage.h" />
+    <ClInclude Include="source_code\application\object\object_factory.h" />
+    <ClInclude Include="source_code\application\object\object_manager.h" />
+    <ClInclude Include="source_code\application\render\directx9\directx9.h" />
+    <ClInclude Include="source_code\application\render\directx9\directx9_holder.h" />
+    <ClInclude Include="source_code\application\render\renderer.h" />
+    <ClInclude Include="source_code\application\render\renderer_factory.h" />
+    <ClInclude Include="source_code\application\resource\fbx_container_manager.h" />
+    <ClInclude Include="source_code\application\resource\fbx_my_container.h" />
+    <ClInclude Include="source_code\application\resource\resource_holder.h" />
+    <ClInclude Include="source_code\application\resource\texture.h" />
+    <ClInclude Include="source_code\application\resource\texture_creator.h" />
+    <ClInclude Include="source_code\application\resource\texture_manager.h" />
+    <ClInclude Include="source_code\application\resource\x_container.h" />
+    <ClInclude Include="source_code\application\resource\x_container_manager.h" />
+    <ClInclude Include="source_code\application\scene\fade\fade.h" />
+    <ClInclude Include="source_code\application\scene\scene.h" />
+    <ClInclude Include="source_code\application\scene\scenes\game.h" />
+    <ClInclude Include="source_code\application\scene\scenes\loading.h" />
+    <ClInclude Include="source_code\application\scene\scenes\matching.h" />
+    <ClInclude Include="source_code\application\scene\scenes\result.h" />
+    <ClInclude Include="source_code\application\scene\scenes\title.h" />
+    <ClInclude Include="source_code\application\scene\scene_factory.h" />
+    <ClInclude Include="source_code\application\scene\scene_manager.h" />
+    <ClInclude Include="source_code\application\shader\shader.h" />
+    <ClInclude Include="source_code\application\sound\sound.h" />
+    <ClInclude Include="source_code\application\thread\thread.h" />
+    <ClInclude Include="source_code\application\window\window.h" />
+    <ClInclude Include="source_code\application\window\window_holder.h" />
+    <ClInclude Include="source_code\common\common.h" />
+    <ClInclude Include="source_code\main.h" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

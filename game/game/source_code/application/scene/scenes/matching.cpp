@@ -17,6 +17,8 @@
 #include "../../font/debug_font.h"
 #include "../../object/object.h"
 #include "../../object/object_manager.h"
+#include "../../object/objects/sprite/sprite2d.h"
+#include "../../object/objects/sprite/message.h"
 #include "../../camera/camera.h"
 #include "../../camera/camera_manager.h"
 #include "../scene.h"
@@ -60,6 +62,20 @@ Matching::Matching()
 	object_manager_->Create(
 		"test",	param,
 		"resource/texture/matching/logo.png");
+
+
+	OBJECT_PARAMETER_DESC message_param;
+	message_param.position_ = {
+		SCREEN_WIDTH + 200.0f,
+		SCREEN_HEIGHT - 200.0f,
+		0.0f };
+	message_param.rotation_ = { 0.0f, 0.0f, 0.0f };
+	message_param.scaling_ = { 400.0f, 100.0f, 0.0f };
+	message_param.layer_ = LAYER_MESSAGE;
+
+	object_manager_->Create(
+		"message", message_param,
+		"resource/texture/matching/message.png");
 }
 
 
@@ -79,6 +95,17 @@ Matching::~Matching()
 //-------------------------------------
 void Matching::Update()
 {
+	if (KeyBoard::isTrigger(DIK_SPACE)){
+		Object *message_object = object_manager_->Get("message");
+		Message *message = dynamic_cast<Message*>(message_object);
+		Vector3 message_position = {
+			SCREEN_WIDTH + 200.0f,
+			SCREEN_HEIGHT - 200.0f,
+			0.0f };
+		message_object->SetPosition(message_position);
+		message->Play();
+	}
+
 	camera_manager_->Update();
 	object_manager_->Update();
 

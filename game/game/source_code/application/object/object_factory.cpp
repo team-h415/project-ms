@@ -14,6 +14,7 @@
 #include "object.h"
 #include "object_factory.h"
 #include "objects/sprite/sprite2d.h"
+#include "objects/sprite/message.h"
 #include "objects/mesh/field.h"
 #include "objects/model/x_model.h"
 #include "objects/model/instancing_tree.h"
@@ -24,6 +25,7 @@
 #include "objects/sprite/water_gage.h"
 #include "objects/sprite/damage_effect.h"
 #include "objects/model/fbx/fbx_player.h"
+#include "objects/sprite/fort_gauge_manager.h"
 #include "objects/model/fbx/fbx_grandfather.h"
 #include "objects/model/fbx/fbx_child.h"
 #include "objects/notice/bullet.h"
@@ -130,10 +132,23 @@ Object *ObjectFactory::Create(
         sprite->SetTexture(object_path);
     }
 
+    else if (param.layer_ == LAYER_FORT_GAUGE){
+        object = new FortGaugeManager(parameter);
+        FortGaugeManager *fort_sprite = dynamic_cast<FortGaugeManager*>(object);
+        fort_sprite->SetTexture(object_path);
+    }
+
 	else if (param.layer_ == LAYER_SPRITE_2D){
 		object = new Sprite2D(parameter);
 		Sprite2D *sprite = dynamic_cast<Sprite2D*>(object);
 		sprite->SetTexture(object_path);
+	}
+
+<<<<<<< HEAD
+	else if (param.layer_ == LAYER_MESSAGE){
+		object = new Message(parameter);
+		Message *message = dynamic_cast<Message*>(object);
+		message->SetTexture(object_path);
 	}
 
 /*
@@ -141,6 +156,8 @@ Object *ObjectFactory::Create(
         object = new WaterGage(parameter);
     }*/
 
+=======
+>>>>>>> origin/rockman
 	else{
 		ASSERT_ERROR("無効なオブジェクト生成カテゴリです");
 	}

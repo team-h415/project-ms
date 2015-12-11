@@ -1,0 +1,511 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="source_code">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="source_code\common">
+      <UniqueIdentifier>{b5fe09ee-44f8-4bbb-8e94-962e3e12bb9c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source_code\application">
+      <UniqueIdentifier>{f4475e62-804e-4de0-a707-e3ca92375c28}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source_code\application\window">
+      <UniqueIdentifier>{1f72e08e-fc5b-46cb-a6a1-24051fe5f54c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source_code\application\fps">
+      <UniqueIdentifier>{8640442c-3ca7-48b2-9b61-7d5e2333046d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source_code\application\scene">
+      <UniqueIdentifier>{02c789bf-bc55-4ba3-8b24-3f64e2043681}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source_code\application\render">
+      <UniqueIdentifier>{40d5ee2f-3dd5-4b35-a525-145ecbd7d4a0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source_code\application\render\directx9">
+      <UniqueIdentifier>{ae909568-d4ac-4abc-83db-da834eccff94}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source_code\application\scene\scenes">
+      <UniqueIdentifier>{73626555-ee20-4b8e-b26e-c547bd0c2fa8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source_code\application\input">
+      <UniqueIdentifier>{d1449237-922a-4f6a-a47a-8f45efeca634}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source_code\application\input\inputs">
+      <UniqueIdentifier>{0b4fdafc-6c6e-48e5-9778-373e14ea83c0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source_code\application\thread">
+      <UniqueIdentifier>{cc57bd8b-9686-4dc6-89d5-65834e68d146}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source_code\application\scene\fade">
+      <UniqueIdentifier>{91d7b850-7d27-4040-8e1d-6528ae68d916}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source_code\application\object">
+      <UniqueIdentifier>{f596aec3-ebe3-491c-8d2d-d4ee4df2ada8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source_code\application\math">
+      <UniqueIdentifier>{1098b12a-e985-44b8-8c34-b7586b12ef77}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source_code\application\object\objects">
+      <UniqueIdentifier>{aad20ef4-2fa6-4e9f-aeb1-a931dc4e2228}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source_code\application\object\objects\sprite">
+      <UniqueIdentifier>{9f6c4f4d-4ff7-4e97-8212-7cfd9a468cb3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source_code\application\camera">
+      <UniqueIdentifier>{d91c4341-78c5-4c57-8dee-c9bc7d6083ab}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source_code\application\camera\cameras">
+      <UniqueIdentifier>{01d57e0c-cb28-49bd-8071-08e8cbc1de05}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source_code\application\shader">
+      <UniqueIdentifier>{d6041757-0270-48bb-970a-c45e00137a72}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source_code\application\object\objects\mesh">
+      <UniqueIdentifier>{131ebc22-f660-4ec0-b334-b722dcc331ca}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source_code\application\object\objects\model">
+      <UniqueIdentifier>{fb393863-9c54-40b5-8c97-a885c8b52a56}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source_code\application\effect">
+      <UniqueIdentifier>{748a7f89-554c-4f75-984e-0ffdab06f527}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source_code\application\resource">
+      <UniqueIdentifier>{bf55e749-48c0-49e8-8f7d-4dbbbed1d5a0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source_code\application\object\objects\model\fbx">
+      <UniqueIdentifier>{60eba6c7-d95d-45f3-b4c7-933671d79331}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source_code\application\sound">
+      <UniqueIdentifier>{8da156ac-fc99-4c4c-8546-fc7c5a2eaa2f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source_code\application\collision">
+      <UniqueIdentifier>{c09705a5-6fd5-416a-a7c8-f5890c109e2e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source_code\application\object\objects\notice">
+      <UniqueIdentifier>{7f67fc37-b121-4bb2-82e8-fd68939f9b56}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source_code\application\config">
+      <UniqueIdentifier>{52a6b0e7-89e4-46d9-9144-769d0090ea01}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source_code\application\font">
+      <UniqueIdentifier>{eaa7fb8f-9696-46ab-a4d3-135708f9b860}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source_code\application\object\objects\model\x">
+      <UniqueIdentifier>{77f6d0bc-0c3b-403c-91dc-f72496126fc3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source_code\application\object\objects\sprite3d">
+      <UniqueIdentifier>{260a024d-bde2-44c6-a71f-35064ad339fe}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="source_code\main.cpp">
+      <Filter>source_code</Filter>
+    </ClCompile>
+    <ClCompile Include="source_code\application\application.cpp">
+      <Filter>source_code\application</Filter>
+    </ClCompile>
+    <ClCompile Include="source_code\application\fps\fps.cpp">
+      <Filter>source_code\application\fps</Filter>
+    </ClCompile>
+    <ClCompile Include="source_code\application\render\renderer.cpp">
+      <Filter>source_code\application\render</Filter>
+    </ClCompile>
+    <ClCompile Include="source_code\application\render\renderer_factory.cpp">
+      <Filter>source_code\application\render</Filter>
+    </ClCompile>
+    <ClCompile Include="source_code\application\render\directx9\directx9.cpp">
+      <Filter>source_code\application\render\directx9</Filter>
+    </ClCompile>
+    <ClCompile Include="source_code\application\render\directx9\directx9_holder.cpp">
+      <Filter>source_code\application\render\directx9</Filter>
+    </ClCompile>
+    <ClCompile Include="source_code\application\scene\scene.cpp">
+      <Filter>source_code\application\scene</Filter>
+    </ClCompile>
+    <ClCompile Include="source_code\application\scene\scene_factory.cpp">
+      <Filter>source_code\application\scene</Filter>
+    </ClCompile>
+    <ClCompile Include="source_code\application\scene\scene_manager.cpp">
+      <Filter>source_code\application\scene</Filter>
+    </ClCompile>
+    <ClCompile Include="source_code\application\scene\scenes\game.cpp">
+      <Filter>source_code\application\scene\scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="source_code\application\scene\scenes\loading.cpp">
+      <Filter>source_code\application\scene\scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="source_code\application\scene\scenes\title.cpp">
+      <Filter>source_code\application\scene\scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="source_code\application\window\window.cpp">
+      <Filter>source_code\application\window</Filter>
+    </ClCompile>
+    <ClCompile Include="source_code\application\window\window_holder.cpp">
+      <Filter>source_code\application\window</Filter>
+    </ClCompile>
+    <ClCompile Include="source_code\application\input\input.cpp">
+      <Filter>source_code\application\input</Filter>
+    </ClCompile>
+    <ClCompile Include="source_code\application\input\input_factory.cpp">
+      <Filter>source_code\application\input</Filter>
+    </ClCompile>
+    <ClCompile Include="source_code\application\input\inputs\keyboard.cpp">
+      <Filter>source_code\application\input\inputs</Filter>
+    </ClCompile>
+    <ClCompile Include="source_code\application\thread\thread.cpp">
+      <Filter>source_code\application\thread</Filter>
+    </ClCompile>
+    <ClCompile Include="source_code\application\scene\fade\fade.cpp">
+      <Filter>source_code\application\scene\fade</Filter>
+    </ClCompile>
+    <ClCompile Include="source_code\application\object\object_manager.cpp">
+      <Filter>source_code\application\object</Filter>
+    </ClCompile>
+    <ClCompile Include="source_code\application\object\object.cpp">
+      <Filter>source_code\application\object</Filter>
+    </ClCompile>
+    <ClCompile Include="source_code\application\object\object_factory.cpp">
+      <Filter>source_code\application\object</Filter>
+    </ClCompile>
+    <ClCompile Include="source_code\application\object\objects\sprite\sprite2d.cpp">
+      <Filter>source_code\application\object\objects\sprite</Filter>
+    </ClCompile>
+    <ClCompile Include="source_code\application\camera\camera.cpp">
+      <Filter>source_code\application\camera</Filter>
+    </ClCompile>
+    <ClCompile Include="source_code\application\camera\camera_factory.cpp">
+      <Filter>source_code\application\camera</Filter>
+    </ClCompile>
+    <ClCompile Include="source_code\application\camera\camera_manager.cpp">
+      <Filter>source_code\application\camera</Filter>
+    </ClCompile>
+    <ClCompile Include="source_code\application\camera\cameras\oltho_camera.cpp">
+      <Filter>source_code\application\camera\cameras</Filter>
+    </ClCompile>
+    <ClCompile Include="source_code\application\camera\cameras\perspective_camera.cpp">
+      <Filter>source_code\application\camera\cameras</Filter>
+    </ClCompile>
+    <ClCompile Include="source_code\application\shader\shader.cpp">
+      <Filter>source_code\application\shader</Filter>
+    </ClCompile>
+    <ClCompile Include="source_code\application\object\objects\mesh\field.cpp">
+      <Filter>source_code\application\object\objects\mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="source_code\application\input\inputs\gamepad.cpp">
+      <Filter>source_code\application\input\inputs</Filter>
+    </ClCompile>
+    <ClCompile Include="source_code\application\object\objects\model\x_model.cpp">
+      <Filter>source_code\application\object\objects\model</Filter>
+    </ClCompile>
+    <ClCompile Include="source_code\application\object\objects\model\fbx_model.cpp">
+      <Filter>source_code\application\object\objects\model</Filter>
+    </ClCompile>
+    <ClCompile Include="source_code\application\effect\effect.cpp">
+      <Filter>source_code\application\effect</Filter>
+    </ClCompile>
+    <ClCompile Include="source_code\application\effect\effect_manager.cpp">
+      <Filter>source_code\application\effect</Filter>
+    </ClCompile>
+    <ClCompile Include="source_code\application\scene\scenes\matching.cpp">
+      <Filter>source_code\application\scene\scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="source_code\application\scene\scenes\result.cpp">
+      <Filter>source_code\application\scene\scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="source_code\application\resource\resource_holder.cpp">
+      <Filter>source_code\application\resource</Filter>
+    </ClCompile>
+    <ClCompile Include="source_code\application\object\objects\model\fbx\fbx_grandfather.cpp">
+      <Filter>source_code\application\object\objects\model\fbx</Filter>
+    </ClCompile>
+    <ClCompile Include="source_code\application\sound\sound.cpp">
+      <Filter>source_code\application\sound</Filter>
+    </ClCompile>
+    <ClCompile Include="source_code\application\object\objects\sprite\timer.cpp">
+      <Filter>source_code\application\object\objects\sprite</Filter>
+    </ClCompile>
+    <ClCompile Include="source_code\application\object\objects\sprite\number.cpp">
+      <Filter>source_code\application\object\objects\sprite</Filter>
+    </ClCompile>
+    <ClCompile Include="source_code\application\object\objects\sprite\water_gage.cpp">
+      <Filter>source_code\application\object\objects\sprite</Filter>
+    </ClCompile>
+    <ClCompile Include="source_code\application\collision\collision.cpp">
+      <Filter>source_code\application\collision</Filter>
+    </ClCompile>
+    <ClCompile Include="source_code\application\collision\collision_manager.cpp">
+      <Filter>source_code\application\collision</Filter>
+    </ClCompile>
+    <ClCompile Include="source_code\application\collision\collision_factory.cpp">
+      <Filter>source_code\application\collision</Filter>
+    </ClCompile>
+    <ClCompile Include="source_code\application\resource\texture_manager.cpp">
+      <Filter>source_code\application\resource</Filter>
+    </ClCompile>
+    <ClCompile Include="source_code\application\resource\texture.cpp">
+      <Filter>source_code\application\resource</Filter>
+    </ClCompile>
+    <ClCompile Include="source_code\application\resource\texture_creator.cpp">
+      <Filter>source_code\application\resource</Filter>
+    </ClCompile>
+    <ClCompile Include="source_code\application\resource\fbx_my_container.cpp">
+      <Filter>source_code\application\resource</Filter>
+    </ClCompile>
+    <ClCompile Include="source_code\application\resource\fbx_container_manager.cpp">
+      <Filter>source_code\application\resource</Filter>
+    </ClCompile>
+    <ClCompile Include="source_code\application\resource\x_container_manager.cpp">
+      <Filter>source_code\application\resource</Filter>
+    </ClCompile>
+    <ClCompile Include="source_code\application\resource\x_container.cpp">
+      <Filter>source_code\application\resource</Filter>
+    </ClCompile>
+    <ClCompile Include="source_code\application\object\objects\notice\bullet.cpp">
+      <Filter>source_code\application\object\objects\notice</Filter>
+    </ClCompile>
+    <ClCompile Include="source_code\application\object\objects\model\fbx\fbx_child.cpp">
+      <Filter>source_code\application\object\objects\model\fbx</Filter>
+    </ClCompile>
+    <ClCompile Include="source_code\application\object\objects\sprite\damage_effect.cpp">
+      <Filter>source_code\application\object\objects\sprite</Filter>
+    </ClCompile>
+    <ClCompile Include="source_code\application\font\debug_font.cpp">
+      <Filter>source_code\application\font</Filter>
+    </ClCompile>
+    <ClCompile Include="source_code\application\object\objects\mesh\skydome.cpp">
+      <Filter>source_code\application\object\objects\mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="source_code\application\object\objects\model\instancing_tree.cpp">
+      <Filter>source_code\application\object\objects\model</Filter>
+    </ClCompile>
+    <ClCompile Include="source_code\application\math\vector.cpp">
+      <Filter>source_code\application\math</Filter>
+    </ClCompile>
+    <ClCompile Include="source_code\application\object\objects\model\x\x_fort.cpp">
+      <Filter>source_code\application\object\objects\model\x</Filter>
+    </ClCompile>
+    <ClCompile Include="source_code\application\object\objects\sprite3d\shadow.cpp">
+      <Filter>source_code\application\object\objects\sprite3d</Filter>
+    </ClCompile>
+    <ClCompile Include="source_code\application\object\objects\model\fbx\fbx_player.cpp">
+      <Filter>source_code\application\object\objects\model\fbx</Filter>
+    </ClCompile>
+    <ClCompile Include="source_code\application\object\objects\sprite\fort_gage.cpp">
+      <Filter>source_code\application\object\objects\sprite</Filter>
+    </ClCompile>
+    <ClCompile Include="source_code\application\object\objects\sprite\fort_gauge_manager.cpp">
+      <Filter>source_code\application\object\objects\sprite</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="source_code\main.h">
+      <Filter>source_code</Filter>
+    </ClInclude>
+    <ClInclude Include="source_code\common\common.h">
+      <Filter>source_code\common</Filter>
+    </ClInclude>
+    <ClInclude Include="source_code\application\application.h">
+      <Filter>source_code\application</Filter>
+    </ClInclude>
+    <ClInclude Include="source_code\application\fps\fps.h">
+      <Filter>source_code\application\fps</Filter>
+    </ClInclude>
+    <ClInclude Include="source_code\application\render\renderer.h">
+      <Filter>source_code\application\render</Filter>
+    </ClInclude>
+    <ClInclude Include="source_code\application\render\renderer_factory.h">
+      <Filter>source_code\application\render</Filter>
+    </ClInclude>
+    <ClInclude Include="source_code\application\render\directx9\directx9.h">
+      <Filter>source_code\application\render\directx9</Filter>
+    </ClInclude>
+    <ClInclude Include="source_code\application\render\directx9\directx9_holder.h">
+      <Filter>source_code\application\render\directx9</Filter>
+    </ClInclude>
+    <ClInclude Include="source_code\application\scene\scene.h">
+      <Filter>source_code\application\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="source_code\application\scene\scene_factory.h">
+      <Filter>source_code\application\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="source_code\application\scene\scene_manager.h">
+      <Filter>source_code\application\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="source_code\application\scene\scenes\game.h">
+      <Filter>source_code\application\scene\scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="source_code\application\scene\scenes\loading.h">
+      <Filter>source_code\application\scene\scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="source_code\application\scene\scenes\title.h">
+      <Filter>source_code\application\scene\scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="source_code\application\window\window.h">
+      <Filter>source_code\application\window</Filter>
+    </ClInclude>
+    <ClInclude Include="source_code\application\window\window_holder.h">
+      <Filter>source_code\application\window</Filter>
+    </ClInclude>
+    <ClInclude Include="source_code\application\input\input.h">
+      <Filter>source_code\application\input</Filter>
+    </ClInclude>
+    <ClInclude Include="source_code\application\input\input_factory.h">
+      <Filter>source_code\application\input</Filter>
+    </ClInclude>
+    <ClInclude Include="source_code\application\input\inputs\keyboard.h">
+      <Filter>source_code\application\input\inputs</Filter>
+    </ClInclude>
+    <ClInclude Include="source_code\application\thread\thread.h">
+      <Filter>source_code\application\thread</Filter>
+    </ClInclude>
+    <ClInclude Include="source_code\application\scene\fade\fade.h">
+      <Filter>source_code\application\scene\fade</Filter>
+    </ClInclude>
+    <ClInclude Include="source_code\application\object\object_manager.h">
+      <Filter>source_code\application\object</Filter>
+    </ClInclude>
+    <ClInclude Include="source_code\application\object\object.h">
+      <Filter>source_code\application\object</Filter>
+    </ClInclude>
+    <ClInclude Include="source_code\application\math\my_math.h">
+      <Filter>source_code\application\math</Filter>
+    </ClInclude>
+    <ClInclude Include="source_code\application\math\vector.h">
+      <Filter>source_code\application\math</Filter>
+    </ClInclude>
+    <ClInclude Include="source_code\application\object\object_factory.h">
+      <Filter>source_code\application\object</Filter>
+    </ClInclude>
+    <ClInclude Include="source_code\application\object\objects\sprite\sprite2d.h">
+      <Filter>source_code\application\object\objects\sprite</Filter>
+    </ClInclude>
+    <ClInclude Include="source_code\application\camera\camera.h">
+      <Filter>source_code\application\camera</Filter>
+    </ClInclude>
+    <ClInclude Include="source_code\application\camera\camera_factory.h">
+      <Filter>source_code\application\camera</Filter>
+    </ClInclude>
+    <ClInclude Include="source_code\application\camera\camera_manager.h">
+      <Filter>source_code\application\camera</Filter>
+    </ClInclude>
+    <ClInclude Include="source_code\application\camera\cameras\oltho_camera.h">
+      <Filter>source_code\application\camera\cameras</Filter>
+    </ClInclude>
+    <ClInclude Include="source_code\application\camera\cameras\perspective_camera.h">
+      <Filter>source_code\application\camera\cameras</Filter>
+    </ClInclude>
+    <ClInclude Include="source_code\application\shader\shader.h">
+      <Filter>source_code\application\shader</Filter>
+    </ClInclude>
+    <ClInclude Include="source_code\application\object\objects\mesh\field.h">
+      <Filter>source_code\application\object\objects\mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="source_code\application\input\inputs\gamepad.h">
+      <Filter>source_code\application\input\inputs</Filter>
+    </ClInclude>
+    <ClInclude Include="source_code\application\object\objects\model\x_model.h">
+      <Filter>source_code\application\object\objects\model</Filter>
+    </ClInclude>
+    <ClInclude Include="source_code\application\object\objects\model\fbx_model.h">
+      <Filter>source_code\application\object\objects\model</Filter>
+    </ClInclude>
+    <ClInclude Include="source_code\application\effect\effect.h">
+      <Filter>source_code\application\effect</Filter>
+    </ClInclude>
+    <ClInclude Include="source_code\application\effect\effect_manager.h">
+      <Filter>source_code\application\effect</Filter>
+    </ClInclude>
+    <ClInclude Include="source_code\application\scene\scenes\matching.h">
+      <Filter>source_code\application\scene\scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="source_code\application\scene\scenes\result.h">
+      <Filter>source_code\application\scene\scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="source_code\application\resource\resource_holder.h">
+      <Filter>source_code\application\resource</Filter>
+    </ClInclude>
+    <ClInclude Include="source_code\application\object\objects\model\fbx\fbx_grandfather.h">
+      <Filter>source_code\application\object\objects\model\fbx</Filter>
+    </ClInclude>
+    <ClInclude Include="source_code\application\sound\sound.h">
+      <Filter>source_code\application\sound</Filter>
+    </ClInclude>
+    <ClInclude Include="source_code\application\object\objects\sprite\timer.h">
+      <Filter>source_code\application\object\objects\sprite</Filter>
+    </ClInclude>
+    <ClInclude Include="source_code\application\object\objects\sprite\number.h">
+      <Filter>source_code\application\object\objects\sprite</Filter>
+    </ClInclude>
+    <ClInclude Include="source_code\application\object\objects\sprite\water_gage.h">
+      <Filter>source_code\application\object\objects\sprite</Filter>
+    </ClInclude>
+    <ClInclude Include="source_code\application\collision\collision.h">
+      <Filter>source_code\application\collision</Filter>
+    </ClInclude>
+    <ClInclude Include="source_code\application\collision\collision_manager.h">
+      <Filter>source_code\application\collision</Filter>
+    </ClInclude>
+    <ClInclude Include="source_code\application\collision\collision_factory.h">
+      <Filter>source_code\application\collision</Filter>
+    </ClInclude>
+    <ClInclude Include="source_code\application\resource\texture_manager.h">
+      <Filter>source_code\application\resource</Filter>
+    </ClInclude>
+    <ClInclude Include="source_code\application\resource\texture.h">
+      <Filter>source_code\application\resource</Filter>
+    </ClInclude>
+    <ClInclude Include="source_code\application\resource\texture_creator.h">
+      <Filter>source_code\application\resource</Filter>
+    </ClInclude>
+    <ClInclude Include="source_code\application\resource\fbx_my_container.h">
+      <Filter>source_code\application\resource</Filter>
+    </ClInclude>
+    <ClInclude Include="source_code\application\resource\fbx_container_manager.h">
+      <Filter>source_code\application\resource</Filter>
+    </ClInclude>
+    <ClInclude Include="source_code\application\resource\x_container_manager.h">
+      <Filter>source_code\application\resource</Filter>
+    </ClInclude>
+    <ClInclude Include="source_code\application\resource\x_container.h">
+      <Filter>source_code\application\resource</Filter>
+    </ClInclude>
+    <ClInclude Include="source_code\application\object\objects\notice\bullet.h">
+      <Filter>source_code\application\object\objects\notice</Filter>
+    </ClInclude>
+    <ClInclude Include="source_code\application\config\config.h">
+      <Filter>source_code\application\config</Filter>
+    </ClInclude>
+    <ClInclude Include="source_code\application\object\objects\model\fbx\fbx_child.h">
+      <Filter>source_code\application\object\objects\model\fbx</Filter>
+    </ClInclude>
+    <ClInclude Include="source_code\application\object\objects\sprite\damage_effect.h">
+      <Filter>source_code\application\object\objects\sprite</Filter>
+    </ClInclude>
+    <ClInclude Include="source_code\application\font\debug_font.h">
+      <Filter>source_code\application\font</Filter>
+    </ClInclude>
+    <ClInclude Include="source_code\application\object\objects\mesh\skydome.h">
+      <Filter>source_code\application\object\objects\mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="source_code\application\object\objects\model\instancing_tree.h">
+      <Filter>source_code\application\object\objects\model</Filter>
+    </ClInclude>
+    <ClInclude Include="source_code\application\object\objects\model\x\x_fort.h">
+      <Filter>source_code\application\object\objects\model\x</Filter>
+    </ClInclude>
+    <ClInclude Include="source_code\application\object\objects\sprite3d\shadow.h">
+      <Filter>source_code\application\object\objects\sprite3d</Filter>
+    </ClInclude>
+    <ClInclude Include="source_code\application\object\objects\model\fbx\fbx_player.h">
+      <Filter>source_code\application\object\objects\model\fbx</Filter>
+    </ClInclude>
+    <ClInclude Include="source_code\application\object\objects\sprite\fort_gage.h">
+      <Filter>source_code\application\object\objects\sprite</Filter>
+    </ClInclude>
+    <ClInclude Include="source_code\application\object\objects\sprite\fort_gauge_manager.h">
+      <Filter>source_code\application\object\objects\sprite</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
