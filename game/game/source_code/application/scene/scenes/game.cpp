@@ -550,7 +550,9 @@ void Game::Update()
 			stage_ = 3;
 		}
 	}
-
+	fort_gauge_manager->SetFortLife(0, fort1_life);
+	fort_gauge_manager->SetFortLife(1, fort2_life);
+	fort_gauge_manager->SetFortLife(2, fort3_life);
 
 	//-------------------------------------
 	// ƒvƒŒƒCƒ„[ˆÚ“®ˆ—
