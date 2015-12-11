@@ -59,6 +59,7 @@ Game::Game()
 	font1_ = new DebugFont;
 	font2_ = new DebugFont;
 	Bullet::Init();
+	use_camera_name_ = "MainCamera";
 
 	//-------------------------------------
 	// エフェクトの読み込み
@@ -110,6 +111,23 @@ Game::Game()
 
 	camera_manager_->Create(
 		"Perspective", "MainCamera", camera_param);
+
+	//-------------------------------------
+	// サブカメラ
+	//-------------------------------------
+	camera_param.acpect_ = SCREEN_WIDTH / SCREEN_HEIGHT;
+	camera_param.fovy_ = D3DX_PI * 0.25f;
+	camera_param.position_ = { 0.0f, 0.0f, -10.0f };
+	camera_param.focus_ = { 0.0f, 0.0f, 0.0f };
+	camera_param.rotation_ = { 0.0f, 0.0f, 0.0f };
+	camera_param.up_ = { 0.0f, 1.0f, 0.0f };
+	camera_param.near_ = 0.1f;
+	camera_param.far_ = 800.0f;
+	camera_pos_len_ = CAMERA_POS_LEN;
+
+	camera_manager_->Create(
+		"Perspective", "SubCamera", camera_param);
+
 
 	//-------------------------------------
 	// 地形
@@ -553,9 +571,9 @@ void Game::Update()
 	//-------------------------------------
 	// ゲームステージデバッグ
 	//-------------------------------------
-	if (fort1_life == 0.0f){
+	if (fort1_life <= 0.0f){
 		stage_ = 2;
-		if (fort2_life == 0.0f){
+		if (fort2_life <= 0.0f){
 			stage_ = 3;
 		}
 	}
@@ -724,6 +742,12 @@ void Game::Update()
 		fort_underground.x = std::min<float>(fort_underground.x, 0.0f);
 		fort_underground.y = std::max<float>(fort_underground.y, -3.0f);
 		fort_underground.z = std::max<float>(fort_underground.z, -3.0f);
+		if (fort_underground.x != 0.0f){
+			use_camera_name_ = "SubCamera";
+		}
+		else{
+			use_camera_name_ = "MainCamera";
+		}
 		break;
 	case 2:
 		fort_underground.x -= 0.01f;
@@ -732,6 +756,12 @@ void Game::Update()
 		fort_underground.x = std::max<float>(fort_underground.x, -3.0f);
 		fort_underground.y = std::min<float>(fort_underground.y, 0.0f);
 		fort_underground.z = std::max<float>(fort_underground.z, -3.0f);
+		if (fort_underground.y != 0.0f){
+			use_camera_name_ = "SubCamera";
+		}
+		else{
+			use_camera_name_ = "MainCamera";
+		}
 		break;
 	case 3:
 		fort_underground.x -= 0.01f;
@@ -740,6 +770,12 @@ void Game::Update()
 		fort_underground.x = std::max<float>(fort_underground.x, -3.0f);
 		fort_underground.y = std::max<float>(fort_underground.y, -3.0f);
 		fort_underground.z = std::min<float>(fort_underground.z, 0.0f);
+		if (fort_underground.z != 0.0f){
+			use_camera_name_ = "SubCamera";
+		}
+		else{
+			use_camera_name_ = "MainCamera";
+		}
 		break;
 	}
 
@@ -791,6 +827,9 @@ void Game::Update()
 	D3DXVECTOR3 camera_position, camera_focus;
 	D3DXVECTOR3 camera_rotation(main_camera->rotation());
 
+	
+	
+
 	// 入力
 #ifdef _DEBUG
 	if(KeyBoard::isPress(DIK_UP)){
@@ -804,6 +843,13 @@ void Game::Update()
 		if(camera_rotation.x > CAMERA_ROT_X_LIMIT){
 			camera_rotation.x = CAMERA_ROT_X_LIMIT;
 		}
+	}
+
+	if (KeyBoard::isPress(DIK_4)){
+		use_camera_name_ = "MainCamera";
+	}
+	if (KeyBoard::isPress(DIK_5)){
+		use_camera_name_ = "SubCamera";
 	}
 #endif
 	
@@ -877,6 +923,50 @@ void Game::Update()
 	main_camera->SetPosition(camera_position);
 	main_camera->SetFocus(camera_focus);
 	main_camera->SetRotation(camera_rotation);
+
+
+	//-------------------------------------
+	// サブカメラ計算
+	//-------------------------------------
+	Camera *sub_camera = camera_manager_->Get("SubCamera");
+	D3DXVECTOR3 sub_camera_position, sub_camera_rotation, sub_camera_focus;
+	// モデルの回転Yをそのままカメラの回転Yへ
+	//sub_camera_rotation.y = D3DX_PI*0.25f;
+	sub_camera_rotation.x = -D3DX_PI*0.15f;
+	// 一旦砦を注視点に
+	switch (stage_)
+	{
+	case 1:
+		sub_camera_focus = fort1_pos;
+		sub_camera_focus.y = 0.0f;
+		break;
+	case 2:
+		sub_camera_focus = fort2_pos;
+		sub_camera_focus.y = 0.0f;
+		break;
+	case 3:
+		sub_camera_focus = fort3_pos;
+		sub_camera_focus.y = 0.0f;
+		break;
+	}
+	// 砦の中心辺りを基準に
+	sub_camera_focus.y += CAMERA_FOCUS_OFFSET_Y;
+	// モデルの少し先を見るように調整
+	sub_camera_focus.x += sinf(sub_camera_rotation.y) * CAMERA_FOCUS_OFFSET * cosf(sub_camera_rotation.x);
+	sub_camera_focus.z += cosf(sub_camera_rotation.y) * CAMERA_FOCUS_OFFSET * cosf(sub_camera_rotation.x);
+	sub_camera_focus.y += sinf(sub_camera_rotation.x) * CAMERA_FOCUS_OFFSET;
+
+	// 注視点を基準にカメラ座標を設定
+	sub_camera_position = sub_camera_focus;
+	sub_camera_position.x -= sinf(sub_camera_rotation.y) * camera_pos_len_ * cosf(sub_camera_rotation.x);
+	sub_camera_position.z -= cosf(sub_camera_rotation.y) * camera_pos_len_ * cosf(sub_camera_rotation.x);
+	sub_camera_position.y -= sinf(sub_camera_rotation.x) * camera_pos_len_;
+
+
+	// カメラにパラメータを再セット
+	sub_camera->SetPosition(sub_camera_position);
+	sub_camera->SetFocus(sub_camera_focus);
+	sub_camera->SetRotation(sub_camera_rotation);
 
 	//-------------------------------------
 	// 弾発射
@@ -1124,7 +1214,7 @@ void Game::Draw()
 	MaterialColor color(32, 32, 32, 0);
 	DirectX9Holder::DrawBegin();
 	DirectX9Holder::Clear(color);
-	camera_manager_->Set("MainCamera");
+	camera_manager_->Set(use_camera_name_);
 	object_manager_->Draw();
 	effect_manager_->Draw();
 	collision_manager_->Draw();
