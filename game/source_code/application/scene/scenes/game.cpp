@@ -8,7 +8,6 @@
 // include
 //-------------------------------------
 #include "../../../common/common.h"
-#include "../../fps/fps.h"
 #include "../../render/renderer.h"
 #include "../../render/directx9/directx9.h"
 #include "../../render/directx9/directx9_holder.h"
@@ -53,7 +52,7 @@ Game::Game()
 	//-------------------------------------
 	camera_manager_ = new CameraManager;
 	object_manager_ = new ObjectManager;
-	effect_manager_ = new EffectManager(10000);
+	effect_manager_ = new EffectManager(5000);
 	collision_manager_ = new CollisionManager;
 	font1_ = new DebugFont;
 	font2_ = new DebugFont;
@@ -77,16 +76,6 @@ Game::Game()
 		"resource/effect/Damage3_2.efk",
 		water_param);
 
-	effect_manager_->Create(
-		"warp",
-		"resource/effect/Warp.efk",
-		water_param);
-
-	effect_manager_->Create(
-		"dead",
-		"resource/effect/Dead2.efk",
-		water_param);
-
 	//-------------------------------------
 	// メインカメラ
 	//-------------------------------------
@@ -98,7 +87,7 @@ Game::Game()
 	camera_param.rotation_ = { 0.0f, 0.0f, 0.0f };
 	camera_param.up_ = { 0.0f, 1.0f, 0.0f };
 	camera_param.near_ = 0.1f;
-	camera_param.far_ = 800.0f;
+	camera_param.far_ = 100000.0f;
 	camera_pos_len_ = CAMERA_POS_LEN;
 
 	camera_manager_->Create(
@@ -138,19 +127,6 @@ Game::Game()
 		"skydome_bottom",
 		param,
 		"resource/mesh/skydome_bottom.txt");
-
-
-	//-------------------------------------
-	// 池
-	//-------------------------------------
-	param.position_ = { 0.0f, -0.5f, 0.0f };
-	param.rotation_ = { 0.0f, 0.0f, 0.0f };
-	param.scaling_ = { 30.0f, 1.0f, 30.0f };
-	param.layer_ = LAYER_SPRITE_LAKE;
-
-	object_manager_->Create(
-		"lake",
-		param);
 
 	//-------------------------------------
 	// 砦
@@ -241,7 +217,7 @@ Game::Game()
 	//-------------------------------------
 	OBJECT_PARAMETER_DESC grandfather_param;
 	grandfather_param.layer_ = LAYER_MODEL_GRANDFATHER;
-	grandfather_param.position_ = GRANDFATHER_POSITION_STAGE1;
+	grandfather_param.position_ = { 1.0f, 0.0f, 0.0f };
 	grandfather_param.rotation_ = { 0.0f, 0.0f, 0.0f };
 	grandfather_param.scaling_ = { 1.0f, 1.0f, 1.0f };
 
@@ -266,7 +242,7 @@ Game::Game()
 	//-------------------------------------
 	OBJECT_PARAMETER_DESC child_param;
 	child_param.layer_ = LAYER_MODEL_CHILD;
-	child_param.position_ = CHILD_POSITION1;
+	child_param.position_ = { -1.0f, 0.0f, 0.0f };
 	child_param.rotation_ = { 0.0f, 0.0f, 0.0f };
 	child_param.scaling_ = { 1.0f, 1.0f, 1.0f };
 
@@ -530,7 +506,6 @@ void Game::Update()
 
 	static const float player_speed_value = 0.05f;
 	static int bullet_count = 0;
-	static int shot_late = 0;
 	static D3DXVECTOR3 fort_underground(0.0f, 0.0f, 0.0f);
 	float player_speed = player_speed_value;
 	float father_life = grandfather->GetLife();
@@ -541,9 +516,13 @@ void Game::Update()
 	float fort2_life = fort2->GetLife();
 	float fort3_life = fort3->GetLife();
 
+
 	//-------------------------------------
 	// ゲームステージデバッグ
 	//-------------------------------------
+    fort_gauge_manager->SetFortLife(0, fort1_life);
+    fort_gauge_manager->SetFortLife(1, fort2_life);
+    fort_gauge_manager->SetFortLife(2, fort3_life);
 	if (fort1_life == 0.0f){
 		stage_ = 2;
 		if (fort2_life == 0.0f){
@@ -578,15 +557,6 @@ void Game::Update()
 		}
 	}
 	if (GamePad::isTrigger(GAMEPAD_GRANDFATHER, PAD_BUTTON_7)){
-		// ワープエフェクト再生（移動前）
-		EFFECT_PARAMETER_DESC effect_param;
-		MyEffect *effect = effect_manager_->Get("warp");
-		effect_param = effect->parameter();
-		effect_param.position_ = grandfather_position;
-		effect_param.rotation_ = Vector3(0.0f, 0.0f, 0.0f);
-		effect->SetParameter(effect_param);
-		effect_manager_->Play("warp");
-
 		switch(stage_){
 		case 1:
 			grandfather_position = GRANDFATHER_POSITION_STAGE1;
@@ -601,10 +571,6 @@ void Game::Update()
 			grandfather_rotation.y_ = GRANDFATHER_ROTATION_STAGE3;
 			break;
 		}
-		// ワープエフェクト再生（移動後）
-		effect_param.position_ = grandfather_position;
-		effect->SetParameter(effect_param);
-		effect_manager_->Play("warp");
 	}
 
 	//-------------------------------------
@@ -697,8 +663,7 @@ void Game::Update()
 		grandfather_position.y_,
 		grandfather_position.z_);
 	grandfather_position.y_ = field->GetHeight(grandfather_pos);
-	if (grandfather_position.y_ > 0.5f ||
-		grandfather_position.y_ < -0.5f){
+	if (grandfather_position.y_ > 0.5f){
 		grandfather_position = grandfather_prevposition;
 	}
 	
@@ -812,11 +777,8 @@ void Game::Update()
 	//-------------------------------------
 	// 弾発射
 	//-------------------------------------
-	shot_late--;
-	shot_late = std::max<int>(shot_late, 0);
 	if (GamePad::isPress(GAMEPAD_GRANDFATHER, PAD_BUTTON_8) &&
-		father_watergauge > 0 &&
-		shot_late == 0){
+		father_watergauge > 0){
 		EFFECT_PARAMETER_DESC effect_param;
 		MyEffect *effect = effect_manager_->Get("water");
 		effect_param = effect->parameter();
@@ -850,8 +812,6 @@ void Game::Update()
 		father_watergauge = std::max<float>(father_watergauge, 0.0f);
 		grandfather->SetWaterGauge(father_watergauge);
 		waterGage->SetChangeValue(father_watergauge);
-
-		shot_late = 10;
 
 	}
 #ifdef _DEBUG
@@ -897,28 +857,28 @@ void Game::Update()
     //-------------------------------------
     // 砦ゲージの変動
     //-------------------------------------
-    if (KeyBoard::isTrigger(DIK_1))
-        fort_gauge_manager->SetFortLife(0 , 0.1f);
-    else if (KeyBoard::isTrigger(DIK_2))
-        fort_gauge_manager->SetFortLife(0 , 0.2f);
-    else if (KeyBoard::isTrigger(DIK_3))
-        fort_gauge_manager->SetFortLife(0, 0.3f);
-    else if (KeyBoard::isTrigger(DIK_4))
-        fort_gauge_manager->SetFortLife(0, 0.4f);
-    else if (KeyBoard::isTrigger(DIK_5))
-        fort_gauge_manager->SetFortLife(0, 0.5f);
-    else if (KeyBoard::isTrigger(DIK_6))
-        fort_gauge_manager->SetFortLife(0, 0.6f);
-    else if (KeyBoard::isTrigger(DIK_7))
-        fort_gauge_manager->SetFortLife(0, 0.7f);
-    else if (KeyBoard::isTrigger(DIK_8))
-        fort_gauge_manager->SetFortLife(0, 0.8f);
-    else if (KeyBoard::isTrigger(DIK_9))
-        fort_gauge_manager->SetFortLife(0, 0.9f);
-    else if (KeyBoard::isTrigger(DIK_0))
-        fort_gauge_manager->SetFortLife(0, 0.0f);
-    else if (KeyBoard::isTrigger(DIK_L))
-        fort_gauge_manager->SetFortLife(0, 1.0f);
+    //if (KeyBoard::isTrigger(DIK_1))
+    //    fort_gauge_manager->SetFortLife(0 , 0.1f);
+    //else if (KeyBoard::isTrigger(DIK_2))
+    //    fort_gauge_manager->SetFortLife(0 , 0.2f);
+    //else if (KeyBoard::isTrigger(DIK_3))
+    //    fort_gauge_manager->SetFortLife(0, 0.3f);
+    //else if (KeyBoard::isTrigger(DIK_4))
+    //    fort_gauge_manager->SetFortLife(0, 0.4f);
+    //else if (KeyBoard::isTrigger(DIK_5))
+    //    fort_gauge_manager->SetFortLife(0, 0.5f);
+    //else if (KeyBoard::isTrigger(DIK_6))
+    //    fort_gauge_manager->SetFortLife(0, 0.6f);
+    //else if (KeyBoard::isTrigger(DIK_7))
+    //    fort_gauge_manager->SetFortLife(0, 0.7f);
+    //else if (KeyBoard::isTrigger(DIK_8))
+    //    fort_gauge_manager->SetFortLife(0, 0.8f);
+    //else if (KeyBoard::isTrigger(DIK_9))
+    //    fort_gauge_manager->SetFortLife(0, 0.9f);
+    //else if (KeyBoard::isTrigger(DIK_0))
+    //    fort_gauge_manager->SetFortLife(0, 0.0f);
+    //else if (KeyBoard::isTrigger(DIK_L))
+    //    fort_gauge_manager->SetFortLife(0, 1.0f);
 #endif //_DEBUG
 	//-------------------------------------
 	// アニメーション制御
@@ -947,14 +907,6 @@ void Game::Update()
 		child->PlayAnimation(FbxChild::DOWN);
 		child_death_ = true;
 		child_respawn_waittime_ = CHILD_RESPAWN_WAITTIME;
-		EFFECT_PARAMETER_DESC effect_param;
-		MyEffect *effect = effect_manager_->Get("dead");
-		effect_param = effect->parameter();
-		effect_param.position_ = child_position;
-		effect_param.rotation_ = Vector3(0.0f, 0.0f, 0.0f);
-		effect->SetParameter(effect_param);
-		effect_manager_->Play("dead");
-
 	}
 	else if (child_death_ && !child_respawn_waittime_){
 		child->PlayAnimation(FbxChild::IDLE);
@@ -1002,7 +954,6 @@ void Game::Update()
 
 	font1_->Add("シーン名:");
 	font1_->Add("Game\n");
-	font1_->Add("FPS : %d\n", Fps::GetFps());
 	font1_->Add("STAGE : %d\n", stage_);
 	font1_->Add("LIFE(GrandFather) : %3.2f\n", father_life);
 	font1_->Add("LIFE(Child)       : %3.2f\n", child_life);
@@ -1012,9 +963,7 @@ void Game::Update()
 		grandfather_position.x_, grandfather_position.y_, grandfather_position.z_);
 	font1_->Add("ROTATION(Grandfather) : %3.2f %3.2f %3.2f\n",
 		grandfather_rotation.x_, grandfather_rotation.y_, grandfather_rotation.z_);
-	font1_->Add("OBJECT : %d\n", ObjectManager::GetCount());
-	font1_->Add("EFFECT : %d\n", EffectManager::GetCount());
-	font1_->Add("COLLISION : %d\n", CollisionManager::GetCount());
+
 
 	font2_->Add("----------操作説明----------\n");
 	font2_->Add("【ゲームパッド使用時】\n");

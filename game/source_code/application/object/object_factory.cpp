@@ -14,12 +14,10 @@
 #include "object.h"
 #include "object_factory.h"
 #include "objects/sprite/sprite2d.h"
-#include "objects/sprite/message.h"
 #include "objects/mesh/field.h"
 #include "objects/model/x_model.h"
 #include "objects/model/instancing_tree.h"
 #include "objects/sprite3d/shadow.h"
-#include "objects/sprite3d/lake.h"
 #include "objects/model/fbx_model.h"
 #include "objects/sprite/timer.h"
 #include "objects/sprite/water_gage.h"
@@ -73,10 +71,6 @@ Object *ObjectFactory::Create(
 
 	else if(param.layer_ == LAYER_SHADOW){
 		object = new Shadow(parameter);
-	}
-
-	else if (param.layer_ == LAYER_SPRITE_LAKE){
-		object = new Lake(parameter);
 	}
 
 	else{
@@ -144,20 +138,6 @@ Object *ObjectFactory::Create(
 		sprite->SetTexture(object_path);
 	}
 
-<<<<<<< HEAD
-	else if (param.layer_ == LAYER_MESSAGE){
-		object = new Message(parameter);
-		Message *message = dynamic_cast<Message*>(object);
-		message->SetTexture(object_path);
-	}
-
-/*
-    else if (param.layer_ == LAYER_WATER_GAGE){
-        object = new WaterGage(parameter);
-    }*/
-
-=======
->>>>>>> origin/rockman
 	else{
 		ASSERT_ERROR("無効なオブジェクト生成カテゴリです");
 	}

@@ -292,17 +292,10 @@
     <ClCompile Include="source_code\application\object\objects\model\fbx\fbx_player.cpp">
       <Filter>source_code\application\object\objects\model\fbx</Filter>
     </ClCompile>
-<<<<<<< HEAD
-    <ClCompile Include="source_code\application\object\objects\sprite3d\lake.cpp">
-      <Filter>source_code\application\object\objects\sprite3d</Filter>
-    </ClCompile>
-    <ClCompile Include="source_code\application\object\objects\sprite\message.cpp">
-=======
     <ClCompile Include="source_code\application\object\objects\sprite\fort_gage.cpp">
       <Filter>source_code\application\object\objects\sprite</Filter>
     </ClCompile>
     <ClCompile Include="source_code\application\object\objects\sprite\fort_gauge_manager.cpp">
->>>>>>> origin/rockman
       <Filter>source_code\application\object\objects\sprite</Filter>
     </ClCompile>
   </ItemGroup>
@@ -508,17 +501,10 @@
     <ClInclude Include="source_code\application\object\objects\model\fbx\fbx_player.h">
       <Filter>source_code\application\object\objects\model\fbx</Filter>
     </ClInclude>
-<<<<<<< HEAD
-    <ClInclude Include="source_code\application\object\objects\sprite3d\lake.h">
-      <Filter>source_code\application\object\objects\sprite3d</Filter>
-    </ClInclude>
-    <ClInclude Include="source_code\application\object\objects\sprite\message.h">
-=======
     <ClInclude Include="source_code\application\object\objects\sprite\fort_gage.h">
       <Filter>source_code\application\object\objects\sprite</Filter>
     </ClInclude>
     <ClInclude Include="source_code\application\object\objects\sprite\fort_gauge_manager.h">
->>>>>>> origin/rockman
       <Filter>source_code\application\object\objects\sprite</Filter>
     </ClInclude>
   </ItemGroup>
