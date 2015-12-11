@@ -747,12 +747,6 @@ void Game::Update()
 		fort_underground.x = std::min<float>(fort_underground.x, 0.0f);
 		fort_underground.y = std::max<float>(fort_underground.y, -3.0f);
 		fort_underground.z = std::max<float>(fort_underground.z, -3.0f);
-		if (fort_underground.x != 0.0f){
-			use_camera_name_ = "SubCamera";
-		}
-		else{
-			use_camera_name_ = "MainCamera";
-		}
 		break;
 	case 2:
 		fort_underground.x -= 0.01f;
@@ -761,12 +755,6 @@ void Game::Update()
 		fort_underground.x = std::max<float>(fort_underground.x, -3.0f);
 		fort_underground.y = std::min<float>(fort_underground.y, 0.0f);
 		fort_underground.z = std::max<float>(fort_underground.z, -3.0f);
-		if (fort_underground.y != 0.0f){
-			use_camera_name_ = "SubCamera";
-		}
-		else{
-			use_camera_name_ = "MainCamera";
-		}
 		break;
 	case 3:
 		fort_underground.x -= 0.01f;
@@ -775,12 +763,6 @@ void Game::Update()
 		fort_underground.x = std::max<float>(fort_underground.x, -3.0f);
 		fort_underground.y = std::max<float>(fort_underground.y, -3.0f);
 		fort_underground.z = std::min<float>(fort_underground.z, 0.0f);
-		if (fort_underground.z != 0.0f){
-			use_camera_name_ = "SubCamera";
-		}
-		else{
-			use_camera_name_ = "MainCamera";
-		}
 		break;
 	}
 
@@ -883,13 +865,6 @@ void Game::Update()
 			camera_rotation.x = CAMERA_ROT_X_LIMIT;
 		}
 	}
-	// カメラ切り替えテスト
-	if (KeyBoard::isPress(DIK_4)){
-		use_camera_name_ = "MainCamera";
-	}
-	if (KeyBoard::isPress(DIK_5)){
-		use_camera_name_ = "SubCamera";
-	}
 #endif
 	
 	if(GamePad::isPress(GAMEPAD_GRANDFATHER, PAD_RS_UP)){
@@ -969,8 +944,7 @@ void Game::Update()
 	//-------------------------------------
 	Camera *sub_camera = camera_manager_->Get("SubCamera");
 	D3DXVECTOR3 sub_camera_position, sub_camera_rotation, sub_camera_focus;
-	// モデルの回転Yをそのままカメラの回転Yへ
-	//sub_camera_rotation.y = D3DX_PI*0.25f;
+	// 適当な位置から眺める
 	sub_camera_rotation.x = -D3DX_PI*0.15f;
 	// 一旦砦を注視点に
 	switch (stage_)
@@ -978,17 +952,35 @@ void Game::Update()
 	case 1:
 		sub_camera_focus = fort1_pos;
 		sub_camera_focus.y = 0.0f;
+		if (fort_underground.x != 0.0f){
+			use_camera_name_ = "SubCamera";
+		}
+		else{
+			use_camera_name_ = "MainCamera";
+		}
 		break;
 	case 2:
 		sub_camera_focus = fort2_pos;
 		sub_camera_focus.y = 0.0f;
+		if (fort_underground.y != 0.0f){
+			use_camera_name_ = "SubCamera";
+		}
+		else{
+			use_camera_name_ = "MainCamera";
+		}
 		break;
 	case 3:
 		sub_camera_focus = fort3_pos;
 		sub_camera_focus.y = 0.0f;
+		if (fort_underground.z != 0.0f){
+			use_camera_name_ = "SubCamera";
+		}
+		else{
+			use_camera_name_ = "MainCamera";
+		}
 		break;
 	}
-	// 砦の中心辺りを基準に
+	// モデルの中心辺りを基準に
 	sub_camera_focus.y += CAMERA_FOCUS_OFFSET_Y;
 	// モデルの少し先を見るように調整
 	sub_camera_focus.x += sinf(sub_camera_rotation.y) * CAMERA_FOCUS_OFFSET * cosf(sub_camera_rotation.x);
@@ -1091,6 +1083,16 @@ void Game::Update()
 		grandfather->SetWaterGauge(father_watergauge);
 		waterGage->SetChangeValue(father_watergauge);
 	}
+	//-------------------------------------
+	// カメラ切り替えテスト
+	//-------------------------------------
+	if (KeyBoard::isPress(DIK_4)){
+		use_camera_name_ = "MainCamera";
+	}
+	if (KeyBoard::isPress(DIK_5)){
+		use_camera_name_ = "SubCamera";
+	}
+
 #endif //_DEBUG
 
 #ifdef _DEBUG
