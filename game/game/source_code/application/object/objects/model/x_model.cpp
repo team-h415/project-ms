@@ -81,7 +81,7 @@ void XModel::Draw()
 
 	DirectX9Holder::device_->SetTransform(D3DTS_WORLD, &world_);
 	DirectX9Holder::device_->SetVertexDeclaration(
-		DirectX9Holder::vertex_declaration_3d_);
+		DirectX9Holder::vertex_declaration_x_);
 
 	D3DXMATRIX view, projection, wvp;
 	DirectX9Holder::device_->GetTransform(D3DTS_VIEW, &view);

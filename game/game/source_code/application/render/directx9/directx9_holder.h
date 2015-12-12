@@ -32,6 +32,7 @@ public:
 	static LPDIRECT3DVERTEXDECLARATION9 vertex_declaration_3d_;
 	static LPDIRECT3DVERTEXDECLARATION9 vertex_declaration_field_;
 	static LPDIRECT3DVERTEXDECLARATION9 vertex_declaration_shadow_;
+	static LPDIRECT3DVERTEXDECLARATION9 vertex_declaration_x_;
 	static LPDIRECT3DVERTEXDECLARATION9 vertex_declaration_fbx_;
 	static LPDIRECT3DVERTEXDECLARATION9 vertex_declaration_instancing_;
 };

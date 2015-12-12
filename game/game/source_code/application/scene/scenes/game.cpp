@@ -484,6 +484,21 @@ Game::Game()
 	object_manager_->Create(
 		"wood", wood_param);*/
 
+	//-------------------------------------
+	// ベンチ
+	//-------------------------------------
+	OBJECT_PARAMETER_DESC bench_param;
+	bench_param.layer_ = LAYER_MODEL_X;
+	bench_param.position_ = { 20.0f, 0.0f, -20.0f };
+	bench_param.rotation_ = { 0.0f, 0.0f, 0.0f };
+	bench_param.scaling_ = { 1.0f, 1.0f, 1.0f };
+
+	XModel *bench = dynamic_cast<XModel*>(object_manager_->Create(
+		"bench",
+		bench_param,
+		"resource/model/x/bench.x"));
+	bench->SetTexture("resource/texture/game/bench.jpg");
+
 
 	//-------------------------------------
 	// ゲームルール用パラメータ初期化
@@ -815,7 +830,8 @@ void Game::Update()
 		EFFECT_PARAMETER_DESC effect_param;
 		MyEffect *effect = effect_manager_->Get("smoke2");
 		effect_param = effect->parameter();
-		effect_param.position_ = { fort1_pos.x, field->GetHeight(fort1_pos), fort1_pos.z };
+		effect_param.position_ =
+		{ fort1_pos.x, field->GetHeight(fort1_pos), fort1_pos.z };
 		effect_param.rotation_ = { 0.0f, 0.0f, 0.0f };
 		effect->SetParameter(effect_param);
 		effect_manager_->Play("smoke2");
@@ -825,7 +841,8 @@ void Game::Update()
 		EFFECT_PARAMETER_DESC effect_param;
 		MyEffect *effect = effect_manager_->Get("smoke2");
 		effect_param = effect->parameter();
-		effect_param.position_ = { fort2_pos.x, field->GetHeight(fort2_pos), fort2_pos.z };
+		effect_param.position_ =
+		{ fort2_pos.x, field->GetHeight(fort2_pos), fort2_pos.z };
 		effect_param.rotation_ = { 0.0f, 0.0f, 0.0f };
 		effect->SetParameter(effect_param);
 		effect_manager_->Play("smoke2");
@@ -835,7 +852,8 @@ void Game::Update()
 		EFFECT_PARAMETER_DESC effect_param;
 		MyEffect *effect = effect_manager_->Get("smoke2");
 		effect_param = effect->parameter();
-		effect_param.position_ = { fort3_pos.x, field->GetHeight(fort3_pos), fort3_pos.z };
+		effect_param.position_ =
+		{ fort3_pos.x, field->GetHeight(fort3_pos), fort3_pos.z };
 		effect_param.rotation_ = { 0.0f, 0.0f, 0.0f };
 		effect->SetParameter(effect_param);
 		effect_manager_->Play("smoke2");
@@ -892,15 +910,21 @@ void Game::Update()
 	// 足元基準から体の中心辺りを基準に
 	camera_focus.y += CAMERA_FOCUS_OFFSET_Y;
 	// モデルの少し先を見るように調整
-	camera_focus.x += sinf(camera_rotation.y) * CAMERA_FOCUS_OFFSET * cosf(camera_rotation.x);
-	camera_focus.z += cosf(camera_rotation.y) * CAMERA_FOCUS_OFFSET * cosf(camera_rotation.x);
-	camera_focus.y += sinf(camera_rotation.x) * CAMERA_FOCUS_OFFSET;
+	camera_focus.x +=
+		sinf(camera_rotation.y) * CAMERA_FOCUS_OFFSET * cosf(camera_rotation.x);
+	camera_focus.z +=
+		cosf(camera_rotation.y) * CAMERA_FOCUS_OFFSET * cosf(camera_rotation.x);
+	camera_focus.y +=
+		sinf(camera_rotation.x) * CAMERA_FOCUS_OFFSET;
 
 	// 注視点を基準にカメラ座標を設定
 	camera_position = camera_focus;
-	camera_position.x -= sinf(camera_rotation.y) * camera_pos_len_ * cosf(camera_rotation.x);
-	camera_position.z -= cosf(camera_rotation.y) * camera_pos_len_ * cosf(camera_rotation.x);
-	camera_position.y -= sinf(camera_rotation.x) * camera_pos_len_;
+	camera_position.x -=
+		sinf(camera_rotation.y) * camera_pos_len_ * cosf(camera_rotation.x);
+	camera_position.z -=
+		cosf(camera_rotation.y) * camera_pos_len_ * cosf(camera_rotation.x);
+	camera_position.y -=
+		sinf(camera_rotation.x) * camera_pos_len_;
 
 
 	// カメラの地面めり込み回避処理
@@ -910,7 +934,8 @@ void Game::Update()
 	bool camera_re_calculate = false;
 	for (int i = 0; i < 10; ++i){
 		// 中間地点を計算
-		D3DXVECTOR3 lay_point = camera_position + vec_camera_to_focus * static_cast<float>(i) * 0.1f;
+		D3DXVECTOR3 lay_point =
+			camera_position + vec_camera_to_focus * static_cast<float>(i) * 0.1f;
 		float pos_y = field->GetHeight(lay_point);
 		// 回避処理
 		if (lay_point.y < pos_y + 0.1f){
@@ -922,9 +947,12 @@ void Game::Update()
 	//カメラ座標再計算
 	if (camera_re_calculate == true){ 
 		camera_position = camera_focus;
-		camera_position.x -= sinf(camera_rotation.y) * camera_pos_len_ * cosf(camera_rotation.x);
-		camera_position.z -= cosf(camera_rotation.y) * camera_pos_len_ * cosf(camera_rotation.x);
-		camera_position.y -= sinf(camera_rotation.x) * camera_pos_len_;
+		camera_position.x -=
+			sinf(camera_rotation.y) * camera_pos_len_ * cosf(camera_rotation.x);
+		camera_position.z -=
+			cosf(camera_rotation.y) * camera_pos_len_ * cosf(camera_rotation.x);
+		camera_position.y -=
+			sinf(camera_rotation.x) * camera_pos_len_;
 		camera_position.y = field->GetHeight(camera_position) + 0.1f;
 	}
 
@@ -983,15 +1011,21 @@ void Game::Update()
 	// モデルの中心辺りを基準に
 	sub_camera_focus.y += CAMERA_FOCUS_OFFSET_Y;
 	// モデルの少し先を見るように調整
-	sub_camera_focus.x += sinf(sub_camera_rotation.y) * CAMERA_FOCUS_OFFSET * cosf(sub_camera_rotation.x);
-	sub_camera_focus.z += cosf(sub_camera_rotation.y) * CAMERA_FOCUS_OFFSET * cosf(sub_camera_rotation.x);
-	sub_camera_focus.y += sinf(sub_camera_rotation.x) * CAMERA_FOCUS_OFFSET;
+	sub_camera_focus.x += 
+		sinf(sub_camera_rotation.y) * CAMERA_FOCUS_OFFSET * cosf(sub_camera_rotation.x);
+	sub_camera_focus.z += 
+		cosf(sub_camera_rotation.y) * CAMERA_FOCUS_OFFSET * cosf(sub_camera_rotation.x);
+	sub_camera_focus.y += 
+		sinf(sub_camera_rotation.x) * CAMERA_FOCUS_OFFSET;
 
 	// 注視点を基準にカメラ座標を設定
 	sub_camera_position = sub_camera_focus;
-	sub_camera_position.x -= sinf(sub_camera_rotation.y) * camera_pos_len_ * cosf(sub_camera_rotation.x);
-	sub_camera_position.z -= cosf(sub_camera_rotation.y) * camera_pos_len_ * cosf(sub_camera_rotation.x);
-	sub_camera_position.y -= sinf(sub_camera_rotation.x) * camera_pos_len_;
+	sub_camera_position.x -= 
+		sinf(sub_camera_rotation.y) * camera_pos_len_ * cosf(sub_camera_rotation.x);
+	sub_camera_position.z -= 
+		cosf(sub_camera_rotation.y) * camera_pos_len_ * cosf(sub_camera_rotation.x);
+	sub_camera_position.y -= 
+		sinf(sub_camera_rotation.x) * camera_pos_len_;
 
 
 	// カメラにパラメータを再セット
@@ -1184,9 +1218,13 @@ void Game::Update()
 	font1_->Add("GAUGE(GrandFather) : %3.2f\n", father_watergauge);
 	font1_->Add("GAUGE(Child)       : %3.2f\n", child_watergauge);
 	font1_->Add("POSITION(Grandfather) : %3.2f %3.2f %3.2f\n",
-		grandfather_position.x_, grandfather_position.y_, grandfather_position.z_);
+		grandfather_position.x_,
+		grandfather_position.y_,
+		grandfather_position.z_);
 	font1_->Add("ROTATION(Grandfather) : %3.2f %3.2f %3.2f\n",
-		grandfather_rotation.x_, grandfather_rotation.y_, grandfather_rotation.z_);
+		grandfather_rotation.x_,
+		grandfather_rotation.y_,
+		grandfather_rotation.z_);
 	font1_->Add("OBJECT : %d\n", ObjectManager::GetCount());
 	font1_->Add("EFFECT : %d\n", EffectManager::GetCount());
 	font1_->Add("COLLISION : %d\n", CollisionManager::GetCount());
@@ -1201,6 +1239,11 @@ void Game::Update()
 	font2_->Add("WASDキー：移動\n");
 	font2_->Add("方向キー：エイム移動\n");
 	font2_->Add("SPACEキー：射撃\n");
+
+	if (KeyBoard::isTrigger(DIK_F1)){
+		object_manager_->ExportObjectParameter(
+			"resource/object_patameter.txt");
+	}
 
 	if (KeyBoard::isTrigger(DIK_RETURN))
 	{
