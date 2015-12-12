@@ -59,6 +59,7 @@ Game::Game()
 	font1_ = new DebugFont;
 	font2_ = new DebugFont;
 	Bullet::Init();
+	use_camera_name_ = "MainCamera";
 
 	//-------------------------------------
 	// エフェクトの読み込み
@@ -90,6 +91,11 @@ Game::Game()
 		water_param);
 
 	effect_manager_->Create(
+		"smoke2",
+		"resource/effect/Smoke2.efk",
+		water_param);
+
+	effect_manager_->Create(
 		"dash",
 		"resource/effect/Dash.efk",
 		water_param);
@@ -110,6 +116,23 @@ Game::Game()
 
 	camera_manager_->Create(
 		"Perspective", "MainCamera", camera_param);
+
+	//-------------------------------------
+	// サブカメラ
+	//-------------------------------------
+	camera_param.acpect_ = SCREEN_WIDTH / SCREEN_HEIGHT;
+	camera_param.fovy_ = D3DX_PI * 0.25f;
+	camera_param.position_ = { 0.0f, 0.0f, -10.0f };
+	camera_param.focus_ = { 0.0f, 0.0f, 0.0f };
+	camera_param.rotation_ = { 0.0f, 0.0f, 0.0f };
+	camera_param.up_ = { 0.0f, 1.0f, 0.0f };
+	camera_param.near_ = 0.1f;
+	camera_param.far_ = 800.0f;
+	camera_pos_len_ = CAMERA_POS_LEN;
+
+	camera_manager_->Create(
+		"Perspective", "SubCamera", camera_param);
+
 
 	//-------------------------------------
 	// 地形
@@ -553,9 +576,9 @@ void Game::Update()
 	//-------------------------------------
 	// ゲームステージデバッグ
 	//-------------------------------------
-	if (fort1_life == 0.0f){
+	if (fort1_life <= 0.0f){
 		stage_ = 2;
-		if (fort2_life == 0.0f){
+		if (fort2_life <= 0.0f){
 			stage_ = 3;
 		}
 	}
@@ -784,12 +807,49 @@ void Game::Update()
 	grandfather_object->SetRotation(grandfather_rotation);
 	child_object->SetPosition(child_position);
 
+
+	//-------------------------------------
+	// 砦にとりあえずエフェクトだす
+	//-------------------------------------
+	if (fort_underground.x != 0.0f && fort_underground.x != -3.0f){
+		EFFECT_PARAMETER_DESC effect_param;
+		MyEffect *effect = effect_manager_->Get("smoke2");
+		effect_param = effect->parameter();
+		effect_param.position_ = { fort1_pos.x, field->GetHeight(fort1_pos), fort1_pos.z };
+		effect_param.rotation_ = { 0.0f, 0.0f, 0.0f };
+		effect->SetParameter(effect_param);
+		effect_manager_->Play("smoke2");
+	}
+	
+	if (fort_underground.y != 0.0f && fort_underground.y != -3.0f){
+		EFFECT_PARAMETER_DESC effect_param;
+		MyEffect *effect = effect_manager_->Get("smoke2");
+		effect_param = effect->parameter();
+		effect_param.position_ = { fort2_pos.x, field->GetHeight(fort2_pos), fort2_pos.z };
+		effect_param.rotation_ = { 0.0f, 0.0f, 0.0f };
+		effect->SetParameter(effect_param);
+		effect_manager_->Play("smoke2");
+	}
+
+	if (fort_underground.z != 0.0f && fort_underground.z != -3.0f){
+		EFFECT_PARAMETER_DESC effect_param;
+		MyEffect *effect = effect_manager_->Get("smoke2");
+		effect_param = effect->parameter();
+		effect_param.position_ = { fort3_pos.x, field->GetHeight(fort3_pos), fort3_pos.z };
+		effect_param.rotation_ = { 0.0f, 0.0f, 0.0f };
+		effect->SetParameter(effect_param);
+		effect_manager_->Play("smoke2");
+	}
+
 	//-------------------------------------
 	// カメラ追従
 	//-------------------------------------
 	Camera *main_camera = camera_manager_->Get("MainCamera");
 	D3DXVECTOR3 camera_position, camera_focus;
 	D3DXVECTOR3 camera_rotation(main_camera->rotation());
+
+	
+	
 
 	// 入力
 #ifdef _DEBUG
@@ -878,6 +938,67 @@ void Game::Update()
 	main_camera->SetFocus(camera_focus);
 	main_camera->SetRotation(camera_rotation);
 
+
+	//-------------------------------------
+	// サブカメラ計算
+	//-------------------------------------
+	Camera *sub_camera = camera_manager_->Get("SubCamera");
+	D3DXVECTOR3 sub_camera_position, sub_camera_rotation, sub_camera_focus;
+	// 適当な位置から眺める
+	sub_camera_rotation.x = -D3DX_PI*0.15f;
+	// 一旦砦を注視点に
+	switch (stage_)
+	{
+	case 1:
+		sub_camera_focus = fort1_pos;
+		sub_camera_focus.y = 0.0f;
+		if (fort_underground.x != 0.0f){
+			use_camera_name_ = "SubCamera";
+		}
+		else{
+			use_camera_name_ = "MainCamera";
+		}
+		break;
+	case 2:
+		sub_camera_focus = fort2_pos;
+		sub_camera_focus.y = 0.0f;
+		if (fort_underground.y != 0.0f){
+			use_camera_name_ = "SubCamera";
+		}
+		else{
+			use_camera_name_ = "MainCamera";
+		}
+		break;
+	case 3:
+		sub_camera_focus = fort3_pos;
+		sub_camera_focus.y = 0.0f;
+		if (fort_underground.z != 0.0f){
+			use_camera_name_ = "SubCamera";
+		}
+		else{
+			use_camera_name_ = "MainCamera";
+		}
+		break;
+	}
+	// モデルの中心辺りを基準に
+	sub_camera_focus.y += CAMERA_FOCUS_OFFSET_Y;
+	// モデルの少し先を見るように調整
+	sub_camera_focus.x += sinf(sub_camera_rotation.y) * CAMERA_FOCUS_OFFSET * cosf(sub_camera_rotation.x);
+	sub_camera_focus.z += cosf(sub_camera_rotation.y) * CAMERA_FOCUS_OFFSET * cosf(sub_camera_rotation.x);
+	sub_camera_focus.y += sinf(sub_camera_rotation.x) * CAMERA_FOCUS_OFFSET;
+
+	// 注視点を基準にカメラ座標を設定
+	sub_camera_position = sub_camera_focus;
+	sub_camera_position.x -= sinf(sub_camera_rotation.y) * camera_pos_len_ * cosf(sub_camera_rotation.x);
+	sub_camera_position.z -= cosf(sub_camera_rotation.y) * camera_pos_len_ * cosf(sub_camera_rotation.x);
+	sub_camera_position.y -= sinf(sub_camera_rotation.x) * camera_pos_len_;
+
+
+	// カメラにパラメータを再セット
+	sub_camera->SetPosition(sub_camera_position);
+	sub_camera->SetFocus(sub_camera_focus);
+	sub_camera->SetRotation(sub_camera_rotation);
+
 	//-------------------------------------
 	// 弾発射
 	//-------------------------------------
@@ -962,6 +1083,16 @@ void Game::Update()
 		grandfather->SetWaterGauge(father_watergauge);
 		waterGage->SetChangeValue(father_watergauge);
 	}
+	//-------------------------------------
+	// カメラ切り替えテスト
+	//-------------------------------------
+	if (KeyBoard::isPress(DIK_4)){
+		use_camera_name_ = "MainCamera";
+	}
+	if (KeyBoard::isPress(DIK_5)){
+		use_camera_name_ = "SubCamera";
+	}
+
 #endif //_DEBUG
 
 #ifdef _DEBUG
@@ -1124,7 +1255,7 @@ void Game::Draw()
 	MaterialColor color(32, 32, 32, 0);
 	DirectX9Holder::DrawBegin();
 	DirectX9Holder::Clear(color);
-	camera_manager_->Set("MainCamera");
+	camera_manager_->Set(use_camera_name_);
 	object_manager_->Draw();
 	effect_manager_->Draw();
 	collision_manager_->Draw();
