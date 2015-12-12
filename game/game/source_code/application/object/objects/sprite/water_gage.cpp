@@ -21,13 +21,6 @@
 
 
 //-------------------------------------
-// macoro
-//-------------------------------------
-namespace {
-    const float kPointPercent = 0.01f;
-}
-
-//-------------------------------------
 // WaterGage()
 //-------------------------------------
 WaterGage::WaterGage(
@@ -52,7 +45,6 @@ WaterGage::WaterGage(
 WaterGage::~WaterGage()
 {
     SAFE_DELETE_ARRAY(vertex_);
-//    SAFE_RELEASE(diffuse_texture_);
     diffuse_texture_ = NULL;
     SAFE_RELEASE(alpha_texture_);
     SAFE_DELETE(shader_);

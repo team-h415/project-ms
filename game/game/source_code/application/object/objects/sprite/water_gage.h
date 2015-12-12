@@ -13,18 +13,6 @@
 
 
 //-------------------------------------
-// macro
-//-------------------------------------
-namespace{
-    static const int kMaxGage = 1000;
-
-    static const int kGageDown = 10;
-
-    static const int kGageRegene = 50;
-}
-
-
-//-------------------------------------
 // class
 //-------------------------------------
 class WaterGage : public Object

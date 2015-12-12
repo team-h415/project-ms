@@ -32,10 +32,10 @@ public:
     void SetTexture(
         const std::string &path);
     void SetFortLife(const int id , const float life);
+    FORT_STATE GetFortState(const int id){ fort_gauge_[id]->GetFortState(); }
 private:
     FortGage *fort_gauge_[3];
     LPDIRECT3DTEXTURE9 texture_;
-    int id_;
 };
 
 
