@@ -17,7 +17,8 @@
 #include "objects/sprite/message.h"
 #include "objects/mesh/field.h"
 #include "objects/model/x_model.h"
-#include "objects/model/instancing_tree.h"
+#include "objects/model/x/instancing_tree.h"
+#include "objects/model/x/instancing_bench.h"
 #include "objects/sprite3d/shadow.h"
 #include "objects/sprite3d/lake.h"
 #include "objects/model/fbx_model.h"
@@ -69,6 +70,10 @@ Object *ObjectFactory::Create(
 
 	else if(param.layer_ == LAYER_TREE){
 		object = new InstancingTree(parameter);
+	}
+
+	else if (param.layer_ == LAYER_BENCH){
+		object = new InstancingBench(parameter);
 	}
 
 	else if(param.layer_ == LAYER_SHADOW){
@@ -149,11 +154,6 @@ Object *ObjectFactory::Create(
 		Message *message = dynamic_cast<Message*>(object);
 		message->SetTexture(object_path);
 	}
-
-/*
-    else if (param.layer_ == LAYER_WATER_GAGE){
-        object = new WaterGage(parameter);
-    }*/
 
 	else{
 		ASSERT_ERROR("無効なオブジェクト生成カテゴリです");

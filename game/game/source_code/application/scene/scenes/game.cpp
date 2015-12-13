@@ -45,6 +45,12 @@
 
 
 //-------------------------------------
+// warning
+//-------------------------------------
+#pragma warning (disable:4996)
+
+
+//-------------------------------------
 // Game()
 //-------------------------------------
 Game::Game()
@@ -488,17 +494,9 @@ Game::Game()
 	// ベンチ
 	//-------------------------------------
 	OBJECT_PARAMETER_DESC bench_param;
-	bench_param.layer_ = LAYER_MODEL_X;
-	bench_param.position_ = { 20.0f, 0.0f, -20.0f };
-	bench_param.rotation_ = { 0.0f, 0.0f, 0.0f };
-	bench_param.scaling_ = { 1.0f, 1.0f, 1.0f };
-
-	XModel *bench = dynamic_cast<XModel*>(object_manager_->Create(
-		"bench",
-		bench_param,
-		"resource/model/x/bench.x"));
-	bench->SetTexture("resource/texture/game/bench.jpg");
-
+	bench_param.layer_ = LAYER_BENCH;
+	object_manager_->Create(
+		"bench", bench_param);
 
 	//-------------------------------------
 	// ゲームルール用パラメータ初期化
@@ -804,8 +802,8 @@ void Game::Update()
 		grandfather_position.y_,
 		grandfather_position.z_);
 	grandfather_position.y_ = field->GetHeight(grandfather_pos);
-	if (grandfather_position.y_ > 0.5f ||
-		grandfather_position.y_ < -0.5f){
+	if (grandfather_position.y_ > 0.4f ||
+		grandfather_position.y_ < -0.4f){
 		grandfather_position = grandfather_prevposition;
 	}
 	
@@ -1243,6 +1241,20 @@ void Game::Update()
 	if (KeyBoard::isTrigger(DIK_F1)){
 		object_manager_->ExportObjectParameter(
 			"resource/object_patameter.txt");
+	}
+
+	if (KeyBoard::isTrigger(DIK_F2)){
+		FILE *file = fopen("DebugParam.txt", "a");
+		fprintf(file, "\n{ %3.2ff, %3.2ff, %3.2ff };\n",
+			grandfather_position.x_,
+			grandfather_position.y_,
+			grandfather_position.z_);
+		fprintf(file, "{ %3.2ff, %3.2ff, %3.2ff };\n",
+			grandfather_rotation.x_,
+			grandfather_rotation.y_,
+			grandfather_rotation.z_);
+		fclose(file);
+
 	}
 
 	if (KeyBoard::isTrigger(DIK_RETURN))

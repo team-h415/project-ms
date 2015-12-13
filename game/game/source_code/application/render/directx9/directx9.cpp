@@ -171,7 +171,7 @@ DirectX9::DirectX9()
 		velementx,
 		&DirectX9Holder::vertex_declaration_x_)))
 	{
-		ASSERT_ERROR("3D用頂点宣言生成に失敗");
+		ASSERT_ERROR("Xモデル用頂点宣言生成に失敗");
 	}
 
 	D3DVERTEXELEMENT9 velementfbx[] = {

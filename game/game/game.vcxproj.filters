@@ -277,9 +277,6 @@
     <ClCompile Include="source_code\application\object\objects\mesh\skydome.cpp">
       <Filter>source_code\application\object\objects\mesh</Filter>
     </ClCompile>
-    <ClCompile Include="source_code\application\object\objects\model\instancing_tree.cpp">
-      <Filter>source_code\application\object\objects\model</Filter>
-    </ClCompile>
     <ClCompile Include="source_code\application\math\vector.cpp">
       <Filter>source_code\application\math</Filter>
     </ClCompile>
@@ -303,6 +300,12 @@
     </ClCompile>
     <ClCompile Include="source_code\application\object\objects\sprite\fort_gauge_manager.cpp">
       <Filter>source_code\application\object\objects\sprite</Filter>
+    </ClCompile>
+    <ClCompile Include="source_code\application\object\objects\model\x\instancing_tree.cpp">
+      <Filter>source_code\application\object\objects\model\x</Filter>
+    </ClCompile>
+    <ClCompile Include="source_code\application\object\objects\model\x\instancing_bench.cpp">
+      <Filter>source_code\application\object\objects\model\x</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -495,9 +498,6 @@
     <ClInclude Include="source_code\application\object\objects\mesh\skydome.h">
       <Filter>source_code\application\object\objects\mesh</Filter>
     </ClInclude>
-    <ClInclude Include="source_code\application\object\objects\model\instancing_tree.h">
-      <Filter>source_code\application\object\objects\model</Filter>
-    </ClInclude>
     <ClInclude Include="source_code\application\object\objects\model\x\x_fort.h">
       <Filter>source_code\application\object\objects\model\x</Filter>
     </ClInclude>
@@ -518,6 +518,12 @@
     </ClInclude>
     <ClInclude Include="source_code\application\object\objects\sprite\fort_gauge_manager.h">
       <Filter>source_code\application\object\objects\sprite</Filter>
+    </ClInclude>
+    <ClInclude Include="source_code\application\object\objects\model\x\instancing_tree.h">
+      <Filter>source_code\application\object\objects\model\x</Filter>
+    </ClInclude>
+    <ClInclude Include="source_code\application\object\objects\model\x\instancing_bench.h">
+      <Filter>source_code\application\object\objects\model\x</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
