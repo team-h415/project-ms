@@ -206,6 +206,24 @@ DirectX9::DirectX9()
 		ASSERT_ERROR("インスタンシング用頂点宣言生成に失敗");
 	}
 
+	D3DVERTEXELEMENT9 velementbench[] = {
+		{ 0, 0, D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_POSITION, 0 },
+		{ 0, 12, D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_NORMAL, 0 },
+		{ 0, 24, D3DDECLTYPE_FLOAT2, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 0 },
+		{ 1, 0, D3DDECLTYPE_FLOAT4, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 1 },
+		{ 1, 16, D3DDECLTYPE_FLOAT4, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 2 },
+		{ 1, 32, D3DDECLTYPE_FLOAT4, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 3 },
+		{ 1, 48, D3DDECLTYPE_FLOAT4, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 4 },
+		D3DDECL_END(),
+	};
+
+	if (FAILED(device->CreateVertexDeclaration(
+		velementbench,
+		&DirectX9Holder::vertex_declaration_instancing_bench_)))
+	{
+		ASSERT_ERROR("インスタンシングベンチ用頂点宣言生成に失敗");
+	}
+
 	D3DVERTEXELEMENT9 velementfield[] = {
 		{ 0, 0, D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_POSITION, 0 },
 		{ 0, 12, D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_NORMAL, 0 },
@@ -249,8 +267,10 @@ DirectX9::~DirectX9()
 	SAFE_RELEASE(DirectX9Holder::vertex_declaration_3d_);
 	SAFE_RELEASE(DirectX9Holder::vertex_declaration_field_);
 	SAFE_RELEASE(DirectX9Holder::vertex_declaration_shadow_);
+	SAFE_RELEASE(DirectX9Holder::vertex_declaration_x_);
 	SAFE_RELEASE(DirectX9Holder::vertex_declaration_fbx_);
 	SAFE_RELEASE(DirectX9Holder::vertex_declaration_instancing_);
+	SAFE_RELEASE(DirectX9Holder::vertex_declaration_instancing_bench_);
 	SAFE_RELEASE(DirectX9Holder::device_);
 	SAFE_RELEASE(DirectX9Holder::directx9_);
 }

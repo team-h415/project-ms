@@ -1238,6 +1238,10 @@ void Game::Update()
 	font2_->Add("方向キー：エイム移動\n");
 	font2_->Add("SPACEキー：射撃\n");
 
+
+	//-------------------------------------
+	// デバッグ出力
+	//-------------------------------------
 	if (KeyBoard::isTrigger(DIK_F1)){
 		object_manager_->ExportObjectParameter(
 			"resource/object_patameter.txt");
@@ -1245,11 +1249,11 @@ void Game::Update()
 
 	if (KeyBoard::isTrigger(DIK_F2)){
 		FILE *file = fopen("DebugParam.txt", "a");
-		fprintf(file, "\n{ %3.2ff, %3.2ff, %3.2ff };\n",
+		fprintf(file, "\n{ %3.2ff, %3.2ff, %3.2ff },\n",
 			grandfather_position.x_,
 			grandfather_position.y_,
 			grandfather_position.z_);
-		fprintf(file, "{ %3.2ff, %3.2ff, %3.2ff };\n",
+		fprintf(file, "{ %3.2ff, %3.2ff, %3.2ff },\n",
 			grandfather_rotation.x_,
 			grandfather_rotation.y_,
 			grandfather_rotation.z_);
