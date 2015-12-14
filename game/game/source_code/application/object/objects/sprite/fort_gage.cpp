@@ -1,5 +1,5 @@
 //=========================================================
-// water_gage.cpp
+// fort_gage.cpp
 // author:shohei matsumoto
 //=========================================================
 
@@ -12,61 +12,63 @@
 #include "../../../render/directx9/directx9.h"
 #include "../../../render/directx9/directx9_holder.h"
 #include "../../../math/vector.h"
-#include "../../../input/input.h"
-#include "../../../input/inputs/keyboard.h"
-#include "../../../shader/shader.h"
 #include "../../object.h"
 #include "../../../resource/texture_manager.h"
-#include "water_gage.h"
+#include "fort_gage.h"
 
 
 //-------------------------------------
-// WaterGage()
+// FortGage()
 //-------------------------------------
-WaterGage::WaterGage(
+FortGage::FortGage(
     const OBJECT_PARAMETER_DESC &parameter)
 {
     parameter_ = parameter;
-    gauge_value_ = 1.0f;
+    state_mode_ = ALIVE;
     vertex_ = new Vertex2D[4];
+    life_ = 1.0f;
+    gauge_uv_y_ = 0.0f;
     CalculateVertex();
-    diffuse_texture_ = NULL;
-    alpha_texture_ = NULL;
-    shader_ = nullptr;
-    shader_ = new Shader("resource/shader/water_gage.hlsl");
-    D3DXCreateTextureFromFile(
-        DirectX9Holder::device_,
-        "resource/texture/game/water_gage_alpha.png", &alpha_texture_);
+    origin_top_vertex_y_ = vertex_[0].position_.y;
+    min_top_vertex_y_ = vertex_[0].position_.y;
+    max_top_vertex_y_ = vertex_[2].position_.y;
 }
 
+
 //-------------------------------------
-// ~WaterGage()
+// ~FortGage()
 //-------------------------------------
-WaterGage::~WaterGage()
+FortGage::~FortGage()
 {
     SAFE_DELETE_ARRAY(vertex_);
-    diffuse_texture_ = NULL;
-    SAFE_RELEASE(alpha_texture_);
-    SAFE_DELETE(shader_);
+    texture_ = NULL;
 }
 
 
 //-------------------------------------
-// Update
+// Init()
 //-------------------------------------
-void WaterGage::Update()
+void FortGage::Init()
 {
-	//-------------------------------------
-	// ç≈è¨ÅEç≈ëÂílê›íË
-	gauge_value_ = std::min<float>(gauge_value_, 1.0f);
-	gauge_value_ = std::max<float>(gauge_value_, 0.0f);
+    CalculateVertex();
+}
+
+//-------------------------------------
+// Update()
+//-------------------------------------
+void FortGage::Update()
+{
+    if (life_ > 0.0f)
+        state_mode_ = ALIVE;
+    else
+        state_mode_ = DEAD;
 }
 
 
 //-------------------------------------
-// Draw
+// Draw()
 //-------------------------------------
-void WaterGage::Draw()
+void FortGage::Draw()
 {
     DirectX9Holder::device_->SetRenderState(D3DRS_ALPHATESTENABLE, TRUE);
     DirectX9Holder::device_->SetRenderState(D3DRS_ALPHAREF, 0x01);
@@ -75,14 +77,7 @@ void WaterGage::Draw()
     DirectX9Holder::device_->SetVertexDeclaration(
         DirectX9Holder::vertex_declaration_2d_);
 
-    DirectX9Holder::device_->SetTexture(shader_->pixel_table()->GetSamplerIndex("diffuse_texture"), diffuse_texture_);
-    DirectX9Holder::device_->SetTexture(shader_->pixel_table()->GetSamplerIndex("alpha_texture"), alpha_texture_);
-
-    shader_->pixel_table()->SetFloat(DirectX9Holder::device_, "current_gage", gauge_value_);
-
-    DirectX9Holder::device_->SetVertexShader(shader_->vertex_shader());
-    DirectX9Holder::device_->SetPixelShader(shader_->pixel_shader());
-
+    DirectX9Holder::device_->SetTexture(0, texture_);
 
     DirectX9Holder::device_->DrawPrimitiveUP(
         D3DPT_TRIANGLESTRIP,
@@ -92,16 +87,13 @@ void WaterGage::Draw()
 
     DirectX9Holder::device_->SetTexture(0, NULL);
 
-    DirectX9Holder::device_->SetVertexShader(NULL);
-    DirectX9Holder::device_->SetPixelShader(NULL);
-
     DirectX9Holder::device_->SetRenderState(D3DRS_ALPHATESTENABLE, FALSE);
 }
 
 //-------------------------------------
 // CreateVertex()
 //-------------------------------------
-void WaterGage::CalculateVertex()
+void FortGage::CalculateVertex()
 {
     if (!vertex_) return;
 
@@ -134,20 +126,71 @@ void WaterGage::CalculateVertex()
     vertex_[2].rhw_ = 1.0f;
     vertex_[3].rhw_ = 1.0f;
 
+    vertex_[0].diffuse_ = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+    vertex_[1].diffuse_ = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+    vertex_[2].diffuse_ = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+    vertex_[3].diffuse_ = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+
     vertex_[0].texture_ = { 0.0f, 0.0f };
     vertex_[1].texture_ = { 1.0f, 0.0f };
     vertex_[2].texture_ = { 0.0f, 1.0f };
     vertex_[3].texture_ = { 1.0f, 1.0f };
 }
 
+
+//-------------------------------------
+// AddGauge()
+//-------------------------------------
+void FortGage::AddGauge(const float value)
+{
+    float add_pos_value = parameter_.scaling_.y_ * value;
+    gauge_uv_y_ += value;
+
+    gauge_uv_y_ = std::min<float>(gauge_uv_y_, 1.0f);
+    gauge_uv_y_ = std::max<float>(gauge_uv_y_, 0.0f);
+
+    vertex_[0].position_.y += add_pos_value;
+    vertex_[1].position_.y += add_pos_value;
+
+    vertex_[0].position_.y = std::min<float>(vertex_[0].position_.y, max_top_vertex_y_);
+    vertex_[0].position_.y = std::max<float>(vertex_[0].position_.y, min_top_vertex_y_);
+    vertex_[1].position_.y = std::min<float>(vertex_[1].position_.y, max_top_vertex_y_);
+    vertex_[1].position_.y = std::max<float>(vertex_[1].position_.y, min_top_vertex_y_);
+
+    vertex_[0].texture_ = { 0.0f, gauge_uv_y_ };
+    vertex_[1].texture_ = { 1.0f, gauge_uv_y_ };
+    vertex_[2].texture_ = { 0.0f, 1.0f };
+    vertex_[3].texture_ = { 1.0f, 1.0f };
+}
+
+//-------------------------------------
+// SetGauge()
+//-------------------------------------
+void FortGage::SetGauge(const float life)
+{
+    life_= life;
+    gauge_uv_y_ = life - 1.0f;
+    gauge_uv_y_ = abs(gauge_uv_y_);
+
+    vertex_[0].position_.y = origin_top_vertex_y_ + parameter_.scaling_.y_ * gauge_uv_y_;
+    vertex_[1].position_.y = origin_top_vertex_y_ + parameter_.scaling_.y_ * gauge_uv_y_;
+
+    vertex_[0].texture_ = { 0.0f, gauge_uv_y_ };
+    vertex_[1].texture_ = { 1.0f, gauge_uv_y_ };
+    vertex_[2].texture_ = { 0.0f, 1.0f };
+    vertex_[3].texture_ = { 1.0f, 1.0f };
+}
+
+
 //-------------------------------------
 // SetTexture()
 //-------------------------------------
-void WaterGage::SetTexture(
+void FortGage::SetTexture(
     const std::string &path)
 {
-    diffuse_texture_ = TextureManager::GetTexture(path.c_str());
+    texture_ = TextureManager::GetTexture(path.c_str());
 }
+
 
 //-------------------------------------
 // end of file

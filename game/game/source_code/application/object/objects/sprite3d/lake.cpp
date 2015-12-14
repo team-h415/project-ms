@@ -1,5 +1,5 @@
 //=========================================================
-// x_model.cpp
+// lake.cpp
 // author:ryuya nakamura
 //=========================================================
 
@@ -14,31 +14,47 @@
 #include "../../../math/vector.h"
 #include "../../../shader/shader.h"
 #include "../../object.h"
-#include "../../../resource/x_container.h"
-#include "../../../resource/x_container_manager.h"
+#include "../../object_manager.h"
+#include "lake.h"
 #include "../../../resource/texture_manager.h"
-#include "x_model.h"
 
 
 //-------------------------------------
-// XModel()
+// Lake()
 //-------------------------------------
-XModel::XModel(
+Lake::Lake(
 	const OBJECT_PARAMETER_DESC &parameter)
 {
 	parameter_ = parameter;
-	mesh_ = NULL;
-	material_buffer_ = NULL;
-	shader_ = nullptr;
 	shader_ = new Shader("resource/shader/halflambert_lighting.hlsl");
-	texture_ = NULL;
+	texture_ = TextureManager::GetTexture("resource/texture/game/lake_upper.jpg");
+
+	vertex_[0].position_ = { -1.0f, 0.0f, 1.0f };
+	vertex_[1].position_ = { 1.0f, 0.0f, 1.0f };
+	vertex_[2].position_ = { -1.0f, 0.0f, -1.0f };
+	vertex_[3].position_ = { 1.0f, 0.0f, -1.0f };
+
+	vertex_[0].diffuse_ = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+	vertex_[1].diffuse_ = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+	vertex_[2].diffuse_ = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+	vertex_[3].diffuse_ = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+
+	vertex_[0].normal_ = { 0.0f, 1.0f, 0.0f };
+	vertex_[1].normal_ = { 0.0f, 1.0f, 0.0f };
+	vertex_[2].normal_ = { 0.0f, 1.0f, 0.0f };
+	vertex_[3].normal_ = { 0.0f, 1.0f, 0.0f };
+
+	vertex_[0].texture_ = { 0.0f, 0.0f };
+	vertex_[1].texture_ = { 5.0f, 0.0f };
+	vertex_[2].texture_ = { 0.0f, 5.0f };
+	vertex_[3].texture_ = { 5.0f, 5.0f };
 }
 
 
 //-------------------------------------
-// ~XModel()
+// ~Lake()
 //-------------------------------------
-XModel::~XModel()
+Lake::~Lake()
 {
 	SAFE_DELETE(shader_);
 }
@@ -47,13 +63,19 @@ XModel::~XModel()
 //-------------------------------------
 // Update()
 //-------------------------------------
-void XModel::Update()
+void Lake::Update()
 {
+	const D3DXVECTOR2 scroll_speed = { 0.0005f, 0.001f };
 	D3DXMATRIX translate, rotate, scaling;
 	D3DXMatrixIdentity(&translate);
 	D3DXMatrixIdentity(&rotate);
 	D3DXMatrixIdentity(&scaling);
 	D3DXMatrixIdentity(&world_);
+
+	vertex_[0].texture_ += scroll_speed;
+	vertex_[1].texture_ += scroll_speed;
+	vertex_[2].texture_ += scroll_speed;
+	vertex_[3].texture_ += scroll_speed;
 
 	D3DXMatrixScaling(
 		&scaling, parameter_.scaling_.x_, parameter_.scaling_.y_, parameter_.scaling_.z_);
@@ -73,7 +95,7 @@ void XModel::Update()
 //-------------------------------------
 // Draw()
 //-------------------------------------
-void XModel::Draw()
+void Lake::Draw()
 {
 	DirectX9Holder::device_->SetRenderState(D3DRS_ALPHATESTENABLE, TRUE);
 	DirectX9Holder::device_->SetRenderState(D3DRS_ALPHAREF, 0x01);
@@ -81,7 +103,7 @@ void XModel::Draw()
 
 	DirectX9Holder::device_->SetTransform(D3DTS_WORLD, &world_);
 	DirectX9Holder::device_->SetVertexDeclaration(
-		DirectX9Holder::vertex_declaration_x_);
+		DirectX9Holder::vertex_declaration_3d_);
 
 	D3DXMATRIX view, projection, wvp;
 	DirectX9Holder::device_->GetTransform(D3DTS_VIEW, &view);
@@ -115,69 +137,12 @@ void XModel::Draw()
 	DirectX9Holder::device_->SetVertexShader(shader_->vertex_shader());
 	DirectX9Holder::device_->SetPixelShader(shader_->pixel_shader());
 
-	D3DMATERIAL9 default_material;
-	D3DXMATERIAL *material;
-	DirectX9Holder::device_->GetMaterial(&default_material);
-	material = (D3DXMATERIAL*)material_buffer_->GetBufferPointer();
-
-	for (DWORD i = 0; i < material_count_; i++)
-	{
-		mesh_->DrawSubset(i);
-	}
-
-	DirectX9Holder::device_->SetMaterial(&default_material);
+	DirectX9Holder::device_->DrawPrimitiveUP(
+		D3DPT_TRIANGLESTRIP, 2, vertex_, sizeof(Vertex3D));
 
 	DirectX9Holder::device_->SetVertexShader(NULL);
 	DirectX9Holder::device_->SetPixelShader(NULL);
 	DirectX9Holder::device_->SetRenderState(D3DRS_ALPHATESTENABLE, FALSE);
-}
-
-
-//-------------------------------------
-// LoadMesh()
-//-------------------------------------
-void XModel::LoadMesh(
-	const std::string &path)
-{
-	XContainer* container = XContainerManager::GetContainer(path);
-	mesh_ = container->mesh_;
-	material_buffer_ = container->material_buffer_;
-	material_count_ = container->material_count_;
-}
-
-
-//-------------------------------------
-// Action()
-//-------------------------------------
-void XModel::Action(
-	Object *target,
-	const float range)
-{
-	////-------------------------------------
-	//// FBXƒ‚ƒfƒ‹‚Æ“–‚½‚Á‚½‚ç
-	//if (target->parameter().layer_ == LAYER_MODEL_GRANDFATHER ||
-	//	target->parameter().layer_ == LAYER_MODEL_CHILD){
-	//	Vector3 vec = target->parameter().position_ - parameter_.position_;
-	//	Vector3 v = vec;
-	//	Vec3Normalize(vec, vec);
-	//	float distance = sqrtf(
-	//		(v.x_ * v.x_) + (v.y_ * v.y_) + (v.z_ * v.z_));
-	//	float sub = range - distance;
-	//	vec *= sub;
-	//	parameter_.position_ -= vec;
-	//}
-}
-
-
-
-//-------------------------------------
-// SetTexture()
-//-------------------------------------
-void XModel::SetTexture(
-	const std::string &path)
-{
-	//LoadTexture
-	texture_ = TextureManager::GetTexture(path.c_str());
 }
 
 

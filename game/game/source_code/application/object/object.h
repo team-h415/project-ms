@@ -21,6 +21,7 @@ enum OBJECT_LAYER
 	LAYER_NONE = 0,
 	LAYER_MESH_SKYDOME,
 	LAYER_MESH_FIELD,
+	LAYER_SPRITE_LAKE,
 	LAYER_MODEL_X,
 	LAYER_MODEL_FBX,
 	LAYER_MODEL_FORT,
@@ -28,11 +29,14 @@ enum OBJECT_LAYER
 	LAYER_MODEL_CHILD,
 	LAYER_BULLET,
 	LAYER_TREE,
+	LAYER_BENCH,
 	LAYER_SHADOW,
+	LAYER_MESSAGE,
     LAYER_DAMAGE_EFFECT,
     LAYER_WATER_GAGE,
     LAYER_TIMER,
     LAYER_SPRITE_2D,
+    LAYER_FORT_GAUGE,
 	LAYER_MAX,
 };
 
@@ -75,6 +79,8 @@ public:
 	bool this_delete(){
 		return this_delete_;
 	}
+
+	void SetThisDelete(bool flag){ this_delete_ = flag; }
 
 	// ÉpÉâÉÅÅ[É^ê›íË
 	void SetPosition(

@@ -20,7 +20,9 @@
 
 //-------------------------------------
 // variable
+//-------------------------------------
 std::list<Collision*> CollisionManager::collision_;
+int CollisionManager::collision_count_ = 0;
 
 
 //-------------------------------------
@@ -49,6 +51,8 @@ CollisionManager::~CollisionManager()
 //-------------------------------------
 void CollisionManager::Update()
 {
+	collision_count_ = 0;
+
 	//-------------------------------------
 	// ‘S—v‘f‚ğXV
 	for (auto it = collision_.begin(); it != collision_.end(); ++it){
@@ -60,14 +64,16 @@ void CollisionManager::Update()
 
 	for(auto it = collision_.begin(); it != collision_.end(); ++it){
 		(*it)->Update();
+		collision_count_++;
 	}
 
 
 	//-------------------------------------
 	// ‹…Œ`“¯m‚Ì‚ ‚½‚è”»’è‚ğÀ{
 	for (auto it = collision_.begin(); it != collision_.end(); ++it){
+		if ((*it)->GetThisDelete() == true) continue;
 		for (auto it2 = collision_.begin(); it2 != collision_.end(); ++it2){
-			if ((*it) == (*it2)) continue;
+			if ((*it) == (*it2) || (*it2)->GetThisDelete() == true) continue;
 			D3DXVECTOR3 distance =
 				(*it)->parameter().position_ - (*it2)->parameter().position_;
 			float range = (*it)->parameter().range_ + (*it2)->parameter().range_;

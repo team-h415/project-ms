@@ -4,6 +4,8 @@
 //=========================================================
 
 
+
+
 //-------------------------------------
 // include
 //-------------------------------------
@@ -38,13 +40,19 @@
 
 
 //-------------------------------------
+// static
+//-------------------------------------
+int Bullet::bullet_num_ = 0;
+
+
+//-------------------------------------
 // Bullet()
 //-------------------------------------
 Bullet::Bullet(
 	const OBJECT_PARAMETER_DESC &parameter)
 {
 	parameter_ = parameter;
-	
+
 	COLLISION_PARAMETER_DESC param;
 	param.position_ = {
 		parameter_.position_.x_,
@@ -64,15 +72,27 @@ Bullet::Bullet(
 	GameServer *game_server = dynamic_cast<GameServer*>(scene);
 	collision_ = game_server->collision_manager()->Create(this, param);
 #else
-	//Scene *scene = SceneManager::GetCurrentScene();
-	//std::string str = SceneManager::GetCurrentSceneName();
-	//if (str == "Game"){
-	//	ASSERT_ERROR("’e‚ª¶¬‚³‚ê‚é‚×‚«ƒV[ƒ“‚Å‚Í‚ ‚è‚Ü‚¹‚ñ");
-	//	return;
-	//}
-	//Game *game = dynamic_cast<Game*>(scene);
-	//collision_ = game->collision_manager()->Create(this, param);
+	std::string str = SceneManager::GetCurrentSceneName();
+	if (str != "Game"){
+		ASSERT_ERROR("’e‚ª¶¬‚³‚ê‚é‚×‚«ƒV[ƒ“‚Å‚Í‚ ‚è‚Ü‚¹‚ñ");
+		return;
+	}
+	Scene *scene = SceneManager::GetCurrentScene();
+	Game *game = dynamic_cast<Game*>(scene);
+	collision_ = game->collision_manager()->Create(this, param);
 #endif
+
+	// ’eÀ‘Ì¶¬
+	OBJECT_PARAMETER_DESC xmodel_param;
+	std::string bullet_name = "bulletcore" + std::to_string(bullet_num_);
+	xmodel_param.position_ = parameter.position_;
+	xmodel_param.rotation_ = { 0.0f, 0.0f, 0.0f };
+	xmodel_param.scaling_ = parameter.scaling_;
+	xmodel_param.layer_ = LAYER_MODEL_X;
+	xmodel_ = (XModel*)game->object_manager()->Create(bullet_name, xmodel_param, "resource/model/x/ball.x");
+	xmodel_->SetTexture("resource/texture/red.png");
+
+	bullet_num_++;
 }
 
 
@@ -86,6 +106,11 @@ Bullet::~Bullet()
 		collision_->SetThisDelete(true);
 		collision_ = nullptr;
 	}
+	if(xmodel_ != nullptr)
+	{
+		xmodel_->SetThisDelete(true);
+		xmodel_ = nullptr;
+	}
 }
 
 
@@ -98,6 +123,9 @@ void Bullet::Update()
 	parameter_.position_.y_ += speed_.y;
 	parameter_.position_.z_ += cosf(parameter_.rotation_.y_) * speed_.z;
 	speed_.y -= BULLET_GRAVITY;
+
+	// ’eÀ‘Ì‚ÌˆÚ“®
+	xmodel_->SetPosition(parameter_.position_);
 
 #ifdef NETWORK_HOST_MODE
 	Scene *scene = SceneManager::GetCurrentScene();
@@ -117,6 +145,11 @@ void Bullet::Update()
 			{
 				collision_->SetThisDelete(true);
 				collision_ = nullptr;
+			}
+			if(xmodel_ != nullptr)
+			{
+				xmodel_->SetThisDelete(true);
+				xmodel_ = nullptr;
 			}
 		}
 	}
@@ -241,7 +274,10 @@ void Bullet::Action(
 			//	game->effect_manager()->Play("damage");
 			//}
 			//this_delete_ = true;
+			//xmodel_->SetThisDelete(true);
 			//collision_->SetThisDelete(true);
+			//collision_ = nullptr;
+			//xmodel_ = nullptr;
 		}
 	}
 #else

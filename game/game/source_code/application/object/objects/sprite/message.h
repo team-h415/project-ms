@@ -1,5 +1,5 @@
 //=========================================================
-// fps.h
+// message.h
 // author:ryuya nakamura
 //=========================================================
 
@@ -8,34 +8,36 @@
 // include guard
 //-------------------------------------
 #pragma once
-#ifndef __APP_FPS_H__
-#define __APP_FPS_H__
+#ifndef __Message_H__
+#define __Message_H__
 
 
 //-------------------------------------
 // class
 //-------------------------------------
-class Fps
+class Message : public Sprite2D
 {
 public:
-	Fps();
-	virtual ~Fps();
-	bool CheckExecute();
-	static int GetFps(){
-		return fps_;
-	}
-private:
+	Message(
+		const OBJECT_PARAMETER_DESC &parameter);
+	virtual ~Message();
 	void Update();
-	DWORD execute_lasttime_;
-	DWORD fps_lasttime_;
-	DWORD current_time_;
-	DWORD frame_count_;
-	static int fps_;
-	static const  int frame_late_ = 60;
+	int GetTimer(){
+		return timer_;
+	}
+	void Play(){
+		timer_ = 120;
+		alpha_ = 1.0f;
+	}
+
+private:
+	void CalculateVertex();
+	int timer_;
+	float alpha_;
 };
 
 
-#endif //__ADD_YOUR_HANDS__
+#endif //__Message_H__
 
 
 //-------------------------------------

@@ -1,5 +1,5 @@
 //=========================================================
-// bullet.h
+// InstancingBench.h
 // author:ryuya nakamura
 //=========================================================
 
@@ -8,38 +8,34 @@
 // include guard
 //-------------------------------------
 #pragma once
-#ifndef __Bullet_H__
-#define __Bullet_H__
+#ifndef __InstancingBench_H__
+#define __InstancingBench_H__
 
 
 //-------------------------------------
 // class
 //-------------------------------------
-class Collision;
-class XModel;
-class MyEffect;
-class Bullet : public Object
+class InstancingBench : public Object
 {
 public:
-	Bullet(
+	InstancingBench(
 		const OBJECT_PARAMETER_DESC &parameter);
-	virtual ~Bullet();
+	virtual ~InstancingBench();
 	void Update();
 	void Draw();
-	void Action(
-		Object *target,
-		const float range);
-
-	static void Init(){ bullet_num_ = 0; }
 private:
-	Collision *collision_;
-	D3DXVECTOR3 speed_;
-	XModel *xmodel_;
-	static int bullet_num_;
+	LPDIRECT3DTEXTURE9 texture_;
+	Shader *shader_;
+	LPDIRECT3DVERTEXBUFFER9 vertex_buffer_;
+	LPDIRECT3DINDEXBUFFER9 index_buffer_;
+	LPDIRECT3DVERTEXBUFFER9 world_buffer_;
+	int object_count_;
+	int count_vertex_;
+	int count_face_;
 };
 
 
-#endif //__Bullet_H__
+#endif //__InstancingBench_H__
 
 
 //-------------------------------------

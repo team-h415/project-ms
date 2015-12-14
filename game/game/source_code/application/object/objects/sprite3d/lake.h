@@ -1,5 +1,5 @@
 //=========================================================
-// fps.h
+// lake.h
 // author:ryuya nakamura
 //=========================================================
 
@@ -8,34 +8,31 @@
 // include guard
 //-------------------------------------
 #pragma once
-#ifndef __APP_FPS_H__
-#define __APP_FPS_H__
+#ifndef __Lake_H__
+#define __Lake_H__
 
 
 //-------------------------------------
 // class
 //-------------------------------------
-class Fps
+class Lake : public Object
 {
 public:
-	Fps();
-	virtual ~Fps();
-	bool CheckExecute();
-	static int GetFps(){
-		return fps_;
-	}
-private:
+	Lake(
+		const OBJECT_PARAMETER_DESC &parameter);
+	virtual ~Lake();
 	void Update();
-	DWORD execute_lasttime_;
-	DWORD fps_lasttime_;
-	DWORD current_time_;
-	DWORD frame_count_;
-	static int fps_;
-	static const  int frame_late_ = 60;
+	void Draw();
+
+private:
+	Vertex3D vertex_[4];
+	LPDIRECT3DTEXTURE9 texture_;
+	Shader *shader_;
+	D3DXMATRIX world_;
 };
 
 
-#endif //__ADD_YOUR_HANDS__
+#endif //__Lake_H__
 
 
 //-------------------------------------

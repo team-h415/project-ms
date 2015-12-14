@@ -18,6 +18,18 @@
 
 
 //-------------------------------------
+// warning
+//-------------------------------------
+#pragma warning (disable:4996)
+
+
+//-------------------------------------
+// variable
+//-------------------------------------
+int ObjectManager::object_count_ = 0;
+
+
+//-------------------------------------
 // ObjectManager()
 //-------------------------------------
 ObjectManager::ObjectManager()
@@ -47,11 +59,8 @@ ObjectManager::~ObjectManager()
 //-------------------------------------
 void ObjectManager::Update()
 {
-	for (int i = 0; i < LAYER_MAX; i++){
-		for (auto it = objects_[i].begin(); it != objects_[i].end(); ++it){
-			(*it).second->Update();
-		}
-	}
+	object_count_ = 0;
+	
 	for (int i = 0; i < LAYER_MAX; i++){
 		for (auto it = objects_[i].begin(); it != objects_[i].end();){
 			if ((*it).second->this_delete()){
@@ -62,6 +71,12 @@ void ObjectManager::Update()
 			{
 				it++;
 			}
+		}
+	}
+	for (int i = 0; i < LAYER_MAX; i++){
+		for (auto it = objects_[i].begin(); it != objects_[i].end(); ++it){
+			(*it).second->Update();
+			object_count_++;
 		}
 	}
 }
@@ -170,6 +185,32 @@ void ObjectManager::Clear(
 			objects_[i].clear();
 		}
 	}
+}
+
+
+//-------------------------------------
+// ExportObjectParameter()
+//-------------------------------------
+void ObjectManager::ExportObjectParameter(
+	const std::string &file_path)
+{
+	FILE *file = fopen(file_path.c_str(), "wt");
+
+	for (int i = 0; i < LAYER_MAX; i++){
+		for (auto it = objects_[i].begin(); it != objects_[i].end(); ++it){
+			fprintf(file, "\n");
+			fprintf(file, "name : %s\n", (*it).first.c_str());
+			fprintf(file, "pos : %3.2f %3.2f %3.2f\n",
+				(*it).second->parameter().position_.x_,
+				(*it).second->parameter().position_.y_,
+				(*it).second->parameter().position_.z_);
+			fprintf(file, "rot : %3.2f %3.2f %3.2f\n",
+				(*it).second->parameter().rotation_.x_,
+				(*it).second->parameter().rotation_.y_,
+				(*it).second->parameter().rotation_.z_);
+		}
+	}
+	fclose(file);
 }
 
 

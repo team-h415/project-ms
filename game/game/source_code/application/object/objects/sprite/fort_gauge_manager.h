@@ -1,5 +1,5 @@
 //=========================================================
-// water_gage.h
+// fort_gauge_manager.h
 // author:shohei matsumoto
 //=========================================================
 
@@ -8,37 +8,38 @@
 // include guard
 //-------------------------------------
 #pragma once
-#ifndef __WaterGage_H__
-#define __WaterGage_H__
+#ifndef __FortGaugeManager_H__
+#define __FortGaugeManager_H__
+
+
+//-------------------------------------
+// include
+//-------------------------------------
+#include "fort_gage.h"
 
 
 //-------------------------------------
 // class
 //-------------------------------------
-class WaterGage : public Object
+class FortGaugeManager :public Object
 {
 public:
-    WaterGage(
+    FortGaugeManager(
         const OBJECT_PARAMETER_DESC &parameter);
-    virtual ~WaterGage();
+    virtual ~FortGaugeManager();
     void Update();
     void Draw();
-    // ƒQ[ƒW‚Ì•ÏXŠ„‡‚ð“ü‚ê‚é
-    void SetChangeValue(const float value){ gauge_value_ = value; }
     void SetTexture(
         const std::string &path);
+    void SetFortLife(const int id , const float life);
+    FORT_STATE GetFortState(const int id){ fort_gauge_[id]->GetFortState(); }
 private:
-    void CalculateVertex();
-    Vertex2D *vertex_;
-    LPDIRECT3DTEXTURE9 diffuse_texture_;
-    LPDIRECT3DTEXTURE9 alpha_texture_;
-    Shader *shader_;
-//    LPDIRECT3DTEXTURE9 texture_;
-    float gauge_value_;
+    FortGage *fort_gauge_[3];
+    LPDIRECT3DTEXTURE9 texture_;
 };
 
 
-#endif //__Watergage_H__
+#endif //__FortGaugeManager_H__
 
 
 //-------------------------------------

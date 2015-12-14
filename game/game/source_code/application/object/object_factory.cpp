@@ -14,15 +14,19 @@
 #include "object.h"
 #include "object_factory.h"
 #include "objects/sprite/sprite2d.h"
+#include "objects/sprite/message.h"
 #include "objects/mesh/field.h"
 #include "objects/model/x_model.h"
-#include "objects/model/instancing_tree.h"
+#include "objects/model/x/instancing_tree.h"
+#include "objects/model/x/instancing_bench.h"
 #include "objects/sprite3d/shadow.h"
+#include "objects/sprite3d/lake.h"
 #include "objects/model/fbx_model.h"
 #include "objects/sprite/timer.h"
 #include "objects/sprite/water_gage.h"
 #include "objects/sprite/damage_effect.h"
 #include "objects/model/fbx/fbx_player.h"
+#include "objects/sprite/fort_gauge_manager.h"
 #include "objects/model/fbx/fbx_grandfather.h"
 #include "objects/model/fbx/fbx_child.h"
 #include "objects/notice/bullet.h"
@@ -68,8 +72,16 @@ Object *ObjectFactory::Create(
 		object = new InstancingTree(parameter);
 	}
 
+	else if (param.layer_ == LAYER_BENCH){
+		object = new InstancingBench(parameter);
+	}
+
 	else if(param.layer_ == LAYER_SHADOW){
 		object = new Shadow(parameter);
+	}
+
+	else if (param.layer_ == LAYER_SPRITE_LAKE){
+		object = new Lake(parameter);
 	}
 
 	else{
@@ -125,16 +137,23 @@ Object *ObjectFactory::Create(
         sprite->SetTexture(object_path);
     }
 
+    else if (param.layer_ == LAYER_FORT_GAUGE){
+        object = new FortGaugeManager(parameter);
+        FortGaugeManager *fort_sprite = dynamic_cast<FortGaugeManager*>(object);
+        fort_sprite->SetTexture(object_path);
+    }
+
 	else if (param.layer_ == LAYER_SPRITE_2D){
 		object = new Sprite2D(parameter);
 		Sprite2D *sprite = dynamic_cast<Sprite2D*>(object);
 		sprite->SetTexture(object_path);
 	}
 
-/*
-    else if (param.layer_ == LAYER_WATER_GAGE){
-        object = new WaterGage(parameter);
-    }*/
+	else if (param.layer_ == LAYER_MESSAGE){
+		object = new Message(parameter);
+		Message *message = dynamic_cast<Message*>(object);
+		message->SetTexture(object_path);
+	}
 
 	else{
 		ASSERT_ERROR("無効なオブジェクト生成カテゴリです");

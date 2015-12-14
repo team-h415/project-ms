@@ -96,9 +96,9 @@ static const Vector3 CHILD_ROTATION[4]
 #define FORT2_POSITION { -56.0f,  0.0f,  63.0f }
 #define FORT3_POSITION {  53.0f,  0.0f,  62.0f }
 // ëÃóÕ
-#define FORT1_LiFE 0.5f
-#define FORT2_LiFE 0.5f
-#define FORT3_LiFE 0.5f
+#define FORT1_LiFE 1.0f
+#define FORT2_LiFE 1.0f
+#define FORT3_LiFE 1.0f
 // Ç≠ÇÁÇ§É_ÉÅÅ[ÉWó 
 #define FORT_DAMAGE 0.01f;
 

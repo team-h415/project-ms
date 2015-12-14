@@ -67,6 +67,10 @@ private:
 	bool child_death_;
 	// 子供リスポーンタイマー
 	int child_respawn_waittime_;
+	// ダッシュエフェクトタイマー
+	int dash_effect_timer_;
+	// 現在表示に使ってるカメラ
+	std::string use_camera_name_;
 
 };
 

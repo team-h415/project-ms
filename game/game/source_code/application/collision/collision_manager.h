@@ -25,8 +25,12 @@ public:
 	static Collision *Create(
 		Object *parent,
 		const COLLISION_PARAMETER_DESC &parameter);
+	static int GetCount(){
+		return collision_count_;
+	}
 private:
 	static std::list<Collision *>collision_;
+	static int collision_count_;
 };
 
 
