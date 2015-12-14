@@ -116,6 +116,7 @@ void Bullet::Update()
 			if(collision_ != nullptr)
 			{
 				collision_->SetThisDelete(true);
+				collision_ = nullptr;
 			}
 		}
 	}
@@ -133,7 +134,11 @@ void Bullet::Update()
 	//		parameter_.position_.z_));
 	//	if (parameter_.position_.y_ < height){
 	//		this_delete_ = true;
-	//		collision_->SetThisDelete(true);
+	//		if(collision_ != nullptr)
+	//		{
+	//			collision_->SetThisDelete(true);
+	//			collision_ = nullptr;
+	//		}
 	//	}
 	//}
 #endif
