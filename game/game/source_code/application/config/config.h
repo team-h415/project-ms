@@ -25,6 +25,8 @@
 #define CAMERA_ROT_SPEED (D3DX_PI * 0.01f)			// カメラ回転速度
 #define CAMARA_LEN_SPEED (CAMERA_POS_LEN * 0.01f)	// カメラ注視点→座標距離の加算スピード
 
+#define CAMERA_SUB_ROT_SPEED (D3DX_PI * 0.007f)		// サブカメラ回転速度
+
 #define BULLET_OFFSET_ROT (D3DX_PI * 0.1f)			// ゲームから受け取った回転を調整する値
 #define BULLET_DEF_SPEED_XZ 0.2f					// バレットの初期速度XZ
 #define BULLET_DEF_SPEED_Y 0.05f					// バレットの初期速度Y
