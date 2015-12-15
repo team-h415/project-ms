@@ -42,6 +42,12 @@
 
 
 //-------------------------------------
+// warning
+//-------------------------------------
+#pragma warning (disable:4996)
+
+
+//-------------------------------------
 // GameServer()
 //-------------------------------------
 GameServer::GameServer()
@@ -82,6 +88,20 @@ GameServer::GameServer()
 	camera_manager_->Create(
 		"Perspective", "camera5", camera_param);
 
+	//-------------------------------------
+	// サブカメラ
+	//-------------------------------------
+	camera_param.acpect_ = SCREEN_WIDTH / SCREEN_HEIGHT;
+	camera_param.fovy_ = D3DX_PI * 0.25f;
+	camera_param.position_ = {0.0f, 0.0f, -10.0f};
+	camera_param.focus_ = {0.0f, 0.0f, 0.0f};
+	camera_param.rotation_ = {0.0f, 0.0f, 0.0f};
+	camera_param.up_ = {0.0f, 1.0f, 0.0f};
+	camera_param.near_ = 0.1f;
+	camera_param.far_ = 800.0f;
+
+	camera_manager_->Create(
+		"Perspective", "SubCamera", camera_param);
 
 	//-------------------------------------
 	// 地形
@@ -433,6 +453,72 @@ void GameServer::MatchingAndGame()
 		break;
 	}
 
+	////-------------------------------------
+	//// サブカメラ計算
+	////-------------------------------------
+	//Camera *sub_camera = camera_manager_->Get("SubCamera");
+	//D3DXVECTOR3 sub_camera_position, sub_camera_rotation, sub_camera_focus;
+	//// 適当な位置から眺める
+	//sub_camera_rotation.x = -D3DX_PI*0.15f;
+	//// 一旦砦を注視点に
+	//switch(stage_)
+	//{
+	//	case 1:
+	//		sub_camera_focus = fort1_pos;
+	//		sub_camera_focus.y = 0.0f;
+	//		if(fort_underground.x != 0.0f){
+	//			use_camera_name_ = "SubCamera";
+	//		}
+	//		else{
+	//			use_camera_name_ = "MainCamera";
+	//		}
+	//		break;
+	//	case 2:
+	//		sub_camera_focus = fort2_pos;
+	//		sub_camera_focus.y = 0.0f;
+	//		if(fort_underground.y != 0.0f){
+	//			use_camera_name_ = "SubCamera";
+	//		}
+	//		else{
+	//			use_camera_name_ = "MainCamera";
+	//		}
+	//		break;
+	//	case 3:
+	//		sub_camera_focus = fort3_pos;
+	//		sub_camera_focus.y = 0.0f;
+	//		if(fort_underground.z != 0.0f){
+	//			use_camera_name_ = "SubCamera";
+	//		}
+	//		else{
+	//			use_camera_name_ = "MainCamera";
+	//		}
+	//		break;
+	//}
+
+	//// モデルの中心辺りを基準に
+	//sub_camera_focus.y += CAMERA_FOCUS_OFFSET_Y;
+	//// モデルの少し先を見るように調整
+	//sub_camera_focus.x +=
+	//	sinf(sub_camera_rotation.y) * CAMERA_FOCUS_OFFSET * cosf(sub_camera_rotation.x);
+	//sub_camera_focus.z +=
+	//	cosf(sub_camera_rotation.y) * CAMERA_FOCUS_OFFSET * cosf(sub_camera_rotation.x);
+	//sub_camera_focus.y +=
+	//	sinf(sub_camera_rotation.x) * CAMERA_FOCUS_OFFSET;
+
+	//// 注視点を基準にカメラ座標を設定
+	//sub_camera_position = sub_camera_focus;
+	//sub_camera_position.x -=
+	//	sinf(sub_camera_rotation.y) * camera_pos_len_ * cosf(sub_camera_rotation.x);
+	//sub_camera_position.z -=
+	//	cosf(sub_camera_rotation.y) * camera_pos_len_ * cosf(sub_camera_rotation.x);
+	//sub_camera_position.y -=
+	//	sinf(sub_camera_rotation.x) * camera_pos_len_;
+
+	//// カメラにパラメータを再セット
+	//sub_camera->SetPosition(sub_camera_position);
+	//sub_camera->SetFocus(sub_camera_focus);
+	//sub_camera->SetRotation(sub_camera_rotation);
+
 	Field *field = dynamic_cast<Field*>(object_manager_->Get("field"));
 	D3DXVECTOR3 fort_pos;
 	Vector3 fort_position;
@@ -476,6 +562,75 @@ void GameServer::MatchingAndGame()
 		send_data.object_param_.rotation_.y_ = fort_rotation.y_;
 		send_data.object_param_.rotation_.z_ = fort_rotation.z_;
 		strcpy_s(send_data.name, MAX_NAME_LEN, fort_str.c_str());
+		NetworkHost::SendTo(DELI_MULTI, send_data);
+
+		// オブジェクトデータ転送
+		send_data.type_ = DATA_UI_PARAM;
+		send_data.id_ = i;
+		send_data.ui_param_.value_f_ = fort_life[i];
+		strcpy_s(send_data.name, MAX_NAME_LEN, "fort_gauge_manager");
+		NetworkHost::SendTo(DELI_MULTI, send_data);
+	}
+
+	//-------------------------------------
+	// 砦にとりあえずエフェクトだす
+	//-------------------------------------
+	int set_camera = 0;
+	if(fort_underground.x != 0.0f && fort_underground.x != -3.0f){
+		set_camera = 1;
+
+		Object *fort_object = object_manager_->Get("fort1");
+		XFort *fort = dynamic_cast<XFort*>(fort_object);
+		fort_position = fort_object->parameter().position_;
+		fort_pos.x = fort_position.x_;
+		fort_pos.y = fort_position.y_;
+		fort_pos.z = fort_position.z_;
+
+		ZeroMemory(&send_data, sizeof(send_data));
+		send_data.type_ = DATA_OBJ_PARAM;
+		send_data.object_param_.type_ = OBJ_EFFECT;
+		send_data.object_param_.position_.x_ = fort_position.x_;
+		send_data.object_param_.position_.y_ = field->GetHeight(fort_pos);
+		send_data.object_param_.position_.z_ = fort_position.z_;
+		strcpy_s(send_data.name, MAX_NAME_LEN, "smoke2");
+		NetworkHost::SendTo(DELI_MULTI, send_data);
+	}
+	if(fort_underground.y != 0.0f && fort_underground.y != -3.0f){
+		set_camera = 2;
+
+		Object *fort_object = object_manager_->Get("fort2");
+		XFort *fort = dynamic_cast<XFort*>(fort_object);
+		fort_position = fort_object->parameter().position_;
+		fort_pos.x = fort_position.x_;
+		fort_pos.y = fort_position.y_;
+		fort_pos.z = fort_position.z_;
+
+		ZeroMemory(&send_data, sizeof(send_data));
+		send_data.type_ = DATA_OBJ_PARAM;
+		send_data.object_param_.type_ = OBJ_EFFECT;
+		send_data.object_param_.position_.x_ = fort_position.x_;
+		send_data.object_param_.position_.y_ = field->GetHeight(fort_pos);
+		send_data.object_param_.position_.z_ = fort_position.z_;
+		strcpy_s(send_data.name, MAX_NAME_LEN, "smoke2");
+		NetworkHost::SendTo(DELI_MULTI, send_data);
+	}
+	if(fort_underground.z != 0.0f && fort_underground.z != -3.0f){
+		set_camera = 3;
+
+		Object *fort_object = object_manager_->Get("fort3");
+		XFort *fort = dynamic_cast<XFort*>(fort_object);
+		fort_position = fort_object->parameter().position_;
+		fort_pos.x = fort_position.x_;
+		fort_pos.y = fort_position.y_;
+		fort_pos.z = fort_position.z_;
+
+		ZeroMemory(&send_data, sizeof(send_data));
+		send_data.type_ = DATA_OBJ_PARAM;
+		send_data.object_param_.type_ = OBJ_EFFECT;
+		send_data.object_param_.position_.x_ = fort_position.x_;
+		send_data.object_param_.position_.y_ = field->GetHeight(fort_pos);
+		send_data.object_param_.position_.z_ = fort_position.z_;
+		strcpy_s(send_data.name, MAX_NAME_LEN, "smoke2");
 		NetworkHost::SendTo(DELI_MULTI, send_data);
 	}
 
@@ -543,7 +698,17 @@ void GameServer::MatchingAndGame()
 		}
 		if(i == 0)
 		{
+			// おじいちゃんワープ
 			if (GamePad::isTrigger(GAMEPAD_GRANDFATHER, PAD_BUTTON_7)){
+				ZeroMemory(&send_data, sizeof(send_data));
+				send_data.type_ = DATA_OBJ_PARAM;
+				send_data.object_param_.type_ = OBJ_EFFECT;
+				send_data.object_param_.position_.x_ = player_position.x_;
+				send_data.object_param_.position_.y_ = player_position.y_;
+				send_data.object_param_.position_.z_ = player_position.z_;
+				strcpy_s(send_data.name, MAX_NAME_LEN, "smoke");
+				NetworkHost::SendTo(DELI_MULTI, send_data);
+
 				switch(stage_){
 				case 1:
 					player_position = GRANDFATHER_POSITION_STAGE1;
@@ -558,6 +723,11 @@ void GameServer::MatchingAndGame()
 					player_rotation.y_ = GRANDFATHER_ROTATION_STAGE3;
 					break;
 				}
+
+				send_data.object_param_.position_.x_ = player_position.x_;
+				send_data.object_param_.position_.y_ = player_position.y_;
+				send_data.object_param_.position_.z_ = player_position.z_;
+				NetworkHost::SendTo(DELI_MULTI, send_data);
 			}
 		}
 
@@ -648,8 +818,11 @@ void GameServer::MatchingAndGame()
 		// バレット発射
 		//-------------------------------------
 		float watergauge = player->GetWaterGauge();
+		shot_late[i]--;
+		shot_late[i] = std::max<int>(shot_late[i], 0);
+		if(GamePad::isPress(i, PAD_BUTTON_8) && watergauge > 0.0f && shot_late[i] == 0){
+			shot_late[i] = 10;
 
-		if(GamePad::isPress(i, PAD_BUTTON_8) && watergauge > 0.0f){
 			OBJECT_PARAMETER_DESC bullet_param;
 			bullet_param.layer_ = LAYER_BULLET;
 			if(i == 0)
@@ -674,15 +847,31 @@ void GameServer::MatchingAndGame()
 				bullet_param);
 			bullet_count_++;
 
+			// バレット生成
+			send_data.type_ = DATA_OBJ_PARAM;
+			send_data.object_param_.type_ = OBJ_BULLET;
+			send_data.id_ = i;
+			send_data.object_param_.ex_id_ = 0;
+			
+			send_data.object_param_.position_.x_ = bullet_param.position_.x_;
+			send_data.object_param_.position_.y_ = bullet_param.position_.y_;
+			send_data.object_param_.position_.z_ = bullet_param.position_.z_;
+			
+			send_data.object_param_.rotation_.x_ = bullet_param.rotation_.x_;
+			send_data.object_param_.rotation_.y_ = bullet_param.rotation_.y_;
+			send_data.object_param_.rotation_.z_ = bullet_param.rotation_.z_;
+			
+			strcpy_s(send_data.name, MAX_NAME_LEN, str.c_str());
+			NetworkHost::SendTo(DELI_MULTI, send_data);
+
 			// エフェクト再生
 			send_data.type_ = DATA_OBJ_PARAM;
 			send_data.object_param_.type_ = OBJ_EFFECT;
 			send_data.object_param_.position_.x_ = player_position.x_;
 			send_data.object_param_.position_.y_ = player_position.y_ + 0.5f;
 			send_data.object_param_.position_.z_ = player_position.z_;
+			send_data.object_param_.rotation_ = {0.0f, 0.0f, 0.0f};
 			strcpy_s(send_data.name, MAX_NAME_LEN, "water");
-
-			// オブジェクトデータ転送
 			NetworkHost::SendTo(DELI_MULTI, send_data);
 
 			//-------------------------------------
@@ -712,6 +901,17 @@ void GameServer::MatchingAndGame()
 				player->PlayAnimation(FbxChild::DOWN);
 				child_death_[i - 1] = true;
 				child_respawn_waittime_[i - 1] = CHILD_RESPAWN_WAITTIME;
+			
+				// エフェクト再生
+				ZeroMemory(&send_data, sizeof(send_data));
+				send_data.type_ = DATA_OBJ_PARAM;
+				send_data.object_param_.type_ = OBJ_EFFECT;
+				send_data.object_param_.position_.x_ = player_position.x_;
+				send_data.object_param_.position_.y_ = player_position.y_;
+				send_data.object_param_.position_.z_ = player_position.z_;
+				send_data.object_param_.rotation_ = {0.0f, 0.0f, 0.0f};
+				strcpy_s(send_data.name, MAX_NAME_LEN, "dead");
+				NetworkHost::SendTo(DELI_MULTI, send_data);
 			}
 			else if (child_death_[i - 1] && !child_respawn_waittime_[i - 1]){
 				player->PlayAnimation(FbxChild::IDLE);
@@ -769,16 +969,92 @@ void GameServer::MatchingAndGame()
 		send_data.type_ = DATA_OBJ_PARAM;
 		send_data.object_param_.type_ = OBJ_CAMERA;
 
-		send_data.object_param_.position_.x_ = camera_position.x;
-		send_data.object_param_.position_.y_ = camera_position.y;
-		send_data.object_param_.position_.z_ = camera_position.z;
+		switch(set_camera)
+		{
+			case 0:
+				send_data.object_param_.position_.x_ = camera_position.x;
+				send_data.object_param_.position_.y_ = camera_position.y;
+				send_data.object_param_.position_.z_ = camera_position.z;
 
-		send_data.object_param_.rotation_.x_ = camera_focus.x;
-		send_data.object_param_.rotation_.y_ = camera_focus.y;
-		send_data.object_param_.rotation_.z_ = camera_focus.z;
+				send_data.object_param_.rotation_.x_ = camera_focus.x;
+				send_data.object_param_.rotation_.y_ = camera_focus.y;
+				send_data.object_param_.rotation_.z_ = camera_focus.z;
+				break;
 
+			case 1:
+				{
+					Object *fort_object = object_manager_->Get("fort1");
+					Vector3 focus = fort_object->parameter().position_;
+					Vector3 pos(0.0f, 0.0f, 0.0f);
+					// モデルの中心辺りを基準に
+					focus.y_ += CAMERA_FOCUS_OFFSET_Y;
+					// 注視点を基準にカメラ座標を設定
+					pos = focus;
+					pos.x_ -= CAMERA_FOCUS_OFFSET * 2.0f;
+					pos.z_ -= CAMERA_FOCUS_OFFSET * 2.0f;
+					pos.y_ += CAMERA_FOCUS_OFFSET;
+					// データセット
+					send_data.object_param_.position_.x_ = pos.x_;
+					send_data.object_param_.position_.y_ = pos.y_;
+					send_data.object_param_.position_.z_ = pos.z_;
+
+					send_data.object_param_.rotation_.x_ = focus.x_;
+					send_data.object_param_.rotation_.y_ = focus.y_;
+					send_data.object_param_.rotation_.z_ = focus.z_;
+				}
+				break;
+
+			case 2:
+				{
+					Object *fort_object = object_manager_->Get("fort2");
+					Vector3 focus = fort_object->parameter().position_;
+					Vector3 pos(0.0f, 0.0f, 0.0f);
+					// モデルの中心辺りを基準に
+					focus.y_ += CAMERA_FOCUS_OFFSET_Y;
+					// 注視点を基準にカメラ座標を設定
+					pos = focus;
+					pos.x_ -= CAMERA_FOCUS_OFFSET * 2.0f;
+					pos.z_ -= CAMERA_FOCUS_OFFSET * 2.0f;
+					pos.y_ += CAMERA_FOCUS_OFFSET;
+					// データセット
+					send_data.object_param_.position_.x_ = pos.x_;
+					send_data.object_param_.position_.y_ = pos.y_;
+					send_data.object_param_.position_.z_ = pos.z_;
+
+					send_data.object_param_.rotation_.x_ = focus.x_;
+					send_data.object_param_.rotation_.y_ = focus.y_;
+					send_data.object_param_.rotation_.z_ = focus.z_;
+				}
+				break;
+
+			case 3:
+				{
+					Object *fort_object = object_manager_->Get("fort3");
+					Vector3 focus = fort_object->parameter().position_;
+					Vector3 pos(0.0f, 0.0f, 0.0f);
+					// モデルの中心辺りを基準に
+					focus.y_ += CAMERA_FOCUS_OFFSET_Y;
+					// 注視点を基準にカメラ座標を設定
+					pos = focus;
+					pos.x_ -= CAMERA_FOCUS_OFFSET * 2.0f;
+					pos.z_ -= CAMERA_FOCUS_OFFSET * 2.0f;
+					pos.y_ += CAMERA_FOCUS_OFFSET;
+					// データセット
+					send_data.object_param_.position_.x_ = pos.x_;
+					send_data.object_param_.position_.y_ = pos.y_;
+					send_data.object_param_.position_.z_ = pos.z_;
+
+					send_data.object_param_.rotation_.x_ = focus.x_;
+					send_data.object_param_.rotation_.y_ = focus.y_;
+					send_data.object_param_.rotation_.z_ = focus.z_;
+				}
+				break;
+
+			default:
+				break;
+		}
 		NetworkHost::SendTo((DELI_TYPE)i, send_data);
-
+		
 		//------------------------------------------------
 		// UIデータ転送
 		//------------------------------------------------
@@ -808,6 +1084,7 @@ void GameServer::ChangeState(SERVER_STATE next)
 	for(int i = 0; i < MAX_GUEST; i++)
 	{
 		camera_pos_len_[i] = CAMERA_POS_LEN;
+		shot_late[i] = 0;
 	}
 	bullet_count_ = 0;
 	object_manager_->Clear(LAYER_BULLET);

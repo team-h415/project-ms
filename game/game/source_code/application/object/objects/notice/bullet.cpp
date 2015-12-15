@@ -80,7 +80,6 @@ Bullet::Bullet(
 	Scene *scene = SceneManager::GetCurrentScene();
 	Game *game = dynamic_cast<Game*>(scene);
 	collision_ = game->collision_manager()->Create(this, param);
-#endif
 
 	// ’eŽÀ‘Ì¶¬
 	OBJECT_PARAMETER_DESC xmodel_param;
@@ -91,6 +90,7 @@ Bullet::Bullet(
 	xmodel_param.layer_ = LAYER_MODEL_X;
 	xmodel_ = (XModel*)game->object_manager()->Create(bullet_name, xmodel_param, "resource/model/x/ball.x");
 	xmodel_->SetTexture("resource/texture/red.png");
+#endif
 
 	bullet_num_++;
 }
@@ -101,6 +101,17 @@ Bullet::Bullet(
 //-------------------------------------
 Bullet::~Bullet()
 {
+#ifdef NETWORK_HOST_MODE
+	//// Á‚¦‚é
+	//NETWORK_DATA send_data;
+	//ZeroMemory(&send_data, sizeof(send_data));
+	//send_data.type_ = DATA_OBJ_PARAM;
+	//send_data.object_param_.type_ = OBJ_BULLET;
+	//send_data.object_param_.ex_id_ = 1;
+	//strcpy_s(send_data.name, MAX_NAME_LEN, str.c_str());
+	//NetworkHost::SendTo(DELI_MULTI, send_data);
+#endif 
+
 	if(collision_ != nullptr)
 	{
 		collision_->SetThisDelete(true);
@@ -123,10 +134,6 @@ void Bullet::Update()
 	parameter_.position_.y_ += speed_.y;
 	parameter_.position_.z_ += cosf(parameter_.rotation_.y_) * speed_.z;
 	speed_.y -= BULLET_GRAVITY;
-
-	// ’eŽÀ‘Ì‚ÌˆÚ“®
-	xmodel_->SetPosition(parameter_.position_);
-
 #ifdef NETWORK_HOST_MODE
 	Scene *scene = SceneManager::GetCurrentScene();
 	std::string str = SceneManager::GetCurrentSceneName();
@@ -154,6 +161,9 @@ void Bullet::Update()
 		}
 	}
 #else
+	// ’eŽÀ‘Ì‚ÌˆÚ“®
+	xmodel_->SetPosition(parameter_.position_);
+
 	//Scene *scene = SceneManager::GetCurrentScene();
 	//std::string str = SceneManager::GetCurrentSceneName();
 	//if (str == "Game"){

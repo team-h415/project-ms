@@ -53,6 +53,7 @@ enum OBJ_TYPE
 	OBJ_CHILD,					// 子供
 	OBJ_EFFECT,					// エフェクト
 	OBJ_FORT,					// 砦
+	OBJ_BULLET,					// 球
 	OBJ_UI,						// UI
 
 	OBJ_CAMERA,					// めんどいのでカメラもオブジェクト扱い
