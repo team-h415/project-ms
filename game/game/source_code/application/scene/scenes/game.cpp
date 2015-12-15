@@ -28,6 +28,7 @@
 #include "../../object/objects/model/fbx/fbx_child.h"
 #include "../../object/objects/sprite/timer.h"
 #include "../../object/objects/sprite/damage_effect.h"
+#include "../../object/objects/sprite/countdown.h"
 #include "../../effect/effect.h"
 #include "../../effect/effect_manager.h"
 #include "../../object/objects/sprite/water_gage.h"
@@ -55,6 +56,24 @@
 //-------------------------------------
 Game::Game()
 {
+	//-------------------------------------
+	// ゲームルール用パラメータ初期化
+	//-------------------------------------
+	// ステージ
+	stage_ = 1;
+	// おじデバフフラグ
+	grandfather_debuff_ = false;
+	// 子供死亡フラグ
+	child_death_ = false;
+	// 子供リスポーン待ち時間
+	child_respawn_waittime_ = 0;
+	// ダッシュエフェクトタイマー初期化
+	dash_effect_timer_ = 0;
+	// 経過フレーム数
+	frame_ = 0;
+	// 経過時間
+	timer_ = 0;
+
 	//-------------------------------------
 	// 各マネージャ・デバッグシステム初期化
 	//-------------------------------------
@@ -491,19 +510,6 @@ Game::Game()
 		bench_param);
 
 	//-------------------------------------
-	// ゲームルール用パラメータ初期化
-	//-------------------------------------
-	// ステージ
-	stage_ = 1;
-	// おじデバフフラグ
-	grandfather_debuff_ = false;
-	// 子供死亡フラグ
-	child_death_ = false;
-	// 子供リスポーン待ち時間
-	child_respawn_waittime_ = 0;
-	// ダッシュエフェクトタイマー初期化
-	dash_effect_timer_ = 0;
-	//-------------------------------------
 	// 影
 	//-------------------------------------
 	OBJECT_PARAMETER_DESC shadow_param;
@@ -513,6 +519,22 @@ Game::Game()
 	object_manager_->Create(
 		shadow_param);
 
+
+	//-------------------------------------
+	// カウントダウン
+	//-------------------------------------
+	OBJECT_PARAMETER_DESC countdown_param;
+	countdown_param.name_ = "countdown";
+	countdown_param.position_ = {
+		SCREEN_WIDTH * 0.5f,
+		SCREEN_HEIGHT * 0.5f,
+		0.0f };
+	countdown_param.rotation_ = { 0.0f, 0.0f, 0.0f };
+	countdown_param.scaling_ = {
+		SCREEN_WIDTH, SCREEN_HEIGHT, 1.0f };
+	countdown_param.layer_ = LAYER_COUNTDOWN;
+	object_manager_->Create(
+		countdown_param);
 }
 
 
@@ -543,6 +565,7 @@ void Game::Update()
 	Object *fort3_object = object_manager_->Get("fort3");
 	Object *grandfather_object = object_manager_->Get("grandfather");
 	Object *child_object = object_manager_->Get("child");
+	Object *countdown_object = object_manager_->Get("countdown");
 	Vector3 fort1_position(fort1_object->parameter().position_);
 	Vector3 fort2_position(fort2_object->parameter().position_);
 	Vector3 fort3_position(fort3_object->parameter().position_);
@@ -565,6 +588,7 @@ void Game::Update()
 	XFort *fort1 = dynamic_cast<XFort*>(fort1_object);
 	XFort *fort2 = dynamic_cast<XFort*>(fort2_object);
 	XFort *fort3 = dynamic_cast<XFort*>(fort3_object);
+	CountDown *countdown = dynamic_cast<CountDown*>(countdown_object);
 
 	static const float player_speed_value = 0.05f;
 	static int bullet_count = 0;
@@ -578,6 +602,39 @@ void Game::Update()
 	float fort1_life = fort1->GetLife();
 	float fort2_life = fort2->GetLife();
 	float fort3_life = fort3->GetLife();
+
+	//-------------------------------------
+	// 時間経過
+	//-------------------------------------
+	frame_++;
+	if (!(frame_ % 60)){
+		timer_++;
+	}
+
+	//-------------------------------------
+	// 時間経過でカウントダウン
+	//-------------------------------------
+	switch (timer_)
+	{
+	case 0:
+		countdown->ChangeTexture(4);
+		break;
+	case 1:
+		countdown->ChangeTexture(3);
+		break;
+	case 2:
+		countdown->ChangeTexture(2);
+		break;
+	case 3:
+		countdown->ChangeTexture(1);
+		break;
+	case 4:
+		countdown->ChangeTexture(0);
+		break;
+	default:
+		countdown->ChangeTexture(4);
+		break;
+	}
 
 	//-------------------------------------
 	// ゲームステージデバッグ

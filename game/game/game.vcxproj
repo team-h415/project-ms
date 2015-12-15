@@ -119,6 +119,7 @@
     <ClCompile Include="source_code\application\object\objects\notice\bullet.cpp" />
     <ClCompile Include="source_code\application\object\objects\sprite3d\lake.cpp" />
     <ClCompile Include="source_code\application\object\objects\sprite3d\shadow.cpp" />
+    <ClCompile Include="source_code\application\object\objects\sprite\countdown.cpp" />
     <ClCompile Include="source_code\application\object\objects\sprite\damage_effect.cpp" />
     <ClCompile Include="source_code\application\object\objects\sprite\message.cpp" />
     <ClCompile Include="source_code\application\object\objects\sprite\fort_gage.cpp" />
@@ -192,6 +193,7 @@
     <ClInclude Include="source_code\application\object\objects\notice\bullet.h" />
     <ClInclude Include="source_code\application\object\objects\sprite3d\lake.h" />
     <ClInclude Include="source_code\application\object\objects\sprite3d\shadow.h" />
+    <ClInclude Include="source_code\application\object\objects\sprite\countdown.h" />
     <ClInclude Include="source_code\application\object\objects\sprite\damage_effect.h" />
     <ClInclude Include="source_code\application\object\objects\sprite\message.h" />
     <ClInclude Include="source_code\application\object\objects\sprite\fort_gage.h" />

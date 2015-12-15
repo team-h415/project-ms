@@ -15,6 +15,7 @@
 #include "object_factory.h"
 #include "objects/sprite/sprite2d.h"
 #include "objects/sprite/message.h"
+#include "objects/sprite/countdown.h"
 #include "objects/mesh/field.h"
 #include "objects/model/x_model.h"
 #include "objects/model/x/instancing_tree.h"
@@ -82,6 +83,10 @@ Object *ObjectFactory::Create(
 
 	else if (param.layer_ == LAYER_SPRITE_LAKE){
 		object = new Lake(parameter);
+	}
+
+	else if (param.layer_ == LAYER_COUNTDOWN){
+		object = new CountDown(parameter);
 	}
 
 	else{

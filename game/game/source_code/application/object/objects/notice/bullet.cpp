@@ -82,7 +82,7 @@ Bullet::Bullet(
 	xmodel_ = (XModel*)game->object_manager()->Create(
 		xmodel_param,
 		"resource/model/x/ball.x");
-	xmodel_->SetTexture("resource/texture/red.png");
+	xmodel_->SetTexture("resource/texture/game/bullet.png");
 
 	bullet_num_++;
 }
