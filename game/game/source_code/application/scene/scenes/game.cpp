@@ -604,7 +604,7 @@ void Game::Update()
 
 	static const float player_speed_value = 0.05f;
 	static int shot_late = 0;
-	static D3DXVECTOR3 fort_underground(0.0f, 0.0f, 0.0f);
+	static D3DXVECTOR3 fort_underground(-3.0f, -3.0f, -3.0f);
 	float player_speed = player_speed_value;
 	float father_life = grandfather->GetLife();
 	float father_watergauge = grandfather->GetWaterGauge();
@@ -1031,52 +1031,58 @@ void Game::Update()
 	//-------------------------------------
 	Camera *sub_camera = camera_manager_->Get("SubCamera");
 	D3DXVECTOR3 sub_camera_position, sub_camera_rotation, sub_camera_focus;
+	sub_camera_rotation = sub_camera->rotation();
+	sub_camera_position = sub_camera->position();
+	sub_camera_focus = sub_camera->focus();
+	
 	// 適当な位置から眺める
-	sub_camera_rotation.x = -D3DX_PI*0.15f;
 	// 一旦砦を注視点に
 	switch (stage_)
 	{
 	case 1:
 		sub_camera_focus = fort1_pos;
-		sub_camera_focus.y = 0.0f;
+		sub_camera_focus.y = 1.5f;
 		if (fort_underground.x != 0.0f){
 			use_camera_name_ = "SubCamera";
+			sub_camera_rotation.y += CAMERA_SUB_ROT_SPEED;
+			sub_camera_rotation.x += CAMERA_SUB_ROT_SPEED*0.02f;
 		}
 		else{
 			use_camera_name_ = "MainCamera";
+			sub_camera_rotation.y = 0.0f;
+			sub_camera_rotation.x = 0.0f;
 		}
 		break;
 	case 2:
 		sub_camera_focus = fort2_pos;
-		sub_camera_focus.y = 0.0f;
+		sub_camera_focus.y = 1.5f;
 		if (fort_underground.y != 0.0f){
 			use_camera_name_ = "SubCamera";
+			sub_camera_rotation.y += CAMERA_SUB_ROT_SPEED;
+			sub_camera_rotation.x += CAMERA_SUB_ROT_SPEED*0.02f;
 		}
 		else{
 			use_camera_name_ = "MainCamera";
+			sub_camera_rotation.y = 0.0f;
+			sub_camera_rotation.x = 0.0f;
 		}
 		break;
 	case 3:
 		sub_camera_focus = fort3_pos;
-		sub_camera_focus.y = 0.0f;
+		sub_camera_focus.y = 1.5f;
 		if (fort_underground.z != 0.0f){
 			use_camera_name_ = "SubCamera";
+			sub_camera_rotation.y += CAMERA_SUB_ROT_SPEED;
+			sub_camera_rotation.x += CAMERA_SUB_ROT_SPEED*0.02f;
 		}
 		else{
 			use_camera_name_ = "MainCamera";
+			sub_camera_rotation.y = 0.0f;
+			sub_camera_rotation.x = 0.0f;
 		}
 		break;
 	}
-	// モデルの中心辺りを基準に
-	sub_camera_focus.y += CAMERA_FOCUS_OFFSET_Y;
-	// モデルの少し先を見るように調整
-	sub_camera_focus.x += 
-		sinf(sub_camera_rotation.y) * CAMERA_FOCUS_OFFSET * cosf(sub_camera_rotation.x);
-	sub_camera_focus.z += 
-		cosf(sub_camera_rotation.y) * CAMERA_FOCUS_OFFSET * cosf(sub_camera_rotation.x);
-	sub_camera_focus.y += 
-		sinf(sub_camera_rotation.x) * CAMERA_FOCUS_OFFSET;
-
+	
 	// 注視点を基準にカメラ座標を設定
 	sub_camera_position = sub_camera_focus;
 	sub_camera_position.x -= 
