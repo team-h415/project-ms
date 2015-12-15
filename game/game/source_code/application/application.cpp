@@ -21,6 +21,13 @@
 #include "resource/texture_manager.h"
 #include "resource/fbx_container_manager.h"
 #include "resource/x_container_manager.h"
+#include "../common/common.h"
+#include "render/renderer.h"
+#include "render/directx9/directx9.h"
+#include "render/directx9/directx9_holder.h"
+#include "math/vector.h"
+#include "effect/effect.h"
+#include "effect/effect_manager.h"
 #include "application.h"
 
 
@@ -62,6 +69,7 @@ Application::~Application()
 	FbxContainerManager::AllRelease();
 	XContainerManager::AllRelease();
 	Sound::End();
+	EffectManager::Delete();
 	SAFE_DELETE(scene_manager_);
 	SAFE_DELETE(fps_);
 	SAFE_DELETE(renderer_);

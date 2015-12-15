@@ -60,11 +60,10 @@ Game::Game()
 	//-------------------------------------
 	camera_manager_ = new CameraManager;
 	object_manager_ = new ObjectManager;
-	effect_manager_ = new EffectManager(10000);
+	effect_manager_ = EffectManager::Get();
 	collision_manager_ = new CollisionManager;
 	font1_ = new DebugFont;
 	font2_ = new DebugFont;
-	Bullet::Init();
 	use_camera_name_ = "MainCamera";
 
 	//-------------------------------------
@@ -513,6 +512,17 @@ Game::Game()
 	object_manager_->Create(
 		shadow_param);
 
+	//-------------------------------------
+	// バレット生成しておくよ
+	//-------------------------------------
+	OBJECT_PARAMETER_DESC bullet_param;
+	bullet_param.layer_ = LAYER_BULLET;
+	for(int i = 0; i < MAX_BULLET; i++)
+	{
+		bullet_param.name_ = "bullet" + std::to_string(i); ;
+		object_manager_->Create(
+			bullet_param);
+	}
 }
 
 
@@ -521,9 +531,9 @@ Game::Game()
 //-------------------------------------
 Game::~Game()
 {
+	effect_manager_ = nullptr;
 	SAFE_DELETE(object_manager_);
 	SAFE_DELETE(camera_manager_);
-	SAFE_DELETE(effect_manager_);
 	SAFE_DELETE(font1_);
 	SAFE_DELETE(font2_);
 	SAFE_DELETE(collision_manager_);
@@ -567,7 +577,6 @@ void Game::Update()
 	XFort *fort3 = dynamic_cast<XFort*>(fort3_object);
 
 	static const float player_speed_value = 0.05f;
-	static int bullet_count = 0;
 	static int shot_late = 0;
 	static D3DXVECTOR3 fort_underground(0.0f, 0.0f, 0.0f);
 	float player_speed = player_speed_value;
@@ -1043,8 +1052,6 @@ void Game::Update()
 
 
 		OBJECT_PARAMETER_DESC bullet_param;
-		std::string str = "notice" + std::to_string(bullet_count);
-		bullet_param.name_ = str;
 		bullet_param.layer_ = LAYER_BULLET;
 		bullet_param.parent_layer_ = LAYER_MODEL_GRANDFATHER;
 		bullet_param.position_ = grandfather_position;
@@ -1055,9 +1062,9 @@ void Game::Update()
 		bullet_param.rotation_.x_ = camera_rotation.x;
 
 		bullet_param.scaling_ = { 1.0f, 1.0f, 1.0f };
-		object_manager_->Create(
-			bullet_param);
-		bullet_count++;
+		
+		Bullet* bullet = object_manager_->GetNoUseBullet();
+		bullet->Fire(bullet_param);
 
 		//-------------------------------------
 		// 水ゲージを減少させる
@@ -1082,8 +1089,6 @@ void Game::Update()
 		effect_manager_->Play("water");
 
 		OBJECT_PARAMETER_DESC bullet_param;
-		std::string str = "notice" + std::to_string(bullet_count);
-		bullet_param.name_ = str;
 		bullet_param.layer_ = LAYER_BULLET;
 		bullet_param.parent_layer_ = LAYER_MODEL_GRANDFATHER;
 		bullet_param.position_ = grandfather_position;
@@ -1094,9 +1099,8 @@ void Game::Update()
 		// カメラの回転Xを利用
 		bullet_param.rotation_.x_ = camera_rotation.x;
 
-		object_manager_->Create(
-			bullet_param);
-		bullet_count++;
+		Bullet* bullet = object_manager_->GetNoUseBullet();
+		bullet->Fire(bullet_param);
 	}
 
 	//-------------------------------------

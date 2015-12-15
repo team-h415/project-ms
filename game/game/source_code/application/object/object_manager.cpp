@@ -13,6 +13,9 @@
 #include "../render/directx9/directx9_holder.h"
 #include "../math/vector.h"
 #include "object.h"
+#include "../shader/shader.h"
+#include "objects/model/x_model.h"
+#include "objects/notice/bullet.h"
 #include "object_factory.h"
 #include "object_manager.h"
 
@@ -141,6 +144,24 @@ Object *ObjectManager::Get(
 			}
 		}
 	}
+	return nullptr;
+}
+
+
+//-------------------------------------
+// 未使用バレット取得
+//-------------------------------------
+// 未使用のバレットを取得するための特殊メソッド
+// ObjectManager::Get(
+//     "オブジェクトの名前");
+Bullet *ObjectManager::GetNoUseBullet()
+{
+	for(auto it = objects_[LAYER_BULLET].begin(); it != objects_[LAYER_BULLET].end(); ++it){
+		if((*it).second->use() == false){
+			return dynamic_cast<Bullet*>((*it).second);
+		}
+	}
+	ASSERT_WARNING("全部のバレットが活動しているぞ　はーと");
 	return nullptr;
 }
 
