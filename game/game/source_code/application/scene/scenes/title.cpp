@@ -48,6 +48,7 @@ Title::Title()
 		 "Perspective", "MainCamera", camera_param);
 
 	OBJECT_PARAMETER_DESC param;
+	param.name_ = "logo";
 	param.position_ = {
         SCREEN_WIDTH * 0.5f,
 		250.0f,
@@ -58,9 +59,10 @@ Title::Title()
 	param.layer_ = LAYER_SPRITE_2D;
 
 	object_manager_->Create(
-		"logo", param);
+		param);
 
     OBJECT_PARAMETER_DESC title_name_param;
+	title_name_param.name_ = "title_name";
     title_name_param.position_ = {
         SCREEN_WIDTH * 0.5f,
         250.0f,
@@ -71,7 +73,7 @@ Title::Title()
     title_name_param.layer_ = LAYER_SPRITE_2D;
 
     object_manager_->Create(
-        "title_name", title_name_param,
+        title_name_param,
         "resource/texture/title/logo.png");
 }
 

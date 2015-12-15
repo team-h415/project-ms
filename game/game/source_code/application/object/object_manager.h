@@ -31,7 +31,6 @@ public:
 	//      "オブジェクトの名前", 
 	//      設定するパラメータ);
 	Object *Create(
-		const std::string &name,
 		const OBJECT_PARAMETER_DESC &parameter);
 
 	// 外部ファイルから読み込みが必要なオブジェクトを生成します。
@@ -40,7 +39,6 @@ public:
 	//     設定するパラメータ,
 	//     外部ファイルのパス);
 	Object *Create(
-		const std::string &name,
 		const OBJECT_PARAMETER_DESC &parameter,
 		const std::string &object_path);
 

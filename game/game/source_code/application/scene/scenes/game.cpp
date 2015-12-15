@@ -143,63 +143,65 @@ Game::Game()
 	//-------------------------------------
 	// 地形
 	//-------------------------------------
-	OBJECT_PARAMETER_DESC param;
-	param.position_ = { 0.0f, 0.0f, 0.0f };
-	param.rotation_ = { 0.0f, 0.0f, 0.0f };
-	param.scaling_ = { 200.0f, 1.0f, 200.0f };
-	param.layer_ = LAYER_MESH_FIELD;
+	OBJECT_PARAMETER_DESC field_param;
+	field_param.name_ = "field";
+	field_param.position_ = { 0.0f, 0.0f, 0.0f };
+	field_param.rotation_ = { 0.0f, 0.0f, 0.0f };
+	field_param.scaling_ = { 200.0f, 1.0f, 200.0f };
+	field_param.layer_ = LAYER_MESH_FIELD;
 
 	object_manager_->Create(
-		"field",
-		param,
+		field_param,
 		"resource/mesh/map.heightmap");
 
 
 	//-------------------------------------
 	// 空
 	//-------------------------------------
-	param.position_ = { 0.0f, 0.0f, 0.0f };
-	param.rotation_ = { 0.0f, 0.0f, 0.0f };
-	param.scaling_ = { 500.0f, 1.0f, 500.0f };
-	param.layer_ = LAYER_MESH_SKYDOME;
+	OBJECT_PARAMETER_DESC skydome_param;
+	skydome_param.name_ = "skydome_up";
+	skydome_param.position_ = { 0.0f, 0.0f, 0.0f };
+	skydome_param.rotation_ = { 0.0f, 0.0f, 0.0f };
+	skydome_param.scaling_ = { 500.0f, 1.0f, 500.0f };
+	skydome_param.layer_ = LAYER_MESH_SKYDOME;
 
 	object_manager_->Create(
-		"skydome_up",
-		param,
+		skydome_param,
 		"resource/mesh/skydome_up.txt");
 
-	param.rotation_ = { 0.0f, 0.0f, D3DX_PI };
+	skydome_param.name_ = "skydome_bottom";
+	skydome_param.rotation_ = { 0.0f, 0.0f, D3DX_PI };
 
 	object_manager_->Create(
-		"skydome_bottom",
-		param,
+		skydome_param,
 		"resource/mesh/skydome_bottom.txt");
 
 
 	//-------------------------------------
 	// 池
 	//-------------------------------------
-	param.position_ = { 0.0f, -0.5f, 0.0f };
-	param.rotation_ = { 0.0f, 0.0f, 0.0f };
-	param.scaling_ = { 30.0f, 1.0f, 30.0f };
-	param.layer_ = LAYER_SPRITE_LAKE;
+	OBJECT_PARAMETER_DESC lake_param;
+	lake_param.name_ = "lake";
+	lake_param.position_ = { 0.0f, -0.5f, 0.0f };
+	lake_param.rotation_ = { 0.0f, 0.0f, 0.0f };
+	lake_param.scaling_ = { 30.0f, 1.0f, 30.0f };
+	lake_param.layer_ = LAYER_SPRITE_LAKE;
 
 	object_manager_->Create(
-		"lake",
-		param);
+		lake_param);
 
 	//-------------------------------------
 	// 砦
 	//-------------------------------------
 	// 砦1
 	OBJECT_PARAMETER_DESC fort1_param;
+	fort1_param.name_ = "fort1";
 	fort1_param.layer_ = LAYER_MODEL_FORT;
 	fort1_param.position_ = FORT1_POSITION;
 	fort1_param.rotation_ = { 0.0f, 0.0f, 0.0f };
 	fort1_param.scaling_ = { 1.0f, 1.0f, 1.0f };
 
 	object_manager_->Create(
-		"fort1",
 		fort1_param,
 		"resource/model/x/test.x");
 
@@ -220,13 +222,13 @@ Game::Game()
 
 	// 砦2
 	OBJECT_PARAMETER_DESC fort2_param;
+	fort2_param.name_ = "fort2";
 	fort2_param.layer_ = LAYER_MODEL_FORT;
 	fort2_param.position_ = FORT2_POSITION;
 	fort2_param.rotation_ = { 0.0f, 0.0f, 0.0f };
 	fort2_param.scaling_ = { 1.0f, 1.0f, 1.0f };
 
 	object_manager_->Create(
-		"fort2",
 		fort2_param,
 		"resource/model/x/test.x");
 
@@ -247,13 +249,13 @@ Game::Game()
 
 	// 砦3
 	OBJECT_PARAMETER_DESC fort3_param;
+	fort3_param.name_ = "fort3";
 	fort3_param.layer_ = LAYER_MODEL_FORT;
 	fort3_param.position_ = FORT3_POSITION;
 	fort3_param.rotation_ = { 0.0f, 0.0f, 0.0f };
 	fort3_param.scaling_ = { 1.0f, 1.0f, 1.0f };
 
 	object_manager_->Create(
-		"fort3",
 		fort3_param,
 		"resource/model/x/test.x");
 
@@ -276,13 +278,13 @@ Game::Game()
 	// FBXおじ
 	//-------------------------------------
 	OBJECT_PARAMETER_DESC grandfather_param;
+	grandfather_param.name_ = "grandfather";
 	grandfather_param.layer_ = LAYER_MODEL_GRANDFATHER;
 	grandfather_param.position_ = GRANDFATHER_POSITION_STAGE1;
 	grandfather_param.rotation_ = { 0.0f, 0.0f, 0.0f };
 	grandfather_param.scaling_ = { 1.0f, 1.0f, 1.0f };
 
 	object_manager_->Create(
-		"grandfather",
 		grandfather_param);
 
 	COLLISION_PARAMETER_DESC fbx_collision_param;
@@ -301,13 +303,13 @@ Game::Game()
 	// FBX子供
 	//-------------------------------------
 	OBJECT_PARAMETER_DESC child_param;
+	child_param.name_ = "child";
 	child_param.layer_ = LAYER_MODEL_CHILD;
 	child_param.position_ = CHILD_POSITION1;
 	child_param.rotation_ = { 0.0f, 0.0f, 0.0f };
 	child_param.scaling_ = { 1.0f, 1.0f, 1.0f };
 
 	object_manager_->Create(
-		"child",
 		child_param);
 
 	COLLISION_PARAMETER_DESC child_collision_param;
@@ -327,6 +329,7 @@ Game::Game()
 	// タイマー
 	//-------------------------------------
     OBJECT_PARAMETER_DESC time_param;
+	time_param.name_ = "time";
     time_param.position_ = {
         SCREEN_WIDTH * 0.5f,
         40.0f,
@@ -338,7 +341,6 @@ Game::Game()
 
 	Timer* timer = static_cast<Timer*>(
 		object_manager_->Create(
-		"time",
 		time_param));
 
 	timer->SetTexture("resource/texture/figure_all.png");
@@ -352,6 +354,7 @@ Game::Game()
 	// 砦UI
 	//-------------------------------------
     OBJECT_PARAMETER_DESC fort_state_param;
+	fort_state_param.name_ = "fort_state";
     fort_state_param.position_ = {
         SCREEN_WIDTH * 0.5f,
         100.0f,
@@ -362,10 +365,11 @@ Game::Game()
     fort_state_param.layer_ = LAYER_SPRITE_2D;
 
     object_manager_->Create(
-        "fort_state", fort_state_param);
+		fort_state_param);
 
 
     OBJECT_PARAMETER_DESC fort_gauge_param;
+	fort_gauge_param.name_ = "fort_gauge_manager";
     fort_gauge_param.position_ = {
         SCREEN_WIDTH * 0.5f,
         100.0f,
@@ -376,32 +380,15 @@ Game::Game()
     fort_gauge_param.layer_ = LAYER_FORT_GAUGE;
 
     object_manager_->Create(
-        "fort_gauge_manager", fort_gauge_param,
+		fort_gauge_param,
         "resource/texture/game/Child_01.jpg");
-
-
-	//-------------------------------------
-	// ミニマップUI
-	//-------------------------------------
-    OBJECT_PARAMETER_DESC mini_map_param;
-    mini_map_param.position_ = {
-        1180.0f,
-        100.0f,
-        0.0f
-    };
-    mini_map_param.rotation_ = { 0.0f, 0.0f, 0.0f };
-    mini_map_param.scaling_ = { 200.0f, 200.0f, 0.0f };
-    mini_map_param.layer_ = LAYER_SPRITE_2D;
-
-    object_manager_->Create(
-        "mini_map", mini_map_param,
-        "resource/texture/title/logo.png");
 
 
     //-------------------------------------
     // 水ゲージ下地UI
     //-------------------------------------
-    OBJECT_PARAMETER_DESC water_design_param;
+	OBJECT_PARAMETER_DESC water_design_param;
+	water_design_param.name_ = "water_design";
     water_design_param.position_ = {
         128.0f,
         624.0f,
@@ -412,13 +399,14 @@ Game::Game()
     water_design_param.layer_ = LAYER_WATER_GAGE;
 
     object_manager_->Create(
-        "water_design", water_design_param,
+		 water_design_param,
         "resource/texture/game/water_gage_background.png");
 
     //-------------------------------------
     // 水ゲージ（ゲージ本体）UI
     //-------------------------------------
     OBJECT_PARAMETER_DESC water_gage_param;
+	water_gage_param.name_ = "water_gage";
     water_gage_param.position_ = {
         128.0f,
         624.0f,
@@ -429,13 +417,14 @@ Game::Game()
     water_gage_param.layer_ = LAYER_WATER_GAGE;
 
     object_manager_->Create(
-        "water_gage", water_gage_param,
+        water_gage_param,
         "resource/texture/game/water_gage_diffuse.png");
 
     //-------------------------------------
     // 水ゲージ（周り）UI
     //-------------------------------------
     OBJECT_PARAMETER_DESC water_gage_around_param;
+	water_gage_around_param.name_ = "water_gage_around";
     water_gage_around_param.position_ = {
         128.0f,
         624.0f,
@@ -446,13 +435,14 @@ Game::Game()
     water_gage_around_param.layer_ = LAYER_SPRITE_2D;
 
     object_manager_->Create(
-        "water_gage_around", water_gage_around_param,
+         water_gage_around_param,
         "resource/texture/game/water_gage_around.png");
 
     //-------------------------------------
     // 水ポリゴンUI
     //-------------------------------------
     OBJECT_PARAMETER_DESC water_poly_param;
+	water_poly_param.name_ = "water_poly";
     water_poly_param.position_ = {
         128.0f,
         624.0f,
@@ -463,13 +453,14 @@ Game::Game()
     water_poly_param.layer_ = LAYER_SPRITE_2D;
 
     object_manager_->Create(
-        "water_poly", water_poly_param,
+        water_poly_param,
         "resource/texture/game/water_desine.png");
 
     //-------------------------------------
     // ダメージエフェクトUI
     //-------------------------------------
     OBJECT_PARAMETER_DESC hit_point_param;
+	hit_point_param.name_ = "damage_effect";
     hit_point_param.position_ = {
         SCREEN_WIDTH * 0.5f,
         SCREEN_HEIGHT * 0.5f,
@@ -480,7 +471,7 @@ Game::Game()
     hit_point_param.layer_ = LAYER_DAMAGE_EFFECT;
 
     object_manager_->Create(
-        "damage_effect", hit_point_param);
+        hit_point_param);
 
 	//-------------------------------------
 	// インスタンシングテスト
@@ -494,9 +485,10 @@ Game::Game()
 	// ベンチ
 	//-------------------------------------
 	OBJECT_PARAMETER_DESC bench_param;
+	bench_param.name_ = "bench";
 	bench_param.layer_ = LAYER_BENCH;
 	object_manager_->Create(
-		"bench", bench_param);
+		bench_param);
 
 	//-------------------------------------
 	// ゲームルール用パラメータ初期化
@@ -515,10 +507,11 @@ Game::Game()
 	// 影
 	//-------------------------------------
 	OBJECT_PARAMETER_DESC shadow_param;
+	shadow_param.name_ = "shadow";
 	shadow_param.layer_ = LAYER_SHADOW;
 	shadow_param.scaling_ = Vector3(1.0f, 1.0f, 1.0f);
 	object_manager_->Create(
-		"shadow", shadow_param);
+		shadow_param);
 
 }
 
@@ -1050,6 +1043,8 @@ void Game::Update()
 
 
 		OBJECT_PARAMETER_DESC bullet_param;
+		std::string str = "notice" + std::to_string(bullet_count);
+		bullet_param.name_ = str;
 		bullet_param.layer_ = LAYER_BULLET;
 		bullet_param.parent_layer_ = LAYER_MODEL_GRANDFATHER;
 		bullet_param.position_ = grandfather_position;
@@ -1060,9 +1055,7 @@ void Game::Update()
 		bullet_param.rotation_.x_ = camera_rotation.x;
 
 		bullet_param.scaling_ = { 1.0f, 1.0f, 1.0f };
-		std::string str = "notice" + std::to_string(bullet_count);
 		object_manager_->Create(
-			str,
 			bullet_param);
 		bullet_count++;
 
@@ -1089,6 +1082,8 @@ void Game::Update()
 		effect_manager_->Play("water");
 
 		OBJECT_PARAMETER_DESC bullet_param;
+		std::string str = "notice" + std::to_string(bullet_count);
+		bullet_param.name_ = str;
 		bullet_param.layer_ = LAYER_BULLET;
 		bullet_param.parent_layer_ = LAYER_MODEL_GRANDFATHER;
 		bullet_param.position_ = grandfather_position;
@@ -1099,9 +1094,7 @@ void Game::Update()
 		// カメラの回転Xを利用
 		bullet_param.rotation_.x_ = camera_rotation.x;
 
-		std::string str = "notice" + std::to_string(bullet_count);
 		object_manager_->Create(
-			str,
 			bullet_param);
 		bullet_count++;
 	}

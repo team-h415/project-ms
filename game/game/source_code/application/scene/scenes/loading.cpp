@@ -25,6 +25,7 @@ Loading::Loading()
 	object_manager_ = new ObjectManager;
 
 	OBJECT_PARAMETER_DESC param;
+	param.name_ = "now_loading";
 	param.position_ = {
 		SCREEN_WIDTH - 200.0f,
 		SCREEN_HEIGHT - 100.0f,
@@ -35,7 +36,7 @@ Loading::Loading()
 	param.layer_ = LAYER_SPRITE_2D;
 
 	object_manager_->Create(
-		"now_loading", param,
+		param,
 		"resource/texture/loading/now_loading_00.png");
 }
 

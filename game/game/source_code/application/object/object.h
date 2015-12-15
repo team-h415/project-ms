@@ -51,6 +51,7 @@ struct OBJECT_PARAMETER_DESC
 	Vector3 scaling_;
 	OBJECT_LAYER layer_;
 	OBJECT_LAYER parent_layer_;
+	std::string name_;
 };
 
 

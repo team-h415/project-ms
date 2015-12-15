@@ -48,6 +48,7 @@ Result::Result()
 		"Perspective", "MainCamera", camera_param);
 
 	OBJECT_PARAMETER_DESC param;
+	param.name_ = "test";
 	param.position_ = {
 		SCREEN_WIDTH * 0.25f,
 		SCREEN_HEIGHT * 0.5f,
@@ -58,7 +59,7 @@ Result::Result()
 	param.layer_ = LAYER_SPRITE_2D;
 
 	object_manager_->Create(
-		"test", param,
+		param,
 		"resource/texture/result/logo.png");
 }
 

@@ -74,11 +74,14 @@ Bullet::Bullet(
 	// ’eŽÀ‘Ì¶¬
 	OBJECT_PARAMETER_DESC xmodel_param;
 	std::string bullet_name = "bulletcore" + std::to_string(bullet_num_);
+	xmodel_param.name_ = bullet_name;
 	xmodel_param.position_ = parameter.position_;
 	xmodel_param.rotation_ = { 0.0f, 0.0f, 0.0f };
 	xmodel_param.scaling_ = parameter.scaling_;
 	xmodel_param.layer_ = LAYER_MODEL_X;
-	xmodel_ = (XModel*)game->object_manager()->Create(bullet_name, xmodel_param, "resource/model/x/ball.x");
+	xmodel_ = (XModel*)game->object_manager()->Create(
+		xmodel_param,
+		"resource/model/x/ball.x");
 	xmodel_->SetTexture("resource/texture/red.png");
 
 	bullet_num_++;
