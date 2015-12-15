@@ -1177,6 +1177,28 @@ void Game::Update()
 
 #endif //_DEBUG
 
+#ifdef _DEBUG
+    //-------------------------------------
+    // ダメージエフェクト確認
+    //-------------------------------------
+    if (KeyBoard::isPress(DIK_L)){
+        float life = child->GetLife();
+        life -= CHILD_DAMAGE;
+        if (life < 0.0f){
+            life = 0.0f;
+        }
+        child->SetLife(life);
+    }
+    else if (KeyBoard::isPress(DIK_K)){
+        float life = child->GetLife();
+        life += CHILD_DAMAGE;
+        if (life > 1.0f){
+            life = 1.0f;
+        }
+        child->SetLife(life);
+    }
+#endif // _DEBUG
+
 	//-------------------------------------
 	// アニメーション制御
 	//-------------------------------------
