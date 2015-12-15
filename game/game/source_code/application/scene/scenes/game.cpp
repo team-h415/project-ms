@@ -518,7 +518,6 @@ Game::Game()
 	object_manager_->Create(
 		shadow_param);
 
-<<<<<<< HEAD
 
 	//-------------------------------------
 	// カウントダウン
@@ -535,7 +534,7 @@ Game::Game()
 	countdown_param.layer_ = LAYER_COUNTDOWN;
 	object_manager_->Create(
 		countdown_param);
-=======
+
 	//-------------------------------------
 	// バレット生成しておくよ
 	//-------------------------------------
@@ -547,7 +546,7 @@ Game::Game()
 		object_manager_->Create(
 			bullet_param);
 	}
->>>>>>> origin/繧ｨ繝輔ぉ繧ｯ繝医→繝舌Ξ繝�繝�
+
 }
 
 
