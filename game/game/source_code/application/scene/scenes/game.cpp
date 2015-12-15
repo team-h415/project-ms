@@ -29,6 +29,7 @@
 #include "../../object/objects/sprite/timer.h"
 #include "../../object/objects/sprite/damage_effect.h"
 #include "../../object/objects/sprite/countdown.h"
+#include "../../object/objects/notice/bullet.h"
 #include "../../effect/effect.h"
 #include "../../effect/effect_manager.h"
 #include "../../object/objects/sprite/water_gage.h"
@@ -42,7 +43,6 @@
 #include "../../config/config.h"
 #include "game.h"
 #include "../fade/fade.h"
-#include "../../object/objects/notice/bullet.h"
 
 
 //-------------------------------------

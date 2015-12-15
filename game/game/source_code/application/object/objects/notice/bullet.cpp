@@ -81,7 +81,7 @@ void Bullet::Fire(OBJECT_PARAMETER_DESC &parameter)
 	{
 		Scene *scene = SceneManager::GetCurrentScene();
 		std::string str = SceneManager::GetCurrentSceneName();
-		if(str != "Game"){
+		if(str != "Game" && str != "Matching"){
 			ASSERT_ERROR("弾が生成されるべきシーンではありません");
 			return;
 		}
@@ -93,8 +93,14 @@ void Bullet::Fire(OBJECT_PARAMETER_DESC &parameter)
 		param.range_ = 0.5f;
 		param.offset_ = {0.0f, 0.0f, 0.0f};
 
-		Game *game = dynamic_cast<Game*>(scene);
-		collision_ = game->collision_manager()->Create(this, param);
+		if (str == "Game"){
+			Game *game = dynamic_cast<Game*>(scene);
+			collision_ = game->collision_manager()->Create(this, param);
+		}
+		if (str == "Matching"){
+			Matching *matching = dynamic_cast<Matching*>(scene);
+			collision_ = matching->collision_manager()->Create(this, param);
+		}
 	}
 
 	// 使用フラグOFF
@@ -123,6 +129,22 @@ void Bullet::Update()
 	if (str == "Game"){
 		Game *game = dynamic_cast<Game*>(scene);
 		Object *obj = game->object_manager()->Get("field");
+		Field *field = dynamic_cast<Field*>(obj);
+		float height = field->GetHeight(
+			D3DXVECTOR3(
+			parameter_.position_.x_,
+			parameter_.position_.y_,
+			parameter_.position_.z_));
+		if (parameter_.position_.y_ < height){
+			use_ = false;
+			collision_->SetUse(false);
+			parameter_.position_.y_ = 10000.0f;
+		}
+	}
+
+	if (str == "Matching"){
+		Matching *matching = dynamic_cast<Matching*>(scene);
+		Object *obj = matching->object_manager()->Get("field");
 		Field *field = dynamic_cast<Field*>(obj);
 		float height = field->GetHeight(
 			D3DXVECTOR3(
