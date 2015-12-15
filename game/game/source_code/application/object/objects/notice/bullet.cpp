@@ -27,6 +27,7 @@
 #include "../../../effect/effect_manager.h"
 #include "../mesh/field.h"
 #include "../../../config/config.h"
+#include "../model/x_model.h"
 #include "bullet.h"
 #include "../../../scene/scene.h"
 #include "../../../scene/scene_manager.h"
@@ -35,43 +36,14 @@
 
 
 //-------------------------------------
-// static
-//-------------------------------------
-int Bullet::bullet_num_ = 0;
-
-
-//-------------------------------------
 // Bullet()
 //-------------------------------------
 Bullet::Bullet(
-	const OBJECT_PARAMETER_DESC &parameter)
+	const OBJECT_PARAMETER_DESC &parameter) :
+	XModel(parameter)
 {
-	parameter_ = parameter;
-
-	COLLISION_PARAMETER_DESC param;
-	param.position_ = {
-		parameter_.position_.x_,
-		parameter_.position_.y_,
-		parameter_.position_.z_ };
-	param.range_ = 0.5f;
-	param.offset_ = { 0.0f, 0.0f, 0.0f };
-	speed_ = {BULLET_DEF_SPEED_XZ, BULLET_DEF_SPEED_Y, BULLET_DEF_SPEED_XZ};
-
-	// 回転値を少し調整
-	parameter_.rotation_.x_ += BULLET_OFFSET_ROT;
-	// 回転値を参照して速度を改良
-	speed_.y += sinf(parameter_.rotation_.x_) * BULLET_ADD_SPEED_Y;
-
-	Scene *scene = SceneManager::GetCurrentScene();
-	std::string str = SceneManager::GetCurrentSceneName();
-	if (str != "Game"){
-		ASSERT_ERROR("弾が生成されるべきシーンではありません");
-		return;
-	}
-	Game *game = dynamic_cast<Game*>(scene);
-	collision_ = game->collision_manager()->Create(this, param);
-	
 	// 弾実体生成
+<<<<<<< HEAD
 	OBJECT_PARAMETER_DESC xmodel_param;
 	std::string bullet_name = "bulletcore" + std::to_string(bullet_num_);
 	xmodel_param.name_ = bullet_name;
@@ -85,6 +57,14 @@ Bullet::Bullet(
 	xmodel_->SetTexture("resource/texture/game/bullet.png");
 
 	bullet_num_++;
+=======
+	LoadMesh("resource/model/x/ball.x");
+	SetTexture("resource/texture/red.png");
+
+	// 使用フラグOFF
+	collision_ = nullptr;
+	use_ = false;
+>>>>>>> origin/繧ｨ繝輔ぉ繧ｯ繝医→繝舌Ξ繝�繝�
 }
 
 
@@ -96,9 +76,46 @@ Bullet::~Bullet()
 	if (collision_){
 		collision_->SetThisDelete(true);
 	}
-	if (xmodel_){
-		xmodel_->SetThisDelete(true);
+}
+
+
+//-------------------------------------
+// Fire()
+//-------------------------------------
+void Bullet::Fire(OBJECT_PARAMETER_DESC &parameter)
+{
+	parameter_ = parameter;
+
+	speed_ = {BULLET_DEF_SPEED_XZ, BULLET_DEF_SPEED_Y, BULLET_DEF_SPEED_XZ};
+
+	// 回転値を少し調整
+	parameter_.rotation_.x_ += BULLET_OFFSET_ROT;
+	// 回転値を参照して速度を改良
+	speed_.y += sinf(parameter_.rotation_.x_) * BULLET_ADD_SPEED_Y;
+
+	if(collision_ == nullptr)
+	{
+		Scene *scene = SceneManager::GetCurrentScene();
+		std::string str = SceneManager::GetCurrentSceneName();
+		if(str != "Game"){
+			ASSERT_ERROR("弾が生成されるべきシーンではありません");
+			return;
+		}
+		COLLISION_PARAMETER_DESC param;
+		param.position_ = {
+			parameter_.position_.x_,
+			parameter_.position_.y_,
+			parameter_.position_.z_};
+		param.range_ = 0.5f;
+		param.offset_ = {0.0f, 0.0f, 0.0f};
+
+		Game *game = dynamic_cast<Game*>(scene);
+		collision_ = game->collision_manager()->Create(this, param);
 	}
+
+	// 使用フラグOFF
+	use_ = true;
+	collision_->SetUse(true);
 }
 
 
@@ -107,13 +124,15 @@ Bullet::~Bullet()
 //-------------------------------------
 void Bullet::Update()
 {
+	if(!use_)
+	{
+		return;
+	}
+
 	parameter_.position_.x_ += sinf(parameter_.rotation_.y_) * speed_.x;
 	parameter_.position_.y_ += speed_.y;
 	parameter_.position_.z_ += cosf(parameter_.rotation_.y_) * speed_.z;
 	speed_.y -= BULLET_GRAVITY;
-
-	// 弾実体の移動
-	xmodel_->SetPosition(parameter_.position_);
 
 	Scene *scene = SceneManager::GetCurrentScene();
 	std::string str = SceneManager::GetCurrentSceneName();
@@ -127,22 +146,26 @@ void Bullet::Update()
 			parameter_.position_.y_,
 			parameter_.position_.z_));
 		if (parameter_.position_.y_ < height){
-			this_delete_ = true;
-			collision_->SetThisDelete(true);
-			xmodel_->SetThisDelete(true);
-			collision_ = nullptr;
-			xmodel_ = nullptr;
+			use_ = false;
+			collision_->SetUse(false);
+			parameter_.position_.y_ = 10000.0f;
 		}
 	}
+
+	XModel::Update();
 }
 
 
 //-------------------------------------
-// Draw()
+// Action()
 //-------------------------------------
 void Bullet::Draw()
 {
-
+	if(!use_)
+	{
+		return;
+	}
+	XModel::Draw();
 }
 
 
@@ -153,6 +176,11 @@ void Bullet::Action(
 	Object *target,
 	const float range)
 {
+	if(!use_)
+	{
+		return;
+	}
+
 	//-------------------------------------
 	// もしXモデルと当たったら
 	if (target->parameter().layer_ == LAYER_MODEL_FORT ||
@@ -209,11 +237,8 @@ void Bullet::Action(
 				// エフェクト再生
 				game->effect_manager()->Play("damage");
 			}
-			this_delete_ = true;
-			xmodel_->SetThisDelete(true);
-			collision_->SetThisDelete(true);
-			collision_ = nullptr;
-			xmodel_ = nullptr;
+			use_ = false;
+			collision_->SetUse(false);
 		}
 	}
 }

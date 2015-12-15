@@ -28,6 +28,7 @@ Collision::Collision(
 	D3DXMatrixIdentity(&world_);
 	CalculateVertex();
 	this_delete_ = false;
+	use_ = true;
 }
 
 
@@ -66,6 +67,11 @@ void Collision::Update()
 //-------------------------------------
 void Collision::Draw()
 {
+	if(!use_)
+	{
+		return;
+	}
+
 	DirectX9Holder::device_->SetRenderState(D3DRS_LIGHTING, FALSE);
 	DirectX9Holder::device_->SetTransform(D3DTS_WORLD, &world_);
 	

@@ -20,9 +20,9 @@ using namespace EffekseerRenderer;
 class EffectManager
 {
 public:
-	EffectManager(
-		const int max_sprites);
-	virtual ~EffectManager();
+	static EffectManager* Get();
+	static void Delete();
+
 	void Update();
 	void Draw();
 	void Create(
@@ -43,6 +43,12 @@ private:
 	EffekseerRenderer::Renderer *renderer_;
 	Effekseer::Manager *manager_;
 	std::map<std::string, MyEffect*> effects_;
+
+	EffectManager(
+		const int max_sprites);
+	virtual ~EffectManager();
+
+	static EffectManager* effect_manager_;
 	static int effect_count_;
 };
 
