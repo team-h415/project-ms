@@ -1546,6 +1546,9 @@ void Game::Draw()
 	camera_manager_->Set(use_camera_name_);
 	object_manager_->Draw();
 	effect_manager_->Draw();
+    DamageEffect *damage_effect = dynamic_cast<DamageEffect*>(
+        object_manager_->Get("damage_effect"));
+    damage_effect->Draw();
 	collision_manager_->Draw();
 	font1_->Draw(rect1, font1_color);
 	font2_->Draw(rect2, font2_color);
