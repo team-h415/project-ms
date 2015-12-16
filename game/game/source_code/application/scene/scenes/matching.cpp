@@ -324,13 +324,13 @@ void Matching::Update()
 		cosf(-grandfather_rotation.y_) * GamePad::isStick(GAMEPAD_GRANDFATHER).lsy_) * player_speed;
 
 	if (GamePad::isPress(GAMEPAD_GRANDFATHER, PAD_RS_LEFT)){
-		grandfather_rotation.y_ -= CHAR_ROT_SPEED;
+		grandfather_rotation.y_ -= CHAR_ROT_SPEED*GamePad::isStick(GAMEPAD_GRANDFATHER).rsx_;
 		if (grandfather_rotation.y_ < D3DX_PI){
 			grandfather_rotation.y_ += D3DX_PI * 2.0f;
 		}
 	}
 	if (GamePad::isPress(GAMEPAD_GRANDFATHER, PAD_RS_RIGHT)){
-		grandfather_rotation.y_ += CHAR_ROT_SPEED;
+		grandfather_rotation.y_ -= CHAR_ROT_SPEED*GamePad::isStick(GAMEPAD_GRANDFATHER).rsx_;
 		if (grandfather_rotation.y_ > D3DX_PI){
 			grandfather_rotation.y_ -= D3DX_PI * 2.0f;
 		}
@@ -408,13 +408,13 @@ void Matching::Update()
 	//-------------------------------------
 
 	if (GamePad::isPress(GAMEPAD_GRANDFATHER, PAD_RS_UP)){
-		camera_rotation.x -= CAMERA_ROT_SPEED;
+		camera_rotation.x += CAMERA_ROT_SPEED*GamePad::isStick(GAMEPAD_GRANDFATHER).rsy_;
 		if (camera_rotation.x < -CAMERA_ROT_X_LIMIT){
 			camera_rotation.x = -CAMERA_ROT_X_LIMIT;
 		}
 	}
 	if (GamePad::isPress(GAMEPAD_GRANDFATHER, PAD_RS_DOWN)){
-		camera_rotation.x += CAMERA_ROT_SPEED;
+		camera_rotation.x += CAMERA_ROT_SPEED*GamePad::isStick(GAMEPAD_GRANDFATHER).rsy_;
 		if (camera_rotation.x > CAMERA_ROT_X_LIMIT){
 			camera_rotation.x = CAMERA_ROT_X_LIMIT;
 		}
