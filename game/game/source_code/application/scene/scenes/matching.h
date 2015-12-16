@@ -47,6 +47,10 @@ private:
 	CollisionManager *collision_manager_;
 	DebugFont *font_;
 	float camera_pos_len_;
+	// 経過フレーム数
+	int frame_;
+	// 経過時間
+	int timer_;
 };
 
 

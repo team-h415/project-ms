@@ -41,10 +41,25 @@
 
 
 //-------------------------------------
+// warning
+//-------------------------------------
+#pragma warning (disable:4996)
+
+
+//-------------------------------------
 // Matching()
 //-------------------------------------
 Matching::Matching()
 {
+
+	//-------------------------------------
+	// ゲームルール用パラメータ初期化
+	//-------------------------------------
+	// 経過フレーム数
+	frame_ = 0;
+	// 経過時間
+	timer_ = 0;
+
 	//-------------------------------------
 	// 各マネージャ・デバッグシステム初期化
 	//-------------------------------------
@@ -69,29 +84,35 @@ Matching::Matching()
 		"resource/effect/BulletFire.efk",
 		water_param);
 
-	effect_manager_->Create(
-		"damage",
-		"resource/effect/Damage3_2.efk",
-		water_param);
+	//effect_manager_->Create(
+	//	"damage",
+	//	"resource/effect/Damage3_2.efk",
+	//	water_param);
 
-	effect_manager_->Create(
-		"dead",
-		"resource/effect/Dead2.efk",
-		water_param);
+	//effect_manager_->Create(
+	//	"dead",
+	//	"resource/effect/Dead2.efk",
+	//	water_param);
 
-	effect_manager_->Create(
-		"smoke",
-		"resource/effect/Smoke.efk",
-		water_param);
+	//effect_manager_->Create(
+	//	"smoke",
+	//	"resource/effect/Smoke.efk",
+	//	water_param);
 
-	effect_manager_->Create(
-		"smoke2",
-		"resource/effect/Smoke2.efk",
-		water_param);
+	//effect_manager_->Create(
+	//	"smoke2",
+	//	"resource/effect/Smoke2.efk",
+	//	water_param);
 
+	//effect_manager_->Create(
+	//	"dash",
+	//	"resource/effect/Dash.efk",
+	//	water_param);
+
+	water_param.position_ = { 40.00f, 0.00f, -40.00f };
 	effect_manager_->Create(
-		"dash",
-		"resource/effect/Dash.efk",
+		"portal",
+		"resource/effect/Portalx2.efk",
 		water_param);
 
 	//-------------------------------------
@@ -100,7 +121,7 @@ Matching::Matching()
 	CAMERA_PARAMETER_DESC camera_param;
 	camera_param.acpect_ = SCREEN_WIDTH / SCREEN_HEIGHT;
 	camera_param.fovy_ = D3DX_PI * 0.25f;
-	camera_param.position_ = { 0.0f, 10.0f, -20.0f };
+	camera_param.position_ = GRANDFATHER_POSITION;
 	camera_param.focus_ = { 0.0f, 0.0f, 0.0f };
 	camera_param.rotation_ = { 0.0f, 0.0f, 0.0f };
 	camera_param.up_ = { 0.0f, 1.0f, 0.0f };
@@ -233,6 +254,7 @@ Matching::~Matching()
 	SAFE_DELETE(camera_manager_);
 	SAFE_DELETE(font_);
 	SAFE_DELETE(collision_manager_);
+	effect_manager_ = NULL;
 }
 
 
@@ -259,7 +281,37 @@ void Matching::Update()
 	static Vector3 grandfather_prevposition(grandfather_object->parameter().position_);
 	static int shot_late = 0;
 
-	
+	//-------------------------------------
+	// 時間経過
+	//-------------------------------------
+	frame_++;
+	if (!(frame_ % 60)){
+		timer_++;
+	}
+
+	//-------------------------------------
+	// 1回だけポータル再生
+	//-------------------------------------
+	if (frame_ == 1){
+
+		EFFECT_PARAMETER_DESC effect_param;
+		MyEffect *effect = effect_manager_->Get("water");
+		effect_param = effect->parameter();
+		effect_param.position_ = grandfather_position;
+		effect_param.position_.y_ -= 100.0f;
+		effect_param.rotation_ = grandfather_rotation;
+		effect->SetParameter(effect_param);
+		effect_manager_->Play("water");
+
+		effect = effect_manager_->Get("portal");
+		effect_param = effect->parameter();
+		effect_param.position_ = grandfather_position;
+		effect_param.position_.y_ += 0.3f;
+		effect_param.rotation_ = grandfather_rotation;
+		effect->SetParameter(effect_param);
+		effect_manager_->Play("portal");
+	}
+
 
 	//-------------------------------------
 	// プレイヤー移動処理
@@ -467,6 +519,21 @@ void Matching::Update()
 		grandfather_rotation.z_);
 	font_->Add("OBJECT : %d\n", ObjectManager::GetCount());
 	font_->Add("COLLISION : %d\n", CollisionManager::GetCount());
+
+
+	if (KeyBoard::isTrigger(DIK_F2)){
+		FILE *file = fopen("DebugParam.txt", "a");
+		fprintf(file, "\n{ %3.2ff, %3.2ff, %3.2ff },\n",
+			grandfather_position.x_,
+			grandfather_position.y_,
+			grandfather_position.z_);
+		fprintf(file, "{ %3.2ff, %3.2ff, %3.2ff },\n",
+			grandfather_rotation.x_,
+			grandfather_rotation.y_,
+			grandfather_rotation.z_);
+		fclose(file);
+
+	}
 
 	if (KeyBoard::isTrigger(DIK_RETURN))
 	{

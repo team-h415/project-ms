@@ -153,7 +153,7 @@ InstancingTree::InstancingTree(
 	shader_ = new Shader("resource/shader/instancing.hlsl");
 	texture_ = TextureManager::GetTexture("resource/texture/game/tree01.png");
 
-	XContainer* container = XContainerManager::GetContainer("./resource/model/x/tree01.x");
+	XContainer* container = XContainerManager::GetContainer("./resource/model/x/tree03.x");
 
 	LPD3DXMESH mesh = container->mesh_;
 	mesh->GetVertexBuffer(&vertex_buffer_);	// 頂点バッファオブジェクトへのポインタをゲット

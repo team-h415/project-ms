@@ -40,6 +40,8 @@ public:
 		Effekseer::Manager *manager);
 	void Play(
 		Effekseer::Manager *manager);
+	void Stop(
+		Effekseer::Manager *manager);
 
 	const EFFECT_PARAMETER_DESC &parameter(){
 		return parameter_;
