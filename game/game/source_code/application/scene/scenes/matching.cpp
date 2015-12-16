@@ -111,9 +111,16 @@ Matching::Matching()
 
 	water_param.position_ = { 40.00f, 0.00f, -40.00f };
 	effect_manager_->Create(
+		"marker",
+		"resource/effect/Marker.efk",
+		water_param);
+	effect_manager_->Create(
 		"portal",
 		"resource/effect/Portalx2.efk",
 		water_param);
+
+	
+
 
 	//-------------------------------------
 	// メインカメラ
@@ -310,6 +317,10 @@ void Matching::Update()
 		effect_param.rotation_ = grandfather_rotation;
 		effect->SetParameter(effect_param);
 		effect_manager_->Play("portal");
+
+		effect = effect_manager_->Get("marker");
+		effect->SetParameter(effect_param);
+		effect_manager_->Play("marker");
 	}
 
 
@@ -500,38 +511,44 @@ void Matching::Update()
 	}
 
 	// まーかー
-	//EFFECT_PARAMETER_DESC effect_param;
-	//MyEffect *effect = effect_manager_->Get("water");
-	//effect_param = effect->parameter();
-	//effect->SetParameter(effect_param);
-	//Vector3 poseffect = grandfather_position;
-	//poseffect.y_ += 0.6f;
-	//Vector3 speed = { BULLET_DEF_SPEED_XZ, BULLET_DEF_SPEED_Y, BULLET_DEF_SPEED_XZ };
-	//Vector3 rot = Vector3(camera_rotation.x, camera_rotation.y, camera_rotation.z);
-	//// 回転値を少し調整
-	//rot.x_ += BULLET_OFFSET_ROT;
-	//// 回転値を参照して速度を改良
-	//speed.y_ += sinf(rot.x_) * BULLET_ADD_SPEED_Y;
+	Vector3 poseffect = grandfather_position;
+	poseffect.y_ += 0.6f;
+	Vector3 speed = { BULLET_DEF_SPEED_XZ, BULLET_DEF_SPEED_Y, BULLET_DEF_SPEED_XZ };
+	Vector3 rot = Vector3(camera_rotation.x, camera_rotation.y, camera_rotation.z);
+	// 回転値を少し調整
+	rot.x_ += BULLET_OFFSET_ROT;
+	// 回転値を参照して速度を改良
+	speed.y_ += sinf(rot.x_) * BULLET_ADD_SPEED_Y;
 
-	//for (int i = 0; i < 120; i++)
-	//{
-	//	poseffect.x_ += sinf(rot.y_) * speed.x_;
-	//	poseffect.y_ += speed.y_;
-	//	poseffect.z_ += cosf(rot.y_) * speed.z_;
-	//	speed.y_ -= BULLET_GRAVITY;
+	for (int i = 0; i < 120; i++)
+	{
+		poseffect.x_ += sinf(rot.y_) * speed.x_;
+		poseffect.y_ += speed.y_;
+		poseffect.z_ += cosf(rot.y_) * speed.z_;
+		speed.y_ -= BULLET_GRAVITY;
 
-	//	float height = field->GetHeight(D3DXVECTOR3(poseffect.x_, poseffect.y_, poseffect.z_));
-	//	if (height > poseffect.y_)
-	//	{
-	//		EFFECT_PARAMETER_DESC effect_param;
-	//		MyEffect *effect = effect_manager_->Get("portal");
-	//		effect_param = effect->parameter();
-	//		effect_param.position_ = poseffect;
-	//		effect_param.position_.y_ = poseffect.y_+0.1f;
-	//		effect->SetParameter(effect_param);
-	//		break;
-	//	}
-	//}
+		float height = field->GetHeight(D3DXVECTOR3(poseffect.x_, poseffect.y_, poseffect.z_));
+		if (height > poseffect.y_)
+		{
+			
+			EFFECT_PARAMETER_DESC effect_param;
+			MyEffect *effect = effect_manager_->Get("marker");
+			effect_param = effect->parameter();
+			effect_param.position_ = poseffect;
+			effect_param.position_.y_ = height;
+
+			Vector3 vec = poseffect - grandfather_position;
+			float len = sqrt(vec.x_*vec.x_ + vec.z_*vec.z_);
+			float scaling = 1.0f+len*0.15f;
+
+			scaling = std::min<float>(scaling, 3.0f);
+
+			effect_param.scaling_ = { scaling, scaling, scaling };
+			
+			effect->SetParameter(effect_param);
+			break;
+		}
+	}
 
 	
 
