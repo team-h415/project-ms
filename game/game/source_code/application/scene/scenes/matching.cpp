@@ -536,7 +536,7 @@ void Matching::Update()
 			effect_param = effect->parameter();
 			effect_param.position_ = poseffect;
 			effect_param.position_.y_ = height;
-
+			effect_param.rotation_ = { 0.0f, camera_rotation.y, 0.0f };
 			Vector3 vec = poseffect - grandfather_position;
 			float len = sqrt(vec.x_*vec.x_ + vec.z_*vec.z_);
 			float scaling = 1.0f+len*0.15f;
