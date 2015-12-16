@@ -53,6 +53,8 @@ public:
 	static void SendTo(DELI_TYPE deli_type, NETWORK_DATA network_data);		// データ送信
 	static void CloseCommunication();										// 通信を終了します
 
+	static int access_guest(){ return access_guest_; }
+
 private:
 	static unsigned __stdcall Communication();								// ホストからの受信を行います、基本的にサブスレッドで稼働します
 
@@ -60,6 +62,7 @@ private:
 	static SOCKET			socket_data_;									// ソケット
 	static unsigned long	guest_addr_[MAX_GUEST];							// ゲストのIPアドレス
 	static SceneManager		*scene_manager_;								// シーンマネージャー
+	static int				access_guest_;									// アクセスしてきたゲスト数
 
 	NetworkHost();
 	virtual ~NetworkHost();

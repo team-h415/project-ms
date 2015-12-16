@@ -14,7 +14,7 @@
 //-------------------------------------
 // define
 //-------------------------------------
-//#define NETWORK_HOST_MODE						// exeがホストなのかゲストなのかの分岐 通常はホスト、コメントアウトでゲストに
+#define NETWORK_HOST_MODE						// exeがホストなのかゲストなのかの分岐 通常はホスト、コメントアウトでゲストに
 
 #define ID_NONE -1								// IDの無い状態
 #define PORT_NUMBER_0 20000						// ゲストからホストへの送信時のポート
@@ -37,9 +37,6 @@ enum DATA_TYPE
 
 	DATA_COMPLETE_SCENE_CHANGE,	// ゲストが使用 シーンチェンジが完了したことを伝える
 
-	DATA_GAME_START,			// ホストが使用 ゲームの開始命令
-	DATA_GAME_END,				// ホストが使用 ゲームの終了命令
-
 	DATA_OBJ_PARAM,				// ホストが使用 オブジェクトのパラメータ情報を送信
 	DATA_UI_PARAM,				// ホストが使用 UIのパラメータ情報を送信
 
@@ -49,8 +46,7 @@ enum DATA_TYPE
 
 enum OBJ_TYPE
 {
-	OBJ_GRANDFATHER,			// おじいちゃん
-	OBJ_CHILD,					// 子供
+	OBJ_PLAYER,					// プレイヤーオブジェクト
 	OBJ_EFFECT,					// エフェクト
 	OBJ_FORT,					// 砦
 	OBJ_BULLET,					// 球

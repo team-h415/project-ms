@@ -56,12 +56,19 @@ Application::Application(
 		"KeyBoard");
 	gamepad_ = InputFactory::Create(
 		"GamePad");
-	#ifdef NETWORK_HOST_MODE
-		NetworkHost::StartCommunication(scene_manager_);
-	#else
-		NetworkGuest::StartCommunication(scene_manager_);
-	#endif
 	Sound::Setup();
+#ifdef NETWORK_HOST_MODE
+	NetworkHost::StartCommunication(scene_manager_);
+#else
+	NetworkGuest::StartCommunication(scene_manager_);
+	Sleep(1000);
+	// ホストと通信できるまですっこんでろ
+	while((!NetworkGuest::disco_host()))
+	{
+		Sleep(1000);
+		NetworkGuest::TrySearchHost();
+	}
+#endif
 }
 
 

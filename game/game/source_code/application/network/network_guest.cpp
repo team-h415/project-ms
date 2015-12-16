@@ -52,7 +52,8 @@ ULONG			NetworkGuest::host_addr_(0);								// ホストアドレス
 MyThread		*NetworkGuest::thread_(nullptr);							// スレッド
 int				NetworkGuest::id_(ID_NONE);									// ID
 SceneManager	*NetworkGuest::scene_manager_(nullptr);						// シーンマネージャー
-int				NetworkGuest::winner_(OBJ_GRANDFATHER);						// 勝者
+int				NetworkGuest::winner_(0);									// 勝者
+bool			NetworkGuest::disco_host_(false);							// ホスト発見フラグ
 
 //-------------------------------------
 // StartCommunication()
@@ -72,12 +73,31 @@ void NetworkGuest::StartCommunication(SceneManager *set)
 		WSAStartup(MAKEWORD(2, 2), &wsaData);
 
 		// 受信スレッド起動
+		disco_host_ = false;
 		thread_->Create(&NetworkGuest::Communication);
 
 		//printf("ゲストスレッド稼働\n");
 	}
 }
 
+
+//-------------------------------------
+// RetrySearchHost()
+//-------------------------------------
+void NetworkGuest::TrySearchHost(void)
+{
+	// 送信アドレス設定
+	sockaddr_in send_addr;
+	ZeroMemory(&send_addr, sizeof(send_addr));
+	send_addr.sin_port = htons(PORT_NUMBER_0);
+	send_addr.sin_family = AF_INET;
+	send_addr.sin_addr.s_addr = inet_addr("255.255.255.255");
+
+	NETWORK_DATA send_data;
+	ZeroMemory(&send_data, sizeof(send_data));
+	send_data.type_ = DATA_REQUEST_ADDR;
+	sendto(socket_data_, (char*)&send_data, sizeof(send_data), 0, (sockaddr*)&send_addr, sizeof(send_addr));
+}
 
 //-------------------------------------
 // EndCommunication()
@@ -109,7 +129,7 @@ void NetworkGuest::SendTo(NETWORK_DATA network_data)
 	// 送信設定
 	sockaddr_in send_addr;
 	ZeroMemory(&send_addr, sizeof(send_addr));
-	send_addr.sin_port = htons(PORT_NUMBER_1);
+	send_addr.sin_port = htons(PORT_NUMBER_0);
 	send_addr.sin_family = AF_INET;
 	send_addr.sin_addr.s_addr = host_addr_;
 	// 送信
@@ -143,19 +163,8 @@ unsigned __stdcall NetworkGuest::Communication()
 	// バインド
 	bind(socket_data_, (sockaddr*)&rec_addr, sizeof(rec_addr));
 
-	// 送信アドレス設定
-	sockaddr_in send_addr;
-	ZeroMemory(&send_addr, sizeof(send_addr));
-	send_addr.sin_port = htons(PORT_NUMBER_0);
-	send_addr.sin_family = AF_INET;
-	send_addr.sin_addr.s_addr = inet_addr("255.255.255.255");
-
-	// ホストへメッセージ送信
-	//printf("ホストへアドレスリクエスト\n");
-	NETWORK_DATA send_data;
-	ZeroMemory(&send_data, sizeof(send_data));
-	send_data.type_ = DATA_REQUEST_ADDR;
-	sendto(socket_data_, (char*)&send_data, sizeof(send_data), 0, (sockaddr*)&send_addr, sizeof(send_addr));
+	// 親の探索
+	TrySearchHost();
 
 	// 受信準備
 	NETWORK_DATA rec_data;
@@ -181,6 +190,7 @@ unsigned __stdcall NetworkGuest::Communication()
 			{
 				host_addr_ = from_addr.sin_addr.s_addr;
 				id_ = rec_data.id_;
+				disco_host_ = true;
 				//printf("ホストからアドレス・IDを取得\n");
 				break;
 			}
@@ -219,6 +229,7 @@ unsigned __stdcall NetworkGuest::Communication()
 	setsockopt(socket_data_, IPPROTO_IP, IP_ADD_MEMBERSHIP, (char*)&mreq, sizeof(mreq));
 
 	// 送信アドレス設定
+	sockaddr_in send_addr;
 	ZeroMemory(&send_addr, sizeof(send_addr));
 	send_addr.sin_port = htons(PORT_NUMBER_0);
 	send_addr.sin_family = AF_INET;
@@ -262,7 +273,7 @@ unsigned __stdcall NetworkGuest::Communication()
 					if("Game" == scene_name)
 					{
 						// 勝者保存
-						winner_ = rec_data.object_param_.type_;
+						winner_ = rec_data.id_;
 						SceneManager::RequestScene("Result");
 					}
 					break;
@@ -272,21 +283,6 @@ unsigned __stdcall NetworkGuest::Communication()
 					if("Result" == scene_name)
 					{
 						SceneManager::RequestScene("Matching");
-					}
-					break;
-
-				case DATA_GAME_START:				// ゲームの開始命令
-					scene_name = scene_manager_->GetCurrentSceneName();
-					if("Game" == scene_name)
-					{
-					}
-					break;
-
-				case DATA_GAME_END:					// ゲームの終了命令
-					scene_name = scene_manager_->GetCurrentSceneName();
-					if("Game" == scene_name)
-					{
-						
 					}
 					break;
 
@@ -401,44 +397,7 @@ void NetworkGuest::ObjDataAdaptation(
 {
 	switch(rec_data.object_param_.type_)
 	{
-		case OBJ_GRANDFATHER:			// おじいちゃん
-			{
-				if(object_manager == nullptr)
-				{
-					return;
-				}
-				Object *object = object_manager->Get("player1");
-				if(object == nullptr)
-				{
-					return;
-				}
-				FbxGrandfather *grandfather = dynamic_cast<FbxGrandfather*>(object);
-				Vector3 set_param;
-				// 回転
-				set_param.x_ = rec_data.object_param_.rotation_.x_;
-				set_param.y_ = rec_data.object_param_.rotation_.y_;
-				set_param.z_ = rec_data.object_param_.rotation_.z_;
-				object->SetRotation(set_param);
-				// 座標
-				set_param.x_ = rec_data.object_param_.position_.x_;
-				set_param.y_ = rec_data.object_param_.position_.y_;
-				set_param.z_ = rec_data.object_param_.position_.z_;
-				object->SetPosition(set_param);
-				if(grandfather->GetCurrentAnimationId() != rec_data.object_param_.ex_id_)
-				{
-					grandfather->PlayAnimation(rec_data.object_param_.ex_id_);
-				}
-				// 影
-				Object *shadow = object_manager->Get("shadow1");
-				if(shadow == nullptr)
-				{
-					return;
-				}
-				set_param.y_ += 0.001f;
-				shadow->SetPosition(set_param);
-			}
-			break;
-		case OBJ_CHILD:					// 子供
+		case OBJ_PLAYER:
 			{
 				if(object_manager == nullptr)
 				{
@@ -450,7 +409,7 @@ void NetworkGuest::ObjDataAdaptation(
 				{
 					return;
 				}
-				FbxChild *child = dynamic_cast<FbxChild*>(object);
+				FbxPlayer *player = dynamic_cast<FbxPlayer*>(object);
 				Vector3 set_param;
 				// 回転
 				set_param.x_ = rec_data.object_param_.rotation_.x_;
@@ -462,9 +421,9 @@ void NetworkGuest::ObjDataAdaptation(
 				set_param.y_ = rec_data.object_param_.position_.y_;
 				set_param.z_ = rec_data.object_param_.position_.z_;
 				object->SetPosition(set_param);
-				if(child->GetCurrentAnimationId() != rec_data.object_param_.ex_id_)
+				if(player->GetCurrentAnimationId() != rec_data.object_param_.ex_id_)
 				{
-					child->PlayAnimation(rec_data.object_param_.ex_id_);
+					player->PlayAnimation(rec_data.object_param_.ex_id_);
 				}
 				// 影
 				std::string shadow_str = "shadow" + std::to_string(rec_data.id_ + 1);

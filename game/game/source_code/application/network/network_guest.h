@@ -39,12 +39,14 @@ class NetworkGuest
 {
 public:
 	static void StartCommunication(SceneManager *set);		// 通信を開始します
+	static void TrySearchHost(void);						// ホストを探します
 	static void SendTo(NETWORK_DATA network_data);			// データ送信
 	static void CloseCommunication();						// 通信を終了します
 
 	//-------------------------------------
 	// パラメータ
 	//-------------------------------------
+	static bool disco_host(){ return disco_host_; }
 	static int winner(){ return winner_; }
 
 private:
@@ -58,6 +60,7 @@ private:
 	static MyThread		*thread_;							// スレッド
 	static SceneManager	*scene_manager_;					// シーンマネージャー
 	static int			winner_;							// 勝者
+	static bool			disco_host_;						// ホスト発見フラグ
 
 	NetworkGuest(){}
 	~NetworkGuest(){}

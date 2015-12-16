@@ -70,7 +70,7 @@ Result::Result()
 		0.0f
 	};
 
-	if(NetworkGuest::winner() == OBJ_GRANDFATHER)
+	if(NetworkGuest::winner() == 0)
 	{
 		object_manager_->Create(
 			"winner", param,

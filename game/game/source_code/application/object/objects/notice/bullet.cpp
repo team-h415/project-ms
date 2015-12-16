@@ -139,7 +139,7 @@ void Bullet::Update()
 	std::string str = SceneManager::GetCurrentSceneName();
 	if (str == "GameServer"){
 		GameServer *game_server = dynamic_cast<GameServer*>(scene);
-		Object *obj = game_server->object_manager()->Get("field");
+		Object *obj = game_server->field();
 		Field *field = dynamic_cast<Field*>(obj);
 		float height = field->GetHeight(
 			D3DXVECTOR3(

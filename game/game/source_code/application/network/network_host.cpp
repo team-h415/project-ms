@@ -22,7 +22,8 @@
 MyThread*		NetworkHost::thread_(nullptr);
 SOCKET			NetworkHost::socket_data_(INVALID_SOCKET);
 unsigned long	NetworkHost::guest_addr_[MAX_GUEST];
-SceneManager*	NetworkHost::scene_manager_(nullptr);								// シーンマネージャー
+SceneManager*	NetworkHost::scene_manager_(nullptr);					// シーンマネージャー
+int				NetworkHost::access_guest_(0);							// アクセスしてきたゲスト数
 
 
 //-------------------------------------
@@ -47,6 +48,7 @@ void NetworkHost::StartCommunication(SceneManager *set)
 		WSAStartup(MAKEWORD(2, 2), &wsaData);
 
 		// 受信スレッド起動
+		access_guest_ = 0;
 		thread_->Create(&NetworkHost::Communication);
 
 		printf("ホストスレッド稼働\n");
@@ -104,6 +106,7 @@ void NetworkHost::CloseCommunication()
 
 		// WinSock終了処理
 		WSACleanup();
+		access_guest_ = 0;
 
 		printf("ホストスレッド終了\n");
 	}
@@ -149,10 +152,6 @@ unsigned __stdcall NetworkHost::Communication()
 	sockaddr_in from_addr;
 	int from_len(sizeof(from_addr));
 
-	// アカウントカウンター
-	//int child_counter(0);
-	int access_counter(0);
-
 	printf("ホスト起動\n");
 	while(true)
 	{
@@ -185,8 +184,8 @@ unsigned __stdcall NetworkHost::Communication()
 						// IPアドレスの記録
 						if(no_ip)
 						{
-							guest_addr_[access_counter] = from_addr.sin_addr.s_addr;
-							access_counter++;
+							guest_addr_[access_guest_] = from_addr.sin_addr.s_addr;
+							access_guest_++;
 						}
 						sendto(socket_data_, (char*)&send_data, sizeof(send_data), 0, (sockaddr*)&from_addr, sizeof(from_addr));
 						printf("アドレスを返信\n");

@@ -22,6 +22,14 @@ enum SERVER_STATE
 	STATE_RESULT,
 };
 
+enum GAME_STATE
+{
+	STATE_GUEST_WAITING = 0,
+	STATE_COUNTDOWN,
+	STATE_RUN,
+	STATE_CHANGE_FORT,
+	STATE_END,
+};
 
 //-------------------------------------
 // class
@@ -31,6 +39,8 @@ class CameraManager;
 class EffectManager;
 class DebugFont;
 class CollisionManager;
+class Object;
+class Field;
 class GameServer : public Scene
 {
 public:
@@ -53,15 +63,18 @@ public:
 	CameraManager *camera_manager(){
 		return camera_manager_;
 	}
-	//EffectManager *effect_manager(){
-	//	return effect_manager_;
-	//}
+	Object* field();
 
 private:
-	void MatchingAndGame();
-	void ChangeState(SERVER_STATE next);
+	void Matching();
+	void Game();
+	void Result();
 
-	SERVER_STATE		state;
+	void MatchingAndGame(Field*	field);
+	void ChangeServerState(SERVER_STATE next);
+
+	SERVER_STATE		server_state_;
+	int					scene_state_;
 	ObjectManager		*object_manager_;
 	CameraManager		*camera_manager_;
 	CollisionManager	*collision_manager_;
