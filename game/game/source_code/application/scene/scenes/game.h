@@ -72,13 +72,10 @@ private:
 	int dash_effect_timer_;
 	// 現在表示に使ってるカメラ
 	std::string use_camera_name_;
-<<<<<<< HEAD
 	// 経過フレーム数
 	int frame_;
 	// 経過時間
 	int timer_;
-=======
->>>>>>> origin/fuka
 };
 
 
