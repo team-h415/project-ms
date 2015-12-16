@@ -7,8 +7,6 @@
 //-------------------------------------
 // include
 //-------------------------------------
-#include "../../network/network.h"
-#include "../../network/network_guest.h"
 #include "../../../common/common.h"
 #include "../../config/config.h"
 #include "../../fps/fps.h"
@@ -333,17 +331,17 @@ Game::Game()
 	// FBXおじ
 	//-------------------------------------
 	OBJECT_PARAMETER_DESC grandfather_param;
-	grandfather_param.name_ = "player1";
+	grandfather_param.name_ = "grandfather";
 	grandfather_param.layer_ = LAYER_MODEL_GRANDFATHER;
 	grandfather_param.position_ = GRANDFATHER_POSITION_STAGE1;
 	grandfather_param.rotation_ = { 0.0f, 0.0f, 0.0f };
 	grandfather_param.scaling_ = { 1.0f, 1.0f, 1.0f };
 
-	object_manager_->Create(grandfather_param);
+	object_manager_->Create(
+		grandfather_param);
 
 	COLLISION_PARAMETER_DESC fbx_collision_param;
-	Object *obj2 = object_manager_->Get("player1");
-
+	Object *obj2 = object_manager_->Get("grandfather");
 	fbx_collision_param.position_ = {
 		obj2->parameter().position_.x_,
 		obj2->parameter().position_.y_,
@@ -351,35 +349,34 @@ Game::Game()
 	fbx_collision_param.range_ = 1.0f;
 	fbx_collision_param.offset_ = { 0.0f, 0.5f, 0.0f };
 
-	collision_manager_->Create(object_manager_->Get("player1"), fbx_collision_param);
+	collision_manager_->Create(object_manager_->Get("grandfather"),
+		fbx_collision_param);
 
 	//-------------------------------------
 	// FBX子供
 	//-------------------------------------
 	OBJECT_PARAMETER_DESC child_param;
+	child_param.name_ = "child";
 	child_param.layer_ = LAYER_MODEL_CHILD;
+	child_param.position_ = CHILD_POSITION1;
 	child_param.rotation_ = { 0.0f, 0.0f, 0.0f };
 	child_param.scaling_ = { 1.0f, 1.0f, 1.0f };
 
-	for(int i = 1; i < MAX_GUEST; i++)
-	{
-		std::string name = "player" + std::to_string(i + 1);
-		child_param.name_ = name;
-		child_param.position_ = CHILD_POSITION[i];
-		object_manager_->Create(child_param);
+	object_manager_->Create(
+		child_param);
 
-		COLLISION_PARAMETER_DESC child_collision_param;
-		Object *obj3 = object_manager_->Get(name);
-		child_collision_param.position_ = {
-			obj3->parameter().position_.x_,
-			obj3->parameter().position_.y_,
-			obj3->parameter().position_.z_ };
-		child_collision_param.range_ = 1.0f;
-		child_collision_param.offset_ = { 0.0f, 0.5f, 0.0f };
+	COLLISION_PARAMETER_DESC child_collision_param;
+	Object *obj3 = object_manager_->Get("child");
+	child_collision_param.position_ = {
+		obj3->parameter().position_.x_,
+		obj3->parameter().position_.y_,
+		obj3->parameter().position_.z_ };
+	child_collision_param.range_ = 1.0f;
+	child_collision_param.offset_ = { 0.0f, 0.5f, 0.0f };
 
-		collision_manager_->Create(object_manager_->Get(name),
-			child_collision_param);
-	}
+	collision_manager_->Create(object_manager_->Get("child"),
+		child_collision_param);
+
 
 	//-------------------------------------
 	// タイマー
@@ -546,19 +543,16 @@ Game::Game()
 	object_manager_->Create(
 		bench_param);
 
-	// ダッシュエフェクトタイマー初期化
-	dash_effect_timer_ = 0;
 	//-------------------------------------
 	// 影
 	//-------------------------------------
 	OBJECT_PARAMETER_DESC shadow_param;
+	shadow_param.name_ = "shadow";
 	shadow_param.layer_ = LAYER_SHADOW;
 	shadow_param.scaling_ = Vector3(1.0f, 1.0f, 1.0f);
-	for(int i = 0; i < MAX_GUEST; i++)
-	{
-		shadow_param.name_ = "shadow" + std::to_string(i + 1);
-		object_manager_->Create(shadow_param);
-	}
+	object_manager_->Create(
+		shadow_param);
+
 
 	//-------------------------------------
 	// カウントダウン
@@ -583,7 +577,7 @@ Game::Game()
 	bullet_param.layer_ = LAYER_BULLET;
 	for(int i = 0; i < MAX_BULLET; i++)
 	{
-		bullet_param.name_ = "bullet" + std::to_string(i);
+		bullet_param.name_ = "bullet" + std::to_string(i); ;
 		object_manager_->Create(
 			bullet_param);
 	}
@@ -645,6 +639,7 @@ Game::Game()
 		message_param,
 		"resource/texture/game/message/message_grandfather_return.png");
 
+<<<<<<< HEAD
 	//-------------------------------------
 	// ゲームルール用パラメータ初期化
 	//-------------------------------------
@@ -663,6 +658,8 @@ Game::Game()
 	network_data.type_ = DATA_COMPLETE_SCENE_CHANGE;
 	NetworkGuest::SendTo(network_data);
 #endif
+=======
+>>>>>>> c7fee46c33efdac16909ae11a20c1311ac100c28
 }
 
 
@@ -685,6 +682,7 @@ Game::~Game()
 //-------------------------------------
 void Game::Update()
 {
+<<<<<<< HEAD
 //	//-------------------------------------
 //	// 変数宣言
 //	//-------------------------------------
@@ -1478,6 +1476,801 @@ void Game::Update()
 //	shadow_pos = grandfather->parameter().position_;
 //	shadow_pos.y_ += 0.001f;
 //	shadow->SetPosition(shadow_pos);
+=======
+	//-------------------------------------
+	// 変数宣言
+	//-------------------------------------
+	// 動的変数
+	Object *fort1_object = object_manager_->Get("fort1");
+	Object *fort2_object = object_manager_->Get("fort2");
+	Object *fort3_object = object_manager_->Get("fort3");
+	Object *grandfather_object = object_manager_->Get("grandfather");
+	Object *child_object = object_manager_->Get("child");
+	Object *countdown_object = object_manager_->Get("countdown");
+	Vector3 fort1_position(fort1_object->parameter().position_);
+	Vector3 fort2_position(fort2_object->parameter().position_);
+	Vector3 fort3_position(fort3_object->parameter().position_);
+	Vector3 grandfather_position(grandfather_object->parameter().position_);
+	Vector3 grandfather_rotation(grandfather_object->parameter().rotation_);
+	Vector3 child_position(child_object->parameter().position_);
+	Vector3 child_rotation(child_object->parameter().rotation_);
+	Field *field = dynamic_cast<Field*>(object_manager_->Get("field"));
+	FbxGrandfather *grandfather = dynamic_cast<FbxGrandfather*>(grandfather_object);
+	FbxChild *child = dynamic_cast<FbxChild*>(child_object);
+    WaterGage *waterGage = dynamic_cast<WaterGage*>(object_manager_->Get("water_gage"));
+	DamageEffect *damage_effect = dynamic_cast<DamageEffect*>(
+		object_manager_->Get("damage_effect"));
+    FortGaugeManager *fort_gauge_manager = dynamic_cast<FortGaugeManager*>(
+        object_manager_->Get("fort_gauge_manager"));
+	XFort *fort1 = dynamic_cast<XFort*>(fort1_object);
+	XFort *fort2 = dynamic_cast<XFort*>(fort2_object);
+	XFort *fort3 = dynamic_cast<XFort*>(fort3_object);
+	CountDown *countdown = dynamic_cast<CountDown*>(countdown_object);
+	float player_speed = CHARANCTER_MOVESPEED;
+	float father_life = grandfather->GetLife();
+	float father_watergauge = grandfather->GetWaterGauge();
+	float child_life = child->GetLife();
+	float child_watergauge = child->GetWaterGauge();
+	float fort1_life = fort1->GetLife();
+	float fort2_life = fort2->GetLife();
+	float fort3_life = fort3->GetLife();
+
+	// 静的変数
+	static int shot_late = 0;
+	static D3DXVECTOR3 fort_underground(-3.0f, -3.0f, -3.0f);
+	static Vector3 grandfather_prevposition(grandfather_object->parameter().position_);
+	static int fort_damage_state = 0;
+
+
+	//-------------------------------------
+	// 時間経過
+	//-------------------------------------
+	frame_++;
+	if (!(frame_ % 60)){
+		timer_++;
+	}
+
+	//-------------------------------------
+	// 時間経過でカウントダウン
+	//-------------------------------------
+	switch (timer_)
+	{
+	case 0:
+		countdown->ChangeTexture(4);
+		break;
+	case 1:
+		countdown->ChangeTexture(3);
+		break;
+	case 2:
+		countdown->ChangeTexture(2);
+		break;
+	case 3:
+		countdown->ChangeTexture(1);
+		break;
+	case 4:
+		countdown->ChangeTexture(0);
+		break;
+	default:
+		countdown->ChangeTexture(4);
+		break;
+	}
+
+	//-------------------------------------
+	// メッセージの再生
+	//-------------------------------------
+	// 砦が破壊された！
+	if ((fort_damage_state == 75 && (fort1_life <= 0.0f) && stage_ == 1) ||
+		(fort_damage_state == 75 && (fort2_life <= 0.0f) && stage_ == 2)){
+		Object *message_object = object_manager_->Get("message_fort_100");
+		Message *message = dynamic_cast<Message*>(message_object);
+		Vector3 message_position = {
+			SCREEN_WIDTH + 200.0f,
+			SCREEN_HEIGHT - 200.0f,
+			0.0f };
+		message_object->SetPosition(message_position);
+		message->Play();
+		fort_damage_state = 0;
+	}
+	// 損壊率75%
+	else if ((fort_damage_state == 50 && fort1_life < FORT1_LiFE * 0.25f && stage_ == 1) ||
+		(fort_damage_state == 50 && fort2_life < FORT2_LiFE * 0.25f && stage_ == 2) ||
+		(fort_damage_state == 50 && fort3_life < FORT3_LiFE * 0.25f && stage_ == 3)){
+		Object *message_object = object_manager_->Get("message_fort_75");
+		Message *message = dynamic_cast<Message*>(message_object);
+		Vector3 message_position = {
+			SCREEN_WIDTH + 200.0f,
+			SCREEN_HEIGHT - 200.0f,
+			0.0f };
+		message_object->SetPosition(message_position);
+		message->Play();
+		fort_damage_state = 75;
+	}
+	// 損壊率50%
+	else if ((fort_damage_state == 25 && fort1_life < FORT1_LiFE * 0.5f && stage_ == 1) ||
+		(fort_damage_state == 25 && fort2_life < FORT2_LiFE * 0.5f && stage_ == 2) ||
+		(fort_damage_state == 25 && fort3_life < FORT3_LiFE * 0.5f && stage_ == 3)){
+		Object *message_object = object_manager_->Get("message_fort_50");
+		Message *message = dynamic_cast<Message*>(message_object);
+		Vector3 message_position = {
+			SCREEN_WIDTH + 200.0f,
+			SCREEN_HEIGHT - 200.0f,
+			0.0f };
+		message_object->SetPosition(message_position);
+		message->Play();
+		fort_damage_state = 50;
+	}
+	// 損壊率25%
+	else if ((fort_damage_state == 0 && fort1_life < FORT1_LiFE * 0.75f && stage_ == 1) ||
+		(fort_damage_state == 0 && fort2_life < FORT2_LiFE * 0.75f && stage_ == 2) ||
+		(fort_damage_state == 0 && fort3_life < FORT3_LiFE * 0.75f && stage_ == 3)){
+		Object *message_object = object_manager_->Get("message_fort_25");
+		Message *message = dynamic_cast<Message*>(message_object);
+		Vector3 message_position = {
+			SCREEN_WIDTH + 200.0f,
+			SCREEN_HEIGHT - 200.0f,
+			0.0f };
+		message_object->SetPosition(message_position);
+		message->Play();
+		fort_damage_state = 25;
+	}
+
+	//-------------------------------------
+	// ゲームステージデバッグ
+	//-------------------------------------
+	if (fort1_life <= 0.0f){
+		stage_ = 2;
+		if (fort2_life <= 0.0f){
+			stage_ = 3;
+		}
+	}
+	fort_gauge_manager->SetFortLife(0, fort1_life);
+	fort_gauge_manager->SetFortLife(1, fort2_life);
+	fort_gauge_manager->SetFortLife(2, fort3_life);
+
+	//-------------------------------------
+	// プレイヤー移動処理
+	//-------------------------------------
+	if (GamePad::isPress(GAMEPAD_GRANDFATHER, PAD_BUTTON_11)){
+
+		player_speed = CHARANCTER_MOVESPEED * 2.0f;
+		// ダッシュエフェクト
+		if (dash_effect_timer_ % 10 == 0){
+			EFFECT_PARAMETER_DESC effect_param;
+			MyEffect *effect = effect_manager_->Get("dash");
+			effect_param = effect->parameter();
+			effect_param.position_ = grandfather_position;
+			effect_param.rotation_ = { 0.0f, 0.0f, 0.0f };
+			effect->SetParameter(effect_param);
+			effect_manager_->Play("dash");
+		}
+		dash_effect_timer_++;
+	}
+	else{ dash_effect_timer_ = 0; }
+	grandfather_position.x_ += (
+		cosf(grandfather_rotation.y_) * GamePad::isStick(GAMEPAD_GRANDFATHER).lsx_ +
+		sinf(-grandfather_rotation.y_) * GamePad::isStick(GAMEPAD_GRANDFATHER).lsy_) * player_speed;
+	grandfather_position.z_ -= (
+		sinf(grandfather_rotation.y_) * GamePad::isStick(GAMEPAD_GRANDFATHER).lsx_ +
+		cosf(-grandfather_rotation.y_) * GamePad::isStick(GAMEPAD_GRANDFATHER).lsy_) * player_speed;
+
+	if (GamePad::isPress(GAMEPAD_GRANDFATHER, PAD_RS_LEFT)){
+		grandfather_rotation.y_ -= CHAR_ROT_SPEED;
+		if (grandfather_rotation.y_ < D3DX_PI){
+			grandfather_rotation.y_ += D3DX_PI * 2.0f;
+		}
+	}
+	if (GamePad::isPress(GAMEPAD_GRANDFATHER, PAD_RS_RIGHT)){
+		grandfather_rotation.y_ += CHAR_ROT_SPEED;
+		if (grandfather_rotation.y_ > D3DX_PI){
+			grandfather_rotation.y_ -= D3DX_PI * 2.0f;
+		}
+	}
+	if (GamePad::isTrigger(GAMEPAD_GRANDFATHER, PAD_BUTTON_7)){
+		// ワープエフェクト再生（移動前）
+		EFFECT_PARAMETER_DESC effect_param;
+		MyEffect *effect = effect_manager_->Get("smoke");
+		effect_param = effect->parameter();
+		effect_param.position_ = grandfather_position;
+		effect_param.rotation_ = Vector3(0.0f, 0.0f, 0.0f);
+		effect->SetParameter(effect_param);
+		effect_manager_->Play("smoke");
+
+		switch(stage_){
+		case 1:
+			grandfather_position = GRANDFATHER_POSITION_STAGE1;
+			grandfather_rotation.y_ = GRANDFATHER_ROTATION_STAGE1;
+			break;
+		case 2:
+			grandfather_position = GRANDFATHER_POSITION_STAGE2;
+			grandfather_rotation.y_ = GRANDFATHER_ROTATION_STAGE2;
+			break;
+		case 3:
+			grandfather_position = GRANDFATHER_POSITION_STAGE3;
+			grandfather_rotation.y_ = GRANDFATHER_ROTATION_STAGE3;
+			break;
+		}
+		// ワープエフェクト再生（移動後）
+		effect_param.position_ = grandfather_position;
+		effect->SetParameter(effect_param);
+		effect_manager_->Play("smoke");
+	}
+
+	//-------------------------------------
+	// デバッグ時のプレイヤー操作
+	//-------------------------------------
+#ifdef _DEBUG
+	if (KeyBoard::isPress(DIK_Z)){
+		player_speed = CHARANCTER_MOVESPEED * 2.0f;
+		// ダッシュエフェクト
+		if (dash_effect_timer_ % 10 == 0){
+			EFFECT_PARAMETER_DESC effect_param;
+			MyEffect *effect = effect_manager_->Get("dash");
+			effect_param = effect->parameter();
+			effect_param.position_ = grandfather_position;
+			effect_param.rotation_ = { 0.0f, 0.0f, 0.0f };
+			effect->SetParameter(effect_param);
+			effect_manager_->Play("dash");
+		}
+		dash_effect_timer_++;
+	}
+	else{ dash_effect_timer_ = 0; }
+	if (KeyBoard::isPress(DIK_W)){
+		grandfather_position.x_ += sinf(grandfather_rotation.y_) * player_speed;
+		grandfather_position.z_ += cosf(grandfather_rotation.y_) * player_speed;
+	}
+	if (KeyBoard::isPress(DIK_A)){
+		grandfather_position.x_ += sinf(grandfather_rotation.y_ - (D3DX_PI * 0.5f)) * player_speed;
+		grandfather_position.z_ += cosf(grandfather_rotation.y_ - (D3DX_PI * 0.5f)) * player_speed;
+	}
+	if (KeyBoard::isPress(DIK_S)){
+		grandfather_position.x_ += sinf(grandfather_rotation.y_ + (D3DX_PI)) * player_speed;
+		grandfather_position.z_ += cosf(grandfather_rotation.y_ + (D3DX_PI)) * player_speed;
+	}
+	if (KeyBoard::isPress(DIK_D)){
+		grandfather_position.x_ += sinf(grandfather_rotation.y_ + (D3DX_PI * 0.5f)) * player_speed;
+		grandfather_position.z_ += cosf(grandfather_rotation.y_ + (D3DX_PI * 0.5f)) * player_speed;
+	}
+	if (KeyBoard::isPress(DIK_RIGHT)){
+		grandfather_rotation.y_ += CHAR_ROT_SPEED;
+		if (grandfather_rotation.y_ > D3DX_PI){
+			grandfather_rotation.y_ -= D3DX_PI * 2.0f;
+		}
+	}
+	if (KeyBoard::isPress(DIK_LEFT)){
+		grandfather_rotation.y_ -= CHAR_ROT_SPEED;
+		if (grandfather_rotation.y_ < -D3DX_PI){
+			grandfather_rotation.y_ += D3DX_PI * 2.0f;
+		}
+	}
+	if (KeyBoard::isTrigger(DIK_3)){
+		// ワープエフェクト再生（移動前）
+		EFFECT_PARAMETER_DESC effect_param;
+		MyEffect *effect = effect_manager_->Get("smoke");
+		effect_param = effect->parameter();
+		effect_param.position_ = grandfather_position;
+		effect_param.rotation_ = { 0.0f, 0.0f, 0.0f };
+		effect->SetParameter(effect_param);
+		effect_manager_->Play("smoke");
+
+		switch (stage_){
+		case 1:
+			grandfather_position = GRANDFATHER_POSITION_STAGE1;
+			grandfather_rotation.y_ = GRANDFATHER_ROTATION_STAGE1;
+			break;
+		case 2:
+			grandfather_position = GRANDFATHER_POSITION_STAGE2;
+			grandfather_rotation.y_ = GRANDFATHER_ROTATION_STAGE2;
+			break;
+		case 3:
+			grandfather_position = GRANDFATHER_POSITION_STAGE3;
+			grandfather_rotation.y_ = GRANDFATHER_ROTATION_STAGE3;
+			break;
+		}
+		// ワープエフェクト再生（移動後）
+		effect_param.position_ = grandfather_position;
+		effect->SetParameter(effect_param);
+		effect_manager_->Play("smoke");
+	}
+
+#endif //_DEBUG
+
+
+	//-------------------------------------
+	// 砦の座標管理
+	//-------------------------------------
+	switch (stage_)
+	{
+	case 1:
+		fort_underground.x += 0.01f;
+		fort_underground.y -= 0.01f;
+		fort_underground.z -= 0.01f;
+		fort_underground.x = std::min<float>(fort_underground.x, 0.0f);
+		fort_underground.y = std::max<float>(fort_underground.y, -3.0f);
+		fort_underground.z = std::max<float>(fort_underground.z, -3.0f);
+		break;
+	case 2:
+		fort_underground.x -= 0.01f;
+		fort_underground.y += 0.01f;
+		fort_underground.z -= 0.01f;
+		fort_underground.x = std::max<float>(fort_underground.x, -3.0f);
+		fort_underground.y = std::min<float>(fort_underground.y, 0.0f);
+		fort_underground.z = std::max<float>(fort_underground.z, -3.0f);
+		break;
+	case 3:
+		fort_underground.x -= 0.01f;
+		fort_underground.y -= 0.01f;
+		fort_underground.z += 0.01f;
+		fort_underground.x = std::max<float>(fort_underground.x, -3.0f);
+		fort_underground.y = std::max<float>(fort_underground.y, -3.0f);
+		fort_underground.z = std::min<float>(fort_underground.z, 0.0f);
+		break;
+	}
+
+	D3DXVECTOR3 fort1_pos(
+		fort1_position.x_,
+		fort1_position.y_,
+		fort1_position.z_);
+	fort1_position.y_ = field->GetHeight(fort1_pos) + fort_underground.x;
+
+	D3DXVECTOR3 fort2_pos(
+		fort2_position.x_,
+		fort2_position.y_,
+		fort2_position.z_);
+	fort2_position.y_ = field->GetHeight(fort2_pos) + fort_underground.y;
+
+	D3DXVECTOR3 fort3_pos(
+		fort3_position.x_,
+		fort3_position.y_,
+		fort3_position.z_);
+	fort3_position.y_ = field->GetHeight(fort3_pos) + fort_underground.z;
+
+	D3DXVECTOR3 grandfather_pos(
+		grandfather_position.x_,
+		grandfather_position.y_,
+		grandfather_position.z_);
+	grandfather_position.y_ = field->GetHeight(grandfather_pos);
+	/*if (grandfather_position.y_ > 0.4f ||
+		grandfather_position.y_ < -0.4f){
+		grandfather_position = grandfather_prevposition;
+	}*/
+	
+	D3DXVECTOR3 child_pos(
+		child_position.x_,
+		child_position.y_,
+		child_position.z_);
+	child_position.y_ = field->GetHeight(child_pos);
+
+	fort1_object->SetPosition(fort1_position);
+	fort2_object->SetPosition(fort2_position);
+	fort3_object->SetPosition(fort3_position);
+	grandfather_object->SetPosition(grandfather_position);
+	grandfather_object->SetRotation(grandfather_rotation);
+	child_object->SetPosition(child_position);
+
+
+	//-------------------------------------
+	// 砦にとりあえずエフェクトだす
+	//-------------------------------------
+	if (fort_underground.x != 0.0f && fort_underground.x != -3.0f){
+		EFFECT_PARAMETER_DESC effect_param;
+		MyEffect *effect = effect_manager_->Get("smoke2");
+		effect_param = effect->parameter();
+		effect_param.position_ =
+		{ fort1_pos.x, field->GetHeight(fort1_pos), fort1_pos.z };
+		effect_param.rotation_ = { 0.0f, 0.0f, 0.0f };
+		effect->SetParameter(effect_param);
+		effect_manager_->Play("smoke2");
+	}
+	
+	if (fort_underground.y != 0.0f && fort_underground.y != -3.0f){
+		EFFECT_PARAMETER_DESC effect_param;
+		MyEffect *effect = effect_manager_->Get("smoke2");
+		effect_param = effect->parameter();
+		effect_param.position_ =
+		{ fort2_pos.x, field->GetHeight(fort2_pos), fort2_pos.z };
+		effect_param.rotation_ = { 0.0f, 0.0f, 0.0f };
+		effect->SetParameter(effect_param);
+		effect_manager_->Play("smoke2");
+	}
+
+	if (fort_underground.z != 0.0f && fort_underground.z != -3.0f){
+		EFFECT_PARAMETER_DESC effect_param;
+		MyEffect *effect = effect_manager_->Get("smoke2");
+		effect_param = effect->parameter();
+		effect_param.position_ =
+		{ fort3_pos.x, field->GetHeight(fort3_pos), fort3_pos.z };
+		effect_param.rotation_ = { 0.0f, 0.0f, 0.0f };
+		effect->SetParameter(effect_param);
+		effect_manager_->Play("smoke2");
+	}
+
+	//-------------------------------------
+	// カメラ追従
+	//-------------------------------------
+	Camera *main_camera = camera_manager_->Get("MainCamera");
+	D3DXVECTOR3 camera_position, camera_focus;
+	D3DXVECTOR3 camera_rotation(main_camera->rotation());
+
+	
+	
+
+	// 入力
+#ifdef _DEBUG
+	if(KeyBoard::isPress(DIK_UP)){
+		camera_rotation.x -= CAMERA_ROT_SPEED;
+		if(camera_rotation.x < -CAMERA_ROT_X_LIMIT){
+			camera_rotation.x = -CAMERA_ROT_X_LIMIT;
+		}
+	}
+	if(KeyBoard::isPress(DIK_DOWN)){
+		camera_rotation.x += CAMERA_ROT_SPEED;
+		if(camera_rotation.x > CAMERA_ROT_X_LIMIT){
+			camera_rotation.x = CAMERA_ROT_X_LIMIT;
+		}
+	}
+#endif
+	
+	if(GamePad::isPress(GAMEPAD_GRANDFATHER, PAD_RS_UP)){
+		camera_rotation.x -= CAMERA_ROT_SPEED;
+		if(camera_rotation.x < -CAMERA_ROT_X_LIMIT){
+			camera_rotation.x = -CAMERA_ROT_X_LIMIT;
+		}
+	}
+	if(GamePad::isPress(GAMEPAD_GRANDFATHER, PAD_RS_DOWN)){
+		camera_rotation.x += CAMERA_ROT_SPEED;
+		if(camera_rotation.x > CAMERA_ROT_X_LIMIT){
+			camera_rotation.x = CAMERA_ROT_X_LIMIT;
+		}
+	}
+
+
+	//-------------------------------------
+	// カメラ計算
+	//-------------------------------------
+
+	// モデルの回転Yをそのままカメラの回転Yへ
+	camera_rotation.y = grandfather_rotation.y_;
+	// 一旦モデルを注視点に
+	camera_focus = grandfather_pos;
+	// 足元基準から体の中心辺りを基準に
+	camera_focus.y += CAMERA_FOCUS_OFFSET_Y;
+	// モデルの少し先を見るように調整
+	camera_focus.x +=
+		sinf(camera_rotation.y) * CAMERA_FOCUS_OFFSET * cosf(camera_rotation.x);
+	camera_focus.z +=
+		cosf(camera_rotation.y) * CAMERA_FOCUS_OFFSET * cosf(camera_rotation.x);
+	camera_focus.y +=
+		sinf(camera_rotation.x) * CAMERA_FOCUS_OFFSET;
+
+	// 注視点を基準にカメラ座標を設定
+	camera_position = camera_focus;
+	camera_position.x -=
+		sinf(camera_rotation.y) * camera_pos_len_ * cosf(camera_rotation.x);
+	camera_position.z -=
+		cosf(camera_rotation.y) * camera_pos_len_ * cosf(camera_rotation.x);
+	camera_position.y -=
+		sinf(camera_rotation.x) * camera_pos_len_;
+
+
+	// カメラの地面めり込み回避処理
+	D3DXVECTOR3	vec_camera_to_focus = camera_focus - camera_position;
+	
+	// 中間にカメラがめり込みそうなところが無いか検査
+	bool camera_re_calculate = false;
+	for (int i = 0; i < 10; ++i){
+		// 中間地点を計算
+		D3DXVECTOR3 lay_point =
+			camera_position + vec_camera_to_focus * static_cast<float>(i) * 0.1f;
+		float pos_y = field->GetHeight(lay_point);
+		// 回避処理
+		if (lay_point.y < pos_y + 0.1f){
+			camera_re_calculate = true;
+			camera_pos_len_ -= CAMARA_LEN_SPEED;
+		}
+	}
+
+	//カメラ座標再計算
+	if (camera_re_calculate == true){ 
+		camera_position = camera_focus;
+		camera_position.x -=
+			sinf(camera_rotation.y) * camera_pos_len_ * cosf(camera_rotation.x);
+		camera_position.z -=
+			cosf(camera_rotation.y) * camera_pos_len_ * cosf(camera_rotation.x);
+		camera_position.y -=
+			sinf(camera_rotation.x) * camera_pos_len_;
+		camera_position.y = field->GetHeight(camera_position) + 0.1f;
+	}
+
+	camera_pos_len_ += CAMARA_LEN_SPEED;
+	if (camera_pos_len_ > CAMERA_POS_LEN){
+		camera_pos_len_ = CAMERA_POS_LEN;
+	}
+	
+	// カメラにパラメータを再セット
+	main_camera->SetPosition(camera_position);
+	main_camera->SetFocus(camera_focus);
+	main_camera->SetRotation(camera_rotation);
+
+
+	//-------------------------------------
+	// サブカメラ計算
+	//-------------------------------------
+	Camera *sub_camera = camera_manager_->Get("SubCamera");
+	D3DXVECTOR3 sub_camera_position, sub_camera_rotation, sub_camera_focus;
+	sub_camera_rotation = sub_camera->rotation();
+	sub_camera_position = sub_camera->position();
+	sub_camera_focus = sub_camera->focus();
+	
+	// 適当な位置から眺める
+	// 一旦砦を注視点に
+	switch (stage_)
+	{
+	case 1:
+		sub_camera_focus = fort1_pos;
+		sub_camera_focus.y = 1.5f;
+		if (fort_underground.x != 0.0f){
+			use_camera_name_ = "SubCamera";
+			sub_camera_rotation.y += CAMERA_SUB_ROT_SPEED;
+			sub_camera_rotation.x += CAMERA_SUB_ROT_SPEED*0.02f;
+		}
+		else{
+			use_camera_name_ = "MainCamera";
+			sub_camera_rotation.y = 0.0f;
+			sub_camera_rotation.x = 0.0f;
+		}
+		break;
+	case 2:
+		sub_camera_focus = fort2_pos;
+		sub_camera_focus.y = 1.5f;
+		if (fort_underground.y != 0.0f){
+			use_camera_name_ = "SubCamera";
+			sub_camera_rotation.y += CAMERA_SUB_ROT_SPEED;
+			sub_camera_rotation.x += CAMERA_SUB_ROT_SPEED*0.02f;
+		}
+		else{
+			use_camera_name_ = "MainCamera";
+			sub_camera_rotation.y = 0.0f;
+			sub_camera_rotation.x = 0.0f;
+		}
+		break;
+	case 3:
+		sub_camera_focus = fort3_pos;
+		sub_camera_focus.y = 1.5f;
+		if (fort_underground.z != 0.0f){
+			use_camera_name_ = "SubCamera";
+			sub_camera_rotation.y += CAMERA_SUB_ROT_SPEED;
+			sub_camera_rotation.x += CAMERA_SUB_ROT_SPEED*0.02f;
+		}
+		else{
+			use_camera_name_ = "MainCamera";
+			sub_camera_rotation.y = 0.0f;
+			sub_camera_rotation.x = 0.0f;
+		}
+		break;
+	}
+	
+	// 注視点を基準にカメラ座標を設定
+	sub_camera_position = sub_camera_focus;
+	sub_camera_position.x -= 
+		sinf(sub_camera_rotation.y) * camera_pos_len_ * cosf(sub_camera_rotation.x);
+	sub_camera_position.z -= 
+		cosf(sub_camera_rotation.y) * camera_pos_len_ * cosf(sub_camera_rotation.x);
+	sub_camera_position.y -= 
+		sinf(sub_camera_rotation.x) * camera_pos_len_;
+
+
+	// カメラにパラメータを再セット
+	sub_camera->SetPosition(sub_camera_position);
+	sub_camera->SetFocus(sub_camera_focus);
+	sub_camera->SetRotation(sub_camera_rotation);
+
+	//-------------------------------------
+	// 弾発射
+	//-------------------------------------
+	shot_late--;
+	shot_late = std::max<int>(shot_late, 0);
+	if (GamePad::isPress(GAMEPAD_GRANDFATHER, PAD_BUTTON_8) &&
+		father_watergauge > 0 &&
+		shot_late == 0){
+		EFFECT_PARAMETER_DESC effect_param;
+		MyEffect *effect = effect_manager_->Get("water");
+		effect_param = effect->parameter();
+		effect_param.position_ = grandfather_position;
+		effect_param.position_.y_ += 0.6f;
+		effect_param.rotation_ = grandfather_rotation;
+		effect->SetParameter(effect_param);
+		effect_manager_->Play("water");
+
+
+		OBJECT_PARAMETER_DESC bullet_param;
+		bullet_param.layer_ = LAYER_BULLET;
+		bullet_param.parent_layer_ = LAYER_MODEL_GRANDFATHER;
+		bullet_param.position_ = grandfather_position;
+		bullet_param.position_.y_ += 0.6f;
+		bullet_param.rotation_ = grandfather_rotation;
+
+		// カメラの回転Xを利用
+		bullet_param.rotation_.x_ = camera_rotation.x;
+
+		bullet_param.scaling_ = { 1.0f, 1.0f, 1.0f };
+		
+		Bullet* bullet = object_manager_->GetNoUseBullet();
+		bullet->Fire(bullet_param);
+
+		//-------------------------------------
+		// 水ゲージを減少させる
+		//-------------------------------------
+		father_watergauge -= GRANDFATHER_SUB_WATERGAUGE;
+		father_watergauge = std::max<float>(father_watergauge, 0.0f);
+		grandfather->SetWaterGauge(father_watergauge);
+		waterGage->SetChangeValue(father_watergauge);
+
+		shot_late = 10;
+
+	}
+
+
+#ifdef _DEBUG
+	if (KeyBoard::isPress(DIK_9)){
+		grandfather->SetWaterGauge(0.0f);
+		waterGage->SetChangeValue(0.0f);
+	}
+	if(KeyBoard::isPress(DIK_SPACE)){
+		EFFECT_PARAMETER_DESC effect_param;
+		MyEffect *effect = effect_manager_->Get("water");
+		effect_param = effect->parameter();
+		effect_param.position_ = grandfather_position;
+		effect_param.position_.y_ += 0.6f;
+		effect_param.rotation_ = grandfather_rotation;
+		effect->SetParameter(effect_param);
+		effect_manager_->Play("water");
+
+		OBJECT_PARAMETER_DESC bullet_param;
+		bullet_param.layer_ = LAYER_BULLET;
+		bullet_param.parent_layer_ = LAYER_MODEL_GRANDFATHER;
+		bullet_param.position_ = grandfather_position;
+		bullet_param.position_.y_ += 0.6f;
+		bullet_param.rotation_ = grandfather_rotation;
+		bullet_param.scaling_ = {1.0f, 1.0f, 1.0f};
+
+		// カメラの回転Xを利用
+		bullet_param.rotation_.x_ = camera_rotation.x;
+
+		Bullet* bullet = object_manager_->GetNoUseBullet();
+		bullet->Fire(bullet_param);
+	}
+
+	//-------------------------------------
+	// デバッグ時のみ、水ゲージ回復
+	//-------------------------------------
+	if (KeyBoard::isPress(DIK_1)){
+		father_watergauge += GRANDFATHER_SUB_WATERGAUGE;
+		father_watergauge = std::min<float>(father_watergauge, 1.0f);
+		grandfather->SetWaterGauge(father_watergauge);
+		waterGage->SetChangeValue(father_watergauge);
+	}
+	//-------------------------------------
+	// カメラ切り替えテスト
+	//-------------------------------------
+	if (KeyBoard::isPress(DIK_4)){
+		use_camera_name_ = "MainCamera";
+	}
+	if (KeyBoard::isPress(DIK_5)){
+		use_camera_name_ = "SubCamera";
+	}
+
+#endif //_DEBUG
+
+#ifdef _DEBUG
+    //-------------------------------------
+    // ダメージエフェクト確認
+    //-------------------------------------
+    if (KeyBoard::isPress(DIK_L)){
+        float life = child->GetLife();
+        life -= CHILD_DAMAGE;
+        if (life < 0.0f){
+            life = 0.0f;
+        }
+        child->SetLife(life);
+    }
+    else if (KeyBoard::isPress(DIK_K)){
+        float life = child->GetLife();
+        life += CHILD_DAMAGE;
+        if (life > 1.0f){
+            life = 1.0f;
+        }
+        child->SetLife(life);
+    }
+#endif // _DEBUG
+
+	//-------------------------------------
+	// アニメーション制御
+	//-------------------------------------
+	if (GamePad::isPress(GAMEPAD_GRANDFATHER, PAD_LS_DOWN) || 
+		GamePad::isPress(GAMEPAD_GRANDFATHER, PAD_LS_UP) || 
+		GamePad::isPress(GAMEPAD_GRANDFATHER, PAD_LS_LEFT) || 
+		GamePad::isPress(GAMEPAD_GRANDFATHER, PAD_LS_RIGHT)){
+		if(grandfather->GetCurrentAnimationId() != FbxGrandfather::WALK)
+		{
+			grandfather->PlayAnimation(FbxGrandfather::WALK);
+		}
+	}
+	else{
+		if(grandfather->GetCurrentAnimationId() != FbxGrandfather::IDLE)
+		{
+			grandfather->PlayAnimation(FbxGrandfather::IDLE);
+		}
+	}
+	
+
+	//-------------------------------------
+	// 子供死亡時制御
+	//-------------------------------------
+	if (child_life < 0 && !child_death_){
+		child->PlayAnimation(FbxChild::DOWN);
+		child_death_ = true;
+		child_respawn_waittime_ = CHILD_RESPAWN_WAITTIME;
+		EFFECT_PARAMETER_DESC effect_param;
+		MyEffect *effect = effect_manager_->Get("dead");
+		effect_param = effect->parameter();
+		effect_param.position_ = child_position;
+		effect_param.rotation_ = Vector3(0.0f, 0.0f, 0.0f);
+		effect->SetParameter(effect_param);
+		effect_manager_->Play("dead");
+
+	}
+	else if (child_death_ && !child_respawn_waittime_){
+		child->PlayAnimation(FbxChild::IDLE);
+		child_death_ = false;
+		child_life = CHILD_LIFE;
+		child->SetLife(child_life);
+		child_position = CHILD_POSITION1;
+		child_rotation.y_ = CHILD_ROTATION1;
+		child->SetPosition(child_position);
+		child->SetRotation(child_rotation);
+	}
+
+	child_respawn_waittime_--;
+	child_respawn_waittime_ = std::max<int>(child_respawn_waittime_, 0);
+
+	//-------------------------------------
+	// 子供体力自動回復制御
+	//-------------------------------------
+	if (child_life < 1.0f && !child_death_){
+		int child_recover_wait_timer = child->GetRecoverWaitTimer();
+		
+		if (child_recover_wait_timer > CHILD_RECOVER_WAITE_TIME){
+			float child_life = child->GetLife();
+			child_life += CHILD_RECOVER_HP;
+			std::min<float>(child_life, 1.0f);
+			child->SetLife(child_life);
+		}
+		child_recover_wait_timer++;
+		child->SetRecoverWaitTimer(child_recover_wait_timer);
+	}
+
+	//-------------------------------------
+	// ダメージエフェクトの処理
+	//-------------------------------------
+	// 今はテスト用に、子供に当てたら主観(おじ)のUIを反映させている
+	damage_effect->SetHP(child_life);
+
+
+	//-------------------------------------
+	// 各キャラクタ座標保存
+	//-------------------------------------
+	grandfather_prevposition = grandfather_position;
+
+
+	//-------------------------------------
+	// 影座標
+	//-------------------------------------
+	Object *shadow = object_manager_->Get("shadow");
+	Vector3 shadow_pos;
+	shadow_pos = grandfather->parameter().position_;
+	shadow_pos.y_ += 0.001f;
+	shadow->SetPosition(shadow_pos);
+>>>>>>> c7fee46c33efdac16909ae11a20c1311ac100c28
 
 	//-------------------------------------
 	// 実更新処理
@@ -1485,6 +2278,61 @@ void Game::Update()
 	camera_manager_->Update();
 	object_manager_->Update();
 	effect_manager_->Update();
+	collision_manager_->Update();
+
+	font1_->Add("シーン名:");
+	font1_->Add("Game\n");
+	font1_->Add("FPS : %d\n", Fps::GetFps());
+	font1_->Add("STAGE : %d\n", stage_);
+	font1_->Add("LIFE(GrandFather) : %3.2f\n", father_life);
+	font1_->Add("LIFE(Child)       : %3.2f\n", child_life);
+	font1_->Add("GAUGE(GrandFather) : %3.2f\n", father_watergauge);
+	font1_->Add("GAUGE(Child)       : %3.2f\n", child_watergauge);
+	font1_->Add("POSITION(Grandfather) : %3.2f %3.2f %3.2f\n",
+		grandfather_position.x_,
+		grandfather_position.y_,
+		grandfather_position.z_);
+	font1_->Add("ROTATION(Grandfather) : %3.2f %3.2f %3.2f\n",
+		grandfather_rotation.x_,
+		grandfather_rotation.y_,
+		grandfather_rotation.z_);
+	font1_->Add("OBJECT : %d\n", ObjectManager::GetCount());
+	font1_->Add("EFFECT : %d\n", EffectManager::GetCount());
+	font1_->Add("COLLISION : %d\n", CollisionManager::GetCount());
+
+	font2_->Add("----------操作説明----------\n");
+	font2_->Add("【ゲームパッド使用時】\n");
+	font2_->Add("左スティック：移動\n");
+	font2_->Add("右スティック：エイム移動\n");
+	font2_->Add("8ボタン：射撃\n");
+	font2_->Add("7ボタン：拠点に戻る ※おじいちゃんのみ\n");
+	font2_->Add("【キーボード使用時】\n");
+	font2_->Add("WASDキー：移動\n");
+	font2_->Add("方向キー：エイム移動\n");
+	font2_->Add("SPACEキー：射撃\n");
+
+
+	//-------------------------------------
+	// デバッグ出力
+	//-------------------------------------
+	if (KeyBoard::isTrigger(DIK_F1)){
+		object_manager_->ExportObjectParameter(
+			"resource/object_patameter.txt");
+	}
+
+	if (KeyBoard::isTrigger(DIK_F2)){
+		FILE *file = fopen("DebugParam.txt", "a");
+		fprintf(file, "\n{ %3.2ff, %3.2ff, %3.2ff },\n",
+			grandfather_position.x_,
+			grandfather_position.y_,
+			grandfather_position.z_);
+		fprintf(file, "{ %3.2ff, %3.2ff, %3.2ff },\n",
+			grandfather_rotation.x_,
+			grandfather_rotation.y_,
+			grandfather_rotation.z_);
+		fclose(file);
+
+	}
 
 	if (KeyBoard::isTrigger(DIK_RETURN))
 	{
@@ -1512,16 +2360,13 @@ void Game::Draw()
 	MaterialColor color(32, 32, 32, 0);
 	DirectX9Holder::DrawBegin();
 	DirectX9Holder::Clear(color);
-
-	camera_manager_->Set("MainCamera");
+	camera_manager_->Set(use_camera_name_);
 	object_manager_->Draw();
 	effect_manager_->Draw();
-	//collision_manager_->Draw();
-	
+	collision_manager_->Draw();
 	font1_->Draw(rect1, font1_color);
 	font2_->Draw(rect2, font2_color);
 	Fade::Draw();
-
 	DirectX9Holder::DrawEnd();
 	DirectX9Holder::SwapBuffer();
 }
