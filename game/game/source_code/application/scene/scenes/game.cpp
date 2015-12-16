@@ -195,11 +195,17 @@ Game::Game()
 		obj_lake->parameter().position_.x_,
 		obj_lake->parameter().position_.y_,
 		obj_lake->parameter().position_.z_ };
-	lake_collision_param.range_ = LAKE_RANGE;
-	lake_collision_param.offset_ = { -2.0f, 0.0f, 10.0f };
+	lake_collision_param.range_ = LAKE_RANGE*0.5f;
+	lake_collision_param.offset_ = { -8.0f, 0.0f, 20.0f };
 	
 	collision_manager_->Create(object_manager_->Get("lake"),
 		lake_collision_param);
+
+	lake_collision_param.offset_ = { 8.0f, 0.0f, -10.0f };
+
+	collision_manager_->Create(object_manager_->Get("lake"),
+		lake_collision_param);
+
 
 	//-------------------------------------
 	// Ô
@@ -589,7 +595,7 @@ void Game::Update()
 	static const float player_speed_value = 0.05f;
 	static int bullet_count = 0;
 	static int shot_late = 0;
-	static D3DXVECTOR3 fort_underground(-3.0f, -3.0f, -3.0f);
+	static D3DXVECTOR3 fort_underground(0.0f, -3.0f, -3.0f);
 	float player_speed = player_speed_value;
 	float father_life = grandfather->GetLife();
 	float father_watergauge = grandfather->GetWaterGauge();
@@ -1207,7 +1213,7 @@ void Game::Update()
 		if (child_recover_wait_timer > CHILD_RECOVER_WAITE_TIME){
 			float child_life = child->GetLife( );
 			child_life += CHILD_RECOVER_HP;
-			std::max<float>(child_life, 1.0f);
+			std::min<float>(child_life, 1.0f);
 			child->SetLife(child_life);
 		}
 		child_recover_wait_timer++;
