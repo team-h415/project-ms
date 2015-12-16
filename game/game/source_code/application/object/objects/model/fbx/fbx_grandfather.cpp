@@ -182,6 +182,21 @@ void FbxGrandfather::Action(
 
 						water_supply_effect_timer_++;
 					}
+<<<<<<< HEAD
+=======
+					// 補給泡エフェクト
+					OBJECT_PARAMETER_DESC grandfather_parameter = this->parameter();
+					EFFECT_PARAMETER_DESC effect_param;
+					MyEffect *effect = game->effect_manager()->Get("watersupplybubble");
+					effect_param = effect->parameter();
+					effect_param.position_ = grandfather_parameter.position_;
+					effect_param.position_.y_ += 0.2f;
+					effect->SetParameter(effect_param);
+					game->effect_manager()->Play("watersupplybubble");
+
+
+					water_supply_effect_timer_++;
+>>>>>>> origin/fuka
 				}
 			}
 
