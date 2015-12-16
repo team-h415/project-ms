@@ -127,7 +127,9 @@ void FbxChild::Action(
 	//-------------------------------------
 	// ŒÎ‚Æ“–‚½‚Á‚½‚ç
 	if (target->parameter().layer_ == LAYER_SPRITE_LAKE){
-		//if (GamePad::isPress(GAMEPAD_CHILD1, PAD_BUTTON_6) && water_gauge_ < 1.0f){
+		//if (GamePad::isPress(GAMEPAD_CHILD1, PAD_BUTTON_6)
+		//&& !GamePad::isPress(GAMEPAD_CHILD1, PAD_BUTTON_8)
+		//&& water_gauge_ < 1.0f){
 		//	if (water_supply_enable_){
 		//		//-------------------------------------
 		//		// ƒV[ƒ“Žæ“¾
@@ -167,7 +169,7 @@ void FbxChild::Action(
 		//			effect_param.position_ = grandfather_parameter.position_;
 		//			effect_param.position_.y_ += 0.2f;
 		//			effect->SetParameter(effect_param);
-		//			game->effect_manager()->Play("watersupplyboble");
+		//			game->effect_manager()->Play("watersupplybobble");
 
 
 		//			water_supply_effect_timer_++;

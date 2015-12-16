@@ -839,13 +839,13 @@ void Game::Update()
 		cosf(-grandfather_rotation.y_) * GamePad::isStick(GAMEPAD_GRANDFATHER).lsy_) * player_speed;
 
 	if (GamePad::isPress(GAMEPAD_GRANDFATHER, PAD_RS_LEFT)){
-		grandfather_rotation.y_ -= CHAR_ROT_SPEED*GamePad::isStick(GAMEPAD_GRANDFATHER).rsx_;
+		grandfather_rotation.y_ += CHAR_ROT_SPEED*GamePad::isStick(GAMEPAD_GRANDFATHER).rsx_;
 		if (grandfather_rotation.y_ < D3DX_PI){
 			grandfather_rotation.y_ += D3DX_PI * 2.0f;
 		}
 	}
 	if (GamePad::isPress(GAMEPAD_GRANDFATHER, PAD_RS_RIGHT)){
-		grandfather_rotation.y_ -= CHAR_ROT_SPEED*GamePad::isStick(GAMEPAD_GRANDFATHER).rsx_;
+		grandfather_rotation.y_ += CHAR_ROT_SPEED*GamePad::isStick(GAMEPAD_GRANDFATHER).rsx_;
 		if (grandfather_rotation.y_ > D3DX_PI){
 			grandfather_rotation.y_ -= D3DX_PI * 2.0f;
 		}
