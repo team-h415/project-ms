@@ -531,13 +531,10 @@ void Matching::Update()
 	}
 
 	// Ç‹Å[Ç©Å[
-<<<<<<< HEAD
 	EFFECT_PARAMETER_DESC effect_param;
 	MyEffect *effect = effect_manager_->Get("water");
 	effect_param = effect->parameter();
 	effect->SetParameter(effect_param);
-=======
->>>>>>> origin/fuka
 	Vector3 poseffect = grandfather_position;
 	poseffect.y_ += 0.6f;
 	Vector3 speed = { BULLET_DEF_SPEED_XZ, BULLET_DEF_SPEED_Y, BULLET_DEF_SPEED_XZ };
@@ -557,29 +554,23 @@ void Matching::Update()
 		float height = field->GetHeight(D3DXVECTOR3(poseffect.x_, poseffect.y_, poseffect.z_));
 		if (height > poseffect.y_)
 		{
-<<<<<<< HEAD
 			EFFECT_PARAMETER_DESC effect_param;
 			MyEffect *effect = effect_manager_->Get("portal");
 			effect_param = effect->parameter();
 			effect_param.position_ = poseffect;
-			effect_param.position_.y_ = poseffect.y_+0.1f;
-=======
-			
-			EFFECT_PARAMETER_DESC effect_param;
-			MyEffect *effect = effect_manager_->Get("marker");
+			effect_param.position_.y_ = poseffect.y_ + 0.1f;
+			effect = effect_manager_->Get("marker");
 			effect_param = effect->parameter();
 			effect_param.position_ = poseffect;
 			effect_param.position_.y_ = height;
 			effect_param.rotation_ = { 0.0f, camera_rotation.y, 0.0f };
 			Vector3 vec = poseffect - grandfather_position;
-			float len = sqrt(vec.x_*vec.x_ + vec.z_*vec.z_);
-			float scaling = 1.0f+len*0.15f;
+			float len = sqrt(vec.x_*vec.x_ + vec.z_ * vec.z_);
+			float scaling = 1.0f + len * 0.15f;
 
 			scaling = std::min<float>(scaling, 3.0f);
 
 			effect_param.scaling_ = { scaling, scaling, scaling };
-			
->>>>>>> origin/fuka
 			effect->SetParameter(effect_param);
 			break;
 		}
