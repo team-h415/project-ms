@@ -31,6 +31,9 @@ public:
 		const EFFECT_PARAMETER_DESC &parameter);
 	void Play(
 		const std::string &name);
+	void Stop(
+		const std::string &name);
+	void StopAll();
 	MyEffect *Get(
 		const std::string &name);
 	static int GetCount(){

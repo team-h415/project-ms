@@ -17,6 +17,26 @@
 //-=--=--=--=--=--=--=--=--=--=--=--=--=--=--=-//
 #define CHARANCTER_MOVESPEED 0.05f
 
+
+//-=--=--=--=--=--=--=--=--=--=--=--=--=--=--=-//
+// Matching
+//-=--=--=--=--=--=--=--=--=--=--=--=--=--=--=-//
+#define GRANDFATHER_POSITION { 59.75f, 0.00f, -39.26f };
+#define GRANDFATHER_ROTATION { 0.00f, 4.68f, 0.00f };
+
+#define CHILD1_POSITION { 39.42f, 0.00f, -55.70f };
+#define CHILD1_ROTATION { 0.00f, -0.03f, 0.00f };
+
+#define CHILD2_POSITION { 42.95f, 0.00f, -55.60f };
+#define CHILD2_ROTATION { 0.00f, -0.03f, 0.00f };
+
+#define CHILD3_POSITION { 47.24f, 0.00f, -55.67f };
+#define CHILD3_ROTATION { 0.00f, -0.03f, 0.00f };
+
+#define CHILD4_POSITION { 51.98f, 0.00f, -55.83f };
+#define CHILD4_ROTATION { 0.00f, -0.03f, 0.00f };
+
+
 //-=--=--=--=--=--=--=--=--=--=--=--=--=--=--=-//
 // Game
 //-=--=--=--=--=--=--=--=--=--=--=--=--=--=--=-//
@@ -42,6 +62,8 @@
 
 #define MAX_BULLET (100)							// バレット最大数
 #define LAKE_RANGE	(35.0f)							// 湖の半径
+#define LAKE_COLLISION_RANGE (24.5f)				// 湖の当たり半径
+
 
 
 //-------------------------------------
@@ -62,7 +84,10 @@
 #define GRANDFATHER_ROTATION_STAGE1 -0.82f
 #define GRANDFATHER_ROTATION_STAGE2  3.14f
 #define GRANDFATHER_ROTATION_STAGE3  4.30f
-
+// HP自動回復待ち時間
+#define GRANDFATHER_RECOVER_WAITE_TIME 180
+// HP回復量
+#define GRANDFATHER_RECOVER_HP 0.003f
 
 
 //-------------------------------------
@@ -95,6 +120,10 @@ static const Vector3 CHILD_ROTATION[4]
 
 // リスポーン待ち時間
 #define CHILD_RESPAWN_WAITTIME 120
+// HP自動回復待ち時間
+#define CHILD_RECOVER_WAITE_TIME 180
+// HP回復量
+#define CHILD_RECOVER_HP 0.003f
 
 
 #define GAME_TIME 180							// ゲーム時間（秒）

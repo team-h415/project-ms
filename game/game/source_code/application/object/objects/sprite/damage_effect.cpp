@@ -131,7 +131,8 @@ void DamageEffect::Draw()
         vertex_,
         sizeof(Vertex2D));
 
-    DirectX9Holder::device_->SetTexture(0, NULL);
+	DirectX9Holder::device_->SetTexture(0, NULL);
+    DirectX9Holder::device_->SetTexture(1, NULL);
 
     DirectX9Holder::device_->SetVertexShader(NULL);
     DirectX9Holder::device_->SetPixelShader(NULL);

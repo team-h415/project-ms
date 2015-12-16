@@ -41,10 +41,25 @@
 
 
 //-------------------------------------
+// warning
+//-------------------------------------
+#pragma warning (disable:4996)
+
+
+//-------------------------------------
 // Matching()
 //-------------------------------------
 Matching::Matching()
 {
+
+	//-------------------------------------
+	// ゲームルール用パラメータ初期化
+	//-------------------------------------
+	// 経過フレーム数
+	frame_ = 0;
+	// 経過時間
+	timer_ = 0;
+
 	//-------------------------------------
 	// 各マネージャ・デバッグシステム初期化
 	//-------------------------------------
@@ -69,29 +84,35 @@ Matching::Matching()
 		"resource/effect/BulletFire.efk",
 		water_param);
 
-	effect_manager_->Create(
-		"damage",
-		"resource/effect/Damage3_2.efk",
-		water_param);
+	//effect_manager_->Create(
+	//	"damage",
+	//	"resource/effect/Damage3_2.efk",
+	//	water_param);
 
-	effect_manager_->Create(
-		"dead",
-		"resource/effect/Dead2.efk",
-		water_param);
+	//effect_manager_->Create(
+	//	"dead",
+	//	"resource/effect/Dead2.efk",
+	//	water_param);
 
-	effect_manager_->Create(
-		"smoke",
-		"resource/effect/Smoke.efk",
-		water_param);
+	//effect_manager_->Create(
+	//	"smoke",
+	//	"resource/effect/Smoke.efk",
+	//	water_param);
 
-	effect_manager_->Create(
-		"smoke2",
-		"resource/effect/Smoke2.efk",
-		water_param);
+	//effect_manager_->Create(
+	//	"smoke2",
+	//	"resource/effect/Smoke2.efk",
+	//	water_param);
 
+	//effect_manager_->Create(
+	//	"dash",
+	//	"resource/effect/Dash.efk",
+	//	water_param);
+
+	water_param.position_ = { 40.00f, 0.00f, -40.00f };
 	effect_manager_->Create(
-		"dash",
-		"resource/effect/Dash.efk",
+		"portal",
+		"resource/effect/Portalx2.efk",
 		water_param);
 
 	//-------------------------------------
@@ -100,7 +121,7 @@ Matching::Matching()
 	CAMERA_PARAMETER_DESC camera_param;
 	camera_param.acpect_ = SCREEN_WIDTH / SCREEN_HEIGHT;
 	camera_param.fovy_ = D3DX_PI * 0.25f;
-	camera_param.position_ = { 0.0f, 10.0f, -20.0f };
+	camera_param.position_ = GRANDFATHER_POSITION;
 	camera_param.focus_ = { 0.0f, 0.0f, 0.0f };
 	camera_param.rotation_ = { 0.0f, 0.0f, 0.0f };
 	camera_param.up_ = { 0.0f, 1.0f, 0.0f };
@@ -220,22 +241,7 @@ Matching::Matching()
 			bullet_param);
 	}
 
-	//-------------------------------------
-	// メッセージ
-	//-------------------------------------
-	OBJECT_PARAMETER_DESC message_param;
-	message_param.name_ = "message";
-	message_param.position_ = {
-		SCREEN_WIDTH + 200.0f,
-		SCREEN_HEIGHT - 200.0f,
-		0.0f };
-	message_param.rotation_ = { 0.0f, 0.0f, 0.0f };
-	message_param.scaling_ = { 400.0f, 100.0f, 0.0f };
-	message_param.layer_ = LAYER_MESSAGE;
-
-	object_manager_->Create(
-		message_param,
-		"resource/texture/matching/message.png");
+	
 }
 
 
@@ -248,6 +254,7 @@ Matching::~Matching()
 	SAFE_DELETE(camera_manager_);
 	SAFE_DELETE(font_);
 	SAFE_DELETE(collision_manager_);
+	effect_manager_ = NULL;
 }
 
 
@@ -256,244 +263,277 @@ Matching::~Matching()
 //-------------------------------------
 void Matching::Update()
 {
-	////-------------------------------------
-	//// 変数宣言
-	////-------------------------------------
-	//// 動的変数
-	//Object *grandfather_object = object_manager_->Get("grandfather");
-	//Vector3 grandfather_position(grandfather_object->parameter().position_);
-	//Vector3 grandfather_rotation(grandfather_object->parameter().rotation_);
-	//Field *field = dynamic_cast<Field*>(object_manager_->Get("field"));
-	//FbxGrandfather *grandfather = dynamic_cast<FbxGrandfather*>(grandfather_object);
-	//Camera *main_camera = camera_manager_->Get("MainCamera");
-	//D3DXVECTOR3 camera_position, camera_focus;
-	//D3DXVECTOR3 camera_rotation(main_camera->rotation());
-	//float player_speed = CHARANCTER_MOVESPEED;
+	//-------------------------------------
+	// 変数宣言
+	//-------------------------------------
+	// 動的変数
+	Object *grandfather_object = object_manager_->Get("grandfather");
+	Vector3 grandfather_position(grandfather_object->parameter().position_);
+	Vector3 grandfather_rotation(grandfather_object->parameter().rotation_);
+	Field *field = dynamic_cast<Field*>(object_manager_->Get("field"));
+	FbxGrandfather *grandfather = dynamic_cast<FbxGrandfather*>(grandfather_object);
+	Camera *main_camera = camera_manager_->Get("MainCamera");
+	D3DXVECTOR3 camera_position, camera_focus;
+	D3DXVECTOR3 camera_rotation(main_camera->rotation());
+	float player_speed = CHARANCTER_MOVESPEED;
 
-	//// 静的変数
-	//static Vector3 grandfather_prevposition(grandfather_object->parameter().position_);
-	//static int shot_late = 0;
+	// 静的変数
+	static Vector3 grandfather_prevposition(grandfather_object->parameter().position_);
+	static int shot_late = 0;
 
-	//
+	//-------------------------------------
+	// 時間経過
+	//-------------------------------------
+	frame_++;
+	if (!(frame_ % 60)){
+		timer_++;
+	}
 
-	////-------------------------------------
-	//// プレイヤー移動処理
-	////-------------------------------------
-	//grandfather_position.x_ += (
-	//	cosf(grandfather_rotation.y_) * GamePad::isStick(GAMEPAD_GRANDFATHER).lsx_ +
-	//	sinf(-grandfather_rotation.y_) * GamePad::isStick(GAMEPAD_GRANDFATHER).lsy_) * player_speed;
-	//grandfather_position.z_ -= (
-	//	sinf(grandfather_rotation.y_) * GamePad::isStick(GAMEPAD_GRANDFATHER).lsx_ +
-	//	cosf(-grandfather_rotation.y_) * GamePad::isStick(GAMEPAD_GRANDFATHER).lsy_) * player_speed;
+	//-------------------------------------
+	// 1回だけポータル再生
+	//-------------------------------------
+	if (frame_ == 1){
 
-	//if (GamePad::isPress(GAMEPAD_GRANDFATHER, PAD_RS_LEFT)){
-	//	grandfather_rotation.y_ -= CHAR_ROT_SPEED;
-	//	if (grandfather_rotation.y_ < D3DX_PI){
-	//		grandfather_rotation.y_ += D3DX_PI * 2.0f;
-	//	}
-	//}
-	//if (GamePad::isPress(GAMEPAD_GRANDFATHER, PAD_RS_RIGHT)){
-	//	grandfather_rotation.y_ += CHAR_ROT_SPEED;
-	//	if (grandfather_rotation.y_ > D3DX_PI){
-	//		grandfather_rotation.y_ -= D3DX_PI * 2.0f;
-	//	}
-	//}
+		EFFECT_PARAMETER_DESC effect_param;
+		MyEffect *effect = effect_manager_->Get("water");
+		effect_param = effect->parameter();
+		effect_param.position_ = grandfather_position;
+		effect_param.position_.y_ -= 100.0f;
+		effect_param.rotation_ = grandfather_rotation;
+		effect->SetParameter(effect_param);
+		effect_manager_->Play("water");
 
-	//D3DXVECTOR3 grandfather_pos(
-	//	grandfather_position.x_,
-	//	grandfather_position.y_,
-	//	grandfather_position.z_);
-	//grandfather_position.y_ = field->GetHeight(grandfather_pos);
-	//if (grandfather_position.y_ > 0.4f ||
-	//	grandfather_position.y_ < -0.4f){
-	//	grandfather_position = grandfather_prevposition;
-	//}
-
-	//grandfather_object->SetPosition(grandfather_position);
-	//grandfather_object->SetRotation(grandfather_rotation);
+		effect = effect_manager_->Get("portal");
+		effect_param = effect->parameter();
+		effect_param.position_ = grandfather_position;
+		effect_param.position_.y_ += 0.3f;
+		effect_param.rotation_ = grandfather_rotation;
+		effect->SetParameter(effect_param);
+		effect_manager_->Play("portal");
+	}
 
 
-	////-------------------------------------
-	//// アニメーション制御
-	////-------------------------------------
-	//if (GamePad::isPress(GAMEPAD_GRANDFATHER, PAD_LS_DOWN) ||
-	//	GamePad::isPress(GAMEPAD_GRANDFATHER, PAD_LS_UP) ||
-	//	GamePad::isPress(GAMEPAD_GRANDFATHER, PAD_LS_LEFT) ||
-	//	GamePad::isPress(GAMEPAD_GRANDFATHER, PAD_LS_RIGHT)){
-	//	if (grandfather->GetCurrentAnimationId() != FbxGrandfather::WALK)
-	//	{
-	//		grandfather->PlayAnimation(FbxGrandfather::WALK);
-	//	}
-	//}
-	//else{
-	//	if (grandfather->GetCurrentAnimationId() != FbxGrandfather::IDLE)
-	//	{
-	//		grandfather->PlayAnimation(FbxGrandfather::IDLE);
-	//	}
-	//}
+	//-------------------------------------
+	// プレイヤー移動処理
+	//-------------------------------------
+	grandfather_position.x_ += (
+		cosf(grandfather_rotation.y_) * GamePad::isStick(GAMEPAD_GRANDFATHER).lsx_ +
+		sinf(-grandfather_rotation.y_) * GamePad::isStick(GAMEPAD_GRANDFATHER).lsy_) * player_speed;
+	grandfather_position.z_ -= (
+		sinf(grandfather_rotation.y_) * GamePad::isStick(GAMEPAD_GRANDFATHER).lsx_ +
+		cosf(-grandfather_rotation.y_) * GamePad::isStick(GAMEPAD_GRANDFATHER).lsy_) * player_speed;
 
-	////-------------------------------------
-	//// 各キャラクタ座標保存
-	////-------------------------------------
-	//grandfather_prevposition = grandfather_position;
+	if (GamePad::isPress(GAMEPAD_GRANDFATHER, PAD_RS_LEFT)){
+		grandfather_rotation.y_ -= CHAR_ROT_SPEED;
+		if (grandfather_rotation.y_ < D3DX_PI){
+			grandfather_rotation.y_ += D3DX_PI * 2.0f;
+		}
+	}
+	if (GamePad::isPress(GAMEPAD_GRANDFATHER, PAD_RS_RIGHT)){
+		grandfather_rotation.y_ += CHAR_ROT_SPEED;
+		if (grandfather_rotation.y_ > D3DX_PI){
+			grandfather_rotation.y_ -= D3DX_PI * 2.0f;
+		}
+	}
 
-	////-------------------------------------
-	//// 影座標
-	////-------------------------------------
-	//Object *shadow = object_manager_->Get("shadow");
-	//Vector3 shadow_pos;
-	//shadow_pos = grandfather->parameter().position_;
-	//shadow_pos.y_ += 0.001f;
-	//shadow->SetPosition(shadow_pos);
+	D3DXVECTOR3 grandfather_pos(
+		grandfather_position.x_,
+		grandfather_position.y_,
+		grandfather_position.z_);
+	grandfather_position.y_ = field->GetHeight(grandfather_pos);
+	if (grandfather_position.y_ > 0.4f ||
+		grandfather_position.y_ < -0.4f){
+		grandfather_position = grandfather_prevposition;
+	}
 
-	////-------------------------------------
-	//// カメラ計算
-	////-------------------------------------
-
-	//if (GamePad::isPress(GAMEPAD_GRANDFATHER, PAD_RS_UP)){
-	//	camera_rotation.x -= CAMERA_ROT_SPEED;
-	//	if (camera_rotation.x < -CAMERA_ROT_X_LIMIT){
-	//		camera_rotation.x = -CAMERA_ROT_X_LIMIT;
-	//	}
-	//}
-	//if (GamePad::isPress(GAMEPAD_GRANDFATHER, PAD_RS_DOWN)){
-	//	camera_rotation.x += CAMERA_ROT_SPEED;
-	//	if (camera_rotation.x > CAMERA_ROT_X_LIMIT){
-	//		camera_rotation.x = CAMERA_ROT_X_LIMIT;
-	//	}
-	//}
-
-	//// モデルの回転Yをそのままカメラの回転Yへ
-	//camera_rotation.y = grandfather_rotation.y_;
-	//// 一旦モデルを注視点に
-	//camera_focus = grandfather_pos;
-	//// 足元基準から体の中心辺りを基準に
-	//camera_focus.y += CAMERA_FOCUS_OFFSET_Y;
-	//// モデルの少し先を見るように調整
-	//camera_focus.x +=
-	//	sinf(camera_rotation.y) * CAMERA_FOCUS_OFFSET * cosf(camera_rotation.x);
-	//camera_focus.z +=
-	//	cosf(camera_rotation.y) * CAMERA_FOCUS_OFFSET * cosf(camera_rotation.x);
-	//camera_focus.y +=
-	//	sinf(camera_rotation.x) * CAMERA_FOCUS_OFFSET;
-
-	//// 注視点を基準にカメラ座標を設定
-	//camera_position = camera_focus;
-	//camera_position.x -=
-	//	sinf(camera_rotation.y) * camera_pos_len_ * cosf(camera_rotation.x);
-	//camera_position.z -=
-	//	cosf(camera_rotation.y) * camera_pos_len_ * cosf(camera_rotation.x);
-	//camera_position.y -=
-	//	sinf(camera_rotation.x) * camera_pos_len_;
+	grandfather_object->SetPosition(grandfather_position);
+	grandfather_object->SetRotation(grandfather_rotation);
 
 
-	//// カメラの地面めり込み回避処理
-	//D3DXVECTOR3	vec_camera_to_focus = camera_focus - camera_position;
+	//-------------------------------------
+	// アニメーション制御
+	//-------------------------------------
+	if (GamePad::isPress(GAMEPAD_GRANDFATHER, PAD_LS_DOWN) ||
+		GamePad::isPress(GAMEPAD_GRANDFATHER, PAD_LS_UP) ||
+		GamePad::isPress(GAMEPAD_GRANDFATHER, PAD_LS_LEFT) ||
+		GamePad::isPress(GAMEPAD_GRANDFATHER, PAD_LS_RIGHT)){
+		if (grandfather->GetCurrentAnimationId() != FbxGrandfather::WALK)
+		{
+			grandfather->PlayAnimation(FbxGrandfather::WALK);
+		}
+	}
+	else{
+		if (grandfather->GetCurrentAnimationId() != FbxGrandfather::IDLE)
+		{
+			grandfather->PlayAnimation(FbxGrandfather::IDLE);
+		}
+	}
 
-	//// 中間にカメラがめり込みそうなところが無いか検査
-	//bool camera_re_calculate = false;
-	//for (int i = 0; i < 10; ++i){
-	//	// 中間地点を計算
-	//	D3DXVECTOR3 lay_point =
-	//		camera_position + vec_camera_to_focus * static_cast<float>(i)* 0.1f;
-	//	float pos_y = field->GetHeight(lay_point);
-	//	// 回避処理
-	//	if (lay_point.y < pos_y + 0.1f){
-	//		camera_re_calculate = true;
-	//		camera_pos_len_ -= CAMARA_LEN_SPEED;
-	//	}
-	//}
+	//-------------------------------------
+	// 各キャラクタ座標保存
+	//-------------------------------------
+	grandfather_prevposition = grandfather_position;
 
-	////カメラ座標再計算
-	//if (camera_re_calculate == true){
-	//	camera_position = camera_focus;
-	//	camera_position.x -=
-	//		sinf(camera_rotation.y) * camera_pos_len_ * cosf(camera_rotation.x);
-	//	camera_position.z -=
-	//		cosf(camera_rotation.y) * camera_pos_len_ * cosf(camera_rotation.x);
-	//	camera_position.y -=
-	//		sinf(camera_rotation.x) * camera_pos_len_;
-	//	camera_position.y = field->GetHeight(camera_position) + 0.1f;
-	//}
+	//-------------------------------------
+	// 影座標
+	//-------------------------------------
+	Object *shadow = object_manager_->Get("shadow");
+	Vector3 shadow_pos;
+	shadow_pos = grandfather->parameter().position_;
+	shadow_pos.y_ += 0.001f;
+	shadow->SetPosition(shadow_pos);
 
-	//camera_pos_len_ += CAMARA_LEN_SPEED;
-	//if (camera_pos_len_ > CAMERA_POS_LEN){
-	//	camera_pos_len_ = CAMERA_POS_LEN;
-	//}
+	//-------------------------------------
+	// カメラ計算
+	//-------------------------------------
 
-	//// カメラにパラメータを再セット
-	//main_camera->SetPosition(camera_position);
-	//main_camera->SetFocus(camera_focus);
-	//main_camera->SetRotation(camera_rotation);
+	if (GamePad::isPress(GAMEPAD_GRANDFATHER, PAD_RS_UP)){
+		camera_rotation.x -= CAMERA_ROT_SPEED;
+		if (camera_rotation.x < -CAMERA_ROT_X_LIMIT){
+			camera_rotation.x = -CAMERA_ROT_X_LIMIT;
+		}
+	}
+	if (GamePad::isPress(GAMEPAD_GRANDFATHER, PAD_RS_DOWN)){
+		camera_rotation.x += CAMERA_ROT_SPEED;
+		if (camera_rotation.x > CAMERA_ROT_X_LIMIT){
+			camera_rotation.x = CAMERA_ROT_X_LIMIT;
+		}
+	}
+
+	// モデルの回転Yをそのままカメラの回転Yへ
+	camera_rotation.y = grandfather_rotation.y_;
+	// 一旦モデルを注視点に
+	camera_focus = grandfather_pos;
+	// 足元基準から体の中心辺りを基準に
+	camera_focus.y += CAMERA_FOCUS_OFFSET_Y;
+	// モデルの少し先を見るように調整
+	camera_focus.x +=
+		sinf(camera_rotation.y) * CAMERA_FOCUS_OFFSET * cosf(camera_rotation.x);
+	camera_focus.z +=
+		cosf(camera_rotation.y) * CAMERA_FOCUS_OFFSET * cosf(camera_rotation.x);
+	camera_focus.y +=
+		sinf(camera_rotation.x) * CAMERA_FOCUS_OFFSET;
+
+	// 注視点を基準にカメラ座標を設定
+	camera_position = camera_focus;
+	camera_position.x -=
+		sinf(camera_rotation.y) * camera_pos_len_ * cosf(camera_rotation.x);
+	camera_position.z -=
+		cosf(camera_rotation.y) * camera_pos_len_ * cosf(camera_rotation.x);
+	camera_position.y -=
+		sinf(camera_rotation.x) * camera_pos_len_;
 
 
-	////-------------------------------------
-	//// 弾発射
-	////-------------------------------------
-	//shot_late--;
-	//shot_late = std::max<int>(shot_late, 0);
-	//if (GamePad::isPress(GAMEPAD_GRANDFATHER, PAD_BUTTON_8) &&
-	//	shot_late == 0){
-	//	EFFECT_PARAMETER_DESC effect_param;
-	//	MyEffect *effect = effect_manager_->Get("water");
-	//	effect_param = effect->parameter();
-	//	effect_param.position_ = grandfather_position;
-	//	effect_param.position_.y_ += 0.6f;
-	//	effect_param.rotation_ = grandfather_rotation;
-	//	effect->SetParameter(effect_param);
-	//	effect_manager_->Play("water");
+	// カメラの地面めり込み回避処理
+	D3DXVECTOR3	vec_camera_to_focus = camera_focus - camera_position;
+
+	// 中間にカメラがめり込みそうなところが無いか検査
+	bool camera_re_calculate = false;
+	for (int i = 0; i < 10; ++i){
+		// 中間地点を計算
+		D3DXVECTOR3 lay_point =
+			camera_position + vec_camera_to_focus * static_cast<float>(i)* 0.1f;
+		float pos_y = field->GetHeight(lay_point);
+		// 回避処理
+		if (lay_point.y < pos_y + 0.1f){
+			camera_re_calculate = true;
+			camera_pos_len_ -= CAMARA_LEN_SPEED;
+		}
+	}
+
+	//カメラ座標再計算
+	if (camera_re_calculate == true){
+		camera_position = camera_focus;
+		camera_position.x -=
+			sinf(camera_rotation.y) * camera_pos_len_ * cosf(camera_rotation.x);
+		camera_position.z -=
+			cosf(camera_rotation.y) * camera_pos_len_ * cosf(camera_rotation.x);
+		camera_position.y -=
+			sinf(camera_rotation.x) * camera_pos_len_;
+		camera_position.y = field->GetHeight(camera_position) + 0.1f;
+	}
+
+	camera_pos_len_ += CAMARA_LEN_SPEED;
+	if (camera_pos_len_ > CAMERA_POS_LEN){
+		camera_pos_len_ = CAMERA_POS_LEN;
+	}
+
+	// カメラにパラメータを再セット
+	main_camera->SetPosition(camera_position);
+	main_camera->SetFocus(camera_focus);
+	main_camera->SetRotation(camera_rotation);
 
 
-	//	OBJECT_PARAMETER_DESC bullet_param;
-	//	bullet_param.layer_ = LAYER_BULLET;
-	//	bullet_param.parent_layer_ = LAYER_MODEL_GRANDFATHER;
-	//	bullet_param.position_ = grandfather_position;
-	//	bullet_param.position_.y_ += 0.6f;
-	//	bullet_param.rotation_ = grandfather_rotation;
+	//-------------------------------------
+	// 弾発射
+	//-------------------------------------
+	shot_late--;
+	shot_late = std::max<int>(shot_late, 0);
+	if (GamePad::isPress(GAMEPAD_GRANDFATHER, PAD_BUTTON_8) &&
+		shot_late == 0){
+		EFFECT_PARAMETER_DESC effect_param;
+		MyEffect *effect = effect_manager_->Get("water");
+		effect_param = effect->parameter();
+		effect_param.position_ = grandfather_position;
+		effect_param.position_.y_ += 0.6f;
+		effect_param.rotation_ = grandfather_rotation;
+		effect->SetParameter(effect_param);
+		effect_manager_->Play("water");
 
-	//	// カメラの回転Xを利用
-	//	bullet_param.rotation_.x_ = camera_rotation.x;
 
-	//	bullet_param.scaling_ = { 1.0f, 1.0f, 1.0f };
+		OBJECT_PARAMETER_DESC bullet_param;
+		bullet_param.layer_ = LAYER_BULLET;
+		bullet_param.parent_layer_ = LAYER_MODEL_GRANDFATHER;
+		bullet_param.position_ = grandfather_position;
+		bullet_param.position_.y_ += 0.6f;
+		bullet_param.rotation_ = grandfather_rotation;
 
-	//	Bullet* bullet = object_manager_->GetNoUseBullet();
-	//	bullet->Fire(bullet_param);
+		// カメラの回転Xを利用
+		bullet_param.rotation_.x_ = camera_rotation.x;
 
-	//	shot_late = 10;
-	//}
+		bullet_param.scaling_ = { 1.0f, 1.0f, 1.0f };
 
-	////-------------------------------------
-	//// メッセージの再生
-	////-------------------------------------
-	//if (KeyBoard::isTrigger(DIK_SPACE)){
-	//	Object *message_object = object_manager_->Get("message");
-	//	Message *message = dynamic_cast<Message*>(message_object);
-	//	Vector3 message_position = {
-	//		SCREEN_WIDTH + 200.0f,
-	//		SCREEN_HEIGHT - 200.0f,
-	//		0.0f };
-	//	message_object->SetPosition(message_position);
-	//	message->Play();
-	//}
+		Bullet* bullet = object_manager_->GetNoUseBullet();
+		bullet->Fire(bullet_param);
+
+		shot_late = 10;
+	}
+
+	
 
 	camera_manager_->Update();
 	object_manager_->Update();
 	effect_manager_->Update();
-	//collision_manager_->Update();
+	collision_manager_->Update();
 
-	//font_->Add("シーン名:");
-	//font_->Add("Matching\n");
-	//font_->Add("FPS : %d\n", Fps::GetFps());
-	//font_->Add("POSITION(Grandfather) : %3.2f %3.2f %3.2f\n",
-	//	grandfather_position.x_,
-	//	grandfather_position.y_,
-	//	grandfather_position.z_);
-	//font_->Add("ROTATION(Grandfather) : %3.2f %3.2f %3.2f\n",
-	//	grandfather_rotation.x_,
-	//	grandfather_rotation.y_,
-	//	grandfather_rotation.z_);
-	//font_->Add("OBJECT : %d\n", ObjectManager::GetCount());
-	//font_->Add("COLLISION : %d\n", CollisionManager::GetCount());
+	font_->Add("シーン名:");
+	font_->Add("Matching\n");
+	font_->Add("FPS : %d\n", Fps::GetFps());
+	font_->Add("POSITION(Grandfather) : %3.2f %3.2f %3.2f\n",
+		grandfather_position.x_,
+		grandfather_position.y_,
+		grandfather_position.z_);
+	font_->Add("ROTATION(Grandfather) : %3.2f %3.2f %3.2f\n",
+		grandfather_rotation.x_,
+		grandfather_rotation.y_,
+		grandfather_rotation.z_);
+	font_->Add("OBJECT : %d\n", ObjectManager::GetCount());
+	font_->Add("COLLISION : %d\n", CollisionManager::GetCount());
+
+
+	if (KeyBoard::isTrigger(DIK_F2)){
+		FILE *file = fopen("DebugParam.txt", "a");
+		fprintf(file, "\n{ %3.2ff, %3.2ff, %3.2ff },\n",
+			grandfather_position.x_,
+			grandfather_position.y_,
+			grandfather_position.z_);
+		fprintf(file, "{ %3.2ff, %3.2ff, %3.2ff },\n",
+			grandfather_rotation.x_,
+			grandfather_rotation.y_,
+			grandfather_rotation.z_);
+		fclose(file);
+
+	}
 
 	if (KeyBoard::isTrigger(DIK_RETURN))
 	{
