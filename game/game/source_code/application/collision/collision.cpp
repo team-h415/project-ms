@@ -72,6 +72,11 @@ void Collision::Draw()
 		return;
 	}
 
+	DirectX9Holder::device_->SetTexture(0, NULL);
+	DirectX9Holder::device_->SetTexture(1, NULL);
+	DirectX9Holder::device_->SetTexture(2, NULL);
+	DirectX9Holder::device_->SetTexture(3, NULL);
+
 	DWORD zfunc;
 	DirectX9Holder::device_->GetRenderState(D3DRS_ZFUNC, &zfunc);
 	DirectX9Holder::device_->SetRenderState(D3DRS_ZFUNC, D3DCMP_ALWAYS);

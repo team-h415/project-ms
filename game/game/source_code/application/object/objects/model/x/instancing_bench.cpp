@@ -187,6 +187,8 @@ void InstancingBench::Draw()
 	DirectX9Holder::device_->SetVertexShader(NULL);
 	DirectX9Holder::device_->SetPixelShader(NULL);
 
+	DirectX9Holder::device_->SetTexture(0, NULL);
+
 	DirectX9Holder::device_->SetStreamSourceFreq(0, 1);
 	DirectX9Holder::device_->SetStreamSourceFreq(1, 1);
 	DirectX9Holder::device_->SetStreamSourceFreq(2, 1);
