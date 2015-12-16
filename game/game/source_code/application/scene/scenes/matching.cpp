@@ -112,7 +112,7 @@ Matching::Matching()
 	water_param.position_ = { 40.00f, 0.00f, -40.00f };
 	effect_manager_->Create(
 		"portal",
-		"resource/effect/Portalx2.efk",
+		"resource/effect/Portal2x2.efk",
 		water_param);
 
 	//-------------------------------------
@@ -190,8 +190,8 @@ Matching::Matching()
 	OBJECT_PARAMETER_DESC grandfather_param;
 	grandfather_param.name_ = "grandfather";
 	grandfather_param.layer_ = LAYER_MODEL_GRANDFATHER;
-	grandfather_param.position_ = GRANDFATHER_POSITION_STAGE1;
-	grandfather_param.rotation_ = { 0.0f, 0.0f, 0.0f };
+	grandfather_param.position_ = GRANDFATHER_POSITION;
+	grandfather_param.rotation_ = { 0.0f, 4.65f, 0.0f };
 	grandfather_param.scaling_ = { 1.0f, 1.0f, 1.0f };
 
 	object_manager_->Create(
@@ -305,7 +305,7 @@ void Matching::Update()
 
 		effect = effect_manager_->Get("portal");
 		effect_param = effect->parameter();
-		effect_param.position_ = grandfather_position;
+		effect_param.position_ = { 40.00f, 0.00f, -40.00f };;
 		effect_param.position_.y_ += 0.3f;
 		effect_param.rotation_ = grandfather_rotation;
 		effect->SetParameter(effect_param);
@@ -346,6 +346,12 @@ void Matching::Update()
 		grandfather_position = grandfather_prevposition;
 	}
 
+	//-------------------------------------
+	// プレイヤー座標をXZ平面で領域指定
+	//-------------------------------------
+	grandfather_position.z_ = std::min<float>(grandfather_position.z_, -35.0f);
+	grandfather_position.x_ = std::max<float>(grandfather_position.x_, 32.0f);
+
 	grandfather_object->SetPosition(grandfather_position);
 	grandfather_object->SetRotation(grandfather_rotation);
 
@@ -367,6 +373,20 @@ void Matching::Update()
 		{
 			grandfather->PlayAnimation(FbxGrandfather::IDLE);
 		}
+	}
+
+
+	//-------------------------------------
+	// 全員集合したらシーン遷移
+	//-------------------------------------
+	// 今はおじだけ集まったら遷移、全員分用意すること
+	D3DXVECTOR3 portal_posiiton = PORTAL_POSITION;
+	grandfather_pos = { grandfather_position.x_, grandfather_position.y_, grandfather_position.z_ };
+	D3DXVECTOR3 vec(grandfather_pos - portal_posiiton);
+	float distance = sqrtf((vec.x * vec.x) + (vec.y * vec.y) + (vec.z * vec.z));
+	if (distance < PORTAL_DISTANCE){
+		effect_manager_->StopAll();
+		SceneManager::RequestScene("Game");
 	}
 
 	//-------------------------------------

@@ -21,20 +21,23 @@
 //-=--=--=--=--=--=--=--=--=--=--=--=--=--=--=-//
 // Matching
 //-=--=--=--=--=--=--=--=--=--=--=--=--=--=--=-//
-#define GRANDFATHER_POSITION { 59.75f, 0.00f, -39.26f };
-#define GRANDFATHER_ROTATION { 0.00f, 4.68f, 0.00f };
+#define GRANDFATHER_POSITION { 59.75f, 0.00f, -39.26f }
+#define GRANDFATHER_ROTATION { 0.00f, 4.68f, 0.00f }
 
-#define CHILD1_POSITION { 39.42f, 0.00f, -55.70f };
-#define CHILD1_ROTATION { 0.00f, -0.03f, 0.00f };
+#define CHILD1_POSITION { 39.42f, 0.00f, -55.70f }
+#define CHILD1_ROTATION { 0.00f, -0.03f, 0.00f }
 
-#define CHILD2_POSITION { 42.95f, 0.00f, -55.60f };
-#define CHILD2_ROTATION { 0.00f, -0.03f, 0.00f };
+#define CHILD2_POSITION { 42.95f, 0.00f, -55.60f }
+#define CHILD2_ROTATION { 0.00f, -0.03f, 0.00f }
 
-#define CHILD3_POSITION { 47.24f, 0.00f, -55.67f };
-#define CHILD3_ROTATION { 0.00f, -0.03f, 0.00f };
+#define CHILD3_POSITION { 47.24f, 0.00f, -55.67f }
+#define CHILD3_ROTATION { 0.00f, -0.03f, 0.00f }
 
-#define CHILD4_POSITION { 51.98f, 0.00f, -55.83f };
-#define CHILD4_ROTATION { 0.00f, -0.03f, 0.00f };
+#define CHILD4_POSITION { 51.98f, 0.00f, -55.83f }
+#define CHILD4_ROTATION { 0.00f, -0.03f, 0.00f }
+
+#define PORTAL_POSITION { 40.00f, 0.00f, -40.00f }
+#define PORTAL_DISTANCE 3.0f
 
 
 //-=--=--=--=--=--=--=--=--=--=--=--=--=--=--=-//
