@@ -1014,10 +1014,10 @@ void Game::Update()
 		grandfather_position.y_,
 		grandfather_position.z_);
 	grandfather_position.y_ = field->GetHeight(grandfather_pos);
-	/*if (grandfather_position.y_ > 0.4f ||
+	if (grandfather_position.y_ > 0.4f ||
 		grandfather_position.y_ < -0.4f){
 		grandfather_position = grandfather_prevposition;
-	}*/
+	}
 	
 	D3DXVECTOR3 child_pos(
 		child_position.x_,
