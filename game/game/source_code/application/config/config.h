@@ -40,8 +40,12 @@
 
 #define GAME_TIMER (100)							// ゲームの時間
 
+<<<<<<< HEAD
 #define MAX_BULLET (100)							// バレット最大数
 #define LAKE_RANGE	(35.0f)							// 湖の半径
+=======
+#define LAKE_COLLISION_RANGE (30.0f)				// 湖の当たり半径
+>>>>>>> origin/fuka
 
 
 //-------------------------------------
@@ -62,7 +66,10 @@
 #define GRANDFATHER_ROTATION_STAGE1 -0.82f
 #define GRANDFATHER_ROTATION_STAGE2  3.14f
 #define GRANDFATHER_ROTATION_STAGE3  4.30f
-
+// HP自動回復待ち時間
+#define GRANDFATHER_RECOVER_WAITE_TIME 180
+// HP回復量
+#define GRANDFATHER_RECOVER_HP 0.003f
 
 
 //-------------------------------------
@@ -87,6 +94,10 @@
 #define CHILD_ROTATION4 0.79f
 // リスポーン待ち時間
 #define CHILD_RESPAWN_WAITTIME 120
+// HP自動回復待ち時間
+#define CHILD_RECOVER_WAITE_TIME 180
+// HP回復量
+#define CHILD_RECOVER_HP 0.003f
 
 
 //-------------------------------------

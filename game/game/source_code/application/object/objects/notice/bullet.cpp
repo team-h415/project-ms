@@ -205,6 +205,7 @@ void Bullet::Action(
 				float life = father->GetLife();
 				life -= GRANDFATHER_DAMAGE;
 				father->SetLife(life);
+				father->SetRecoverWaitTimer(0);
 			}
 			// Žq‹Ÿ
 			else if (target->parameter().layer_ == LAYER_MODEL_CHILD){
@@ -212,6 +213,7 @@ void Bullet::Action(
 				float life = child->GetLife();
 				life -= CHILD_DAMAGE;
 				child->SetLife(life);
+				child->SetRecoverWaitTimer(0);
 			}
 			// Ô(¦Žq‹Ÿ‚É·‚µ‘Ö‚¦‚é‚±‚Æ!)
 			else if (target->parameter().layer_ == LAYER_MODEL_FORT &&

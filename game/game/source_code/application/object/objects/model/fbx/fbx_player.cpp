@@ -105,6 +105,8 @@ void FbxPlayer::Update()
 		&element, &element, &translate);
 
 	UpdateBoneMatrix(&bone_[0], &element);
+
+	water_supply_enable_ = true;
 }
 
 

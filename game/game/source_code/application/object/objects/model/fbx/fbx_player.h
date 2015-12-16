@@ -85,8 +85,26 @@ public:
 		water_gauge_ = gauge;
 	}
 
+	//体力回復ウェイトタイマー
+	const int &GetRecoverWaitTimer(){
+		return recover_wait_timer_;
+	}
+	void SetRecoverWaitTimer(const int &timer){
+		recover_wait_timer_ = timer;
+	}
+
+	//給水有効フラグ
+	const bool &GetWaterSupplyEnable(){
+		return water_supply_enable_;
+	}
+	void SetWaterSupplyEnable(const bool &flag){
+		water_supply_enable_ = flag;
+	}
+
 protected:
 	void UpdateBoneMatrix(BONE *subject, D3DXMATRIX *parent);
+
+	void UpdateHP();
 
 	//キーフレーム間の補間
 	D3DXVECTOR3 InterpolateTranslation(BONE* subject, float time);
@@ -104,6 +122,12 @@ protected:
 	float life_;
 	// 水ゲージ
 	float water_gauge_;
+	//  体力回復ウェイトタイマー
+	int recover_wait_timer_;
+	//給水有効フラグ
+	bool water_supply_enable_;
+
+	int water_supply_effect_timer_;
 };
 
 

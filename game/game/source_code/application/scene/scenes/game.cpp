@@ -90,41 +90,51 @@ Game::Game()
 	//-------------------------------------
 	// エフェクトの読み込み
 	//-------------------------------------
-	EFFECT_PARAMETER_DESC water_param;
-	water_param.position_ = { 0.0f, 0.0f, 0.0f };
-	water_param.rotation_ = { 0.0f, 0.0f, 0.0f };
-	water_param.scaling_ = { 1.0f, 1.0f, 1.0f };
-	water_param.speed_ = 1.0f;
+	EFFECT_PARAMETER_DESC effect_param;
+	effect_param.position_ = { 0.0f, 0.0f, 0.0f };
+	effect_param.rotation_ = { 0.0f, 0.0f, 0.0f };
+	effect_param.scaling_ = { 1.0f, 1.0f, 1.0f };
+	effect_param.speed_ = 1.0f;
 
 	effect_manager_->Create(
 		"water",
 		"resource/effect/BulletFire.efk",
-		water_param);
+		effect_param);
 
 	effect_manager_->Create(
 		"damage",
 		"resource/effect/Damage3_2.efk",
-		water_param);
+		effect_param);
 
 	effect_manager_->Create(
 		"dead",
 		"resource/effect/Dead2.efk",
-		water_param);
+		effect_param);
 
 	effect_manager_->Create(
 		"smoke",
 		"resource/effect/Smoke.efk",
-		water_param);
+		effect_param);
 
 	effect_manager_->Create(
 		"smoke2",
 		"resource/effect/Smoke2.efk",
-		water_param);
+		effect_param);
 
 	effect_manager_->Create(
 		"dash",
 		"resource/effect/Dash.efk",
-		water_param);
+		effect_param);
+
+	effect_manager_->Create(
+		"watersupply",
+		"resource/effect/WaterSupply.efk",
+		effect_param);
+
+	effect_manager_->Create(
+		"watersupplybubble",
+		"resource/effect/WaterSupply2.efk",
+		effect_param);
 
 	//-------------------------------------
 	// メインカメラ
@@ -217,11 +227,21 @@ Game::Game()
 		obj_lake->parameter().position_.x_,
 		obj_lake->parameter().position_.y_,
 		obj_lake->parameter().position_.z_ };
-	lake_collision_param.range_ = LAKE_RANGE;
-	lake_collision_param.offset_ = { -2.0f, 0.0f, 10.0f };
-	
+	lake_collision_param.range_ = LAKE_COLLISION_RANGE;
+	// 上
+	lake_collision_param.offset_ = { 0.0f, 0.0f, 15.0f };
 	collision_manager_->Create(object_manager_->Get("lake"),
 		lake_collision_param);
+	// 右下
+	lake_collision_param.offset_ = { 10.0f, 0.0f, -10.0f };
+	collision_manager_->Create(object_manager_->Get("lake"),
+		lake_collision_param);
+	// 左上
+	lake_collision_param.offset_ = { -5.0f, 0.0f, 0.0f };
+	collision_manager_->Create(object_manager_->Get("lake"),
+		lake_collision_param);
+
+
 
 	//-------------------------------------
 	// 砦
@@ -936,7 +956,6 @@ void Game::Update()
 		effect_manager_->Play("smoke");
 	}
 
-
 #endif //_DEBUG
 
 
@@ -1276,6 +1295,10 @@ void Game::Update()
 
 
 #ifdef _DEBUG
+	if (KeyBoard::isPress(DIK_9)){
+		grandfather->SetWaterGauge(0.0f);
+		waterGage->SetChangeValue(0.0f);
+	}
 	if(KeyBoard::isPress(DIK_SPACE)){
 		EFFECT_PARAMETER_DESC effect_param;
 		MyEffect *effect = effect_manager_->Get("water");
@@ -1393,6 +1416,22 @@ void Game::Update()
 
 	child_respawn_waittime_--;
 	child_respawn_waittime_ = std::max<int>(child_respawn_waittime_, 0);
+
+	//-------------------------------------
+	// 子供体力自動回復制御
+	//-------------------------------------
+	if (child_life < 1.0f && !child_death_){
+		int child_recover_wait_timer = child->GetRecoverWaitTimer();
+		
+		if (child_recover_wait_timer > CHILD_RECOVER_WAITE_TIME){
+			float child_life = child->GetLife();
+			child_life += CHILD_RECOVER_HP;
+			std::min<float>(child_life, 1.0f);
+			child->SetLife(child_life);
+		}
+		child_recover_wait_timer++;
+		child->SetRecoverWaitTimer(child_recover_wait_timer);
+	}
 
 	//-------------------------------------
 	// ダメージエフェクトの処理
