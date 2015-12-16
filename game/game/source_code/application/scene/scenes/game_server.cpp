@@ -380,6 +380,341 @@ void GameServer::Matching()
 		send_data.type_ = DATA_SCENE_CHANGE_GAME;
 		NetworkHost::SendTo(DELI_MULTI, send_data);
 	}
+
+	// フィールド取得
+	Field *field = dynamic_cast<Field*>(object_manager_->Get("matching_field"));
+
+	for(int i = 0; i < 5; i++){
+
+		//-------------------------------------
+		// 変数宣言
+		//-------------------------------------
+		std::string player_str = "player" + std::to_string(i + 1);
+		Object *player_obj = object_manager_->Get(player_str);
+		FbxPlayer *player = dynamic_cast<FbxPlayer*>(player_obj);
+		Vector3 player_position(player->parameter().position_);
+		Vector3 player_rotation(player->parameter().rotation_);
+		Vector3 player_position_old = player_position;
+
+		float player_speed = CHARANCTER_MOVESPEED;
+
+		//-------------------------------------
+		// プレイヤーを地形に沿って移動させる
+		//-------------------------------------
+		bool input(true);
+		if(i != 0)
+		{
+			if(child_death_[i - 1])
+			{
+				input = false;
+			}
+		}
+		if(input)
+		{
+			if(i == 0)
+			{
+				// じじいダッシュ
+				if(GamePad::isPress(i, PAD_BUTTON_11)){
+					player_speed = CHARANCTER_MOVESPEED * 2.0f;
+					// ダッシュエフェクト
+					if(dash_effect_timer_ % 10 == 0){
+
+						// エフェクト再生
+						ZeroMemory(&send_data, sizeof(send_data));
+						send_data.type_ = DATA_OBJ_PARAM;
+						send_data.object_param_.type_ = OBJ_EFFECT;
+						send_data.object_param_.position_.x_ = player_position.x_;
+						send_data.object_param_.position_.y_ = player_position.y_;
+						send_data.object_param_.position_.z_ = player_position.z_;
+						send_data.object_param_.rotation_ = {0.0f, 0.0f, 0.0f};
+						strcpy_s(send_data.name, MAX_NAME_LEN, "dash");
+						NetworkHost::SendTo(DELI_MULTI, send_data);
+					}
+					dash_effect_timer_++;
+				}
+			}
+
+			player_position.x_ += (
+				cosf(player_rotation.y_) * GamePad::isStick(i).lsx_ +
+				sinf(-player_rotation.y_) * GamePad::isStick(i).lsy_) * player_speed;
+			player_position.z_ -= (
+				sinf(player_rotation.y_) * GamePad::isStick(i).lsx_ +
+				cosf(-player_rotation.y_) * GamePad::isStick(i).lsy_) * player_speed;
+
+			if(GamePad::isPress(i, PAD_RS_LEFT)){
+				player_rotation.y_ -= CHAR_ROT_SPEED;
+				if(player_rotation.y_ < D3DX_PI){
+					player_rotation.y_ += D3DX_PI * 2.0f;
+				}
+			}
+			if(GamePad::isPress(i, PAD_RS_RIGHT)){
+				player_rotation.y_ += CHAR_ROT_SPEED;
+				if(player_rotation.y_ > D3DX_PI){
+					player_rotation.y_ -= D3DX_PI * 2.0f;
+				}
+			}
+		}
+
+		D3DXVECTOR3 player_pos(
+			player_position.x_,
+			player_position.y_,
+			player_position.z_);
+		player_position.y_ = field->GetHeight(player_pos);
+		// 侵入不可領域チェック
+		if(player_position.y_ > 0.4f || player_position.y_ < -0.4f){
+			player_position = player_position_old;
+		}
+
+		player_pos.x = player_position.x_;
+		player_pos.y = player_position.y_;
+		player_pos.z = player_position.z_;
+		player->SetPosition(player_position);
+		player->SetRotation(player_rotation);
+
+		//-------------------------------------
+		// カメラ追従
+		//-------------------------------------
+		std::string camera_str = "camera" + std::to_string(i + 1);
+		Camera *main_camera = camera_manager_->Get(camera_str);
+		D3DXVECTOR3 camera_position, camera_focus;
+		D3DXVECTOR3 camera_rotation(main_camera->rotation());
+
+		if(GamePad::isPress(i, PAD_RS_UP)){
+			camera_rotation.x -= CAMERA_ROT_SPEED;
+			if(camera_rotation.x < -CAMERA_ROT_X_LIMIT){
+				camera_rotation.x = -CAMERA_ROT_X_LIMIT;
+			}
+		}
+		if(GamePad::isPress(i, PAD_RS_DOWN)){
+			camera_rotation.x += CAMERA_ROT_SPEED;
+			if(camera_rotation.x > CAMERA_ROT_X_LIMIT){
+				camera_rotation.x = CAMERA_ROT_X_LIMIT;
+			}
+		}
+
+		// モデルの回転Yをそのままカメラの回転Yへ
+		camera_rotation.y = player_rotation.y_;
+		// 一旦モデルを注視点に
+		camera_focus = player_pos;
+		// 足元基準から体の中心辺りを基準に
+		camera_focus.y += CAMERA_FOCUS_OFFSET_Y;
+		// モデルの少し先を見るように調整
+		camera_focus.x += sinf(camera_rotation.y) * CAMERA_FOCUS_OFFSET * cosf(camera_rotation.x);
+		camera_focus.z += cosf(camera_rotation.y) * CAMERA_FOCUS_OFFSET * cosf(camera_rotation.x);
+		camera_focus.y += sinf(camera_rotation.x) * CAMERA_FOCUS_OFFSET;
+
+		// 注視点を基準にカメラ座標を設定
+		camera_position = camera_focus;
+		camera_position.x -= sinf(camera_rotation.y) * camera_pos_len_[i] * cosf(camera_rotation.x);
+		camera_position.z -= cosf(camera_rotation.y) * camera_pos_len_[i] * cosf(camera_rotation.x);
+		camera_position.y -= sinf(camera_rotation.x) * camera_pos_len_[i];
+
+		// カメラの地面めり込み回避処理
+		D3DXVECTOR3	vec_camera_to_focus = camera_focus - camera_position;
+
+		// 中間にカメラがめり込みそうなところが無いか検査
+		bool camera_re_calculate = false;
+		for(int j = 0; j < 10; ++j){
+			// 中間地点を計算
+			D3DXVECTOR3 lay_point = camera_position + vec_camera_to_focus * (0.1f * j);
+			float pos_y = field->GetHeight(lay_point);
+			// 回避処理
+			if(lay_point.y < pos_y + 0.1f){
+				camera_re_calculate = true;
+				camera_pos_len_[i] -= CAMARA_LEN_SPEED;
+			}
+		}
+
+		//カメラ座標再計算
+		if(camera_re_calculate == true){
+			camera_position = camera_focus;
+			camera_position.x -= sinf(camera_rotation.y) * camera_pos_len_[i] * cosf(camera_rotation.x);
+			camera_position.z -= cosf(camera_rotation.y) * camera_pos_len_[i] * cosf(camera_rotation.x);
+			camera_position.y -= sinf(camera_rotation.x) * camera_pos_len_[i];
+			camera_position.y = field->GetHeight(camera_position) + 0.1f;
+		}
+
+		camera_pos_len_[i] += CAMARA_LEN_SPEED;
+		if(camera_pos_len_[i] > CAMERA_POS_LEN){
+			camera_pos_len_[i] = CAMERA_POS_LEN;
+		}
+
+		// カメラにパラメータを再セット
+		main_camera->SetPosition(camera_position);
+		main_camera->SetFocus(camera_focus);
+		main_camera->SetRotation(camera_rotation);
+
+		//-------------------------------------
+		// バレット発射
+		//-------------------------------------
+		shot_late[i]--;
+		shot_late[i] = std::max<int>(shot_late[i], 0);
+
+		if(GamePad::isPress(i, PAD_BUTTON_8) && shot_late[i] == 0){
+			shot_late[i] = 10;
+
+			OBJECT_PARAMETER_DESC bullet_param;
+			bullet_param.layer_ = LAYER_BULLET;
+			if(i == 0)
+			{
+				bullet_param.parent_layer_ = LAYER_MODEL_GRANDFATHER;
+			}
+			else
+			{
+				bullet_param.parent_layer_ = LAYER_MODEL_CHILD;
+			}
+			bullet_param.position_ = player_position;
+			bullet_param.position_.y_ += 0.5f;
+			bullet_param.rotation_ = player_rotation;
+
+			// カメラの回転Xを利用
+			bullet_param.rotation_.x_ = camera_rotation.x;
+
+			bullet_param.scaling_ = {1.0f, 1.0f, 1.0f};
+
+			// バレット発砲
+			Bullet* bullet = object_manager_->GetNoUseBullet();
+			bullet->Fire(bullet_param);
+
+			// エフェクト再生
+			send_data.type_ = DATA_OBJ_PARAM;
+			send_data.object_param_.type_ = OBJ_EFFECT;
+			send_data.object_param_.position_.x_ = player_position.x_;
+			send_data.object_param_.position_.y_ = player_position.y_ + 0.5f;
+			send_data.object_param_.position_.z_ = player_position.z_;
+			send_data.object_param_.rotation_ = {0.0f, 0.0f, 0.0f};
+			strcpy_s(send_data.name, MAX_NAME_LEN, "water");
+			NetworkHost::SendTo(DELI_MULTI, send_data);
+		}
+
+		////-------------------------------------
+		//// マーカー
+		////-------------------------------------
+		//Vector3 poseffect = player_position;
+		//poseffect.y_ += 0.6f;
+		//Vector3 speed = { BULLET_DEF_SPEED_XZ, BULLET_DEF_SPEED_Y, BULLET_DEF_SPEED_XZ };
+		//Vector3 rot = Vector3(camera_rotation.x, camera_rotation.y, camera_rotation.z);
+		//// 回転値を少し調整
+		//rot.x_ += BULLET_OFFSET_ROT;
+		//// 回転値を参照して速度を改良
+		//speed.y_ += sinf(rot.x_) * BULLET_ADD_SPEED_Y;
+
+		//for (int j = 0; j < 120; j++)
+		//{
+		//	poseffect.x_ += sinf(rot.y_) * speed.x_;
+		//	poseffect.y_ += speed.y_;
+		//	poseffect.z_ += cosf(rot.y_) * speed.z_;
+		//	speed.y_ -= BULLET_GRAVITY;
+
+		//	float height = field->GetHeight(D3DXVECTOR3(poseffect.x_, poseffect.y_, poseffect.z_));
+		//	if (height > poseffect.y_)
+		//	{
+		//		Vector3 vec = poseffect - player_position;
+		//		float len = sqrt(vec.x_*vec.x_ + vec.z_ * vec.z_);
+		//		float scaling = 1.0f + len * 0.15f;
+
+		//		scaling = std::min<float>(scaling, 3.0f);
+
+		//		// エフェクト再生
+		//		send_data.type_ = DATA_OBJ_PARAM;
+		//		send_data.object_param_.type_ = OBJ_EFFECT;
+		//		send_data.object_param_.position_.x_ = poseffect.x_;
+		//		send_data.object_param_.position_.y_ = height;
+		//		send_data.object_param_.position_.z_ = poseffect.z_;
+		//		send_data.object_param_.rotation_ = {scaling, camera_rotation.y, 0.0f};
+		//		strcpy_s(send_data.name, MAX_NAME_LEN, "marker");
+		//		NetworkHost::SendTo((DELI_TYPE)i, send_data);
+		//		break;
+		//	}
+		//}
+
+		//------------------------------------------------
+		// プレイヤーデータ転送
+		//------------------------------------------------
+		send_data.type_ = DATA_OBJ_PARAM;
+		send_data.id_ = i;
+		send_data.object_param_.ex_id_ = 0;
+		send_data.object_param_.type_ = OBJ_PLAYER;
+		strcpy_s(send_data.name, MAX_NAME_LEN, player_str.c_str());
+		if(input)
+		{
+			if(GamePad::isPress(i, PAD_LS_DOWN) ||
+				GamePad::isPress(i, PAD_LS_UP) ||
+				GamePad::isPress(i, PAD_LS_LEFT) ||
+				GamePad::isPress(i, PAD_LS_RIGHT)){
+				send_data.object_param_.ex_id_ = 1;
+			}
+		}
+		else
+		{
+			send_data.object_param_.ex_id_ = 2;
+		}
+
+		send_data.object_param_.position_.x_ = player_position.x_;
+		send_data.object_param_.position_.y_ = player_position.y_;
+		send_data.object_param_.position_.z_ = player_position.z_;
+
+		send_data.object_param_.rotation_.x_ = player_rotation.x_;
+		send_data.object_param_.rotation_.y_ = player_rotation.y_;
+		send_data.object_param_.rotation_.z_ = player_rotation.z_;
+
+		NetworkHost::SendTo(DELI_MULTI, send_data);
+
+		//------------------------------------------------
+		// カメラデータ転送
+		//------------------------------------------------
+		camera_position = main_camera->position();
+		camera_focus = main_camera->focus();
+		camera_rotation = main_camera->rotation();
+
+		send_data.type_ = DATA_OBJ_PARAM;
+		send_data.object_param_.type_ = OBJ_CAMERA;
+
+		send_data.object_param_.position_.x_ = camera_position.x;
+		send_data.object_param_.position_.y_ = camera_position.y;
+		send_data.object_param_.position_.z_ = camera_position.z;
+
+		send_data.object_param_.rotation_.x_ = camera_focus.x;
+		send_data.object_param_.rotation_.y_ = camera_focus.y;
+		send_data.object_param_.rotation_.z_ = camera_focus.z;
+
+		send_data.object_param_.ex_vec_.x_ = camera_rotation.x;
+		send_data.object_param_.ex_vec_.y_ = camera_rotation.y;
+		send_data.object_param_.ex_vec_.z_ = camera_rotation.z;
+		NetworkHost::SendTo((DELI_TYPE)i, send_data);
+	}
+
+	//-------------------------------------
+	// 全員集合したらシーン遷移
+	//-------------------------------------
+	// 今はおじだけ集まったら遷移、全員分用意すること
+	D3DXVECTOR3 portal_posiiton = PORTAL_POSITION;
+	D3DXVECTOR3 player_pos;
+	int access_guest = NetworkHost::access_guest();
+	if(access_guest <= 0)
+	{
+		return;
+	}
+	for(int i = 0; i < access_guest; i++)
+	{
+		std::string player_str = "player" + std::to_string(i + 1);
+		Object *player_obj = object_manager_->Get(player_str);
+		Vector3 temp = player_obj->parameter().position_;
+		player_pos.x = temp.x_;
+		player_pos.y = temp.y_;
+		player_pos.z = temp.z_;
+		D3DXVECTOR3 vec(player_pos - portal_posiiton);
+		float distance = sqrtf((vec.x * vec.x) + (vec.y * vec.y) + (vec.z * vec.z));
+		if (!(distance < PORTAL_DISTANCE)){
+			return;
+		}
+	}
+	// シーン遷移
+	// シーンチェンジ命令送信
+	ZeroMemory(&send_data, sizeof(send_data));
+	send_data.type_ = DATA_SCENE_CHANGE_GAME;
+	NetworkHost::SendTo(DELI_MULTI, send_data);
+	ChangeServerState(STATE_GAME);
 }
 
 
@@ -397,22 +732,22 @@ void GameServer::Game()
 	// デバッグ用遷移勝者じじい
 	if(KeyBoard::isTrigger(DIK_9))
 	{
-		ChangeServerState(STATE_RESULT);
 		// シーンチェンジ命令送信
 		ZeroMemory(&send_data, sizeof(send_data));
 		send_data.type_ = DATA_SCENE_CHANGE_RESULT;
 		send_data.id_ = 0;
 		NetworkHost::SendTo(DELI_MULTI, send_data);
+		ChangeServerState(STATE_RESULT);
 	}
 	// デバッグ用遷移勝者ガキ
 	else if(KeyBoard::isTrigger(DIK_0))
 	{
-		ChangeServerState(STATE_RESULT);
 		// シーンチェンジ命令送信
 		ZeroMemory(&send_data, sizeof(send_data));
 		send_data.type_ = DATA_SCENE_CHANGE_RESULT;
 		send_data.id_ = 1;
 		NetworkHost::SendTo(DELI_MULTI, send_data);
+		ChangeServerState(STATE_RESULT);
 	}
 
 	// フィールド取得
@@ -428,7 +763,6 @@ void GameServer::Game()
 				strcpy_s(send_data.name, MAX_NAME_LEN, "time");
 				send_data.ui_param_.value_i_ = 180;
 				NetworkHost::SendTo(DELI_MULTI, send_data);
-				int access_guest = NetworkHost::access_guest();
 
 				for(int i = 0; i < MAX_GUEST; i++)
 				{
@@ -473,6 +807,7 @@ void GameServer::Game()
 					NetworkHost::SendTo((DELI_TYPE)i, send_data);
 				}
 
+				int access_guest = NetworkHost::access_guest();
 				for(int i = 0; i < access_guest; i++)
 				{
 					if(!guest_scene_change_[i])
@@ -573,12 +908,12 @@ void GameServer::Game()
 				{
 					// ゲームエンド条件１ タイムアップ
 					// じじい勝利
-					ChangeServerState(STATE_RESULT);
 					// シーンチェンジ命令送信
 					ZeroMemory(&send_data, sizeof(send_data));
 					send_data.type_ = DATA_SCENE_CHANGE_RESULT;
 					send_data.id_ = 0;
 					NetworkHost::SendTo(DELI_MULTI, send_data);
+					ChangeServerState(STATE_RESULT);
 				}
 
 				// 砦ライフ管理
@@ -619,12 +954,12 @@ void GameServer::Game()
 					{
 						// ガキの勝利
 						now_target_fort_ = 3;
-						ChangeServerState(STATE_RESULT);
 						// シーンチェンジ命令送信
 						ZeroMemory(&send_data, sizeof(send_data));
 						send_data.type_ = DATA_SCENE_CHANGE_RESULT;
 						send_data.id_ = 1;
 						NetworkHost::SendTo(DELI_MULTI, send_data);
+						ChangeServerState(STATE_RESULT);
 					}
 					else
 					{
@@ -1185,16 +1520,104 @@ void GameServer::ChangeServerState(SERVER_STATE next)
 	{
 		case STATE_MATCHING:
 			{
+				// フィールド取得
+				Field *field = dynamic_cast<Field*>(object_manager_->Get("matching_field"));
+				//---------------------------------------
+				// プレイヤー関連パラメータ
 				std::string player_str;
-				Object *player;
-				Vector3 pos(-55.0f, 0.0f, -50.0f), rot(0.0f, 0.0f, 0.0f);
-				for(int i = 0; i < MAX_GUEST; i++){
+				FbxPlayer *player;
+				for(int i = 0; i < MAX_GUEST; i++)
+				{
 					player_str = "player" + std::to_string(i + 1);
-					player = object_manager_->Get(player_str);
+					player = dynamic_cast<FbxPlayer*>(object_manager_->Get(player_str));
 
-					pos.x_ += 2.0f;
+					player->SetLife(1.0f);
+					player->SetWaterGauge(1.0f);
+					player->SetRecoverWaitTimer(0);
+					player->SetWaterSupplyEnable(0);
+
+					Vector3 pos, rot;
+					if(i == 0)
+					{
+						pos = GRANDFATHER_POSITION;
+						rot = {0.0f, 45.0f, 0.0f};
+					}
+					else
+					{
+						pos = GRANDFATHER_POSITION;
+						pos.x_ += i * 2.0f;
+						rot = {0.0f, 45.0f, 0.0f};
+					}
+					D3DXVECTOR3 poss;
+					poss.x = pos.x_;
+					poss.y = pos.y_;
+					poss.z = pos.z_;
+					pos.y_ = field->GetHeight(poss);
+
 					player->SetPosition(pos);
 					player->SetRotation(rot);
+
+					//------------------------------------------------
+					// カメラ調整
+					//------------------------------------------------
+					std::string camera_str = "camera" + std::to_string(i + 1);
+					Camera *main_camera = camera_manager_->Get(camera_str);
+					D3DXVECTOR3 camera_position, camera_focus;
+					D3DXVECTOR3 camera_rotation(main_camera->rotation());
+
+					// モデルの回転Yをそのままカメラの回転Yへ
+					camera_rotation.y = rot.y_;
+					// 一旦モデルを注視点に
+					camera_focus.x = pos.x_;
+					camera_focus.y = pos.y_;
+					camera_focus.z = pos.z_;
+					// 足元基準から体の中心辺りを基準に
+					camera_focus.y += CAMERA_FOCUS_OFFSET_Y;
+					// モデルの少し先を見るように調整
+					camera_focus.x += sinf(camera_rotation.y) * CAMERA_FOCUS_OFFSET * cosf(camera_rotation.x);
+					camera_focus.z += cosf(camera_rotation.y) * CAMERA_FOCUS_OFFSET * cosf(camera_rotation.x);
+					camera_focus.y += sinf(camera_rotation.x) * CAMERA_FOCUS_OFFSET;
+
+					// 注視点を基準にカメラ座標を設定
+					camera_position = camera_focus;
+					camera_position.x -= sinf(camera_rotation.y) * camera_pos_len_[i] * cosf(camera_rotation.x);
+					camera_position.z -= cosf(camera_rotation.y) * camera_pos_len_[i] * cosf(camera_rotation.x);
+					camera_position.y -= sinf(camera_rotation.x) * camera_pos_len_[i];
+
+					// カメラの地面めり込み回避処理
+					D3DXVECTOR3	vec_camera_to_focus = camera_focus - camera_position;
+
+					// 中間にカメラがめり込みそうなところが無いか検査
+					bool camera_re_calculate = false;
+					for(int j = 0; j < 10; ++j){
+						// 中間地点を計算
+						D3DXVECTOR3 lay_point = camera_position + vec_camera_to_focus * (0.1f * j);
+						float pos_y = field->GetHeight(lay_point);
+						// 回避処理
+						if(lay_point.y < pos_y + 0.1f){
+							camera_re_calculate = true;
+							camera_pos_len_[i] -= CAMARA_LEN_SPEED;
+						}
+					}
+
+					//カメラ座標再計算
+					if(camera_re_calculate == true){
+						camera_position = camera_focus;
+						camera_position.x -= sinf(camera_rotation.y) * camera_pos_len_[i] * cosf(camera_rotation.x);
+						camera_position.z -= cosf(camera_rotation.y) * camera_pos_len_[i] * cosf(camera_rotation.x);
+						camera_position.y -= sinf(camera_rotation.x) * camera_pos_len_[i];
+						camera_position.y = field->GetHeight(camera_position) + 0.1f;
+					}
+
+					camera_pos_len_[i] += CAMARA_LEN_SPEED;
+					if(camera_pos_len_[i] > CAMERA_POS_LEN){
+						camera_pos_len_[i] = CAMERA_POS_LEN;
+					}
+
+					// カメラにパラメータを再セット
+					main_camera->SetPosition(camera_position);
+					main_camera->SetFocus(camera_focus);
+					main_camera->SetRotation(camera_rotation);
 				}
 			}
 			break;

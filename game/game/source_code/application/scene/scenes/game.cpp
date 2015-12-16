@@ -88,6 +88,7 @@ Game::Game()
 	font1_ = new DebugFont;
 	font2_ = new DebugFont;
 	use_camera_name_ = "MainCamera";
+    object_manager_->SetDrawEnable(LAYER_DAMAGE_EFFECT, false);
 
 	//-------------------------------------
 	// エフェクトの読み込み
@@ -244,7 +245,6 @@ Game::Game()
 		lake_collision_param);
 
 
-
 	//-------------------------------------
 	// 砦
 	//-------------------------------------
@@ -293,7 +293,6 @@ Game::Game()
 			fort_collision_param);
 		fort->SetLife(FORT_LIFE[i]);
 	}
-
 
 	//-------------------------------------
 	// FBXおじ
@@ -637,7 +636,8 @@ Game::Game()
 //-------------------------------------
 Game::~Game()
 {
-	effect_manager_ = nullptr;
+	effect_manager_->StopAll();
+	effect_manager_ = NULL;
 	SAFE_DELETE(object_manager_);
 	SAFE_DELETE(camera_manager_);
 	SAFE_DELETE(font1_);
@@ -828,13 +828,13 @@ void Game::Update()
 //		cosf(-grandfather_rotation.y_) * GamePad::isStick(GAMEPAD_GRANDFATHER).lsy_) * player_speed;
 //
 //	if (GamePad::isPress(GAMEPAD_GRANDFATHER, PAD_RS_LEFT)){
-//		grandfather_rotation.y_ -= CHAR_ROT_SPEED;
+//		grandfather_rotation.y_ += CHAR_ROT_SPEED*GamePad::isStick(GAMEPAD_GRANDFATHER).rsx_;
 //		if (grandfather_rotation.y_ < D3DX_PI){
 //			grandfather_rotation.y_ += D3DX_PI * 2.0f;
 //		}
 //	}
 //	if (GamePad::isPress(GAMEPAD_GRANDFATHER, PAD_RS_RIGHT)){
-//		grandfather_rotation.y_ += CHAR_ROT_SPEED;
+//		grandfather_rotation.y_ += CHAR_ROT_SPEED*GamePad::isStick(GAMEPAD_GRANDFATHER).rsx_;
 //		if (grandfather_rotation.y_ > D3DX_PI){
 //			grandfather_rotation.y_ -= D3DX_PI * 2.0f;
 //		}
@@ -1003,10 +1003,10 @@ void Game::Update()
 //		grandfather_position.y_,
 //		grandfather_position.z_);
 //	grandfather_position.y_ = field->GetHeight(grandfather_pos);
-//	/*if (grandfather_position.y_ > 0.4f ||
+//	if (grandfather_position.y_ > 0.4f ||
 //		grandfather_position.y_ < -0.4f){
 //		grandfather_position = grandfather_prevposition;
-//	}*/
+//	}
 //	
 //	D3DXVECTOR3 child_pos(
 //		child_position.x_,
@@ -1085,13 +1085,13 @@ void Game::Update()
 //#endif
 //	
 //	if(GamePad::isPress(GAMEPAD_GRANDFATHER, PAD_RS_UP)){
-//		camera_rotation.x -= CAMERA_ROT_SPEED;
+//			camera_rotation.x += CAMERA_ROT_SPEED*GamePad::isStick(GAMEPAD_GRANDFATHER).rsy_;
 //		if(camera_rotation.x < -CAMERA_ROT_X_LIMIT){
 //			camera_rotation.x = -CAMERA_ROT_X_LIMIT;
 //		}
 //	}
 //	if(GamePad::isPress(GAMEPAD_GRANDFATHER, PAD_RS_DOWN)){
-//		camera_rotation.x += CAMERA_ROT_SPEED;
+//		camera_rotation.x += CAMERA_ROT_SPEED*GamePad::isStick(GAMEPAD_GRANDFATHER).rsy_;
 //		if(camera_rotation.x > CAMERA_ROT_X_LIMIT){
 //			camera_rotation.x = CAMERA_ROT_X_LIMIT;
 //		}
@@ -1479,11 +1479,14 @@ void Game::Draw()
 	DirectX9Holder::DrawBegin();
 	DirectX9Holder::Clear(color);
 
-	camera_manager_->Set("MainCamera");
+    DamageEffect *damage_effect = dynamic_cast<DamageEffect*>(
+                                object_manager_->Get("damage_effect"));
+	camera_manager_->Set(use_camera_name_);
 	object_manager_->Draw();
 	effect_manager_->Draw();
+    damage_effect->Draw();
 	//collision_manager_->Draw();
-	
+
 	font1_->Draw(rect1, font1_color);
 	font2_->Draw(rect2, font2_color);
 	Fade::Draw();

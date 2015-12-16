@@ -78,6 +78,7 @@ struct OBJ_PARAM
 	OBJ_TYPE	type_;			// オブジェクトタイプ
 	VEC3		position_;		// 座標
 	VEC3		rotation_;		// 回転
+	VEC3		ex_vec_;		// 特殊項目
 	int			ex_id_;			// EX項目 FBXのアニメーションIDなどで
 };
 

@@ -68,13 +68,6 @@ Application::Application(
 	NetworkHost::StartCommunication(scene_manager_);
 #else
 	NetworkGuest::StartCommunication(scene_manager_);
-	Sleep(1000);
-	// ホストと通信できるまですっこんでろ
-	while((!NetworkGuest::disco_host()))
-	{
-		Sleep(1000);
-		NetworkGuest::TrySearchHost();
-	}
 #endif
 }
 
@@ -84,6 +77,11 @@ Application::Application(
 //-------------------------------------
 Application::~Application()
 {
+	SAFE_DELETE(scene_manager_);
+	SAFE_DELETE(fps_);
+	SAFE_DELETE(renderer_);
+	SAFE_DELETE(keyboard_);
+	SAFE_DELETE(gamepad_);
 	#ifdef NETWORK_HOST_MODE
 		NetworkHost::CloseCommunication();
 	#else
@@ -92,13 +90,8 @@ Application::~Application()
 	TextureManager::AllRelease();
 	FbxContainerManager::AllRelease();
 	XContainerManager::AllRelease();
-	Sound::End();
 	EffectManager::Delete();
-	SAFE_DELETE(scene_manager_);
-	SAFE_DELETE(fps_);
-	SAFE_DELETE(renderer_);
-	SAFE_DELETE(keyboard_);
-	SAFE_DELETE(gamepad_);
+	Sound::End();
 }
 
 

@@ -459,17 +459,35 @@ void NetworkGuest::ObjDataAdaptation(
 				}
 				EFFECT_PARAMETER_DESC effect_param;
 				std::string name = rec_data.name;
-				MyEffect *effect = effect_manager->Get(name);
-				if(effect == nullptr)
+				if(name == "marker")
 				{
-					return;
+					EFFECT_PARAMETER_DESC effect_param;
+					MyEffect *effect = effect_manager->Get(name);
+					effect_param = effect->parameter();
+					effect_param.position_.x_ = rec_data.object_param_.position_.x_;
+					effect_param.position_.y_ = rec_data.object_param_.position_.y_;
+					effect_param.position_.z_ = rec_data.object_param_.position_.z_;
+					effect_param.rotation_ = {0.0f, 0.0f, 0.0f};
+					effect_param.rotation_.y_ = rec_data.object_param_.rotation_.y_;
+					effect_param.scaling_ = {	rec_data.object_param_.rotation_.x_,
+												rec_data.object_param_.rotation_.x_,
+												rec_data.object_param_.rotation_.x_};
+					effect->SetParameter(effect_param);
 				}
-				effect_param = effect->parameter();
-				effect_param.position_.x_ = rec_data.object_param_.position_.x_;
-				effect_param.position_.y_ = rec_data.object_param_.position_.y_;
-				effect_param.position_.z_ = rec_data.object_param_.position_.z_;
-				effect->SetParameter(effect_param);
-				effect_manager->Play(name);
+				else
+				{
+					MyEffect *effect = effect_manager->Get(name);
+					if(effect == nullptr)
+					{
+						return;
+					}
+					effect_param = effect->parameter();
+					effect_param.position_.x_ = rec_data.object_param_.position_.x_;
+					effect_param.position_.y_ = rec_data.object_param_.position_.y_;
+					effect_param.position_.z_ = rec_data.object_param_.position_.z_;
+					effect->SetParameter(effect_param);
+					effect_manager->Play(name);
+				}
 			}
 			break;
 
@@ -583,6 +601,7 @@ void NetworkGuest::ObjDataAdaptation(
 				}
 				D3DXVECTOR3 camera_position;
 				D3DXVECTOR3 camera_focus;
+				D3DXVECTOR3 camera_rotation;
 
 				camera_position.x = rec_data.object_param_.position_.x_;
 				camera_position.y = rec_data.object_param_.position_.y_;
@@ -592,8 +611,13 @@ void NetworkGuest::ObjDataAdaptation(
 				camera_focus.y = rec_data.object_param_.rotation_.y_;
 				camera_focus.z = rec_data.object_param_.rotation_.z_;
 
+				camera_rotation.x = rec_data.object_param_.ex_vec_.x_;
+				camera_rotation.y = rec_data.object_param_.ex_vec_.y_;
+				camera_rotation.z = rec_data.object_param_.ex_vec_.z_;
+
 				main_camera->SetPosition(camera_position);
 				main_camera->SetFocus(camera_focus);
+				main_camera->SetRotation(camera_rotation);
 
 			}
 			break;

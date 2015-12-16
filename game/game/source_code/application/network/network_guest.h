@@ -46,6 +46,7 @@ public:
 	//-------------------------------------
 	// ƒpƒ‰ƒ[ƒ^
 	//-------------------------------------
+	static int id(){ return id_; }
 	static bool disco_host(){ return disco_host_; }
 	static int winner(){ return winner_; }
 
