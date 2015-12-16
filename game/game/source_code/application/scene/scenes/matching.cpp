@@ -499,6 +499,40 @@ void Matching::Update()
 		shot_late = 10;
 	}
 
+	// まーかー
+	//EFFECT_PARAMETER_DESC effect_param;
+	//MyEffect *effect = effect_manager_->Get("water");
+	//effect_param = effect->parameter();
+	//effect->SetParameter(effect_param);
+	//Vector3 poseffect = grandfather_position;
+	//poseffect.y_ += 0.6f;
+	//Vector3 speed = { BULLET_DEF_SPEED_XZ, BULLET_DEF_SPEED_Y, BULLET_DEF_SPEED_XZ };
+	//Vector3 rot = Vector3(camera_rotation.x, camera_rotation.y, camera_rotation.z);
+	//// 回転値を少し調整
+	//rot.x_ += BULLET_OFFSET_ROT;
+	//// 回転値を参照して速度を改良
+	//speed.y_ += sinf(rot.x_) * BULLET_ADD_SPEED_Y;
+
+	//for (int i = 0; i < 120; i++)
+	//{
+	//	poseffect.x_ += sinf(rot.y_) * speed.x_;
+	//	poseffect.y_ += speed.y_;
+	//	poseffect.z_ += cosf(rot.y_) * speed.z_;
+	//	speed.y_ -= BULLET_GRAVITY;
+
+	//	float height = field->GetHeight(D3DXVECTOR3(poseffect.x_, poseffect.y_, poseffect.z_));
+	//	if (height > poseffect.y_)
+	//	{
+	//		EFFECT_PARAMETER_DESC effect_param;
+	//		MyEffect *effect = effect_manager_->Get("portal");
+	//		effect_param = effect->parameter();
+	//		effect_param.position_ = poseffect;
+	//		effect_param.position_.y_ = poseffect.y_+0.1f;
+	//		effect->SetParameter(effect_param);
+	//		break;
+	//	}
+	//}
+
 	
 
 	camera_manager_->Update();
