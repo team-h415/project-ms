@@ -7,12 +7,21 @@
 //-------------------------------------
 // include
 //-------------------------------------
+#include "../../../../config/config.h"
 #include "../../../../../common/common.h"
 #include "../../../../render/renderer.h"
 #include "../../../../render/directx9/directx9.h"
 #include "../../../../render/directx9/directx9_holder.h"
+#include "../../../../input/input.h"
+#include "../../../../input/inputs/gamepad.h"
 #include "../../../../math/vector.h"
 #include "../../../../shader/shader.h"
+#include "../../../../scene/scene.h"
+#include "../../../../scene/scene_manager.h"
+#include "../../../../scene/scenes/game.h"
+#include "../../../object.h"
+#include "../../../object_manager.h"
+#include "../../sprite/water_gage.h"
 #include "../../../object.h"
 #include "../fbx_model.h"
 #include "fbx_player.h"
@@ -108,6 +117,27 @@ void FbxChild::Action(
 		float sub = range - distance;
 		vec *= sub;
 		parameter_.position_ -= vec;
+	}
+
+	//-------------------------------------
+	// ŒÎ‚Æ“–‚½‚Á‚½‚ç
+	if (target->parameter().layer_ == LAYER_SPRITE_LAKE){
+		//if (GamePad::isPress(GAMEPAD_CHILD1, PAD_BUTTON_6) && water_gauge_ < 1.0f){
+		//	//-------------------------------------
+		//	// ƒV[ƒ“Žæ“¾
+		//	Scene *scene = SceneManager::GetCurrentScene();
+		//	std::string str = SceneManager::GetCurrentSceneName();
+		//	if (str == "Game"){
+		//		Game *game = dynamic_cast<Game*>(scene);
+
+		//		// …•â‹‹
+		//		water_gauge_ += CHILD_SUB_WATERGAUGE;
+
+		//		Object *obj = game->object_manager()->Get("water_gage");
+		//		WaterGage *water_gage_obj = static_cast<WaterGage*>(obj);
+		//		water_gage_obj->SetChangeValue(water_gauge_);
+		//	}
+		//}
 	}
 }
 

@@ -195,7 +195,7 @@ Game::Game()
 		obj_lake->parameter().position_.x_,
 		obj_lake->parameter().position_.y_,
 		obj_lake->parameter().position_.z_ };
-	lake_collision_param.range_ = LAKE_SIZE;
+	lake_collision_param.range_ = LAKE_RANGE;
 	lake_collision_param.offset_ = { -2.0f, 0.0f, 10.0f };
 	
 	collision_manager_->Create(object_manager_->Get("lake"),
