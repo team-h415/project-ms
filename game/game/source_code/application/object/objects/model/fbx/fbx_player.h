@@ -126,6 +126,8 @@ protected:
 	int recover_wait_timer_;
 	//‹‹…—LŒøƒtƒ‰ƒO
 	bool water_supply_enable_;
+
+	int water_supply_effect_timer_;
 };
 
 

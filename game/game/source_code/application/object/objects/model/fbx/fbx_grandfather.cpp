@@ -23,6 +23,8 @@
 #include "../../../object.h"
 #include "../../../object_manager.h"
 #include "../../sprite/water_gage.h"
+#include "../../../../effect/effect.h"
+#include "../../../../effect/effect_manager.h"
 #include "../fbx_model.h"
 #include "fbx_player.h"
 #include "fbx_grandfather.h"
@@ -39,6 +41,7 @@ FbxGrandfather::FbxGrandfather(const OBJECT_PARAMETER_DESC &parameter) :
 	animation_count_ = MAX_TYPE;
 
 	recover_wait_timer_ = 0;
+	water_supply_effect_timer_ = 0;
 
 	// モデル読み込み
 	Load("./resource/model/fbx/ogchan.fbx");
@@ -130,14 +133,44 @@ void FbxGrandfather::Action(
 
 					// 水補給
 					water_gauge_ += GRANDFATHER_SUB_WATERGAUGE;
-					std::min<float>(water_gauge_, 1.0f);
+					water_gauge_ = std::min<float>(water_gauge_, 1.0f);
 					Object *obj = game->object_manager()->Get("water_gage");
 					WaterGage *water_gage_obj = static_cast<WaterGage*>(obj);
 					water_gage_obj->SetChangeValue(water_gauge_);
 					// 重複防止
 					water_supply_enable_ = false;
+
+					if (water_supply_effect_timer_ % 45 == 0)
+					{
+						// 補給エフェクト
+						OBJECT_PARAMETER_DESC grandfather_parameter = this->parameter();
+						EFFECT_PARAMETER_DESC effect_param;
+						MyEffect *effect = game->effect_manager()->Get("watersupply");
+						effect_param = effect->parameter();
+						effect_param.position_ = grandfather_parameter.position_;
+						effect_param.position_.x_ += sinf(grandfather_parameter.rotation_.y_)*0.2f;
+						effect_param.position_.z_ += cosf(grandfather_parameter.rotation_.y_)*0.2f;
+						effect_param.position_.y_ += 0.5f;
+						effect->SetParameter(effect_param);
+						game->effect_manager()->Play("watersupply");
+					}
+					// 補給泡エフェクト
+					OBJECT_PARAMETER_DESC grandfather_parameter = this->parameter();
+					EFFECT_PARAMETER_DESC effect_param;
+					MyEffect *effect = game->effect_manager()->Get("watersupplybubble");
+					effect_param = effect->parameter();
+					effect_param.position_ = grandfather_parameter.position_;
+					effect_param.position_.y_ += 0.2f;
+					effect->SetParameter(effect_param);
+					game->effect_manager()->Play("watersupplyboble");
+
+
+					water_supply_effect_timer_++;
 				}
 			}
+		}
+		else{
+			water_supply_effect_timer_ = 0;
 		}
 	}
 

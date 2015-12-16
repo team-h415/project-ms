@@ -70,41 +70,51 @@ Game::Game()
 	//-------------------------------------
 	// エフェクトの読み込み
 	//-------------------------------------
-	EFFECT_PARAMETER_DESC water_param;
-	water_param.position_ = { 0.0f, 0.0f, 0.0f };
-	water_param.rotation_ = { 0.0f, 0.0f, 0.0f };
-	water_param.scaling_ = { 1.0f, 1.0f, 1.0f };
-	water_param.speed_ = 1.0f;
+	EFFECT_PARAMETER_DESC effect_param;
+	effect_param.position_ = { 0.0f, 0.0f, 0.0f };
+	effect_param.rotation_ = { 0.0f, 0.0f, 0.0f };
+	effect_param.scaling_ = { 1.0f, 1.0f, 1.0f };
+	effect_param.speed_ = 1.0f;
 
 	effect_manager_->Create(
 		"water",
 		"resource/effect/BulletFire.efk",
-		water_param);
+		effect_param);
 
 	effect_manager_->Create(
 		"damage",
 		"resource/effect/Damage3_2.efk",
-		water_param);
+		effect_param);
 
 	effect_manager_->Create(
 		"dead",
 		"resource/effect/Dead2.efk",
-		water_param);
+		effect_param);
 
 	effect_manager_->Create(
 		"smoke",
 		"resource/effect/Smoke.efk",
-		water_param);
+		effect_param);
 
 	effect_manager_->Create(
 		"smoke2",
 		"resource/effect/Smoke2.efk",
-		water_param);
+		effect_param);
 
 	effect_manager_->Create(
 		"dash",
 		"resource/effect/Dash.efk",
-		water_param);
+		effect_param);
+
+	effect_manager_->Create(
+		"watersupply",
+		"resource/effect/WaterSupply.efk",
+		effect_param);
+
+	effect_manager_->Create(
+		"watersupplybubble",
+		"resource/effect/WaterSupply2.efk",
+		effect_param);
 
 	//-------------------------------------
 	// メインカメラ
@@ -767,7 +777,6 @@ void Game::Update()
 		effect_manager_->Play("smoke");
 	}
 
-
 #endif //_DEBUG
 
 
@@ -1109,6 +1118,10 @@ void Game::Update()
 
 
 #ifdef _DEBUG
+	if (KeyBoard::isPress(DIK_9)){
+		grandfather->SetWaterGauge(0.0f);
+		waterGage->SetChangeValue(0.0f);
+	}
 	if(KeyBoard::isPress(DIK_SPACE)){
 		EFFECT_PARAMETER_DESC effect_param;
 		MyEffect *effect = effect_manager_->Get("water");
