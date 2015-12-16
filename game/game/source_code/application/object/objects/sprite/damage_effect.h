@@ -34,8 +34,6 @@ public:
 	}
 private:
 	void CalculateVertex();
-	// MaxÇÃílÇÕ100Ç…ÅI
-	void SetPoint(const int point);
     Vertex2D *vertex_;
     LPDIRECT3DTEXTURE9 diffuse_texture_;
     LPDIRECT3DTEXTURE9 alpha_texture_;

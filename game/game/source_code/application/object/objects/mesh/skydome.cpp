@@ -68,6 +68,11 @@ void SkyDome::Update()
 	D3DXMatrixIdentity(&scaling);
 	D3DXMatrixIdentity(&world_);
 
+	parameter_.rotation_.y_ += D3DX_PI * 0.0001f;
+	if (parameter_.rotation_.y_ > D3DX_PI){
+		parameter_.rotation_.y_ -= D3DX_PI * 2.0f;
+	}
+
 	D3DXMatrixScaling(
 		&scaling, 1.0f, 1.0f, 1.0f);
 	D3DXMatrixMultiply(

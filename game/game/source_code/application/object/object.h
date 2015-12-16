@@ -37,6 +37,7 @@ enum OBJECT_LAYER
     LAYER_TIMER,
     LAYER_SPRITE_2D,
     LAYER_FORT_GAUGE,
+	LAYER_COUNTDOWN,
 	LAYER_MAX,
 };
 
@@ -51,6 +52,7 @@ struct OBJECT_PARAMETER_DESC
 	Vector3 scaling_;
 	OBJECT_LAYER layer_;
 	OBJECT_LAYER parent_layer_;
+	std::string name_;
 };
 
 
@@ -79,8 +81,12 @@ public:
 	bool this_delete(){
 		return this_delete_;
 	}
+	bool use(){
+		return use_;
+	}
 
 	void SetThisDelete(bool flag){ this_delete_ = flag; }
+	void SetUse(bool flag){ use_ = flag; }
 
 	// ÉpÉâÉÅÅ[É^ê›íË
 	void SetPosition(
@@ -99,6 +105,7 @@ public:
 protected:
 	OBJECT_PARAMETER_DESC parameter_;
 	bool this_delete_;
+	bool use_;
 };
 
 

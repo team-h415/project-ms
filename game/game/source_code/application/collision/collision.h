@@ -55,12 +55,18 @@ public:
 	void SetThisDelete(bool flag){
 		this_delete_ = flag;
 	}
+	bool GetUse(void){ return use_; }
+	void SetUse(bool flag){
+		use_ = flag;
+	}
+
 private:
 	COLLISION_PARAMETER_DESC parameter_;
 	Object *parent_;
 	Vertex3D vertex_[3][11];
 	D3DXMATRIX world_;
 	bool this_delete_;
+	bool use_;
 };
 
 

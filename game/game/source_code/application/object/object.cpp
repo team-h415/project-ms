@@ -18,6 +18,7 @@
 Object::Object()
 {
 	this_delete_ = false;
+	use_ = true;
 }
 
 

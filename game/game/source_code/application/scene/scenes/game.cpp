@@ -30,6 +30,7 @@
 #include "../../object/objects/model/fbx/fbx_child.h"
 #include "../../object/objects/sprite/timer.h"
 #include "../../object/objects/sprite/damage_effect.h"
+#include "../../object/objects/sprite/countdown.h"
 #include "../../effect/effect.h"
 #include "../../effect/effect_manager.h"
 #include "../../object/objects/sprite/water_gage.h"
@@ -58,15 +59,32 @@
 Game::Game()
 {
 	//-------------------------------------
+	// ゲームルール用パラメータ初期化
+	//-------------------------------------
+	// ステージ
+	stage_ = 1;
+	// おじデバフフラグ
+	grandfather_debuff_ = false;
+	// 子供死亡フラグ
+	child_death_ = false;
+	// 子供リスポーン待ち時間
+	child_respawn_waittime_ = 0;
+	// ダッシュエフェクトタイマー初期化
+	dash_effect_timer_ = 0;
+	// 経過フレーム数
+	frame_ = 0;
+	// 経過時間
+	timer_ = 0;
+
+	//-------------------------------------
 	// 各マネージャ・デバッグシステム初期化
 	//-------------------------------------
 	camera_manager_ = new CameraManager;
 	object_manager_ = new ObjectManager;
-	effect_manager_ = new EffectManager(10000);
+	effect_manager_ = EffectManager::Get();
 	collision_manager_ = new CollisionManager;
 	font1_ = new DebugFont;
 	font2_ = new DebugFont;
-	Bullet::Init();
 	use_camera_name_ = "MainCamera";
 
 	//-------------------------------------
@@ -145,63 +163,65 @@ Game::Game()
 	//-------------------------------------
 	// 地形
 	//-------------------------------------
-	OBJECT_PARAMETER_DESC param;
-	param.position_ = { 0.0f, 0.0f, 0.0f };
-	param.rotation_ = { 0.0f, 0.0f, 0.0f };
-	param.scaling_ = { 200.0f, 1.0f, 200.0f };
-	param.layer_ = LAYER_MESH_FIELD;
+	OBJECT_PARAMETER_DESC field_param;
+	field_param.name_ = "field";
+	field_param.position_ = { 0.0f, 0.0f, 0.0f };
+	field_param.rotation_ = { 0.0f, 0.0f, 0.0f };
+	field_param.scaling_ = { 200.0f, 1.0f, 200.0f };
+	field_param.layer_ = LAYER_MESH_FIELD;
 
 	object_manager_->Create(
-		"field",
-		param,
+		field_param,
 		"resource/mesh/map.heightmap");
 
 
 	//-------------------------------------
 	// 空
 	//-------------------------------------
-	param.position_ = { 0.0f, 0.0f, 0.0f };
-	param.rotation_ = { 0.0f, 0.0f, 0.0f };
-	param.scaling_ = { 500.0f, 1.0f, 500.0f };
-	param.layer_ = LAYER_MESH_SKYDOME;
+	OBJECT_PARAMETER_DESC skydome_param;
+	skydome_param.name_ = "skydome_up";
+	skydome_param.position_ = { 0.0f, 0.0f, 0.0f };
+	skydome_param.rotation_ = { 0.0f, 0.0f, 0.0f };
+	skydome_param.scaling_ = { 500.0f, 1.0f, 500.0f };
+	skydome_param.layer_ = LAYER_MESH_SKYDOME;
 
 	object_manager_->Create(
-		"skydome_up",
-		param,
+		skydome_param,
 		"resource/mesh/skydome_up.txt");
 
-	param.rotation_ = { 0.0f, 0.0f, D3DX_PI };
+	skydome_param.name_ = "skydome_bottom";
+	skydome_param.rotation_ = { 0.0f, 0.0f, D3DX_PI };
 
 	object_manager_->Create(
-		"skydome_bottom",
-		param,
+		skydome_param,
 		"resource/mesh/skydome_bottom.txt");
 
 
 	//-------------------------------------
 	// 池
 	//-------------------------------------
-	param.position_ = { 0.0f, -0.5f, 0.0f };
-	param.rotation_ = { 0.0f, 0.0f, 0.0f };
-	param.scaling_ = { 30.0f, 1.0f, 30.0f };
-	param.layer_ = LAYER_SPRITE_LAKE;
+	OBJECT_PARAMETER_DESC lake_param;
+	lake_param.name_ = "lake";
+	lake_param.position_ = { 0.0f, -0.5f, 0.0f };
+	lake_param.rotation_ = { 0.0f, 0.0f, 0.0f };
+	lake_param.scaling_ = { 30.0f, 1.0f, 30.0f };
+	lake_param.layer_ = LAYER_SPRITE_LAKE;
 
 	object_manager_->Create(
-		"lake",
-		param);
+		lake_param);
 
 	//-------------------------------------
 	// 砦
 	//-------------------------------------
 	// 砦1
 	OBJECT_PARAMETER_DESC fort1_param;
+	fort1_param.name_ = "fort1";
 	fort1_param.layer_ = LAYER_MODEL_FORT;
 	fort1_param.position_ = FORT1_POSITION;
 	fort1_param.rotation_ = { 0.0f, 0.0f, 0.0f };
 	fort1_param.scaling_ = { 1.0f, 1.0f, 1.0f };
 
 	object_manager_->Create(
-		"fort1",
 		fort1_param,
 		"resource/model/x/test.x");
 
@@ -222,13 +242,13 @@ Game::Game()
 
 	// 砦2
 	OBJECT_PARAMETER_DESC fort2_param;
+	fort2_param.name_ = "fort2";
 	fort2_param.layer_ = LAYER_MODEL_FORT;
 	fort2_param.position_ = FORT2_POSITION;
 	fort2_param.rotation_ = { 0.0f, 0.0f, 0.0f };
 	fort2_param.scaling_ = { 1.0f, 1.0f, 1.0f };
 
 	object_manager_->Create(
-		"fort2",
 		fort2_param,
 		"resource/model/x/test.x");
 
@@ -249,13 +269,13 @@ Game::Game()
 
 	// 砦3
 	OBJECT_PARAMETER_DESC fort3_param;
+	fort3_param.name_ = "fort3";
 	fort3_param.layer_ = LAYER_MODEL_FORT;
 	fort3_param.position_ = FORT3_POSITION;
 	fort3_param.rotation_ = { 0.0f, 0.0f, 0.0f };
 	fort3_param.scaling_ = { 1.0f, 1.0f, 1.0f };
 
 	object_manager_->Create(
-		"fort3",
 		fort3_param,
 		"resource/model/x/test.x");
 
@@ -278,14 +298,13 @@ Game::Game()
 	// FBXおじ
 	//-------------------------------------
 	OBJECT_PARAMETER_DESC grandfather_param;
+	grandfather_param.name_ = "player1";
 	grandfather_param.layer_ = LAYER_MODEL_GRANDFATHER;
 	grandfather_param.position_ = GRANDFATHER_POSITION_STAGE1;
 	grandfather_param.rotation_ = { 0.0f, 0.0f, 0.0f };
 	grandfather_param.scaling_ = { 1.0f, 1.0f, 1.0f };
 
-	object_manager_->Create(
-		"player1",
-		grandfather_param);
+	object_manager_->Create(grandfather_param);
 
 	COLLISION_PARAMETER_DESC fbx_collision_param;
 	Object *obj2 = object_manager_->Get("player1");
@@ -310,10 +329,9 @@ Game::Game()
 	for(int i = 1; i < MAX_GUEST; i++)
 	{
 		std::string name = "player" + std::to_string(i + 1);
+		child_param.name_ = name;
 		child_param.position_ = CHILD_POSITION[i];
-		object_manager_->Create(
-			name,
-			child_param);
+		object_manager_->Create(child_param);
 
 		COLLISION_PARAMETER_DESC child_collision_param;
 		Object *obj3 = object_manager_->Get(name);
@@ -328,11 +346,11 @@ Game::Game()
 			child_collision_param);
 	}
 
-
 	//-------------------------------------
 	// タイマー
 	//-------------------------------------
     OBJECT_PARAMETER_DESC time_param;
+	time_param.name_ = "time";
     time_param.position_ = {
         SCREEN_WIDTH * 0.5f,
         40.0f,
@@ -344,7 +362,6 @@ Game::Game()
 
 	Timer* timer = static_cast<Timer*>(
 		object_manager_->Create(
-		"time",
 		time_param));
 
 	timer->SetTexture("resource/texture/figure_all.png");
@@ -358,6 +375,7 @@ Game::Game()
 	// 砦UI
 	//-------------------------------------
     OBJECT_PARAMETER_DESC fort_state_param;
+	fort_state_param.name_ = "fort_state";
     fort_state_param.position_ = {
         SCREEN_WIDTH * 0.5f,
         100.0f,
@@ -368,10 +386,11 @@ Game::Game()
     fort_state_param.layer_ = LAYER_SPRITE_2D;
 
     object_manager_->Create(
-        "fort_state", fort_state_param);
+		fort_state_param);
 
 
     OBJECT_PARAMETER_DESC fort_gauge_param;
+	fort_gauge_param.name_ = "fort_gauge_manager";
     fort_gauge_param.position_ = {
         SCREEN_WIDTH * 0.5f,
         100.0f,
@@ -382,32 +401,15 @@ Game::Game()
     fort_gauge_param.layer_ = LAYER_FORT_GAUGE;
 
     object_manager_->Create(
-        "fort_gauge_manager", fort_gauge_param,
+		fort_gauge_param,
         "resource/texture/game/Child_01.jpg");
-
-
-	//-------------------------------------
-	// ミニマップUI
-	//-------------------------------------
-    OBJECT_PARAMETER_DESC mini_map_param;
-    mini_map_param.position_ = {
-        1180.0f,
-        100.0f,
-        0.0f
-    };
-    mini_map_param.rotation_ = { 0.0f, 0.0f, 0.0f };
-    mini_map_param.scaling_ = { 200.0f, 200.0f, 0.0f };
-    mini_map_param.layer_ = LAYER_SPRITE_2D;
-
-    object_manager_->Create(
-        "mini_map", mini_map_param,
-        "resource/texture/title/logo.png");
 
 
     //-------------------------------------
     // 水ゲージ下地UI
     //-------------------------------------
-    OBJECT_PARAMETER_DESC water_design_param;
+	OBJECT_PARAMETER_DESC water_design_param;
+	water_design_param.name_ = "water_design";
     water_design_param.position_ = {
         128.0f,
         624.0f,
@@ -418,13 +420,14 @@ Game::Game()
     water_design_param.layer_ = LAYER_WATER_GAGE;
 
     object_manager_->Create(
-        "water_design", water_design_param,
+		 water_design_param,
         "resource/texture/game/water_gage_background.png");
 
     //-------------------------------------
     // 水ゲージ（ゲージ本体）UI
     //-------------------------------------
     OBJECT_PARAMETER_DESC water_gage_param;
+	water_gage_param.name_ = "water_gage";
     water_gage_param.position_ = {
         128.0f,
         624.0f,
@@ -435,13 +438,14 @@ Game::Game()
     water_gage_param.layer_ = LAYER_WATER_GAGE;
 
     object_manager_->Create(
-        "water_gage", water_gage_param,
+        water_gage_param,
         "resource/texture/game/water_gage_diffuse.png");
 
     //-------------------------------------
     // 水ゲージ（周り）UI
     //-------------------------------------
     OBJECT_PARAMETER_DESC water_gage_around_param;
+	water_gage_around_param.name_ = "water_gage_around";
     water_gage_around_param.position_ = {
         128.0f,
         624.0f,
@@ -452,13 +456,14 @@ Game::Game()
     water_gage_around_param.layer_ = LAYER_SPRITE_2D;
 
     object_manager_->Create(
-        "water_gage_around", water_gage_around_param,
+         water_gage_around_param,
         "resource/texture/game/water_gage_around.png");
 
     //-------------------------------------
     // 水ポリゴンUI
     //-------------------------------------
     OBJECT_PARAMETER_DESC water_poly_param;
+	water_poly_param.name_ = "water_poly";
     water_poly_param.position_ = {
         128.0f,
         624.0f,
@@ -469,13 +474,14 @@ Game::Game()
     water_poly_param.layer_ = LAYER_SPRITE_2D;
 
     object_manager_->Create(
-        "water_poly", water_poly_param,
+        water_poly_param,
         "resource/texture/game/water_desine.png");
 
     //-------------------------------------
     // ダメージエフェクトUI
     //-------------------------------------
     OBJECT_PARAMETER_DESC hit_point_param;
+	hit_point_param.name_ = "damage_effect";
     hit_point_param.position_ = {
         SCREEN_WIDTH * 0.5f,
         SCREEN_HEIGHT * 0.5f,
@@ -486,7 +492,7 @@ Game::Game()
     hit_point_param.layer_ = LAYER_DAMAGE_EFFECT;
 
     object_manager_->Create(
-        "damage_effect", hit_point_param);
+        hit_point_param);
 
 	//-------------------------------------
 	// インスタンシングテスト
@@ -500,9 +506,10 @@ Game::Game()
 	// ベンチ
 	//-------------------------------------
 	OBJECT_PARAMETER_DESC bench_param;
+	bench_param.name_ = "bench";
 	bench_param.layer_ = LAYER_BENCH;
 	object_manager_->Create(
-		"bench", bench_param);
+		bench_param);
 
 	// ダッシュエフェクトタイマー初期化
 	dash_effect_timer_ = 0;
@@ -514,8 +521,36 @@ Game::Game()
 	shadow_param.scaling_ = Vector3(1.0f, 1.0f, 1.0f);
 	for(int i = 0; i < MAX_GUEST; i++)
 	{
-		std::string name = "shadow" + std::to_string(i + 1);
-		object_manager_->Create(name, shadow_param);
+		shadow_param.name_ = "shadow" + std::to_string(i + 1);
+		object_manager_->Create(shadow_param);
+	}
+
+	//-------------------------------------
+	// カウントダウン
+	//-------------------------------------
+	OBJECT_PARAMETER_DESC countdown_param;
+	countdown_param.name_ = "countdown";
+	countdown_param.position_ = {
+		SCREEN_WIDTH * 0.5f,
+		SCREEN_HEIGHT * 0.5f,
+		0.0f };
+	countdown_param.rotation_ = { 0.0f, 0.0f, 0.0f };
+	countdown_param.scaling_ = {
+		SCREEN_WIDTH, SCREEN_HEIGHT, 1.0f };
+	countdown_param.layer_ = LAYER_COUNTDOWN;
+	object_manager_->Create(
+		countdown_param);
+
+	//-------------------------------------
+	// バレット生成しておくよ
+	//-------------------------------------
+	OBJECT_PARAMETER_DESC bullet_param;
+	bullet_param.layer_ = LAYER_BULLET;
+	for(int i = 0; i < MAX_BULLET; i++)
+	{
+		bullet_param.name_ = "bullet" + std::to_string(i);
+		object_manager_->Create(
+			bullet_param);
 	}
 
 	//-------------------------------------
@@ -529,6 +564,7 @@ Game::Game()
 	child_death_ = false;
 	// 子供リスポーン待ち時間
 	child_respawn_waittime_ = 0;
+
 
 #ifdef NETWORK_HOST_MODE
 #else
@@ -544,9 +580,9 @@ Game::Game()
 //-------------------------------------
 Game::~Game()
 {
+	effect_manager_ = nullptr;
 	SAFE_DELETE(object_manager_);
 	SAFE_DELETE(camera_manager_);
-	SAFE_DELETE(effect_manager_);
 	SAFE_DELETE(font1_);
 	SAFE_DELETE(font2_);
 	SAFE_DELETE(collision_manager_);
@@ -566,6 +602,7 @@ void Game::Update()
 //	Object *fort3_object = object_manager_->Get("fort3");
 //	Object *grandfather_object = object_manager_->Get("grandfather");
 //	Object *child_object = object_manager_->Get("child");
+//	Object *countdown_object = object_manager_->Get("countdown");
 //	Vector3 fort1_position(fort1_object->parameter().position_);
 //	Vector3 fort2_position(fort2_object->parameter().position_);
 //	Vector3 fort3_position(fort3_object->parameter().position_);
@@ -588,11 +625,11 @@ void Game::Update()
 //	XFort *fort1 = dynamic_cast<XFort*>(fort1_object);
 //	XFort *fort2 = dynamic_cast<XFort*>(fort2_object);
 //	XFort *fort3 = dynamic_cast<XFort*>(fort3_object);
+//	CountDown *countdown = dynamic_cast<CountDown*>(countdown_object);
 //
 //	static const float player_speed_value = 0.05f;
-//	static int bullet_count = 0;
 //	static int shot_late = 0;
-//	static D3DXVECTOR3 fort_underground(0.0f, 0.0f, 0.0f);
+//	static D3DXVECTOR3 fort_underground(-3.0f, -3.0f, -3.0f);
 //	float player_speed = player_speed_value;
 //	float father_life = grandfather->GetLife();
 //	float father_watergauge = grandfather->GetWaterGauge();
@@ -601,6 +638,39 @@ void Game::Update()
 //	float fort1_life = fort1->GetLife();
 //	float fort2_life = fort2->GetLife();
 //	float fort3_life = fort3->GetLife();
+//
+//	//-------------------------------------
+//	// 時間経過
+//	//-------------------------------------
+//	frame_++;
+//	if (!(frame_ % 60)){
+//		timer_++;
+//	}
+//
+//	//-------------------------------------
+//	// 時間経過でカウントダウン
+//	//-------------------------------------
+//	switch (timer_)
+//	{
+//	case 0:
+//		countdown->ChangeTexture(4);
+//		break;
+//	case 1:
+//		countdown->ChangeTexture(3);
+//		break;
+//	case 2:
+//		countdown->ChangeTexture(2);
+//		break;
+//	case 3:
+//		countdown->ChangeTexture(1);
+//		break;
+//	case 4:
+//		countdown->ChangeTexture(0);
+//		break;
+//	default:
+//		countdown->ChangeTexture(4);
+//		break;
+//	}
 //
 //	//-------------------------------------
 //	// ゲームステージデバッグ
@@ -940,6 +1010,7 @@ void Game::Update()
 //	camera_position.y -=
 //		sinf(camera_rotation.x) * camera_pos_len_;
 //
+//
 //	// カメラの地面めり込み回避処理
 //	D3DXVECTOR3	vec_camera_to_focus = camera_focus - camera_position;
 //	
@@ -985,52 +1056,58 @@ void Game::Update()
 //	//-------------------------------------
 //	Camera *sub_camera = camera_manager_->Get("SubCamera");
 //	D3DXVECTOR3 sub_camera_position, sub_camera_rotation, sub_camera_focus;
+//	sub_camera_rotation = sub_camera->rotation();
+//	sub_camera_position = sub_camera->position();
+//	sub_camera_focus = sub_camera->focus();
+//	
 //	// 適当な位置から眺める
-//	sub_camera_rotation.x = -D3DX_PI*0.15f;
 //	// 一旦砦を注視点に
 //	switch (stage_)
 //	{
 //	case 1:
 //		sub_camera_focus = fort1_pos;
-//		sub_camera_focus.y = 0.0f;
+//		sub_camera_focus.y = 1.5f;
 //		if (fort_underground.x != 0.0f){
 //			use_camera_name_ = "SubCamera";
+//			sub_camera_rotation.y += CAMERA_SUB_ROT_SPEED;
+//			sub_camera_rotation.x += CAMERA_SUB_ROT_SPEED*0.02f;
 //		}
 //		else{
 //			use_camera_name_ = "MainCamera";
+//			sub_camera_rotation.y = 0.0f;
+//			sub_camera_rotation.x = 0.0f;
 //		}
 //		break;
 //	case 2:
 //		sub_camera_focus = fort2_pos;
-//		sub_camera_focus.y = 0.0f;
+//		sub_camera_focus.y = 1.5f;
 //		if (fort_underground.y != 0.0f){
 //			use_camera_name_ = "SubCamera";
+//			sub_camera_rotation.y += CAMERA_SUB_ROT_SPEED;
+//			sub_camera_rotation.x += CAMERA_SUB_ROT_SPEED*0.02f;
 //		}
 //		else{
 //			use_camera_name_ = "MainCamera";
+//			sub_camera_rotation.y = 0.0f;
+//			sub_camera_rotation.x = 0.0f;
 //		}
 //		break;
 //	case 3:
 //		sub_camera_focus = fort3_pos;
-//		sub_camera_focus.y = 0.0f;
+//		sub_camera_focus.y = 1.5f;
 //		if (fort_underground.z != 0.0f){
 //			use_camera_name_ = "SubCamera";
+//			sub_camera_rotation.y += CAMERA_SUB_ROT_SPEED;
+//			sub_camera_rotation.x += CAMERA_SUB_ROT_SPEED*0.02f;
 //		}
 //		else{
 //			use_camera_name_ = "MainCamera";
+//			sub_camera_rotation.y = 0.0f;
+//			sub_camera_rotation.x = 0.0f;
 //		}
 //		break;
 //	}
-//	// モデルの中心辺りを基準に
-//	sub_camera_focus.y += CAMERA_FOCUS_OFFSET_Y;
-//	// モデルの少し先を見るように調整
-//	sub_camera_focus.x += 
-//		sinf(sub_camera_rotation.y) * CAMERA_FOCUS_OFFSET * cosf(sub_camera_rotation.x);
-//	sub_camera_focus.z += 
-//		cosf(sub_camera_rotation.y) * CAMERA_FOCUS_OFFSET * cosf(sub_camera_rotation.x);
-//	sub_camera_focus.y += 
-//		sinf(sub_camera_rotation.x) * CAMERA_FOCUS_OFFSET;
-//
+//	
 //	// 注視点を基準にカメラ座標を設定
 //	sub_camera_position = sub_camera_focus;
 //	sub_camera_position.x -= 
@@ -1075,11 +1152,9 @@ void Game::Update()
 //		bullet_param.rotation_.x_ = camera_rotation.x;
 //
 //		bullet_param.scaling_ = { 1.0f, 1.0f, 1.0f };
-//		std::string str = "notice" + std::to_string(bullet_count);
-//		object_manager_->Create(
-//			str,
-//			bullet_param);
-//		bullet_count++;
+//		
+//		Bullet* bullet = object_manager_->GetNoUseBullet();
+//		bullet->Fire(bullet_param);
 //
 //		//-------------------------------------
 //		// 水ゲージを減少させる
@@ -1114,11 +1189,8 @@ void Game::Update()
 //		// カメラの回転Xを利用
 //		bullet_param.rotation_.x_ = camera_rotation.x;
 //
-//		std::string str = "notice" + std::to_string(bullet_count);
-//		object_manager_->Create(
-//			str,
-//			bullet_param);
-//		bullet_count++;
+//		Bullet* bullet = object_manager_->GetNoUseBullet();
+//		bullet->Fire(bullet_param);
 //	}
 //
 //	//-------------------------------------
@@ -1141,6 +1213,28 @@ void Game::Update()
 //	}
 //
 //#endif //_DEBUG
+//
+//#ifdef _DEBUG
+//    //-------------------------------------
+//    // ダメージエフェクト確認
+//    //-------------------------------------
+//    if (KeyBoard::isPress(DIK_L)){
+//        float life = child->GetLife();
+//        life -= CHILD_DAMAGE;
+//        if (life < 0.0f){
+//            life = 0.0f;
+//        }
+//        child->SetLife(life);
+//    }
+//    else if (KeyBoard::isPress(DIK_K)){
+//        float life = child->GetLife();
+//        life += CHILD_DAMAGE;
+//        if (life > 1.0f){
+//            life = 1.0f;
+//        }
+//        child->SetLife(life);
+//    }
+//#endif // _DEBUG
 //
 //	//-------------------------------------
 //	// アニメーション制御
@@ -1203,6 +1297,16 @@ void Game::Update()
 //	// 各キャラクタ座標保存
 //	//-------------------------------------
 //	grandfather_prevposition = grandfather_position;
+//
+//
+//	//-------------------------------------
+//	// 影座標
+//	//-------------------------------------
+//	Object *shadow = object_manager_->Get("shadow");
+//	Vector3 shadow_pos;
+//	shadow_pos = grandfather->parameter().position_;
+//	shadow_pos.y_ += 0.001f;
+//	shadow->SetPosition(shadow_pos);
 
 	//-------------------------------------
 	// 実更新処理

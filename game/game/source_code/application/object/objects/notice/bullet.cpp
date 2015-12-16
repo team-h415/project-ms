@@ -4,8 +4,6 @@
 //=========================================================
 
 
-
-
 //-------------------------------------
 // include
 //-------------------------------------
@@ -31,6 +29,7 @@
 #include "../../../effect/effect_manager.h"
 #include "../mesh/field.h"
 #include "../../../config/config.h"
+#include "../model/x_model.h"
 #include "bullet.h"
 #include "../../../scene/scene.h"
 #include "../../../scene/scene_manager.h"
@@ -40,59 +39,19 @@
 
 
 //-------------------------------------
-// static
-//-------------------------------------
-int Bullet::bullet_num_ = 0;
-
-
-//-------------------------------------
 // Bullet()
 //-------------------------------------
 Bullet::Bullet(
-	const OBJECT_PARAMETER_DESC &parameter)
+	const OBJECT_PARAMETER_DESC &parameter) :
+	XModel(parameter)
 {
-	parameter_ = parameter;
-
-	COLLISION_PARAMETER_DESC param;
-	param.position_ = {
-		parameter_.position_.x_,
-		parameter_.position_.y_,
-		parameter_.position_.z_ };
-	param.range_ = 0.5f;
-	param.offset_ = { 0.0f, 0.0f, 0.0f };
-	speed_ = {BULLET_DEF_SPEED_XZ, BULLET_DEF_SPEED_Y, BULLET_DEF_SPEED_XZ};
-
-	// 回転値を少し調整
-	parameter_.rotation_.x_ += BULLET_OFFSET_ROT;
-	// 回転値を参照して速度を改良
-	speed_.y += sinf(parameter_.rotation_.x_) * BULLET_ADD_SPEED_Y;
-
-#ifdef NETWORK_HOST_MODE
-	Scene *scene = SceneManager::GetCurrentScene();
-	GameServer *game_server = dynamic_cast<GameServer*>(scene);
-	collision_ = game_server->collision_manager()->Create(this, param);
-#else
-	std::string str = SceneManager::GetCurrentSceneName();
-	if (str != "Game"){
-		ASSERT_ERROR("弾が生成されるべきシーンではありません");
-		return;
-	}
-	Scene *scene = SceneManager::GetCurrentScene();
-	Game *game = dynamic_cast<Game*>(scene);
-	collision_ = game->collision_manager()->Create(this, param);
-
 	// 弾実体生成
-	OBJECT_PARAMETER_DESC xmodel_param;
-	std::string bullet_name = "bulletcore" + std::to_string(bullet_num_);
-	xmodel_param.position_ = parameter.position_;
-	xmodel_param.rotation_ = { 0.0f, 0.0f, 0.0f };
-	xmodel_param.scaling_ = parameter.scaling_;
-	xmodel_param.layer_ = LAYER_MODEL_X;
-	xmodel_ = (XModel*)game->object_manager()->Create(bullet_name, xmodel_param, "resource/model/x/ball.x");
-	xmodel_->SetTexture("resource/texture/red.png");
-#endif
+	LoadMesh("resource/model/x/ball.x");
+	SetTexture("resource/texture/game/bullet.png");
 
-	bullet_num_++;
+	// 使用フラグOFF
+	collision_ = nullptr;
+	use_ = false;
 }
 
 
@@ -101,27 +60,74 @@ Bullet::Bullet(
 //-------------------------------------
 Bullet::~Bullet()
 {
-#ifdef NETWORK_HOST_MODE
-	//// 消える
-	//NETWORK_DATA send_data;
-	//ZeroMemory(&send_data, sizeof(send_data));
-	//send_data.type_ = DATA_OBJ_PARAM;
-	//send_data.object_param_.type_ = OBJ_BULLET;
-	//send_data.object_param_.ex_id_ = 1;
-	//strcpy_s(send_data.name, MAX_NAME_LEN, str.c_str());
-	//NetworkHost::SendTo(DELI_MULTI, send_data);
-#endif 
-
 	if(collision_ != nullptr)
 	{
 		collision_->SetThisDelete(true);
 		collision_ = nullptr;
 	}
-	if(xmodel_ != nullptr)
+}
+
+
+//-------------------------------------
+// Fire()
+//-------------------------------------
+void Bullet::Fire(OBJECT_PARAMETER_DESC &parameter)
+{
+#ifdef NETWORK_HOST_MODE
+	std::string temp = parameter_.name_;
+	
+	parameter_ = parameter;
+	parameter_.name_ = temp;
+
+
+	// 回転値を少し調整
+	parameter_.rotation_.x_ += BULLET_OFFSET_ROT;
+
+	// ゲストへ出現報告
+	NETWORK_DATA send_data;
+	send_data.type_ = DATA_OBJ_PARAM;
+	send_data.object_param_.type_ = OBJ_BULLET;
+	send_data.object_param_.ex_id_ = 0;
+
+	send_data.object_param_.position_.x_ = parameter_.position_.x_;
+	send_data.object_param_.position_.y_ = parameter_.position_.y_;
+	send_data.object_param_.position_.z_ = parameter_.position_.z_;
+
+	send_data.object_param_.rotation_.x_ = parameter_.rotation_.x_;
+	send_data.object_param_.rotation_.y_ = parameter_.rotation_.y_;
+	send_data.object_param_.rotation_.z_ = parameter_.rotation_.z_;
+
+	strcpy_s(send_data.name, MAX_NAME_LEN, parameter_.name_.c_str());
+	NetworkHost::SendTo(DELI_MULTI, send_data);
+
+	if(collision_ == nullptr)
 	{
-		xmodel_->SetThisDelete(true);
-		xmodel_ = nullptr;
+		Scene *scene = SceneManager::GetCurrentScene();
+		std::string str = SceneManager::GetCurrentSceneName();
+		if(str != "GameServer"){
+			ASSERT_ERROR("弾が生成されるべきシーンではありません");
+			return;
+		}
+		COLLISION_PARAMETER_DESC param;
+		param.position_ = {
+			parameter_.position_.x_,
+			parameter_.position_.y_,
+			parameter_.position_.z_};
+		param.range_ = 0.5f;
+		param.offset_ = {0.0f, 0.0f, 0.0f};
+
+		GameServer *game_server = dynamic_cast<GameServer*>(scene);
+		collision_ = game_server->collision_manager()->Create(this, param);
 	}
+	collision_->SetUse(true);
+
+	speed_ = {BULLET_DEF_SPEED_XZ, BULLET_DEF_SPEED_Y, BULLET_DEF_SPEED_XZ};
+	// 回転値を参照して速度を改良
+	speed_.y += sinf(parameter_.rotation_.x_) * BULLET_ADD_SPEED_Y;
+
+	// 使用フラグOFF
+	use_ = true;
+#endif 
 }
 
 
@@ -130,11 +136,31 @@ Bullet::~Bullet()
 //-------------------------------------
 void Bullet::Update()
 {
+	if(!use_)
+	{
+		return;
+	}
+#ifdef NETWORK_HOST_MODE
+
 	parameter_.position_.x_ += sinf(parameter_.rotation_.y_) * speed_.x;
 	parameter_.position_.y_ += speed_.y;
 	parameter_.position_.z_ += cosf(parameter_.rotation_.y_) * speed_.z;
 	speed_.y -= BULLET_GRAVITY;
-#ifdef NETWORK_HOST_MODE
+
+	// ゲストへ座標報告
+	NETWORK_DATA send_data;
+	send_data.type_ = DATA_OBJ_PARAM;
+	send_data.object_param_.type_ = OBJ_BULLET;
+	send_data.object_param_.ex_id_ = 0;
+	send_data.object_param_.position_.x_ = parameter_.position_.x_;
+	send_data.object_param_.position_.y_ = parameter_.position_.y_;
+	send_data.object_param_.position_.z_ = parameter_.position_.z_;
+	send_data.object_param_.rotation_.x_ = parameter_.rotation_.x_;
+	send_data.object_param_.rotation_.y_ = parameter_.rotation_.y_;
+	send_data.object_param_.rotation_.z_ = parameter_.rotation_.z_;
+	strcpy_s(send_data.name, MAX_NAME_LEN, parameter_.name_.c_str());
+	NetworkHost::SendTo(DELI_MULTI, send_data);
+
 	Scene *scene = SceneManager::GetCurrentScene();
 	std::string str = SceneManager::GetCurrentSceneName();
 	if (str == "GameServer"){
@@ -147,53 +173,37 @@ void Bullet::Update()
 			parameter_.position_.y_,
 			parameter_.position_.z_));
 		if (parameter_.position_.y_ < height){
-			this_delete_ = true;
-			if(collision_ != nullptr)
-			{
-				collision_->SetThisDelete(true);
-				collision_ = nullptr;
-			}
-			if(xmodel_ != nullptr)
-			{
-				xmodel_->SetThisDelete(true);
-				xmodel_ = nullptr;
-			}
+			use_ = false;
+			collision_->SetUse(false);
+			parameter_.position_.y_ = 10000.0f;
+
+			// ゲストへ消える報告
+			NETWORK_DATA send_data;
+			send_data.type_ = DATA_OBJ_PARAM;
+			send_data.object_param_.type_ = OBJ_BULLET;
+			send_data.object_param_.ex_id_ = 1;
+			strcpy_s(send_data.name, MAX_NAME_LEN, parameter_.name_.c_str());
+			NetworkHost::SendTo(DELI_MULTI, send_data);
 		}
 	}
-#else
-	// 弾実体の移動
-	xmodel_->SetPosition(parameter_.position_);
+#endif
 
-	//Scene *scene = SceneManager::GetCurrentScene();
-	//std::string str = SceneManager::GetCurrentSceneName();
-	//if (str == "Game"){
-	//	Game *game = dynamic_cast<Game*>(scene);
-	//	Object *obj = game->object_manager()->Get("field");
-	//	Field *field = dynamic_cast<Field*>(obj);
-	//	float height = field->GetHeight(
-	//		D3DXVECTOR3(
-	//		parameter_.position_.x_,
-	//		parameter_.position_.y_,
-	//		parameter_.position_.z_));
-	//	if (parameter_.position_.y_ < height){
-	//		this_delete_ = true;
-	//		if(collision_ != nullptr)
-	//		{
-	//			collision_->SetThisDelete(true);
-	//			collision_ = nullptr;
-	//		}
-	//	}
-	//}
+#if defined(_DEBUG) || !defined(NETWORK_HOST_MODE)
+	XModel::Update();
 #endif
 }
 
 
 //-------------------------------------
-// Draw()
+// Action()
 //-------------------------------------
 void Bullet::Draw()
 {
-
+	if(!use_)
+	{
+		return;
+	}
+	XModel::Draw();
 }
 
 
@@ -205,6 +215,11 @@ void Bullet::Action(
 	const float range)
 {
 #ifdef NETWORK_HOST_MODE
+	if(!use_)
+	{
+		return;
+	}
+
 	//-------------------------------------
 	// もしXモデルと当たったら
 	if (target->parameter().layer_ == LAYER_MODEL_FORT ||
@@ -255,67 +270,19 @@ void Bullet::Action(
 			// オブジェクトデータ転送
 			NetworkHost::SendTo(DELI_MULTI, send_data);
 
-			this_delete_ = true;
-			if(collision_ != nullptr)
-			{
-				collision_->SetThisDelete(true);
-				collision_ = nullptr;
-			}
+			// 使用フラグOFF
+			use_ = false;
+			collision_->SetUse(false);
 
-			//-------------------------------------
-			// シーン取得
-			//Scene *scene = SceneManager::GetCurrentScene();
-			//std::string str = SceneManager::GetCurrentSceneName();
-			//if (str == "Game"){
-			//	Game *game = dynamic_cast<Game*>(scene);
-
-			//	//-------------------------------------
-			//	// シーンからエフェクト取得
-			//	EFFECT_PARAMETER_DESC effect_param;
-			//	MyEffect *effect = game->effect_manager()->Get("damage");
-			//	effect_param = effect->parameter();
-			//	effect_param.position_ = parameter_.position_;
-			//	effect_param.position_.y_ += 0.5f;
-			//	effect_param.rotation_ = parameter_.rotation_;
-			//	effect->SetParameter(effect_param);
-
-			//	//-------------------------------------
-			//	// エフェクト再生
-			//	game->effect_manager()->Play("damage");
-			//}
-			//this_delete_ = true;
-			//xmodel_->SetThisDelete(true);
-			//collision_->SetThisDelete(true);
-			//collision_ = nullptr;
-			//xmodel_ = nullptr;
+			// ゲストへ消える報告
+			ZeroMemory(&send_data, sizeof(send_data));
+			send_data.type_ = DATA_OBJ_PARAM;
+			send_data.object_param_.type_ = OBJ_BULLET;
+			send_data.object_param_.ex_id_ = 1;
+			strcpy_s(send_data.name, MAX_NAME_LEN, parameter_.name_.c_str());
+			NetworkHost::SendTo(DELI_MULTI, send_data);
 		}
 	}
-#else
-	////-------------------------------------
-	//// もしXモデルと当たったら
-	//if (target->parameter().layer_ == LAYER_MODEL_X){
-	//	//-------------------------------------
-	//	// シーン取得
-	//	Scene *scene = SceneManager::GetCurrentScene();
-	//	std::string str = SceneManager::GetCurrentSceneName();
-	//	if (str == "Game"){
-	//		Game *game = dynamic_cast<Game*>(scene);
-	//		//-------------------------------------
-	//		// シーンからエフェクト取得
-	//		EFFECT_PARAMETER_DESC effect_param;
-	//		MyEffect *effect = game->effect_manager()->Get("damage");
-	//		effect_param = effect->parameter();
-	//		effect_param.position_ = parameter_.position_;
-	//		effect_param.position_.y_ += 0.5f;
-	//		effect_param.rotation_ = parameter_.rotation_;
-	//		effect->SetParameter(effect_param);
-	//		//-------------------------------------
-	//		// エフェクト再生
-	//		game->effect_manager()->Play("damage");
-	//	}
-	//	this_delete_ = true;
-	//	collision_->SetThisDelete(true);
-	//}
 #endif
 }
 

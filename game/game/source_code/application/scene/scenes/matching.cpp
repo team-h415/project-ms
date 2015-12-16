@@ -56,6 +56,7 @@ Matching::Matching()
 		"Perspective", "MainCamera", camera_param);
 
 	OBJECT_PARAMETER_DESC param;
+	param.name_ = "test";
 	param.position_ = {
 		SCREEN_WIDTH * 0.5f,
 		SCREEN_HEIGHT * 0.25f,
@@ -66,10 +67,11 @@ Matching::Matching()
 	param.layer_ = LAYER_SPRITE_2D;
 
 	object_manager_->Create(
-		"test", param,
+		param,
 		"resource/texture/matching/logo.png");
 
 	OBJECT_PARAMETER_DESC message_param;
+	message_param.name_ = "message";
 	message_param.position_ = {
 		SCREEN_WIDTH + 200.0f,
 		SCREEN_HEIGHT - 200.0f,
@@ -79,7 +81,7 @@ Matching::Matching()
 	message_param.layer_ = LAYER_MESSAGE;
 
 	object_manager_->Create(
-		"message", message_param,
+		message_param,
 		"resource/texture/matching/message.png");
 
 	NETWORK_DATA network_data;

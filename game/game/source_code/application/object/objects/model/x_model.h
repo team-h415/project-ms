@@ -22,7 +22,7 @@ public:
 		const OBJECT_PARAMETER_DESC &parameter);
 	virtual ~XModel();
 	virtual void Update();
-	void Draw();
+	virtual void Draw();
 	void LoadMesh(
 		const std::string &path);
 	virtual void Action(

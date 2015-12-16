@@ -70,7 +70,6 @@ private:
 	void Game();
 	void Result();
 
-	void MatchingAndGame(Field*	field);
 	void ChangeServerState(SERVER_STATE next);
 
 	SERVER_STATE		server_state_;
@@ -96,6 +95,8 @@ private:
 	bool child_death_[MAX_GUEST - 1];
 	// 子供リスポーンタイマー
 	int child_respawn_waittime_[MAX_GUEST - 1];
+	// じじいダッシュ
+	int dash_effect_timer_;
 };
 
 

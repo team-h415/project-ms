@@ -29,7 +29,10 @@
 #include "../object/objects/sprite/damage_effect.h"
 #include "../object/objects/sprite/damage_effect.h"
 #include "../object/objects/sprite/water_gage.h"
+#include "../object/objects/sprite/countdown.h"
+#include "../object/objects/model/x_model.h"
 #include "../object/objects/model/fbx_model.h"
+#include "../object/objects/notice/bullet.h"
 #include "../object/objects/model/fbx/fbx_player.h"
 #include "../object/objects/model/fbx/fbx_grandfather.h"
 #include "../object/objects/model/fbx/fbx_child.h"
@@ -371,6 +374,16 @@ unsigned __stdcall NetworkGuest::Communication()
 							fort_gauge_manager->SetFortLife(rec_data.id_, rec_data.ui_param_.value_f_);
 						}
 
+						else if(name == "countdown")
+						{
+							Object *object = object_manager->Get(name);
+							if(object == nullptr)
+							{
+								continue;
+							}
+							CountDown* countdown = dynamic_cast<CountDown*>(object);
+							countdown->Play(rec_data.ui_param_.value_i_);
+						}
 					}
 					break;
 
@@ -494,21 +507,28 @@ void NetworkGuest::ObjDataAdaptation(
 				std::string name = rec_data.name;
 				if(rec_data.object_param_.ex_id_ == 0)
 				{
-					// 0‚È‚ç¶¬
-					OBJECT_PARAMETER_DESC bullet_param;
-					bullet_param.layer_ = LAYER_BULLET;
-					bullet_param.parent_layer_ = LAYER_MODEL_GRANDFATHER;
-					bullet_param.position_.x_ = rec_data.object_param_.position_.x_;
-					bullet_param.position_.y_ = rec_data.object_param_.position_.y_;
-					bullet_param.position_.z_ = rec_data.object_param_.position_.z_;
+					// 0‚È‚çXV
+					Object *object = object_manager->Get(name);
+					if(object == nullptr)
+					{
+						return;
+					}
+					Bullet *bullet = dynamic_cast<Bullet*>(object);
+					Vector3 pos, rot, scl;
+					pos.x_ = rec_data.object_param_.position_.x_;
+					pos.y_ = rec_data.object_param_.position_.y_;
+					pos.z_ = rec_data.object_param_.position_.z_;
 
-					bullet_param.rotation_.x_ = rec_data.object_param_.rotation_.x_;
-					bullet_param.rotation_.y_ = rec_data.object_param_.rotation_.y_;
-					bullet_param.rotation_.z_ = rec_data.object_param_.rotation_.z_;
-					bullet_param.scaling_ = {1.0f, 1.0f, 1.0f};
-					//object_manager->Create(
-					//	name,
-					//	bullet_param);
+					rot.x_ = rec_data.object_param_.rotation_.x_;
+					rot.y_ = rec_data.object_param_.rotation_.y_;
+					rot.z_ = rec_data.object_param_.rotation_.z_;
+
+					scl = {1.0f, 1.0f, 1.0f};
+
+					bullet->SetPosition(pos);
+					bullet->SetRotation(rot);
+					bullet->SetScaling(scl);
+					bullet->SetUse(true);
 				}
 				else if(rec_data.object_param_.ex_id_ == 1)
 				{
@@ -518,7 +538,8 @@ void NetworkGuest::ObjDataAdaptation(
 					{
 						return;
 					}
-					object->SetThisDelete(true);
+					Bullet *bullet = dynamic_cast<Bullet*>(object);
+					bullet->SetUse(false);
 				}
 			}
 			break;

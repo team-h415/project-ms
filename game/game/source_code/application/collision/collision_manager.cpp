@@ -71,9 +71,9 @@ void CollisionManager::Update()
 	//-------------------------------------
 	// ‹…Œ`“¯m‚Ì‚ ‚½‚è”»’è‚ğÀ{
 	for (auto it = collision_.begin(); it != collision_.end(); ++it){
-		if ((*it)->GetThisDelete() == true) continue;
+		if((*it)->GetThisDelete() == true || (*it)->GetUse() == false) continue;
 		for (auto it2 = collision_.begin(); it2 != collision_.end(); ++it2){
-			if ((*it) == (*it2) || (*it2)->GetThisDelete() == true) continue;
+			if((*it) == (*it2) || (*it2)->GetThisDelete() == true || (*it2)->GetUse() == false) continue;
 			D3DXVECTOR3 distance =
 				(*it)->parameter().position_ - (*it2)->parameter().position_;
 			float range = (*it)->parameter().range_ + (*it2)->parameter().range_;

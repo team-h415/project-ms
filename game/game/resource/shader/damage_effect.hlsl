@@ -10,14 +10,13 @@
 struct V_IN
 {
     float3 position : POSITION0;
-    float2 texture_uv : TEXCOORD0;
+    float2 texture_uv : TEXCOORD;
 };
 
 struct V_OUT
 {
     float4 position : POSITION;
-	float2 texture_uv : TEXCOORD;
-//    float4 color : COLOR0;
+	float2 texture_uv : TEXCOORD0;
 };
 
 
@@ -40,7 +39,7 @@ sampler alpha_texture : TEXTURE1;
 //=========================================================
 V_OUT VS(V_IN v_in)
 {
-    V_OUT v_out;
+    V_OUT v_out = (V_OUT)0;
 
     v_out.position = float4(v_in.position , 0.0f);
     v_out.texture_uv = v_in.texture_uv;
@@ -54,14 +53,9 @@ V_OUT VS(V_IN v_in)
 float4 PS(V_OUT v_out) : COLOR0
 {
     float alpha = tex2D(alpha_texture, v_out.texture_uv).r;
-    float hp;
+    float a = abs(alpha - 1.0f);
+    float4 color = tex2D(diffuse_texture, v_out.texture_uv);
 
-    hp = current_damage;
-    if (alpha < hp){
-
-        return float4(tex2D(diffuse_texture, v_out.texture_uv).rgb, hp);
-    }
-    else{
-        return float4(tex2D(diffuse_texture, v_out.texture_uv).rgb , 0.0f);
-    }
+    color.a = color.a * a * current_damage;
+    return color;
 }

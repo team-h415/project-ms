@@ -28,6 +28,7 @@
 #include "../../object/objects/model/fbx/fbx_player.h"
 #include "../../object/objects/model/fbx/fbx_grandfather.h"
 #include "../../object/objects/model/fbx/fbx_child.h"
+#include "../../object/objects/notice/bullet.h"
 #include "../../effect/effect.h"
 #include "../../effect/effect_manager.h"
 #include "../../camera/camera.h"
@@ -39,6 +40,7 @@
 #include "../../config/config.h"
 #include "game_server.h"
 #include "../fade/fade.h"
+#include "../../fps/fps.h"
 
 
 //-------------------------------------
@@ -108,23 +110,23 @@ GameServer::GameServer()
 	// 地形
 	//-------------------------------------
 	OBJECT_PARAMETER_DESC param;
+	param.name_ = "matching_field";
 	param.position_ = {0.0f, 0.0f, 0.0f};
 	param.rotation_ = {0.0f, 0.0f, 0.0f};
 	param.scaling_ = {200.0f, 1.0f, 200.0f};
 	param.layer_ = LAYER_MESH_FIELD;
 
 	object_manager_->Create(
-		"matching_field",
 		param,
 		"resource/mesh/map.heightmap");
 
+	param.name_ = "game_field";
 	param.position_ = {0.0f, 0.0f, 0.0f};
 	param.rotation_ = {0.0f, 0.0f, 0.0f};
 	param.scaling_ = {200.0f, 1.0f, 200.0f};
 	param.layer_ = LAYER_MESH_FIELD;
 
 	object_manager_->Create(
-		"game_field",
 		param,
 		"resource/mesh/map.heightmap");
 
@@ -133,13 +135,13 @@ GameServer::GameServer()
 	//-------------------------------------
 	// 砦1
 	OBJECT_PARAMETER_DESC fort1_param;
+	fort1_param.name_ = "fort1";
 	fort1_param.layer_ = LAYER_MODEL_FORT;
 	fort1_param.position_ = FORT1_POSITION;
 	fort1_param.rotation_ = {0.0f, 0.0f, 0.0f};
 	fort1_param.scaling_ = {1.0f, 1.0f, 1.0f};
 
 	object_manager_->Create(
-		"fort1",
 		fort1_param,
 		"resource/model/x/test.x");
 
@@ -160,13 +162,13 @@ GameServer::GameServer()
 
 	// 砦2
 	OBJECT_PARAMETER_DESC fort2_param;
+	fort2_param.name_ = "fort2";
 	fort2_param.layer_ = LAYER_MODEL_FORT;
 	fort2_param.position_ = FORT2_POSITION;
 	fort2_param.rotation_ = {0.0f, 0.0f, 0.0f};
 	fort2_param.scaling_ = {1.0f, 1.0f, 1.0f};
 
 	object_manager_->Create(
-		"fort2",
 		fort2_param,
 		"resource/model/x/test.x");
 
@@ -187,13 +189,13 @@ GameServer::GameServer()
 
 	// 砦3
 	OBJECT_PARAMETER_DESC fort3_param;
+	fort3_param.name_ = "fort3";
 	fort3_param.layer_ = LAYER_MODEL_FORT;
 	fort3_param.position_ = FORT3_POSITION;
 	fort3_param.rotation_ = {0.0f, 0.0f, 0.0f};
 	fort3_param.scaling_ = {1.0f, 1.0f, 1.0f};
 
 	object_manager_->Create(
-		"fort3",
 		fort3_param,
 		"resource/model/x/test.x");
 
@@ -216,13 +218,13 @@ GameServer::GameServer()
 	// FBXおじ
 	//-------------------------------------
 	OBJECT_PARAMETER_DESC grandfather_param;
+	grandfather_param.name_ = "player1";
 	grandfather_param.layer_ = LAYER_MODEL_GRANDFATHER;
 	grandfather_param.position_ = {1.0f, 0.0f, 0.0f};
 	grandfather_param.rotation_ = {0.0f, 0.0f, 0.0f};
 	grandfather_param.scaling_ = {1.0f, 1.0f, 1.0f};
 
 	object_manager_->Create(
-		"player1",
 		grandfather_param);
 
 	COLLISION_PARAMETER_DESC fbx_collision_param;
@@ -249,8 +251,8 @@ GameServer::GameServer()
 	for(int i = 1; i < MAX_GUEST; i++)
 	{
 		std::string name = "player" + std::to_string(i + 1);
+		child_param.name_ = name;
 		object_manager_->Create(
-			name,
 			child_param);
 
 		COLLISION_PARAMETER_DESC child_collision_param;
@@ -264,6 +266,18 @@ GameServer::GameServer()
 
 		collision_manager_->Create(object_manager_->Get(name),
 			child_collision_param);
+	}
+
+	//-------------------------------------
+	// バレット生成しておくよ
+	//-------------------------------------
+	OBJECT_PARAMETER_DESC bullet_param;
+	bullet_param.layer_ = LAYER_BULLET;
+	for(int i = 0; i < MAX_BULLET; i++)
+	{
+		bullet_param.name_ = "bullet" + std::to_string(i);
+		object_manager_->Create(
+			bullet_param);
 	}
 
 	//-------------------------------------
@@ -310,6 +324,9 @@ GameServer::~GameServer()
 //-------------------------------------
 void GameServer::Update()
 {
+	// FPS
+	font_->Add("FPS:%d :", Fps::GetFps());
+
 	// 状態分岐
 	switch(server_state_)
 	{
@@ -354,6 +371,27 @@ void GameServer::Draw()
 
 #ifdef _DEBUG
 	camera_manager_->Set("camera1");
+
+	switch(server_state_)
+	{
+		case STATE_GAME:
+			switch(scene_state_)
+			{
+				case STATE_GUEST_WAITING:
+				case STATE_COUNTDOWN:
+				case STATE_CHANGE_FORT:
+					camera_manager_->Set("SubCamera");
+					break;
+
+				default:
+					break;
+			}
+			break;
+
+		default:
+			break;
+	}
+
 	object_manager_->Draw();
 	collision_manager_->Draw();
 #endif
@@ -374,6 +412,8 @@ void GameServer::Matching()
 
 	font_->Add("シーン名:");
 	font_->Add("Matching\n");
+
+	// デバッグ用遷移
 	if(KeyBoard::isTrigger(DIK_RETURN))
 	{
 		ChangeServerState(STATE_GAME);
@@ -381,12 +421,6 @@ void GameServer::Matching()
 		ZeroMemory(&send_data, sizeof(send_data));
 		send_data.type_ = DATA_SCENE_CHANGE_GAME;
 		NetworkHost::SendTo(DELI_MULTI, send_data);
-	}
-
-	// マッチング・ゲーム画面共通処理
-	MatchingAndGame(dynamic_cast<Field*>(object_manager_->Get("matching_field")));
-
-	for(int i = 0; i < 5; i++){
 	}
 }
 
@@ -396,7 +430,32 @@ void GameServer::Matching()
 //-------------------------------------
 void GameServer::Game()
 {
+	font_->Add("シーン名:");
+	font_->Add("Game\n");
+	font_->Add("Time:%d\n", time_);
+
 	NETWORK_DATA send_data;
+
+	// デバッグ用遷移勝者じじい
+	if(KeyBoard::isTrigger(DIK_9))
+	{
+		ChangeServerState(STATE_RESULT);
+		// シーンチェンジ命令送信
+		ZeroMemory(&send_data, sizeof(send_data));
+		send_data.type_ = DATA_SCENE_CHANGE_RESULT;
+		send_data.id_ = 0;
+		NetworkHost::SendTo(DELI_MULTI, send_data);
+	}
+	// デバッグ用遷移勝者ガキ
+	else if(KeyBoard::isTrigger(DIK_0))
+	{
+		ChangeServerState(STATE_RESULT);
+		// シーンチェンジ命令送信
+		ZeroMemory(&send_data, sizeof(send_data));
+		send_data.type_ = DATA_SCENE_CHANGE_RESULT;
+		send_data.id_ = 1;
+		NetworkHost::SendTo(DELI_MULTI, send_data);
+	}
 
 	switch(scene_state_)
 	{
@@ -425,24 +484,33 @@ void GameServer::Game()
 
 		case STATE_COUNTDOWN:
 			time_--;
-			if(time_ <= (60 * 3))
+			if(time_ <= (60 * 4))
 			{
 				ZeroMemory(&send_data, sizeof(send_data));
 				send_data.type_ = DATA_UI_PARAM;
 				send_data.object_param_.type_ = OBJ_UI;
-				strcpy_s(send_data.name, MAX_NAME_LEN, "time");
+				strcpy_s(send_data.name, MAX_NAME_LEN, "countdown");
 				send_data.ui_param_.value_i_ = time_ / 60;
 				NetworkHost::SendTo(DELI_MULTI, send_data);
 
 				if(time_ == 0)
 				{
+					ZeroMemory(&send_data, sizeof(send_data));
+					send_data.type_ = DATA_UI_PARAM;
+					send_data.object_param_.type_ = OBJ_UI;
+					strcpy_s(send_data.name, MAX_NAME_LEN, "countdown");
+					send_data.ui_param_.value_i_ = 4;
+					NetworkHost::SendTo(DELI_MULTI, send_data);
+
 					scene_state_ = STATE_RUN;
+					time_ = 60 * 240;
 				}
 			}
 			return;
 			break;
 
 		case STATE_RUN:
+			// 時間経過
 			time_--;
 			if(time_ > 0)
 			{
@@ -452,40 +520,23 @@ void GameServer::Game()
 				strcpy_s(send_data.name, MAX_NAME_LEN, "time");
 				send_data.ui_param_.value_i_ = time_ / 60;
 				NetworkHost::SendTo(DELI_MULTI, send_data);
+				// ゲームエンド条件１ タイムアップ
+				if(time_ == 0)
+				{
+				}
 			}
+			// 砦管理
+
 			break;
 
 		case STATE_CHANGE_FORT:
 			break;
+
 		case STATE_END:
 			break;
 
 		default:
 			break;
-	}
-
-
-	font_->Add("シーン名:");
-	font_->Add("Game\n");
-	// 勝者じじい
-	if(KeyBoard::isTrigger(DIK_9))
-	{
-		ChangeServerState(STATE_RESULT);
-		// シーンチェンジ命令送信
-		ZeroMemory(&send_data, sizeof(send_data));
-		send_data.type_ = DATA_SCENE_CHANGE_RESULT;
-		send_data.id_ = 0;
-		NetworkHost::SendTo(DELI_MULTI, send_data);
-	}
-	// 勝者ガキ
-	else if(KeyBoard::isTrigger(DIK_0))
-	{
-		ChangeServerState(STATE_RESULT);
-		// シーンチェンジ命令送信
-		ZeroMemory(&send_data, sizeof(send_data));
-		send_data.type_ = DATA_SCENE_CHANGE_RESULT;
-		send_data.id_ = 1;
-		NetworkHost::SendTo(DELI_MULTI, send_data);
 	}
 
 	// フィールド取得
@@ -687,156 +738,6 @@ void GameServer::Game()
 		player->SetRotation(player_rotation);
 	}
 
-	// マッチング・ゲーム画面共通処理
-	MatchingAndGame(field);
-
-	for(int i = 0; i < 5; i++){
-		std::string player_str = "player" + std::to_string(i + 1);
-		Object *player_obj = object_manager_->Get(player_str);
-		FbxPlayer *player = dynamic_cast<FbxPlayer*>(player_obj);
-
-		//-------------------------------------
-		// 子供死亡時制御
-		//-------------------------------------
-		if(i != 0)
-		{
-			float child_life = player->GetLife();
-			if(child_life < 0 && !child_death_[i - 1]){
-				player->PlayAnimation(FbxChild::DOWN);
-				child_death_[i - 1] = true;
-				child_respawn_waittime_[i - 1] = CHILD_RESPAWN_WAITTIME;
-
-				Vector3 player_position = player->parameter().position_;
-
-				// エフェクト再生
-				ZeroMemory(&send_data, sizeof(send_data));
-				send_data.type_ = DATA_OBJ_PARAM;
-				send_data.object_param_.type_ = OBJ_EFFECT;
-				send_data.object_param_.position_.x_ = player_position.x_;
-				send_data.object_param_.position_.y_ = player_position.y_;
-				send_data.object_param_.position_.z_ = player_position.z_;
-				send_data.object_param_.rotation_ = {0.0f, 0.0f, 0.0f};
-				strcpy_s(send_data.name, MAX_NAME_LEN, "dead");
-				NetworkHost::SendTo(DELI_MULTI, send_data);
-			}
-			else if(child_death_[i - 1] && !child_respawn_waittime_[i - 1]){
-				player->PlayAnimation(FbxChild::IDLE);
-				child_death_[i - 1] = false;
-				child_life = CHILD_LIFE;
-				player->SetLife(child_life);
-				player->SetPosition(CHILD_POSITION[i - 1]);
-				player->SetRotation(CHILD_ROTATION[i - 1]);
-			}
-
-			child_respawn_waittime_[i - 1]--;
-			child_respawn_waittime_[i - 1] = std::max<int>(child_respawn_waittime_[i - 1], 0);
-		}
-
-		//------------------------------------------------
-		// カメラデータ転送
-		//------------------------------------------------
-		std::string camera_str = "camera" + std::to_string(i + 1);
-		Camera *main_camera = camera_manager_->Get(camera_str);
-		D3DXVECTOR3 camera_position, camera_focus;
-		camera_position = main_camera->position();
-		camera_focus = main_camera->focus();
-
-		send_data.type_ = DATA_OBJ_PARAM;
-		send_data.object_param_.type_ = OBJ_CAMERA;
-
-		if(scene_state_ != STATE_CHANGE_FORT)
-		{
-		}
-		switch(scene_state_)
-		{
-			case STATE_COUNTDOWN:
-				break;
-
-			case STATE_CHANGE_FORT:
-				{
-					std::string name = "fort" + std::to_string(set_camera); 
-					Object *fort_object = object_manager_->Get(name);
-					Vector3 focus = fort_object->parameter().position_;
-					Vector3 pos(0.0f, 0.0f, 0.0f);
-					// モデルの中心辺りを基準に
-					focus.y_ += CAMERA_FOCUS_OFFSET_Y;
-					// 注視点を基準にカメラ座標を設定
-					pos = focus;
-					pos.x_ -= CAMERA_FOCUS_OFFSET * 2.0f;
-					pos.z_ -= CAMERA_FOCUS_OFFSET * 2.0f;
-					pos.y_ += CAMERA_FOCUS_OFFSET;
-					// データセット
-					send_data.object_param_.position_.x_ = pos.x_;
-					send_data.object_param_.position_.y_ = pos.y_;
-					send_data.object_param_.position_.z_ = pos.z_;
-
-					send_data.object_param_.rotation_.x_ = focus.x_;
-					send_data.object_param_.rotation_.y_ = focus.y_;
-					send_data.object_param_.rotation_.z_ = focus.z_;
-				}
-				break;
-
-			default:
-				send_data.object_param_.position_.x_ = camera_position.x;
-				send_data.object_param_.position_.y_ = camera_position.y;
-				send_data.object_param_.position_.z_ = camera_position.z;
-
-				send_data.object_param_.rotation_.x_ = camera_focus.x;
-				send_data.object_param_.rotation_.y_ = camera_focus.y;
-				send_data.object_param_.rotation_.z_ = camera_focus.z;
-				break;
-
-		}
-		NetworkHost::SendTo((DELI_TYPE)i, send_data);
-
-		//------------------------------------------------
-		// UIデータ転送
-		//------------------------------------------------
-		// 水ゲージ
-		send_data.type_ = DATA_UI_PARAM;
-		send_data.object_param_.type_ = OBJ_UI;
-		send_data.ui_param_.value_f_ = player->GetWaterGauge();
-		strcpy_s(send_data.name, MAX_NAME_LEN, "water_gage");
-		NetworkHost::SendTo((DELI_TYPE)i, send_data);
-
-		// ダメージエフェクト
-		send_data.ui_param_.value_f_ = player->GetLife();
-		strcpy_s(send_data.name, MAX_NAME_LEN, "damage_effect");
-		NetworkHost::SendTo((DELI_TYPE)i, send_data);
-
-		Vector3 param = player->parameter().position_;
-		font_->Add("POSITION(player) : %3.2f %3.2f %3.2f\n", param.x_, param.y_, param.z_);
-	}
-}
-
-
-//-------------------------------------
-// Result()
-//-------------------------------------
-void GameServer::Result()
-{
-	NETWORK_DATA send_data;
-
-	font_->Add("シーン名:");
-	font_->Add("Result\n");
-	if(KeyBoard::isTrigger(DIK_RETURN))
-	{
-		ChangeServerState(STATE_MATCHING);
-		// シーンチェンジ命令送信
-		ZeroMemory(&send_data, sizeof(send_data));
-		send_data.type_ = DATA_SCENE_CHANGE_MATCHING;
-		NetworkHost::SendTo(DELI_MULTI, send_data);
-	}
-}
-
-//-------------------------------------
-// MatchingAndGame()
-//-------------------------------------
-void GameServer::MatchingAndGame(Field*	field)
-{
-	// データ転送用構造体用意
-	NETWORK_DATA send_data;
-
 	static const float player_speed_value = 0.05f;
 
 	for(int i = 0; i < 5; i++){
@@ -867,9 +768,21 @@ void GameServer::MatchingAndGame(Field*	field)
 		{
 			if(GamePad::isPress(i, PAD_BUTTON_11)){
 				player_speed = player_speed_value * 2.0f;
-			}
-			if(GamePad::isPress(i, PAD_BUTTON_11)){
-				player_speed = player_speed_value * 2.0f;
+				// ダッシュエフェクト
+				if (dash_effect_timer_ % 10 == 0){
+
+					// エフェクト再生
+					ZeroMemory(&send_data, sizeof(send_data));
+					send_data.type_ = DATA_OBJ_PARAM;
+					send_data.object_param_.type_ = OBJ_EFFECT;
+					send_data.object_param_.position_.x_ = player_position.x_;
+					send_data.object_param_.position_.y_ = player_position.y_;
+					send_data.object_param_.position_.z_ = player_position.z_;
+					send_data.object_param_.rotation_ = {0.0f, 0.0f, 0.0f};
+					strcpy_s(send_data.name, MAX_NAME_LEN, "dash");
+					NetworkHost::SendTo(DELI_MULTI, send_data);
+				}
+				dash_effect_timer_++;
 			}
 			player_position.x_ += (
 				cosf(player_rotation.y_) * GamePad::isStick(i).lsx_ +
@@ -942,31 +855,31 @@ void GameServer::MatchingAndGame(Field*	field)
 
 		// カメラの地面めり込み回避処理
 		D3DXVECTOR3	vec_camera_to_focus = camera_focus - camera_position;
-			
+
 		// 中間にカメラがめり込みそうなところが無いか検査
 		bool camera_re_calculate = false;
-		for (int j = 0; j < 10; ++j){
+		for(int j = 0; j < 10; ++j){
 			// 中間地点を計算
 			D3DXVECTOR3 lay_point = camera_position + vec_camera_to_focus * (0.1f * j);
 			float pos_y = field->GetHeight(lay_point);
 			// 回避処理
-			if (lay_point.y < pos_y + 0.1f){
+			if(lay_point.y < pos_y + 0.1f){
 				camera_re_calculate = true;
 				camera_pos_len_[i] -= CAMARA_LEN_SPEED;
 			}
 		}
-		
+
 		//カメラ座標再計算
-		if (camera_re_calculate == true){ 
+		if(camera_re_calculate == true){
 			camera_position = camera_focus;
 			camera_position.x -= sinf(camera_rotation.y) * camera_pos_len_[i] * cosf(camera_rotation.x);
 			camera_position.z -= cosf(camera_rotation.y) * camera_pos_len_[i] * cosf(camera_rotation.x);
 			camera_position.y -= sinf(camera_rotation.x) * camera_pos_len_[i];
 			camera_position.y = field->GetHeight(camera_position) + 0.1f;
 		}
-		
+
 		camera_pos_len_[i] += CAMARA_LEN_SPEED;
-		if (camera_pos_len_[i] > CAMERA_POS_LEN){
+		if(camera_pos_len_[i] > CAMERA_POS_LEN){
 			camera_pos_len_[i] = CAMERA_POS_LEN;
 		}
 
@@ -1003,28 +916,10 @@ void GameServer::MatchingAndGame(Field*	field)
 			bullet_param.rotation_.x_ = camera_rotation.x;
 
 			bullet_param.scaling_ = {1.0f, 1.0f, 1.0f};
-			std::string str = "notice" + std::to_string(bullet_count_);
-			object_manager_->Create(
-				str,
-				bullet_param);
-			bullet_count_++;
 
-			// バレット生成
-			send_data.type_ = DATA_OBJ_PARAM;
-			send_data.object_param_.type_ = OBJ_BULLET;
-			send_data.id_ = i;
-			send_data.object_param_.ex_id_ = 0;
-			
-			send_data.object_param_.position_.x_ = bullet_param.position_.x_;
-			send_data.object_param_.position_.y_ = bullet_param.position_.y_;
-			send_data.object_param_.position_.z_ = bullet_param.position_.z_;
-			
-			send_data.object_param_.rotation_.x_ = bullet_param.rotation_.x_;
-			send_data.object_param_.rotation_.y_ = bullet_param.rotation_.y_;
-			send_data.object_param_.rotation_.z_ = bullet_param.rotation_.z_;
-			
-			strcpy_s(send_data.name, MAX_NAME_LEN, str.c_str());
-			NetworkHost::SendTo(DELI_MULTI, send_data);
+			// バレット発砲
+			Bullet* bullet = object_manager_->GetNoUseBullet();
+			bullet->Fire(bullet_param);
 
 			// エフェクト再生
 			send_data.type_ = DATA_OBJ_PARAM;
@@ -1053,6 +948,61 @@ void GameServer::MatchingAndGame(Field*	field)
 			player->SetWaterGauge(watergauge);
 		}
 
+		//-------------------------------------
+		// 子供死亡時制御
+		//-------------------------------------
+		if(i != 0)
+		{
+			float child_life = player->GetLife();
+			if(child_life < 0 && !child_death_[i - 1]){
+				player->PlayAnimation(FbxChild::DOWN);
+				child_death_[i - 1] = true;
+				child_respawn_waittime_[i - 1] = CHILD_RESPAWN_WAITTIME;
+
+				Vector3 player_position = player->parameter().position_;
+
+				// エフェクト再生
+				ZeroMemory(&send_data, sizeof(send_data));
+				send_data.type_ = DATA_OBJ_PARAM;
+				send_data.object_param_.type_ = OBJ_EFFECT;
+				send_data.object_param_.position_.x_ = player_position.x_;
+				send_data.object_param_.position_.y_ = player_position.y_;
+				send_data.object_param_.position_.z_ = player_position.z_;
+				send_data.object_param_.rotation_ = {0.0f, 0.0f, 0.0f};
+				strcpy_s(send_data.name, MAX_NAME_LEN, "dead");
+				NetworkHost::SendTo(DELI_MULTI, send_data);
+			}
+			else if(child_death_[i - 1] && !child_respawn_waittime_[i - 1]){
+				player->PlayAnimation(FbxChild::IDLE);
+				child_death_[i - 1] = false;
+				child_life = CHILD_LIFE;
+				player->SetLife(child_life);
+				player->SetPosition(CHILD_POSITION[i - 1]);
+				player->SetRotation(CHILD_ROTATION[i - 1]);
+			}
+
+			child_respawn_waittime_[i - 1]--;
+			child_respawn_waittime_[i - 1] = std::max<int>(child_respawn_waittime_[i - 1], 0);
+		}
+
+		//------------------------------------------------
+		// UIデータ転送
+		//------------------------------------------------
+		// 水ゲージ
+		send_data.type_ = DATA_UI_PARAM;
+		send_data.object_param_.type_ = OBJ_UI;
+		send_data.ui_param_.value_f_ = player->GetWaterGauge();
+		strcpy_s(send_data.name, MAX_NAME_LEN, "water_gage");
+		NetworkHost::SendTo((DELI_TYPE)i, send_data);
+
+		// ダメージエフェクト
+		send_data.ui_param_.value_f_ = player->GetLife();
+		strcpy_s(send_data.name, MAX_NAME_LEN, "damage_effect");
+		NetworkHost::SendTo((DELI_TYPE)i, send_data);
+
+		Vector3 param = player->parameter().position_;
+		font_->Add("POSITION(player) : %3.2f %3.2f %3.2f\n", param.x_, param.y_, param.z_);
+
 		//------------------------------------------------
 		// プレイヤーデータ転送
 		//------------------------------------------------
@@ -1069,7 +1019,8 @@ void GameServer::MatchingAndGame(Field*	field)
 				GamePad::isPress(i, PAD_LS_RIGHT)){
 				send_data.object_param_.ex_id_ = 1;
 			}
-		}else
+		}
+		else
 		{
 			send_data.object_param_.ex_id_ = 2;
 		}
@@ -1083,9 +1034,99 @@ void GameServer::MatchingAndGame(Field*	field)
 		send_data.object_param_.rotation_.z_ = player_rotation.z_;
 
 		NetworkHost::SendTo(DELI_MULTI, send_data);
-	}
 
+		//------------------------------------------------
+		// カメラデータ転送
+		//------------------------------------------------
+		camera_position = main_camera->position();
+		camera_focus = main_camera->focus();
+
+		send_data.type_ = DATA_OBJ_PARAM;
+		send_data.object_param_.type_ = OBJ_CAMERA;
+
+		switch(scene_state_)
+		{
+			case STATE_COUNTDOWN:
+			case STATE_CHANGE_FORT:
+				{
+					Camera* sub_camera = camera_manager_->Get("SubCamera");
+					D3DXVECTOR3 sub_camera_position, sub_camera_rotation, sub_camera_focus;
+					sub_camera_rotation = sub_camera->rotation();
+					sub_camera_position = sub_camera->position();
+					sub_camera_focus = sub_camera->focus();
+
+					std::string name = "fort" + std::to_string(set_camera);
+					Object *fort_object = object_manager_->Get(name);
+					Vector3 focus = fort_object->parameter().position_;
+					Vector3 pos(0.0f, 0.0f, 0.0f);
+					// サブカメラ回転
+					sub_camera_rotation.y += CAMERA_SUB_ROT_SPEED;
+					sub_camera_rotation.x += CAMERA_SUB_ROT_SPEED*0.02f;
+					// フォーカス設定
+					sub_camera_focus.x = focus.x_;
+					sub_camera_focus.y = focus.y_;
+					sub_camera_focus.z = focus.z_;
+					sub_camera_focus.y = 1.5f;
+					// 注視点を基準にカメラ座標を設定
+					sub_camera_position = sub_camera_focus;
+					sub_camera_position.x -=
+						sinf(sub_camera_rotation.y) * CAMERA_POS_LEN * cosf(sub_camera_rotation.x);
+					sub_camera_position.z -=
+						cosf(sub_camera_rotation.y) * CAMERA_POS_LEN * cosf(sub_camera_rotation.x);
+					sub_camera_position.y -=
+						sinf(sub_camera_rotation.x) * CAMERA_POS_LEN;
+
+					// データセット
+					send_data.object_param_.position_.x_ = sub_camera_position.x;
+					send_data.object_param_.position_.y_ = sub_camera_position.y;
+					send_data.object_param_.position_.z_ = sub_camera_position.z;
+
+					send_data.object_param_.rotation_.x_ = sub_camera_focus.x;
+					send_data.object_param_.rotation_.y_ = sub_camera_focus.y;
+					send_data.object_param_.rotation_.z_ = sub_camera_focus.z;
+
+					// サブカメラへ値装填
+					sub_camera->SetPosition(sub_camera_position);
+					sub_camera->SetFocus(sub_camera_focus);
+					sub_camera->SetRotation(sub_camera_rotation);
+				}
+				break;
+
+			default:
+				send_data.object_param_.position_.x_ = camera_position.x;
+				send_data.object_param_.position_.y_ = camera_position.y;
+				send_data.object_param_.position_.z_ = camera_position.z;
+
+				send_data.object_param_.rotation_.x_ = camera_focus.x;
+				send_data.object_param_.rotation_.y_ = camera_focus.y;
+				send_data.object_param_.rotation_.z_ = camera_focus.z;
+				break;
+
+		}
+		NetworkHost::SendTo((DELI_TYPE)i, send_data);
+	}
 }
+
+
+//-------------------------------------
+// Result()
+//-------------------------------------
+void GameServer::Result()
+{
+	NETWORK_DATA send_data;
+
+	font_->Add("シーン名:");
+	font_->Add("Result\n");
+	if(KeyBoard::isTrigger(DIK_RETURN))
+	{
+		ChangeServerState(STATE_MATCHING);
+		// シーンチェンジ命令送信
+		ZeroMemory(&send_data, sizeof(send_data));
+		send_data.type_ = DATA_SCENE_CHANGE_MATCHING;
+		NetworkHost::SendTo(DELI_MULTI, send_data);
+	}
+}
+
 
 //-------------------------------------
 // ChangeServerState(SERVER_STATE next)
@@ -1099,7 +1140,6 @@ void GameServer::ChangeServerState(SERVER_STATE next)
 		shot_late[i] = 0;
 	}
 	bullet_count_ = 0;
-	object_manager_->Clear(LAYER_BULLET);
 	collision_manager_->Update();
 	stage_ = 1;
 	server_state_ = next;
@@ -1126,7 +1166,8 @@ void GameServer::ChangeServerState(SERVER_STATE next)
 				scene_state_ = STATE_GUEST_WAITING;
 				// ステージ
 				stage_ = 1;
-				// おじデバフフラグ
+				// おじパラメータ
+				dash_effect_timer_ = 0;
 				grandfather_debuff_ = false;
 				for(int i = 0; i < (MAX_GUEST - 1); i++)
 				{

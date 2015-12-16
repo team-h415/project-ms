@@ -19,7 +19,31 @@
 //-------------------------------------
 // variable
 //-------------------------------------
+EffectManager* EffectManager::effect_manager_ = nullptr;
 int EffectManager::effect_count_ = 0;
+
+
+//-------------------------------------
+// Get
+//-------------------------------------
+EffectManager* EffectManager::Get()
+{
+	if(effect_manager_ == nullptr)
+	{
+		effect_manager_ = new EffectManager(10000);
+	}
+
+	return effect_manager_;
+}
+
+
+//-------------------------------------
+// Delete
+//-------------------------------------
+void EffectManager::Delete()
+{
+	SAFE_DELETE(effect_manager_);
+}
 
 
 //-------------------------------------
@@ -178,7 +202,10 @@ void EffectManager::Create(
 	const std::string &path,
 	const EFFECT_PARAMETER_DESC &parameter)
 {
-	effects_[name] = new MyEffect(manager_, parameter, path);
+	if(effects_[name] == nullptr)
+	{
+		effects_[name] = new MyEffect(manager_, parameter, path);
+	}
 }
 
 
