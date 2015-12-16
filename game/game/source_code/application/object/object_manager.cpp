@@ -93,7 +93,7 @@ void ObjectManager::Draw()
 {
 	for (int i = 0; i < LAYER_MAX; i++){
 		for (auto it = objects_[i].begin(); it != objects_[i].end(); ++it){
-            if (i != LAYER_DAMAGE_EFFECT)
+            if (draw_enable_[i])
 			(*it).second->Draw();
 		}
 	}

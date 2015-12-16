@@ -86,6 +86,7 @@ Game::Game()
 	font1_ = new DebugFont;
 	font2_ = new DebugFont;
 	use_camera_name_ = "MainCamera";
+    object_manager_->SetDrawEnable(LAYER_DAMAGE_EFFECT, false);
 
 	//-------------------------------------
 	// エフェクトの読み込み
@@ -1543,11 +1544,11 @@ void Game::Draw()
 	MaterialColor color(32, 32, 32, 0);
 	DirectX9Holder::DrawBegin();
 	DirectX9Holder::Clear(color);
+    DamageEffect *damage_effect = dynamic_cast<DamageEffect*>(
+                                object_manager_->Get("damage_effect"));
 	camera_manager_->Set(use_camera_name_);
 	object_manager_->Draw();
 	effect_manager_->Draw();
-    DamageEffect *damage_effect = dynamic_cast<DamageEffect*>(
-        object_manager_->Get("damage_effect"));
     damage_effect->Draw();
 	collision_manager_->Draw();
 	font1_->Draw(rect1, font1_color);
