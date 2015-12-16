@@ -80,7 +80,6 @@ private:
 	DebugFont			*font_;
 	bool				guest_scene_change_[MAX_GUEST];
 	float				camera_pos_len_[MAX_GUEST];
-	int					bullet_count_;
 	int					time_;
 
 	//-------------------------------------

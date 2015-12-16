@@ -287,7 +287,6 @@ GameServer::GameServer()
 	{
 		guest_scene_change_[i] = false;
 	}
-	bullet_count_ = 0;
 	// ステージ
 	stage_ = 1;
 	// おじデバフフラグ
@@ -723,8 +722,6 @@ void GameServer::Game()
 		player->SetRotation(player_rotation);
 	}
 
-	static const float player_speed_value = 0.05f;
-
 	for(int i = 0; i < 5; i++){
 
 		//-------------------------------------
@@ -736,7 +733,7 @@ void GameServer::Game()
 		Vector3 player_position(player->parameter().position_);
 		Vector3 player_rotation(player->parameter().rotation_);
 
-		float player_speed = player_speed_value;
+		float player_speed = CHARANCTER_MOVESPEED;
 
 		//-------------------------------------
 		// プレイヤーを地形に沿って移動させる
@@ -752,7 +749,7 @@ void GameServer::Game()
 		if(input)
 		{
 			if(GamePad::isPress(i, PAD_BUTTON_11)){
-				player_speed = player_speed_value * 2.0f;
+				player_speed = CHARANCTER_MOVESPEED * 2.0f;
 				// ダッシュエフェクト
 				if (dash_effect_timer_ % 10 == 0){
 
@@ -1124,7 +1121,6 @@ void GameServer::ChangeServerState(SERVER_STATE next)
 		camera_pos_len_[i] = CAMERA_POS_LEN;
 		shot_late[i] = 0;
 	}
-	bullet_count_ = 0;
 	collision_manager_->Update();
 	stage_ = 1;
 	server_state_ = next;
