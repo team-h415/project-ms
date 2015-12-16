@@ -55,7 +55,10 @@
 #define GRANDFATHER_ROTATION_STAGE1 -0.82f
 #define GRANDFATHER_ROTATION_STAGE2  3.14f
 #define GRANDFATHER_ROTATION_STAGE3  4.30f
-
+// HPŽ©“®‰ñ•œ‘Ò‚¿ŽžŠÔ
+#define GRANDFATHER_RECOVER_WAITE_TIME 180
+// HP‰ñ•œ—Ê
+#define GRANDFATHER_RECOVER_HP 0.003f
 
 
 //-------------------------------------
@@ -80,6 +83,10 @@
 #define CHILD_ROTATION4 0.79f
 // ƒŠƒXƒ|[ƒ“‘Ò‚¿ŽžŠÔ
 #define CHILD_RESPAWN_WAITTIME 120
+// HPŽ©“®‰ñ•œ‘Ò‚¿ŽžŠÔ
+#define CHILD_RECOVER_WAITE_TIME 180
+// HP‰ñ•œ—Ê
+#define CHILD_RECOVER_HP 0.003f
 
 
 //-------------------------------------

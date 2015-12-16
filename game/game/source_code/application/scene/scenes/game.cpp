@@ -1199,6 +1199,22 @@ void Game::Update()
 	child_respawn_waittime_ = std::max<int>(child_respawn_waittime_, 0);
 
 	//-------------------------------------
+	// 子供体力自動回復制御
+	//-------------------------------------
+	if (child_life < 1.0f && !child_death_){
+		int child_recover_wait_timer = child->GetRecoverWaitTimer();
+		
+		if (child_recover_wait_timer > CHILD_RECOVER_WAITE_TIME){
+			float child_life = child->GetLife( );
+			child_life += CHILD_RECOVER_HP;
+			std::max<float>(child_life, 1.0f);
+			child->SetLife(child_life);
+		}
+		child_recover_wait_timer++;
+		child->SetRecoverWaitTimer(child_recover_wait_timer);
+	}
+
+	//-------------------------------------
 	// ダメージエフェクトの処理
 	//-------------------------------------
 	// 今はテスト用に、子供に当てたら主観(おじ)のUIを反映させている

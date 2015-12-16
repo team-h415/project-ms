@@ -43,6 +43,8 @@ FbxChild::FbxChild(const OBJECT_PARAMETER_DESC &parameter) :
 {
 	animation_count_ = MAX_TYPE;
 
+	recover_wait_timer_ = 0;
+
 	// ƒ‚ƒfƒ‹“Ç‚Ýž‚Ý
 	Load("./resource/model/fbx/child_01.fbx");
 	texture_ = TextureManager::GetTexture("resource/texture/game/child_01.jpg");
@@ -86,6 +88,7 @@ FbxChild::FbxChild(const OBJECT_PARAMETER_DESC &parameter) :
 	animation_[DOWN].loop_ = false;
 	animation_[DOWN].speed_ = 0.5f;
 	animation_[DOWN].time_ = 0.0f;
+
 }
 
 
@@ -122,6 +125,7 @@ void FbxChild::Action(
 	//-------------------------------------
 	// ŒÎ‚Æ“–‚½‚Á‚½‚ç
 	if (target->parameter().layer_ == LAYER_SPRITE_LAKE){
+		
 		//if (GamePad::isPress(GAMEPAD_CHILD1, PAD_BUTTON_6) && water_gauge_ < 1.0f){
 		//	//-------------------------------------
 		//	// ƒV[ƒ“Žæ“¾
@@ -132,7 +136,7 @@ void FbxChild::Action(
 
 		//		// …•â‹‹
 		//		water_gauge_ += CHILD_SUB_WATERGAUGE;
-
+		
 		//		Object *obj = game->object_manager()->Get("water_gage");
 		//		WaterGage *water_gage_obj = static_cast<WaterGage*>(obj);
 		//		water_gage_obj->SetChangeValue(water_gauge_);

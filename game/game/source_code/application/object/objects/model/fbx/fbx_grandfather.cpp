@@ -38,6 +38,8 @@ FbxGrandfather::FbxGrandfather(const OBJECT_PARAMETER_DESC &parameter) :
 {
 	animation_count_ = MAX_TYPE;
 
+	recover_wait_timer_ = 0;
+
 	// ÉÇÉfÉãì«Ç›çûÇ›
 	Load("./resource/model/fbx/ogchan.fbx");
 	texture_ = TextureManager::GetTexture("resource/texture/game/ogchan.jpg");

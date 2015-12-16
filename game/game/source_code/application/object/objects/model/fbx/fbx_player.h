@@ -85,8 +85,18 @@ public:
 		water_gauge_ = gauge;
 	}
 
+	//体力回復ウェイトタイマー
+	const int &GetRecoverWaitTimer(){
+		return recover_wait_timer_;
+	}
+	void SetRecoverWaitTimer(const int &timer){
+		recover_wait_timer_ = timer;
+	}
+
 protected:
 	void UpdateBoneMatrix(BONE *subject, D3DXMATRIX *parent);
+
+	void UpdateHP();
 
 	//キーフレーム間の補間
 	D3DXVECTOR3 InterpolateTranslation(BONE* subject, float time);
@@ -104,6 +114,8 @@ protected:
 	float life_;
 	// 水ゲージ
 	float water_gauge_;
+	//  体力回復ウェイトタイマー
+	int recover_wait_timer_;
 };
 
 
