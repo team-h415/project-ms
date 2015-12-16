@@ -122,7 +122,9 @@ void FbxGrandfather::Action(
 	//-------------------------------------
 	// ŒÎ‚Æ“–‚½‚Á‚½‚ç
 	if (target->parameter().layer_ == LAYER_SPRITE_LAKE){
-		if (GamePad::isPress(GAMEPAD_GRANDFATHER, PAD_BUTTON_6) && water_gauge_ < 1.0f){
+		if (GamePad::isPress(GAMEPAD_GRANDFATHER, PAD_BUTTON_6) 
+			&& !GamePad::isPress(GAMEPAD_GRANDFATHER, PAD_BUTTON_8)
+			&& water_gauge_ < 1.0f){
 			if (water_supply_enable_){
 				//-------------------------------------
 				// ƒV[ƒ“Žæ“¾
