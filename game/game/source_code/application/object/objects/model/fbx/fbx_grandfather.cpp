@@ -120,19 +120,23 @@ void FbxGrandfather::Action(
 	// 湖と当たったら
 	if (target->parameter().layer_ == LAYER_SPRITE_LAKE){
 		if (GamePad::isPress(GAMEPAD_GRANDFATHER, PAD_BUTTON_6) && water_gauge_ < 1.0f){
-			//-------------------------------------
-			// シーン取得
-			Scene *scene = SceneManager::GetCurrentScene();
-			std::string str = SceneManager::GetCurrentSceneName();
-			if (str == "Game"){
-				Game *game = dynamic_cast<Game*>(scene);
+			if (water_supply_enable_){
+				//-------------------------------------
+				// シーン取得
+				Scene *scene = SceneManager::GetCurrentScene();
+				std::string str = SceneManager::GetCurrentSceneName();
+				if (str == "Game"){
+					Game *game = dynamic_cast<Game*>(scene);
 
-				// 水補給
-				water_gauge_ += GRANDFATHER_SUB_WATERGAUGE;
-
-				Object *obj = game->object_manager()->Get("water_gage");
-				WaterGage *water_gage_obj = static_cast<WaterGage*>(obj);
-				water_gage_obj->SetChangeValue(water_gauge_);
+					// 水補給
+					water_gauge_ += GRANDFATHER_SUB_WATERGAUGE;
+					std::min<float>(water_gauge_, 1.0f);
+					Object *obj = game->object_manager()->Get("water_gage");
+					WaterGage *water_gage_obj = static_cast<WaterGage*>(obj);
+					water_gage_obj->SetChangeValue(water_gauge_);
+					// 重複防止
+					water_supply_enable_ = false;
+				}
 			}
 		}
 	}
