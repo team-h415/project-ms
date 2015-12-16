@@ -22,6 +22,7 @@ class CameraManager;
 class EffectManager;
 class DebugFont;
 class CollisionManager;
+class Collision;
 class Game : public Scene
 {
 public:
@@ -71,7 +72,6 @@ private:
 	int dash_effect_timer_;
 	// Œ»İ•\¦‚Ég‚Á‚Ä‚éƒJƒƒ‰
 	std::string use_camera_name_;
-
 };
 
 
