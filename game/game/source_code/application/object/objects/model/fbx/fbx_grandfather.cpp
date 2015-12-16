@@ -182,8 +182,6 @@ void FbxGrandfather::Action(
 
 						water_supply_effect_timer_++;
 					}
-<<<<<<< HEAD
-=======
 					// 補給泡エフェクト
 					OBJECT_PARAMETER_DESC grandfather_parameter = this->parameter();
 					EFFECT_PARAMETER_DESC effect_param;
@@ -196,7 +194,6 @@ void FbxGrandfather::Action(
 
 
 					water_supply_effect_timer_++;
->>>>>>> origin/fuka
 				}
 			}
 
