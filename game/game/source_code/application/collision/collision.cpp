@@ -72,6 +72,10 @@ void Collision::Draw()
 		return;
 	}
 
+	DWORD zfunc;
+	DirectX9Holder::device_->GetRenderState(D3DRS_ZFUNC, &zfunc);
+	DirectX9Holder::device_->SetRenderState(D3DRS_ZFUNC, D3DCMP_ALWAYS);
+
 	DirectX9Holder::device_->SetRenderState(D3DRS_LIGHTING, FALSE);
 	DirectX9Holder::device_->SetTransform(D3DTS_WORLD, &world_);
 	
@@ -83,6 +87,8 @@ void Collision::Draw()
 	DirectX9Holder::device_->DrawPrimitiveUP(D3DPT_LINESTRIP, 10, vertex_[2], sizeof(Vertex3D));
 
 	DirectX9Holder::device_->SetRenderState(D3DRS_LIGHTING, TRUE);
+
+	DirectX9Holder::device_->SetRenderState(D3DRS_ZFUNC, zfunc);
 }
 
 

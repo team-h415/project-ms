@@ -22,6 +22,7 @@ class CameraManager;
 class EffectManager;
 class DebugFont;
 class CollisionManager;
+class Collision;
 class Game : public Scene
 {
 public:
