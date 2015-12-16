@@ -248,7 +248,7 @@ void Bullet::Action(
 				child->SetLife(life);
 				child->SetRecoverWaitTimer(0);
 			}
-			// Ô(¦Žq‹Ÿ‚É·‚µ‘Ö‚¦‚é‚±‚Æ!)
+			// Ô
 			else if (target->parameter().layer_ == LAYER_MODEL_FORT &&
 				parameter_.parent_layer_ == LAYER_MODEL_GRANDFATHER){
 				XFort *fort = dynamic_cast<XFort*>(target);

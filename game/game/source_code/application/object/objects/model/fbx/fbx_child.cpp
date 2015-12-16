@@ -7,7 +7,6 @@
 //-------------------------------------
 // include
 //-------------------------------------
-#include "../../../../config/config.h"
 #include "../../../../../common/common.h"
 #include "../../../../render/renderer.h"
 #include "../../../../render/directx9/directx9.h"
@@ -15,6 +14,7 @@
 #include "../../../../input/input.h"
 #include "../../../../input/inputs/gamepad.h"
 #include "../../../../math/vector.h"
+#include "../../../../config/config.h"
 #include "../../../../shader/shader.h"
 #include "../../../../scene/scene.h"
 #include "../../../../scene/scene_manager.h"
@@ -124,60 +124,60 @@ void FbxChild::Action(
 		parameter_.position_ -= vec;
 	}
 
-	//-------------------------------------
-	// 湖と当たったら
-	if (target->parameter().layer_ == LAYER_SPRITE_LAKE){
-		//if (GamePad::isPress(GAMEPAD_CHILD1, PAD_BUTTON_6) && water_gauge_ < 1.0f){
-		//	if (water_supply_enable_){
-		//		//-------------------------------------
-		//		// シーン取得
-		//		Scene *scene = SceneManager::GetCurrentScene();
-		//		std::string str = SceneManager::GetCurrentSceneName();
-		//		if (str == "Game"){
-		//			Game *game = dynamic_cast<Game*>(scene);
+	////-------------------------------------
+	//// 湖と当たったら
+	//if (target->parameter().layer_ == LAYER_SPRITE_LAKE){
+	//	if (GamePad::isPress(GAMEPAD_CHILD1, PAD_BUTTON_6) && water_gauge_ < 1.0f){
+	//		if (water_supply_enable_){
+	//			//-------------------------------------
+	//			// シーン取得
+	//			Scene *scene = SceneManager::GetCurrentScene();
+	//			std::string str = SceneManager::GetCurrentSceneName();
+	//			if (str == "Game"){
+	//				Game *game = dynamic_cast<Game*>(scene);
 
-		//			// 水補給
-		//			water_gauge_ += GRANDFATHER_SUB_WATERGAUGE;
-		//			water_gauge_ = std::min<float>(water_gauge_, 1.0f);
-		//			Object *obj = game->object_manager()->Get("water_gage");
-		//			WaterGage *water_gage_obj = static_cast<WaterGage*>(obj);
-		//			water_gage_obj->SetChangeValue(water_gauge_);
-		//			// 重複防止
-		//			water_supply_enable_ = false;
+	//				// 水補給
+	//				water_gauge_ += GRANDFATHER_SUB_WATERGAUGE;
+	//				water_gauge_ = std::min<float>(water_gauge_, 1.0f);
+	//				Object *obj = game->object_manager()->Get("water_gage");
+	//				WaterGage *water_gage_obj = static_cast<WaterGage*>(obj);
+	//				water_gage_obj->SetChangeValue(water_gauge_);
+	//				// 重複防止
+	//				water_supply_enable_ = false;
 
-		//			if (water_supply_effect_timer_ % 45 == 0)
-		//			{
-		//				// 補給エフェクト
-		//				OBJECT_PARAMETER_DESC grandfather_parameter = this->parameter();
-		//				EFFECT_PARAMETER_DESC effect_param;
-		//				MyEffect *effect = game->effect_manager()->Get("watersupply");
-		//				effect_param = effect->parameter();
-		//				effect_param.position_ = grandfather_parameter.position_;
-		//				effect_param.position_.x_ += sinf(grandfather_parameter.rotation_.y_)*0.2f;
-		//				effect_param.position_.z_ += cosf(grandfather_parameter.rotation_.y_)*0.2f;
-		//				effect_param.position_.y_ += 0.5f;
-		//				effect->SetParameter(effect_param);
-		//				game->effect_manager()->Play("watersupply");
-		//			}
-		//			// 補給泡エフェクト
-		//			OBJECT_PARAMETER_DESC grandfather_parameter = this->parameter();
-		//			EFFECT_PARAMETER_DESC effect_param;
-		//			MyEffect *effect = game->effect_manager()->Get("watersupplybubble");
-		//			effect_param = effect->parameter();
-		//			effect_param.position_ = grandfather_parameter.position_;
-		//			effect_param.position_.y_ += 0.2f;
-		//			effect->SetParameter(effect_param);
-		//			game->effect_manager()->Play("watersupplyboble");
+	//				if (water_supply_effect_timer_ % 45 == 0)
+	//				{
+	//					// 補給エフェクト
+	//					OBJECT_PARAMETER_DESC grandfather_parameter = this->parameter();
+	//					EFFECT_PARAMETER_DESC effect_param;
+	//					MyEffect *effect = game->effect_manager()->Get("watersupply");
+	//					effect_param = effect->parameter();
+	//					effect_param.position_ = grandfather_parameter.position_;
+	//					effect_param.position_.x_ += sinf(grandfather_parameter.rotation_.y_)*0.2f;
+	//					effect_param.position_.z_ += cosf(grandfather_parameter.rotation_.y_)*0.2f;
+	//					effect_param.position_.y_ += 0.5f;
+	//					effect->SetParameter(effect_param);
+	//					game->effect_manager()->Play("watersupply");
+	//				}
+	//				// 補給泡エフェクト
+	//				OBJECT_PARAMETER_DESC grandfather_parameter = this->parameter();
+	//				EFFECT_PARAMETER_DESC effect_param;
+	//				MyEffect *effect = game->effect_manager()->Get("watersupplybubble");
+	//				effect_param = effect->parameter();
+	//				effect_param.position_ = grandfather_parameter.position_;
+	//				effect_param.position_.y_ += 0.2f;
+	//				effect->SetParameter(effect_param);
+	//				game->effect_manager()->Play("watersupplyboble");
 
 
-		//			water_supply_effect_timer_++;
-		//		}
-		//	}
-		//}
-		//else{
-		//	water_supply_effect_timer_ = 0;
-		//}
-	}
+	//				water_supply_effect_timer_++;
+	//			}
+	//		}
+	//	}
+	//	else{
+	//		water_supply_effect_timer_ = 0;
+	//	}
+	//}
 }
 
 

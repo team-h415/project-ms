@@ -132,13 +132,18 @@ static const Vector3 CHILD_ROTATION[4]
 // 砦
 
 // 座標
-#define FORT1_POSITION {  50.0f,  0.0f, -50.0f }
-#define FORT2_POSITION { -56.0f,  0.0f,  63.0f }
-#define FORT3_POSITION {  53.0f,  0.0f,  62.0f }
+static const Vector3 FORT_POSITION[3]
+{
+	{  50.0f, 0.0f, -50.0f },
+	{ -56.0f, 0.0f, 63.0f },
+	{  53.0f, 0.0f, 62.0f },
+};
 // 体力
-#define FORT1_LiFE 1.0f
-#define FORT2_LiFE 1.0f
-#define FORT3_LiFE 1.0f
+static const float FORT_LIFE[3]{
+	1.0f,
+	1.0f,
+	1.0f,
+};
 // くらうダメージ量
 #define FORT_DAMAGE 0.01f;
 

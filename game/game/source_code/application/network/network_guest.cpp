@@ -36,6 +36,7 @@
 #include "../object/objects/model/fbx/fbx_player.h"
 #include "../object/objects/model/fbx/fbx_grandfather.h"
 #include "../object/objects/model/fbx/fbx_child.h"
+#include "../object/objects/sprite/message.h"
 #include "../effect/effect.h"
 #include "../effect/effect_manager.h"
 #include "../camera/camera.h"
@@ -299,8 +300,8 @@ unsigned __stdcall NetworkGuest::Communication()
 						{
 							continue;
 						}
-						ObjDataAdaptation(matching->GetObjectManager(),
-							matching->GetCameraManager(), matching->GetEffectManager(), rec_data);
+						ObjDataAdaptation(matching->object_manager(),
+							matching->camera_manager(), matching->effect_manager(), rec_data);
 					}
 					else if("Game" == scene_name)
 					{
@@ -550,40 +551,22 @@ void NetworkGuest::ObjDataAdaptation(
 				{
 					return;
 				}
+				// アナウンス
 				std::string name = rec_data.name;
-				if(name == "time")
+				Object *object = object_manager->Get(name);
+				if(object == nullptr)
 				{
-					Object *object = object_manager->Get(name);
-					if(object == nullptr)
-					{
-						return;
-					}
-					Timer *timer = dynamic_cast<Timer*>(object);
-					timer->SetValue(rec_data.ui_param_.value_i_);
+					return;
 				}
-
-				else if(name == "water_gage")
+				Message *message = dynamic_cast<Message*>(object);
+				Vector3 message_position = 
 				{
-					Object *object = object_manager->Get(name);
-					if(object == nullptr)
-					{
-						return;
-					}
-					WaterGage *water_gage = dynamic_cast<WaterGage*>(object);
-					water_gage->SetChangeValue(rec_data.ui_param_.value_f_);
-				}
-
-				else if(name == "damage_effect")
-				{
-					Object *object = object_manager->Get(name);
-					if(object == nullptr)
-					{
-						return;
-					}
-					DamageEffect *damage_effect = dynamic_cast<DamageEffect*>(object);
-					damage_effect->SetHP(rec_data.ui_param_.value_f_);
-				}
-
+					rec_data.object_param_.position_.x_,
+					rec_data.object_param_.position_.y_,
+					rec_data.object_param_.position_.z_
+				};
+				message->SetPosition(message_position);
+				message->Play();
 			}
 			break;
 

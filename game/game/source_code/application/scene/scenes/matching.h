@@ -39,6 +39,9 @@ public:
 	CameraManager *camera_manager(){
 		return camera_manager_;
 	}
+	EffectManager *effect_manager(){
+		return effect_manager_;
+	}
 
 private:
 	ObjectManager *object_manager_;

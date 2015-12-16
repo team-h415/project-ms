@@ -87,7 +87,7 @@ private:
 	//-------------------------------------
 	int shot_late[MAX_GUEST];
 	// ステージ(砦が壊されるごとに進行/1からスタート)
-	int stage_;
+	int now_target_fort_;
 	// 砦高さ補正
 	float fort_y[3];
 	// おじデバフフラグ
@@ -98,6 +98,8 @@ private:
 	int child_respawn_waittime_[MAX_GUEST - 1];
 	// じじいダッシュ
 	int dash_effect_timer_;
+	// 砦アナウンスステート
+	int fort_announce_state_;
 };
 
 

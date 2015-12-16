@@ -172,7 +172,8 @@ unsigned __stdcall NetworkHost::Communication()
 						send_data.type_ = DATA_GIVE_ADDR;
 						// IPアドレス登録
 						bool no_ip(true);
-						for(int i = 0; i < MAX_GUEST; i++)
+						int i = 0;
+						for(i = 0; i < MAX_GUEST; i++)
 						{
 							// IPアドレス重複チェック
 							if(guest_addr_[i] == from_addr.sin_addr.s_addr)
@@ -181,9 +182,11 @@ unsigned __stdcall NetworkHost::Communication()
 								break;
 							}
 						}
+						send_data.id_ = i;
 						// IPアドレスの記録
 						if(no_ip)
 						{
+							send_data.id_ = access_guest_;
 							guest_addr_[access_guest_] = from_addr.sin_addr.s_addr;
 							access_guest_++;
 						}

@@ -31,6 +31,10 @@
 FbxPlayer::FbxPlayer(const OBJECT_PARAMETER_DESC &parameter) :
 	FbxModel(parameter)
 {
+	recover_wait_timer_ = 0;
+	water_supply_effect_timer_ = 0;
+	life_ = 1.0f;
+	water_gauge_ = 1.0f;
 }
 
 

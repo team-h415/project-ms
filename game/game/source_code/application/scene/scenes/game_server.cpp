@@ -76,20 +76,11 @@ GameServer::GameServer()
 	camera_param.near_ = 0.1f;
 	camera_param.far_ = 1000.0f;
 
-	camera_manager_->Create(
-		"Perspective", "camera1", camera_param);
-
-	camera_manager_->Create(
-		"Perspective", "camera2", camera_param);
-
-	camera_manager_->Create(
-		"Perspective", "camera3", camera_param);
-
-	camera_manager_->Create(
-		"Perspective", "camera4", camera_param);
-
-	camera_manager_->Create(
-		"Perspective", "camera5", camera_param);
+	for(int i = 0; i < MAX_GUEST; i++)
+	{
+		camera_manager_->Create(
+			"Perspective", "camera" + std::to_string(i + 1), camera_param);
+	}
 
 	//-------------------------------------
 	// サブカメラ
@@ -131,88 +122,75 @@ GameServer::GameServer()
 		"resource/mesh/map.heightmap");
 
 	//-------------------------------------
+	// 池
+	//-------------------------------------
+	OBJECT_PARAMETER_DESC lake_param;
+	lake_param.name_ = "lake";
+	lake_param.position_ = {0.0f, -0.5f, 0.0f};
+	lake_param.rotation_ = {0.0f, 0.0f, 0.0f};
+	lake_param.scaling_ = {30.0f, 1.0f, 30.0f};
+	lake_param.layer_ = LAYER_SPRITE_LAKE;
+
+	object_manager_->Create(
+		lake_param);
+
+	// 湖
+	Object *obj_lake = object_manager_->Get("lake");
+	COLLISION_PARAMETER_DESC lake_collision_param;
+	lake_collision_param.position_ = {
+		obj_lake->parameter().position_.x_,
+		5.0f,
+		obj_lake->parameter().position_.z_};
+	lake_collision_param.range_ = LAKE_COLLISION_RANGE;
+	// 上
+	lake_collision_param.offset_ = {-0.5f, 0.0f, 11.5f};
+	collision_manager_->Create(object_manager_->Get("lake"),
+		lake_collision_param);
+	// 右下
+	lake_collision_param.offset_ = {5.0f, 0.0f, 2.0f};
+	collision_manager_->Create(object_manager_->Get("lake"),
+		lake_collision_param);
+	// 左上
+	lake_collision_param.offset_ = {-3.5f, 0.0f, 0.0f};
+	collision_manager_->Create(object_manager_->Get("lake"),
+		lake_collision_param);
+
+	//-------------------------------------
 	// 砦
 	//-------------------------------------
-	// 砦1
-	OBJECT_PARAMETER_DESC fort1_param;
-	fort1_param.name_ = "fort1";
-	fort1_param.layer_ = LAYER_MODEL_FORT;
-	fort1_param.position_ = FORT1_POSITION;
-	fort1_param.rotation_ = {0.0f, 0.0f, 0.0f};
-	fort1_param.scaling_ = {1.0f, 1.0f, 1.0f};
+	OBJECT_PARAMETER_DESC fort_param;
+	COLLISION_PARAMETER_DESC fort_collision_param;
+	Object *fort_obj;
+	XFort *fort;
+	Vector3 fort_pos;
+	for(int i = 0; i < 3; i++)
+	{
+		std::string name = "fort" + std::to_string(i + 1);
+		fort_param.name_ = name;
+		fort_param.layer_ = LAYER_MODEL_FORT;
+		fort_param.position_ = FORT_POSITION[i];
+		fort_param.rotation_ = {0.0f, 0.0f, 0.0f};
+		fort_param.scaling_ = {1.0f, 1.0f, 1.0f};
 
-	object_manager_->Create(
-		fort1_param,
-		"resource/model/x/test.x");
+		object_manager_->Create(
+			fort_param,
+			"resource/model/x/test.x");
 
-	COLLISION_PARAMETER_DESC fort1_collision_param;
-	Object *fort1_obj = object_manager_->Get("fort1");
-	fort1_collision_param.position_ = {
-		fort1_obj->parameter().position_.x_,
-		fort1_obj->parameter().position_.y_ + 0.5f,
-		fort1_obj->parameter().position_.z_};
-	fort1_collision_param.range_ = 1.0f;
-	fort1_collision_param.offset_ = {0.0f, 0.5f, 0.0f};
+		fort_obj = object_manager_->Get(name);
+		fort = dynamic_cast<XFort*>(fort_obj);
 
-	collision_manager_->Create(fort1_obj,
-		fort1_collision_param);
-	XFort *fort1 = dynamic_cast<XFort*>(fort1_obj);
-	fort1->SetLife(FORT1_LiFE);
+		fort_pos = fort_obj->parameter().position_;
+		fort_collision_param.position_ = {
+			fort_pos.x_,
+			fort_pos.y_ + 0.5f,
+			fort_pos.z_};
+		fort_collision_param.range_ = 1.0f;
+		fort_collision_param.offset_ = {0.0f, 0.5f, 0.0f};
 
-
-	// 砦2
-	OBJECT_PARAMETER_DESC fort2_param;
-	fort2_param.name_ = "fort2";
-	fort2_param.layer_ = LAYER_MODEL_FORT;
-	fort2_param.position_ = FORT2_POSITION;
-	fort2_param.rotation_ = {0.0f, 0.0f, 0.0f};
-	fort2_param.scaling_ = {1.0f, 1.0f, 1.0f};
-
-	object_manager_->Create(
-		fort2_param,
-		"resource/model/x/test.x");
-
-	COLLISION_PARAMETER_DESC fort2_collision_param;
-	Object *fort2_obj = object_manager_->Get("fort2");
-	fort2_collision_param.position_ = {
-		fort2_obj->parameter().position_.x_,
-		fort2_obj->parameter().position_.y_ + 0.5f,
-		fort2_obj->parameter().position_.z_};
-	fort2_collision_param.range_ = 1.0f;
-	fort2_collision_param.offset_ = {0.0f, 0.5f, 0.0f};
-
-	collision_manager_->Create(fort2_obj,
-		fort2_collision_param);
-	XFort *fort2 = dynamic_cast<XFort*>(fort2_obj);
-	fort2->SetLife(FORT2_LiFE);
-
-
-	// 砦3
-	OBJECT_PARAMETER_DESC fort3_param;
-	fort3_param.name_ = "fort3";
-	fort3_param.layer_ = LAYER_MODEL_FORT;
-	fort3_param.position_ = FORT3_POSITION;
-	fort3_param.rotation_ = {0.0f, 0.0f, 0.0f};
-	fort3_param.scaling_ = {1.0f, 1.0f, 1.0f};
-
-	object_manager_->Create(
-		fort3_param,
-		"resource/model/x/test.x");
-
-	COLLISION_PARAMETER_DESC fort3_collision_param;
-	Object *fort3_obj = object_manager_->Get("fort3");
-	fort3_collision_param.position_ = {
-		fort3_obj->parameter().position_.x_,
-		fort3_obj->parameter().position_.y_ + 0.5f,
-		fort3_obj->parameter().position_.z_};
-	fort3_collision_param.range_ = 1.0f;
-	fort3_collision_param.offset_ = {0.0f, 0.5f, 0.0f};
-
-	collision_manager_->Create(fort3_obj,
-		fort3_collision_param);
-	XFort *fort3 = dynamic_cast<XFort*>(fort3_obj);
-	fort3->SetLife(FORT3_LiFE);
-
+		collision_manager_->Create(fort_obj,
+			fort_collision_param);
+		fort->SetLife(FORT_LIFE[i]);
+	}
 
 	//-------------------------------------
 	// FBXおじ
@@ -278,25 +256,6 @@ GameServer::GameServer()
 		bullet_param.name_ = "bullet" + std::to_string(i);
 		object_manager_->Create(
 			bullet_param);
-	}
-
-	//-------------------------------------
-	// ゲームルール用パラメータ初期化
-	//-------------------------------------
-	for(int i = 0; i < MAX_GUEST; i++)
-	{
-		guest_scene_change_[i] = false;
-	}
-	// ステージ
-	stage_ = 1;
-	// おじデバフフラグ
-	grandfather_debuff_ = false;
-	for(int i = 0; i < (MAX_GUEST - 1); i++)
-	{
-		// 子供死亡フラグ
-		child_death_[i] = false;
-		// 子供リスポーン待ち時間
-		child_respawn_waittime_[i] = 0;
 	}
 
 	//-------------------------------------
@@ -522,7 +481,7 @@ void GameServer::Game()
 					}
 				}
 				scene_state_ = STATE_COUNTDOWN;
-				time_ = 60 * 5;
+				time_ = 60 * (5 + 10);
 				return;
 			}
 			break;
@@ -548,8 +507,51 @@ void GameServer::Game()
 					NetworkHost::SendTo(DELI_MULTI, send_data);
 
 					scene_state_ = STATE_RUN;
-					time_ = 60 * 240;
+					time_ = 60 * 180;
 				}
+			}
+			// 演出入るまではプレイヤー見てる
+			for(int i = 0; i < MAX_GUEST; i++)
+			{
+				//------------------------------------------------
+				// プレイヤーデータ転送
+				//------------------------------------------------
+				FbxPlayer* player = dynamic_cast<FbxPlayer*>(object_manager_->Get("player" + std::to_string(i + 1)));
+				Vector3 player_position = player->parameter().position_;
+				Vector3 player_rotation = player->parameter().rotation_;
+
+				send_data.type_ = DATA_OBJ_PARAM;
+				send_data.id_ = i;
+				send_data.object_param_.ex_id_ = 0;
+				send_data.object_param_.type_ = OBJ_PLAYER;
+				send_data.object_param_.position_.x_ = player_position.x_;
+				send_data.object_param_.position_.y_ = player_position.y_;
+				send_data.object_param_.position_.z_ = player_position.z_;
+
+				send_data.object_param_.rotation_.x_ = player_rotation.x_;
+				send_data.object_param_.rotation_.y_ = player_rotation.y_;
+				send_data.object_param_.rotation_.z_ = player_rotation.z_;
+
+				NetworkHost::SendTo(DELI_MULTI, send_data);
+
+				//------------------------------------------------
+				// カメラデータ転送
+				//------------------------------------------------
+				Camera* main_camera = camera_manager_->Get("camera" + std::to_string(i + 1));
+				D3DXVECTOR3 camera_position = main_camera->position();
+				D3DXVECTOR3 camera_focus = main_camera->focus();
+
+				send_data.type_ = DATA_OBJ_PARAM;
+				send_data.object_param_.type_ = OBJ_CAMERA;
+				send_data.object_param_.position_.x_ = camera_position.x;
+				send_data.object_param_.position_.y_ = camera_position.y;
+				send_data.object_param_.position_.z_ = camera_position.z;
+
+				send_data.object_param_.rotation_.x_ = camera_focus.x;
+				send_data.object_param_.rotation_.y_ = camera_focus.y;
+				send_data.object_param_.rotation_.z_ = camera_focus.z;
+
+				NetworkHost::SendTo((DELI_TYPE)i, send_data);
 			}
 			return;
 			break;
@@ -566,35 +568,57 @@ void GameServer::Game()
 					strcpy_s(send_data.name, MAX_NAME_LEN, "time");
 					send_data.ui_param_.value_i_ = time_ / 60;
 					NetworkHost::SendTo(DELI_MULTI, send_data);
-					// ゲームエンド条件１ タイムアップ
-					if(time_ == 0)
-					{
-						// じじい勝利
-						ChangeServerState(STATE_RESULT);
-						// シーンチェンジ命令送信
-						ZeroMemory(&send_data, sizeof(send_data));
-						send_data.type_ = DATA_SCENE_CHANGE_RESULT;
-						send_data.id_ = 0;
-						NetworkHost::SendTo(DELI_MULTI, send_data);
-					}
 				}
+				else
+				{
+					// ゲームエンド条件１ タイムアップ
+					// じじい勝利
+					ChangeServerState(STATE_RESULT);
+					// シーンチェンジ命令送信
+					ZeroMemory(&send_data, sizeof(send_data));
+					send_data.type_ = DATA_SCENE_CHANGE_RESULT;
+					send_data.id_ = 0;
+					NetworkHost::SendTo(DELI_MULTI, send_data);
+				}
+
 				// 砦ライフ管理
-				std::string fort_str = "fort" + std::to_string(stage_);
+				std::string fort_str = "fort" + std::to_string(now_target_fort_);
 				Object *fort_object = object_manager_->Get(fort_str);
 				XFort *fort = dynamic_cast<XFort*>(fort_object);
 				send_data.type_ = DATA_UI_PARAM;
-				send_data.id_ = stage_ - 1;
+				send_data.id_ = now_target_fort_ - 1;
 				float life(fort->GetLife());
 				send_data.ui_param_.value_f_ = life;
 				strcpy_s(send_data.name, MAX_NAME_LEN, "fort_gauge_manager");
 				NetworkHost::SendTo(DELI_MULTI, send_data);
+
+				// アナウンスチェック
+				if(fort_announce_state_ * 0.01f > life)
+				{
+					// ゲストへアナウンス告知命令
+					std::string name = "message_fort_" + std::to_string(100 - fort_announce_state_);
+					ZeroMemory(&send_data, sizeof(send_data));
+					send_data.type_ = DATA_OBJ_PARAM;
+					send_data.object_param_.type_ = OBJ_UI;
+					send_data.object_param_.position_.x_ = SCREEN_WIDTH + 200.0f;
+					send_data.object_param_.position_.y_ = SCREEN_HEIGHT - 200.0f;
+					send_data.object_param_.position_.z_ = 0.0f;
+					strcpy_s(send_data.name, MAX_NAME_LEN, name.c_str());
+					NetworkHost::SendTo(DELI_MULTI, send_data);
+
+					// アナウンス用値減少
+					fort_announce_state_ -= 25;
+				}
+
 				if(life <= 0.0f)
 				{
-					stage_++;
-					if(stage_ >= 4)
+					fort_announce_state_ = 75;
+
+					now_target_fort_++;
+					if(now_target_fort_ >= 4)
 					{
 						// ガキの勝利
-						stage_ = 3;
+						now_target_fort_ = 3;
 						ChangeServerState(STATE_RESULT);
 						// シーンチェンジ命令送信
 						ZeroMemory(&send_data, sizeof(send_data));
@@ -630,7 +654,7 @@ void GameServer::Game()
 					fort_pos.z = fort_position.z_;
 
 					float field_height = field->GetHeight(fort_pos);
-					if((stage_ - 1) == i)
+					if((now_target_fort_ - 1) == i)
 					{
 						fort_y[i] += 0.01f;
 						if(fort_y[i] > 0.0f)
@@ -672,6 +696,37 @@ void GameServer::Game()
 					strcpy_s(send_data.name, MAX_NAME_LEN, fort_str.c_str());
 					NetworkHost::SendTo(DELI_MULTI, send_data);
 				}
+
+				Camera* sub_camera = camera_manager_->Get("SubCamera");
+				D3DXVECTOR3 sub_camera_position, sub_camera_rotation, sub_camera_focus;
+				sub_camera_rotation = sub_camera->rotation();
+				sub_camera_position = sub_camera->position();
+				sub_camera_focus = sub_camera->focus();
+
+				std::string name = "fort" + std::to_string(now_target_fort_);
+				Object *fort_object = object_manager_->Get(name);
+				Vector3 focus = fort_object->parameter().position_;
+				// サブカメラ回転
+				sub_camera_rotation.y += CAMERA_SUB_ROT_SPEED;
+				sub_camera_rotation.x += CAMERA_SUB_ROT_SPEED*0.02f;
+				// フォーカス設定
+				sub_camera_focus.x = focus.x_;
+				sub_camera_focus.y = focus.y_;
+				sub_camera_focus.z = focus.z_;
+				sub_camera_focus.y = 1.5f;
+				// 注視点を基準にカメラ座標を設定
+				sub_camera_position = sub_camera_focus;
+				sub_camera_position.x -=
+					sinf(sub_camera_rotation.y) * CAMERA_POS_LEN * cosf(sub_camera_rotation.x);
+				sub_camera_position.z -=
+					cosf(sub_camera_rotation.y) * CAMERA_POS_LEN * cosf(sub_camera_rotation.x);
+				sub_camera_position.y -=
+					sinf(sub_camera_rotation.x) * CAMERA_POS_LEN;
+
+				// サブカメラへ値装填
+				sub_camera->SetPosition(sub_camera_position);
+				sub_camera->SetFocus(sub_camera_focus);
+				sub_camera->SetRotation(sub_camera_rotation);
 			}
 			break;
 
@@ -698,7 +753,7 @@ void GameServer::Game()
 		strcpy_s(send_data.name, MAX_NAME_LEN, "smoke");
 		NetworkHost::SendTo(DELI_MULTI, send_data);
 
-		switch(stage_){
+		switch(now_target_fort_){
 			case 1:
 				player_position = GRANDFATHER_POSITION_STAGE1;
 				player_rotation.y_ = GRANDFATHER_ROTATION_STAGE1;
@@ -732,6 +787,7 @@ void GameServer::Game()
 		FbxPlayer *player = dynamic_cast<FbxPlayer*>(player_obj);
 		Vector3 player_position(player->parameter().position_);
 		Vector3 player_rotation(player->parameter().rotation_);
+		Vector3 player_position_old = player_position;
 
 		float player_speed = CHARANCTER_MOVESPEED;
 
@@ -748,24 +804,29 @@ void GameServer::Game()
 		}
 		if(input)
 		{
-			if(GamePad::isPress(i, PAD_BUTTON_11)){
-				player_speed = CHARANCTER_MOVESPEED * 2.0f;
-				// ダッシュエフェクト
-				if (dash_effect_timer_ % 10 == 0){
+			if(i == 0)
+			{
+				// じじいダッシュ
+				if(GamePad::isPress(i, PAD_BUTTON_11)){
+					player_speed = CHARANCTER_MOVESPEED * 2.0f;
+					// ダッシュエフェクト
+					if (dash_effect_timer_ % 10 == 0){
 
-					// エフェクト再生
-					ZeroMemory(&send_data, sizeof(send_data));
-					send_data.type_ = DATA_OBJ_PARAM;
-					send_data.object_param_.type_ = OBJ_EFFECT;
-					send_data.object_param_.position_.x_ = player_position.x_;
-					send_data.object_param_.position_.y_ = player_position.y_;
-					send_data.object_param_.position_.z_ = player_position.z_;
-					send_data.object_param_.rotation_ = {0.0f, 0.0f, 0.0f};
-					strcpy_s(send_data.name, MAX_NAME_LEN, "dash");
-					NetworkHost::SendTo(DELI_MULTI, send_data);
+						// エフェクト再生
+						ZeroMemory(&send_data, sizeof(send_data));
+						send_data.type_ = DATA_OBJ_PARAM;
+						send_data.object_param_.type_ = OBJ_EFFECT;
+						send_data.object_param_.position_.x_ = player_position.x_;
+						send_data.object_param_.position_.y_ = player_position.y_;
+						send_data.object_param_.position_.z_ = player_position.z_;
+						send_data.object_param_.rotation_ = {0.0f, 0.0f, 0.0f};
+						strcpy_s(send_data.name, MAX_NAME_LEN, "dash");
+						NetworkHost::SendTo(DELI_MULTI, send_data);
+					}
+					dash_effect_timer_++;
 				}
-				dash_effect_timer_++;
 			}
+
 			player_position.x_ += (
 				cosf(player_rotation.y_) * GamePad::isStick(i).lsx_ +
 				sinf(-player_rotation.y_) * GamePad::isStick(i).lsy_) * player_speed;
@@ -792,8 +853,14 @@ void GameServer::Game()
 			player_position.y_,
 			player_position.z_);
 		player_position.y_ = field->GetHeight(player_pos);
-		player_pos.y = player_position.y_;
+		// 侵入不可領域チェック
+		if(player_position.y_ > 0.4f || player_position.y_ < -0.4f){
+			player_position = player_position_old;
+		}
 
+		player_pos.x = player_position.x_;
+		player_pos.y = player_position.y_;
+		player_pos.z = player_position.z_;
 		player->SetPosition(player_position);
 		player->SetRotation(player_rotation);
 
@@ -965,6 +1032,22 @@ void GameServer::Game()
 
 			child_respawn_waittime_[i - 1]--;
 			child_respawn_waittime_[i - 1] = std::max<int>(child_respawn_waittime_[i - 1], 0);
+
+			//-------------------------------------
+			// 子供体力自動回復制御
+			//-------------------------------------
+			if(child_life < 1.0f && !child_death_[i - 1]){
+				int child_recover_wait_timer = player->GetRecoverWaitTimer();
+					
+				if (child_recover_wait_timer > CHILD_RECOVER_WAITE_TIME){
+					float child_life = player->GetLife();
+					child_life += CHILD_RECOVER_HP;
+					std::min<float>(child_life, 1.0f);
+					player->SetLife(child_life);
+				}
+				child_recover_wait_timer++;
+				player->SetRecoverWaitTimer(child_recover_wait_timer);
+			}
 		}
 
 		//------------------------------------------------
@@ -1037,27 +1120,6 @@ void GameServer::Game()
 					sub_camera_position = sub_camera->position();
 					sub_camera_focus = sub_camera->focus();
 
-					std::string name = "fort" + std::to_string(stage_);
-					Object *fort_object = object_manager_->Get(name);
-					Vector3 focus = fort_object->parameter().position_;
-					Vector3 pos(0.0f, 0.0f, 0.0f);
-					// サブカメラ回転
-					sub_camera_rotation.y += CAMERA_SUB_ROT_SPEED;
-					sub_camera_rotation.x += CAMERA_SUB_ROT_SPEED*0.02f;
-					// フォーカス設定
-					sub_camera_focus.x = focus.x_;
-					sub_camera_focus.y = focus.y_;
-					sub_camera_focus.z = focus.z_;
-					sub_camera_focus.y = 1.5f;
-					// 注視点を基準にカメラ座標を設定
-					sub_camera_position = sub_camera_focus;
-					sub_camera_position.x -=
-						sinf(sub_camera_rotation.y) * CAMERA_POS_LEN * cosf(sub_camera_rotation.x);
-					sub_camera_position.z -=
-						cosf(sub_camera_rotation.y) * CAMERA_POS_LEN * cosf(sub_camera_rotation.x);
-					sub_camera_position.y -=
-						sinf(sub_camera_rotation.x) * CAMERA_POS_LEN;
-
 					// データセット
 					send_data.object_param_.position_.x_ = sub_camera_position.x;
 					send_data.object_param_.position_.y_ = sub_camera_position.y;
@@ -1066,11 +1128,6 @@ void GameServer::Game()
 					send_data.object_param_.rotation_.x_ = sub_camera_focus.x;
 					send_data.object_param_.rotation_.y_ = sub_camera_focus.y;
 					send_data.object_param_.rotation_.z_ = sub_camera_focus.z;
-
-					// サブカメラへ値装填
-					sub_camera->SetPosition(sub_camera_position);
-					sub_camera->SetFocus(sub_camera_focus);
-					sub_camera->SetRotation(sub_camera_rotation);
 				}
 				break;
 
@@ -1122,7 +1179,7 @@ void GameServer::ChangeServerState(SERVER_STATE next)
 		shot_late[i] = 0;
 	}
 	collision_manager_->Update();
-	stage_ = 1;
+	now_target_fort_ = 1;
 	server_state_ = next;
 	switch(server_state_)
 	{
@@ -1144,32 +1201,65 @@ void GameServer::ChangeServerState(SERVER_STATE next)
 
 		case STATE_GAME:
 			{
-				// 砦高さ補正
+				// フィールド取得
+				Field *field = dynamic_cast<Field*>(object_manager_->Get("game_field"));
+				//---------------------------------------
+				// シーンステートリセット
+				scene_state_ = STATE_GUEST_WAITING;
+				//---------------------------------------
+				// 砦パラメータの修正
+				XFort *fort;
+				Vector3 fort_pos;
+				D3DXVECTOR3 temp;
 				for(int i = 0; i < 3; i++)
 				{
-					fort_y[i] = -3.0f;
-				}
-				fort_y[0] = 0.0f;
+					fort = dynamic_cast<XFort*>(object_manager_->Get("fort" + std::to_string(i + 1)));
+					fort->SetLife(FORT_LIFE[i]);
 
-				scene_state_ = STATE_GUEST_WAITING;
-				// ステージ
-				stage_ = 1;
-				// おじパラメータ
+					fort_pos = FORT_POSITION[i];
+					temp.x = fort_pos.x_;
+					temp.y = fort_pos.y_;
+					temp.z = fort_pos.z_;
+
+					if(i == 0)
+					{
+						fort_y[i] = 0.0f;
+					}
+					else
+					{
+						fort_y[i] = -3.0f;
+					}
+					fort_pos.y_ = field->GetHeight(temp) + fort_y[i];
+
+					fort->SetPosition(fort_pos);
+				}
+
+				fort_announce_state_ = 75;
+				now_target_fort_ = 1;
+				//---------------------------------------
+				// おじ関連パラメータ
 				dash_effect_timer_ = 0;
 				grandfather_debuff_ = false;
+				//---------------------------------------
+				// 子供関連パラメータ
 				for(int i = 0; i < (MAX_GUEST - 1); i++)
 				{
-					// 子供死亡フラグ
 					child_death_[i] = false;
-					// 子供リスポーン待ち時間
 					child_respawn_waittime_[i] = 0;
 				}
-				time_ = GAME_TIME * 60;
+				//---------------------------------------
+				// プレイヤー関連パラメータ
 				std::string player_str;
-				Object *player;
-				for(int i = 0; i < MAX_GUEST; i++){
+				FbxPlayer *player;
+				for(int i = 0; i < MAX_GUEST; i++)
+				{
 					player_str = "player" + std::to_string(i + 1);
-					player = object_manager_->Get(player_str);
+					player = dynamic_cast<FbxPlayer*>(object_manager_->Get(player_str));
+
+					player->SetLife(1.0f);
+					player->SetWaterGauge(1.0f);
+					player->SetRecoverWaitTimer(0);
+					player->SetWaterSupplyEnable(0);
 
 					Vector3 pos, rot;
 					if(i == 0)
@@ -1182,8 +1272,6 @@ void GameServer::ChangeServerState(SERVER_STATE next)
 						pos = CHILD_POSITION[i - 1];
 						rot = CHILD_ROTATION[i - 1];
 					}
-					// フィールド取得
-					Field *field = dynamic_cast<Field*>(object_manager_->Get("game_field"));
 					D3DXVECTOR3 poss;
 					poss.x = pos.x_;
 					poss.y = pos.y_;
@@ -1266,7 +1354,6 @@ void GameServer::ChangeServerState(SERVER_STATE next)
 	}
 
 }
-
 
 
 //-------------------------------------
