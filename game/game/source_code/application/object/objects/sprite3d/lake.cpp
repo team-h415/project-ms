@@ -19,6 +19,7 @@
 #include "../../../resource/texture_manager.h"
 
 
+
 //-------------------------------------
 // Lake()
 //-------------------------------------
@@ -145,6 +146,16 @@ void Lake::Draw()
 	DirectX9Holder::device_->SetRenderState(D3DRS_ALPHATESTENABLE, FALSE);
 }
 
+//-------------------------------------
+// Action()
+//-------------------------------------
+void Lake::Action(
+	Object *target,
+	const float range)
+{
+
+
+}
 
 //-------------------------------------
 // end of file

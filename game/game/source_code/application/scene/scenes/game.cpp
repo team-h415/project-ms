@@ -208,6 +208,19 @@ Game::Game()
 	object_manager_->Create(
 		lake_param);
 
+	// åŒ
+	Object *obj_lake = object_manager_->Get("lake");
+	COLLISION_PARAMETER_DESC lake_collision_param;
+	lake_collision_param.position_ = {
+		obj_lake->parameter().position_.x_,
+		obj_lake->parameter().position_.y_,
+		obj_lake->parameter().position_.z_ };
+	lake_collision_param.range_ = LAKE_RANGE;
+	lake_collision_param.offset_ = { -2.0f, 0.0f, 10.0f };
+	
+	collision_manager_->Create(object_manager_->Get("lake"),
+		lake_collision_param);
+
 	//-------------------------------------
 	// ç‘
 	//-------------------------------------
@@ -1141,6 +1154,8 @@ void Game::Update()
 		shot_late = 10;
 
 	}
+
+
 #ifdef _DEBUG
 	if(KeyBoard::isPress(DIK_SPACE)){
 		EFFECT_PARAMETER_DESC effect_param;

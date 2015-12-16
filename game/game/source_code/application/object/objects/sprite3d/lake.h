@@ -23,6 +23,9 @@ public:
 	virtual ~Lake();
 	void Update();
 	void Draw();
+	void Action(
+		Object *target,
+		const float range);
 
 private:
 	Vertex3D vertex_[4];

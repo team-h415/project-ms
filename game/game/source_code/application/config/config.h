@@ -40,7 +40,11 @@
 
 #define GAME_TIMER (100)							// ゲームの時間
 
+<<<<<<< HEAD
 #define MAX_BULLET (100)							// バレット最大数
+=======
+#define LAKE_RANGE	(35.0f)							// 湖の半径
+>>>>>>> origin/fuka
 
 //-------------------------------------
 // おじ
