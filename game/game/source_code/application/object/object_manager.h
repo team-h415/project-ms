@@ -83,10 +83,19 @@ public:
 	void ExportObjectParameter(
 		const std::string &file_path);
 
+	//-------------------------------------
+	// •`‰æƒtƒ‰ƒOİ’è
+	//-------------------------------------
+	void SetDrawEnable(
+		int layer, bool flag){
+		draw_enable_[layer] = flag;
+	}
+
 private:
 	bool Search(const std::string &name);
 	std::map<std::string, Object*> objects_[LAYER_MAX];
 	static int object_count_;
+	bool draw_enable_[LAYER_MAX];
 };
 
 

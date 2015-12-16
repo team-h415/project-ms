@@ -240,5 +240,28 @@ MyEffect *EffectManager::Get(
 
 
 //-------------------------------------
+// Stop()
+//-------------------------------------
+void EffectManager::Stop(
+	const std::string &name)
+{
+	for (auto it = effects_.begin(); it != effects_.end(); ++it){
+		if ((*it).first == name){
+			(*it).second->Stop(manager_);
+		}
+	}
+}
+
+
+//-------------------------------------
+// StopAll()
+//-------------------------------------
+void EffectManager::StopAll()
+{
+	manager_->StopAllEffects();
+}
+
+
+//-------------------------------------
 // end of file
 //-------------------------------------

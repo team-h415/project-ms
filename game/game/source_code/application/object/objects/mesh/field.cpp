@@ -164,6 +164,12 @@ void Field::Draw()
 	DirectX9Holder::device_->SetPixelShader(NULL);
 
 
+	DirectX9Holder::device_->SetTexture(0, NULL);
+	DirectX9Holder::device_->SetTexture(1, NULL);
+	DirectX9Holder::device_->SetTexture(2, NULL);
+	DirectX9Holder::device_->SetTexture(3, NULL);
+
+
 //	DirectX9Holder::device_->SetRenderState(
 //		D3DRS_FILLMODE, D3DFILL_SOLID);
 }

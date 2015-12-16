@@ -86,5 +86,15 @@ void MyEffect::Play(
 
 
 //-------------------------------------
+// Stop()
+//-------------------------------------
+void MyEffect::Stop(
+	Effekseer::Manager *manager)
+{
+	manager->StopEffect(handle_);
+}
+
+
+//-------------------------------------
 // end of file
 //-------------------------------------

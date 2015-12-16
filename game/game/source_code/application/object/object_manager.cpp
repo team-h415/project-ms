@@ -39,6 +39,7 @@ ObjectManager::ObjectManager()
 {
 	for (int i = 0; i < LAYER_MAX; i++){
 		objects_[i].clear();
+		draw_enable_[i] = true;
 	}
 }
 

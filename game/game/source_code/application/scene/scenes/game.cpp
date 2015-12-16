@@ -10,6 +10,7 @@
 #include "../../network/network.h"
 #include "../../network/network_guest.h"
 #include "../../../common/common.h"
+#include "../../config/config.h"
 #include "../../fps/fps.h"
 #include "../../render/renderer.h"
 #include "../../render/directx9/directx9.h"
@@ -28,21 +29,22 @@
 #include "../../object/objects/model/fbx/fbx_player.h"
 #include "../../object/objects/model/fbx/fbx_grandfather.h"
 #include "../../object/objects/model/fbx/fbx_child.h"
+#include "../../object/objects/sprite/sprite2d.h"
 #include "../../object/objects/sprite/timer.h"
 #include "../../object/objects/sprite/damage_effect.h"
 #include "../../object/objects/sprite/countdown.h"
+#include "../../object/objects/sprite/water_gage.h"
+#include "../../object/objects/sprite/fort_gauge_manager.h"
+#include "../../object/objects/sprite/message.h"
 #include "../../object/objects/notice/bullet.h"
 #include "../../effect/effect.h"
 #include "../../effect/effect_manager.h"
-#include "../../object/objects/sprite/water_gage.h"
-#include "../../object/objects/sprite/fort_gauge_manager.h"
 #include "../../camera/camera.h"
 #include "../../camera/camera_manager.h"
 #include "../../collision/collision.h"
 #include "../../collision/collision_manager.h"
 #include "../scene.h"
 #include "../scene_manager.h"
-#include "../../config/config.h"
 #include "game.h"
 #include "../fade/fade.h"
 
@@ -90,41 +92,51 @@ Game::Game()
 	//-------------------------------------
 	// エフェクトの読み込み
 	//-------------------------------------
-	EFFECT_PARAMETER_DESC water_param;
-	water_param.position_ = { 0.0f, 0.0f, 0.0f };
-	water_param.rotation_ = { 0.0f, 0.0f, 0.0f };
-	water_param.scaling_ = { 1.0f, 1.0f, 1.0f };
-	water_param.speed_ = 1.0f;
+	EFFECT_PARAMETER_DESC effect_param;
+	effect_param.position_ = { 0.0f, 0.0f, 0.0f };
+	effect_param.rotation_ = { 0.0f, 0.0f, 0.0f };
+	effect_param.scaling_ = { 1.0f, 1.0f, 1.0f };
+	effect_param.speed_ = 1.0f;
 
 	effect_manager_->Create(
 		"water",
 		"resource/effect/BulletFire.efk",
-		water_param);
+		effect_param);
 
 	effect_manager_->Create(
 		"damage",
 		"resource/effect/Damage3_2.efk",
-		water_param);
+		effect_param);
 
 	effect_manager_->Create(
 		"dead",
 		"resource/effect/Dead2.efk",
-		water_param);
+		effect_param);
 
 	effect_manager_->Create(
 		"smoke",
 		"resource/effect/Smoke.efk",
-		water_param);
+		effect_param);
 
 	effect_manager_->Create(
 		"smoke2",
 		"resource/effect/Smoke2.efk",
-		water_param);
+		effect_param);
 
 	effect_manager_->Create(
 		"dash",
 		"resource/effect/Dash.efk",
-		water_param);
+		effect_param);
+
+	effect_manager_->Create(
+		"watersupply",
+		"resource/effect/WaterSupply.efk",
+		effect_param);
+
+	effect_manager_->Create(
+		"watersupplybubble",
+		"resource/effect/WaterSupply2.efk",
+		effect_param);
 
 	//-------------------------------------
 	// メインカメラ
@@ -215,13 +227,23 @@ Game::Game()
 	COLLISION_PARAMETER_DESC lake_collision_param;
 	lake_collision_param.position_ = {
 		obj_lake->parameter().position_.x_,
-		obj_lake->parameter().position_.y_,
+		5.0f,
 		obj_lake->parameter().position_.z_ };
-	lake_collision_param.range_ = LAKE_RANGE;
-	lake_collision_param.offset_ = { -2.0f, 0.0f, 10.0f };
-	
+	lake_collision_param.range_ = LAKE_COLLISION_RANGE;
+	// 上
+	lake_collision_param.offset_ = { -0.5f, 0.0f, 11.5f };
 	collision_manager_->Create(object_manager_->Get("lake"),
 		lake_collision_param);
+	// 右下
+	lake_collision_param.offset_ = { 5.0f, 0.0f, 2.0f };
+	collision_manager_->Create(object_manager_->Get("lake"),
+		lake_collision_param);
+	// 左上
+	lake_collision_param.offset_ = { -3.5f, 0.0f, 0.0f };
+	collision_manager_->Create(object_manager_->Get("lake"),
+		lake_collision_param);
+
+
 
 	//-------------------------------------
 	// 砦
@@ -510,10 +532,10 @@ Game::Game()
 	//-------------------------------------
 	// インスタンシングテスト
 	//-------------------------------------
-	/*OBJECT_PARAMETER_DESC wood_param;
+	OBJECT_PARAMETER_DESC wood_param;
+	wood_param.name_ = "wood";
 	wood_param.layer_ = LAYER_TREE;
-	object_manager_->Create(
-		"wood", wood_param);*/
+	object_manager_->Create(wood_param);
 
 	//-------------------------------------
 	// ベンチ
@@ -567,6 +589,63 @@ Game::Game()
 	}
 
 	//-------------------------------------
+	// メッセージ
+	//-------------------------------------
+	OBJECT_PARAMETER_DESC message_param;
+	message_param.name_ = "message_child1_death";
+	message_param.position_ = {
+		SCREEN_WIDTH + 200.0f,
+		SCREEN_HEIGHT - 200.0f,
+		0.0f };
+	message_param.rotation_ = { 0.0f, 0.0f, 0.0f };
+	message_param.scaling_ = { 400.0f, 100.0f, 0.0f };
+	message_param.layer_ = LAYER_MESSAGE;
+
+	object_manager_->Create(
+		message_param,
+		"resource/texture/game/message/message_child1_death.png");
+	message_param.name_ = "message_child2_death";
+	object_manager_->Create(
+		message_param,
+		"resource/texture/game/message/message_child2_death.png");
+	message_param.name_ = "message_child3_death";
+	object_manager_->Create(
+		message_param,
+		"resource/texture/game/message/message_child3_death.png");
+	message_param.name_ = "message_child4_death";
+	object_manager_->Create(
+		message_param,
+		"resource/texture/game/message/message_child4_death.png");
+
+
+	message_param.name_ = "message_fort_25";
+	object_manager_->Create(
+		message_param,
+		"resource/texture/game/message/message_fort_25.png");
+	message_param.name_ = "message_fort_50";
+	object_manager_->Create(
+		message_param,
+		"resource/texture/game/message/message_fort_50.png");
+	message_param.name_ = "message_fort_75";
+	object_manager_->Create(
+		message_param,
+		"resource/texture/game/message/message_fort_75.png");
+	message_param.name_ = "message_fort_100";
+	object_manager_->Create(
+		message_param,
+		"resource/texture/game/message/message_fort_100.png");
+
+
+	message_param.name_ = "message_grandfather_debuff";
+	object_manager_->Create(
+		message_param,
+		"resource/texture/game/message/message_grandfather_debuff.png");
+	message_param.name_ = "message_grandfather_return";
+	object_manager_->Create(
+		message_param,
+		"resource/texture/game/message/message_grandfather_return.png");
+
+	//-------------------------------------
 	// ゲームルール用パラメータ初期化
 	//-------------------------------------
 	// ステージ
@@ -577,7 +656,6 @@ Game::Game()
 	child_death_ = false;
 	// 子供リスポーン待ち時間
 	child_respawn_waittime_ = 0;
-
 
 #ifdef NETWORK_HOST_MODE
 #else
@@ -644,11 +722,12 @@ void Game::Update()
 //	float fort1_life = fort1->GetLife();
 //	float fort2_life = fort2->GetLife();
 //	float fort3_life = fort3->GetLife();
-//	
+//
 //	// 静的変数
 //	static int shot_late = 0;
 //	static D3DXVECTOR3 fort_underground(-3.0f, -3.0f, -3.0f);
 //	static Vector3 grandfather_prevposition(grandfather_object->parameter().position_);
+//	static int fort_damage_state = 0;
 //
 //
 //	//-------------------------------------
@@ -682,6 +761,65 @@ void Game::Update()
 //	default:
 //		countdown->ChangeTexture(4);
 //		break;
+//	}
+//
+//	//-------------------------------------
+//	// メッセージの再生
+//	//-------------------------------------
+//	// 砦が破壊された！
+//	if ((fort_damage_state == 75 && (fort1_life <= 0.0f) && stage_ == 1) ||
+//		(fort_damage_state == 75 && (fort2_life <= 0.0f) && stage_ == 2)){
+//		Object *message_object = object_manager_->Get("message_fort_100");
+//		Message *message = dynamic_cast<Message*>(message_object);
+//		Vector3 message_position = {
+//			SCREEN_WIDTH + 200.0f,
+//			SCREEN_HEIGHT - 200.0f,
+//			0.0f };
+//		message_object->SetPosition(message_position);
+//		message->Play();
+//		fort_damage_state = 0;
+//	}
+//	// 損壊率75%
+//	else if ((fort_damage_state == 50 && fort1_life < FORT1_LiFE * 0.25f && stage_ == 1) ||
+//		(fort_damage_state == 50 && fort2_life < FORT2_LiFE * 0.25f && stage_ == 2) ||
+//		(fort_damage_state == 50 && fort3_life < FORT3_LiFE * 0.25f && stage_ == 3)){
+//		Object *message_object = object_manager_->Get("message_fort_75");
+//		Message *message = dynamic_cast<Message*>(message_object);
+//		Vector3 message_position = {
+//			SCREEN_WIDTH + 200.0f,
+//			SCREEN_HEIGHT - 200.0f,
+//			0.0f };
+//		message_object->SetPosition(message_position);
+//		message->Play();
+//		fort_damage_state = 75;
+//	}
+//	// 損壊率50%
+//	else if ((fort_damage_state == 25 && fort1_life < FORT1_LiFE * 0.5f && stage_ == 1) ||
+//		(fort_damage_state == 25 && fort2_life < FORT2_LiFE * 0.5f && stage_ == 2) ||
+//		(fort_damage_state == 25 && fort3_life < FORT3_LiFE * 0.5f && stage_ == 3)){
+//		Object *message_object = object_manager_->Get("message_fort_50");
+//		Message *message = dynamic_cast<Message*>(message_object);
+//		Vector3 message_position = {
+//			SCREEN_WIDTH + 200.0f,
+//			SCREEN_HEIGHT - 200.0f,
+//			0.0f };
+//		message_object->SetPosition(message_position);
+//		message->Play();
+//		fort_damage_state = 50;
+//	}
+//	// 損壊率25%
+//	else if ((fort_damage_state == 0 && fort1_life < FORT1_LiFE * 0.75f && stage_ == 1) ||
+//		(fort_damage_state == 0 && fort2_life < FORT2_LiFE * 0.75f && stage_ == 2) ||
+//		(fort_damage_state == 0 && fort3_life < FORT3_LiFE * 0.75f && stage_ == 3)){
+//		Object *message_object = object_manager_->Get("message_fort_25");
+//		Message *message = dynamic_cast<Message*>(message_object);
+//		Vector3 message_position = {
+//			SCREEN_WIDTH + 200.0f,
+//			SCREEN_HEIGHT - 200.0f,
+//			0.0f };
+//		message_object->SetPosition(message_position);
+//		message->Play();
+//		fort_damage_state = 25;
 //	}
 //
 //	//-------------------------------------
@@ -842,7 +980,6 @@ void Game::Update()
 //		effect_manager_->Play("smoke");
 //	}
 //
-//
 //#endif //_DEBUG
 //
 //
@@ -900,10 +1037,10 @@ void Game::Update()
 //		grandfather_position.y_,
 //		grandfather_position.z_);
 //	grandfather_position.y_ = field->GetHeight(grandfather_pos);
-//	if (grandfather_position.y_ > 0.4f ||
+//	/*if (grandfather_position.y_ > 0.4f ||
 //		grandfather_position.y_ < -0.4f){
 //		grandfather_position = grandfather_prevposition;
-//	}
+//	}*/
 //	
 //	D3DXVECTOR3 child_pos(
 //		child_position.x_,
@@ -1182,6 +1319,10 @@ void Game::Update()
 //
 //
 //#ifdef _DEBUG
+//	if (KeyBoard::isPress(DIK_9)){
+//		grandfather->SetWaterGauge(0.0f);
+//		waterGage->SetChangeValue(0.0f);
+//	}
 //	if(KeyBoard::isPress(DIK_SPACE)){
 //		EFFECT_PARAMETER_DESC effect_param;
 //		MyEffect *effect = effect_manager_->Get("water");
@@ -1301,6 +1442,22 @@ void Game::Update()
 //	child_respawn_waittime_ = std::max<int>(child_respawn_waittime_, 0);
 //
 //	//-------------------------------------
+//	// 子供体力自動回復制御
+//	//-------------------------------------
+//	if (child_life < 1.0f && !child_death_){
+//		int child_recover_wait_timer = child->GetRecoverWaitTimer();
+//		
+//		if (child_recover_wait_timer > CHILD_RECOVER_WAITE_TIME){
+//			float child_life = child->GetLife();
+//			child_life += CHILD_RECOVER_HP;
+//			std::min<float>(child_life, 1.0f);
+//			child->SetLife(child_life);
+//		}
+//		child_recover_wait_timer++;
+//		child->SetRecoverWaitTimer(child_recover_wait_timer);
+//	}
+//
+//	//-------------------------------------
 //	// ダメージエフェクトの処理
 //	//-------------------------------------
 //	// 今はテスト用に、子供に当てたら主観(おじ)のUIを反映させている
@@ -1321,68 +1478,6 @@ void Game::Update()
 //	shadow_pos = grandfather->parameter().position_;
 //	shadow_pos.y_ += 0.001f;
 //	shadow->SetPosition(shadow_pos);
-//
-//	//-------------------------------------
-//	// 実更新処理
-//	//-------------------------------------
-//	camera_manager_->Update();
-//	object_manager_->Update();
-//	effect_manager_->Update();
-//	collision_manager_->Update();
-//
-//	font1_->Add("シーン名:");
-//	font1_->Add("Game\n");
-//	font1_->Add("FPS : %d\n", Fps::GetFps());
-//	font1_->Add("STAGE : %d\n", stage_);
-//	font1_->Add("LIFE(GrandFather) : %3.2f\n", father_life);
-//	font1_->Add("LIFE(Child)       : %3.2f\n", child_life);
-//	font1_->Add("GAUGE(GrandFather) : %3.2f\n", father_watergauge);
-//	font1_->Add("GAUGE(Child)       : %3.2f\n", child_watergauge);
-//	font1_->Add("POSITION(Grandfather) : %3.2f %3.2f %3.2f\n",
-//		grandfather_position.x_,
-//		grandfather_position.y_,
-//		grandfather_position.z_);
-//	font1_->Add("ROTATION(Grandfather) : %3.2f %3.2f %3.2f\n",
-//		grandfather_rotation.x_,
-//		grandfather_rotation.y_,
-//		grandfather_rotation.z_);
-//	font1_->Add("OBJECT : %d\n", ObjectManager::GetCount());
-//	font1_->Add("EFFECT : %d\n", EffectManager::GetCount());
-//	font1_->Add("COLLISION : %d\n", CollisionManager::GetCount());
-//
-//	font2_->Add("----------操作説明----------\n");
-//	font2_->Add("【ゲームパッド使用時】\n");
-//	font2_->Add("左スティック：移動\n");
-//	font2_->Add("右スティック：エイム移動\n");
-//	font2_->Add("8ボタン：射撃\n");
-//	font2_->Add("7ボタン：拠点に戻る ※おじいちゃんのみ\n");
-//	font2_->Add("【キーボード使用時】\n");
-//	font2_->Add("WASDキー：移動\n");
-//	font2_->Add("方向キー：エイム移動\n");
-//	font2_->Add("SPACEキー：射撃\n");
-//
-//
-//	//-------------------------------------
-//	// デバッグ出力
-//	//-------------------------------------
-//	if (KeyBoard::isTrigger(DIK_F1)){
-//		object_manager_->ExportObjectParameter(
-//			"resource/object_patameter.txt");
-//	}
-//
-//	if (KeyBoard::isTrigger(DIK_F2)){
-//		FILE *file = fopen("DebugParam.txt", "a");
-//		fprintf(file, "\n{ %3.2ff, %3.2ff, %3.2ff },\n",
-//			grandfather_position.x_,
-//			grandfather_position.y_,
-//			grandfather_position.z_);
-//		fprintf(file, "{ %3.2ff, %3.2ff, %3.2ff },\n",
-//			grandfather_rotation.x_,
-//			grandfather_rotation.y_,
-//			grandfather_rotation.z_);
-//		fclose(file);
-//
-//	}
 
 	//-------------------------------------
 	// 実更新処理
