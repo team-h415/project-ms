@@ -457,6 +457,9 @@ void GameServer::Game()
 		NetworkHost::SendTo(DELI_MULTI, send_data);
 	}
 
+	// フィールド取得
+	Field *field = dynamic_cast<Field*>(object_manager_->Get("game_field"));
+
 	switch(scene_state_)
 	{
 		case STATE_GUEST_WAITING:
@@ -468,6 +471,49 @@ void GameServer::Game()
 				send_data.ui_param_.value_i_ = 180;
 				NetworkHost::SendTo(DELI_MULTI, send_data);
 				int access_guest = NetworkHost::access_guest();
+
+				for(int i = 0; i < MAX_GUEST; i++)
+				{
+					//------------------------------------------------
+					// プレイヤーデータ転送
+					//------------------------------------------------
+					FbxPlayer* player = dynamic_cast<FbxPlayer*>(object_manager_->Get("player" + std::to_string(i + 1)));
+					Vector3 player_position = player->parameter().position_;
+					Vector3 player_rotation = player->parameter().rotation_;
+
+					send_data.type_ = DATA_OBJ_PARAM;
+					send_data.id_ = i;
+					send_data.object_param_.ex_id_ = 0;
+					send_data.object_param_.type_ = OBJ_PLAYER;
+					send_data.object_param_.position_.x_ = player_position.x_;
+					send_data.object_param_.position_.y_ = player_position.y_;
+					send_data.object_param_.position_.z_ = player_position.z_;
+
+					send_data.object_param_.rotation_.x_ = player_rotation.x_;
+					send_data.object_param_.rotation_.y_ = player_rotation.y_;
+					send_data.object_param_.rotation_.z_ = player_rotation.z_;
+
+					NetworkHost::SendTo(DELI_MULTI, send_data);
+
+					//------------------------------------------------
+					// カメラデータ転送
+					//------------------------------------------------
+					Camera* main_camera = camera_manager_->Get("camera" + std::to_string(i + 1));
+					D3DXVECTOR3 camera_position = main_camera->position();
+					D3DXVECTOR3 camera_focus = main_camera->focus();
+
+					send_data.type_ = DATA_OBJ_PARAM;
+					send_data.object_param_.type_ = OBJ_CAMERA;
+					send_data.object_param_.position_.x_ = camera_position.x;
+					send_data.object_param_.position_.y_ = camera_position.y;
+					send_data.object_param_.position_.z_ = camera_position.z;
+
+					send_data.object_param_.rotation_.x_ = camera_focus.x;
+					send_data.object_param_.rotation_.y_ = camera_focus.y;
+					send_data.object_param_.rotation_.z_ = camera_focus.z;
+
+					NetworkHost::SendTo((DELI_TYPE)i, send_data);
+				}
 
 				for(int i = 0; i < access_guest; i++)
 				{
@@ -510,26 +556,124 @@ void GameServer::Game()
 			break;
 
 		case STATE_RUN:
-			// 時間経過
-			time_--;
-			if(time_ > 0)
 			{
-				ZeroMemory(&send_data, sizeof(send_data));
-				send_data.type_ = DATA_UI_PARAM;
-				send_data.object_param_.type_ = OBJ_UI;
-				strcpy_s(send_data.name, MAX_NAME_LEN, "time");
-				send_data.ui_param_.value_i_ = time_ / 60;
-				NetworkHost::SendTo(DELI_MULTI, send_data);
-				// ゲームエンド条件１ タイムアップ
-				if(time_ == 0)
+				// 時間経過
+				time_--;
+				if(time_ > 0)
 				{
+					ZeroMemory(&send_data, sizeof(send_data));
+					send_data.type_ = DATA_UI_PARAM;
+					send_data.object_param_.type_ = OBJ_UI;
+					strcpy_s(send_data.name, MAX_NAME_LEN, "time");
+					send_data.ui_param_.value_i_ = time_ / 60;
+					NetworkHost::SendTo(DELI_MULTI, send_data);
+					// ゲームエンド条件１ タイムアップ
+					if(time_ == 0)
+					{
+						// じじい勝利
+						ChangeServerState(STATE_RESULT);
+						// シーンチェンジ命令送信
+						ZeroMemory(&send_data, sizeof(send_data));
+						send_data.type_ = DATA_SCENE_CHANGE_RESULT;
+						send_data.id_ = 0;
+						NetworkHost::SendTo(DELI_MULTI, send_data);
+					}
+				}
+				// 砦ライフ管理
+				std::string fort_str = "fort" + std::to_string(stage_);
+				Object *fort_object = object_manager_->Get(fort_str);
+				XFort *fort = dynamic_cast<XFort*>(fort_object);
+				send_data.type_ = DATA_UI_PARAM;
+				send_data.id_ = stage_ - 1;
+				float life(fort->GetLife());
+				send_data.ui_param_.value_f_ = life;
+				strcpy_s(send_data.name, MAX_NAME_LEN, "fort_gauge_manager");
+				NetworkHost::SendTo(DELI_MULTI, send_data);
+				if(life <= 0.0f)
+				{
+					stage_++;
+					if(stage_ >= 4)
+					{
+						// ガキの勝利
+						stage_ = 3;
+						ChangeServerState(STATE_RESULT);
+						// シーンチェンジ命令送信
+						ZeroMemory(&send_data, sizeof(send_data));
+						send_data.type_ = DATA_SCENE_CHANGE_RESULT;
+						send_data.id_ = 1;
+						NetworkHost::SendTo(DELI_MULTI, send_data);
+					}
+					else
+					{
+						scene_state_ = STATE_CHANGE_FORT;
+					}
 				}
 			}
-			// 砦管理
-
 			break;
 
 		case STATE_CHANGE_FORT:
+			{
+				// 砦の変更
+				D3DXVECTOR3 fort_pos;
+				Vector3 fort_position;
+				Vector3 fort_rotation;
+				for(int i = 0; i < 3; i++)
+				{
+
+					std::string fort_str = "fort" + std::to_string(i + 1);
+					Object *fort_object = object_manager_->Get(fort_str);
+					XFort *fort = dynamic_cast<XFort*>(fort_object);
+					fort_position = fort_object->parameter().position_;
+					fort_rotation = fort_object->parameter().rotation_;
+
+					fort_pos.x = fort_position.x_;
+					fort_pos.y = fort_position.y_;
+					fort_pos.z = fort_position.z_;
+
+					float field_height = field->GetHeight(fort_pos);
+					if((stage_ - 1) == i)
+					{
+						fort_y[i] += 0.01f;
+						if(fort_y[i] > 0.0f)
+						{
+							fort_y[i] = 0.0f;
+							scene_state_ = STATE_RUN;
+							Camera* sub_camera = camera_manager_->Get("SubCamera");
+							sub_camera->SetRotation(D3DXVECTOR3(0.0f, 0.0f, 0.0f));
+						}
+						// 砦エフェクト
+						ZeroMemory(&send_data, sizeof(send_data));
+						send_data.type_ = DATA_OBJ_PARAM;
+						send_data.object_param_.type_ = OBJ_EFFECT;
+						send_data.object_param_.position_.x_ = fort_position.x_;
+						send_data.object_param_.position_.y_ = field_height;
+						send_data.object_param_.position_.z_ = fort_position.z_;
+						strcpy_s(send_data.name, MAX_NAME_LEN, "smoke2");
+						NetworkHost::SendTo(DELI_MULTI, send_data);
+					}
+					else
+					{
+						fort_y[i] -= 0.01f;
+						fort_y[i] = std::max<float>(fort_y[i], -3.0f);
+					}
+
+					fort_position.y_ = field_height + fort_y[i];
+
+					fort->SetPosition(fort_position);
+
+					// オブジェクトデータ転送
+					send_data.type_ = DATA_OBJ_PARAM;
+					send_data.object_param_.type_ = OBJ_FORT;
+					send_data.object_param_.position_.x_ = fort_position.x_;
+					send_data.object_param_.position_.y_ = fort_position.y_;
+					send_data.object_param_.position_.z_ = fort_position.z_;
+					send_data.object_param_.rotation_.x_ = fort_rotation.x_;
+					send_data.object_param_.rotation_.y_ = fort_rotation.y_;
+					send_data.object_param_.rotation_.z_ = fort_rotation.z_;
+					strcpy_s(send_data.name, MAX_NAME_LEN, fort_str.c_str());
+					NetworkHost::SendTo(DELI_MULTI, send_data);
+				}
+			}
 			break;
 
 		case STATE_END:
@@ -537,165 +681,6 @@ void GameServer::Game()
 
 		default:
 			break;
-	}
-
-	// フィールド取得
-	Field *field = dynamic_cast<Field*>(object_manager_->Get("game_field"));
-
-	//-------------------------------------
-	// 砦の座標管理
-	//-------------------------------------
-	static D3DXVECTOR3 fort_underground(0.0f, 0.0f, 0.0f);
-	switch(stage_)
-	{
-		case 1:
-			fort_underground.x += 0.01f;
-			fort_underground.y -= 0.01f;
-			fort_underground.z -= 0.01f;
-			fort_underground.x = std::min<float>(fort_underground.x, 0.0f);
-			fort_underground.y = std::max<float>(fort_underground.y, -3.0f);
-			fort_underground.z = std::max<float>(fort_underground.z, -3.0f);
-			break;
-		case 2:
-			fort_underground.x -= 0.01f;
-			fort_underground.y += 0.01f;
-			fort_underground.z -= 0.01f;
-			fort_underground.x = std::max<float>(fort_underground.x, -3.0f);
-			fort_underground.y = std::min<float>(fort_underground.y, 0.0f);
-			fort_underground.z = std::max<float>(fort_underground.z, -3.0f);
-			break;
-		case 3:
-			fort_underground.x -= 0.01f;
-			fort_underground.y -= 0.01f;
-			fort_underground.z += 0.01f;
-			fort_underground.x = std::max<float>(fort_underground.x, -3.0f);
-			fort_underground.y = std::max<float>(fort_underground.y, -3.0f);
-			fort_underground.z = std::min<float>(fort_underground.z, 0.0f);
-			break;
-	}
-
-	D3DXVECTOR3 fort_pos;
-	Vector3 fort_position;
-	Vector3 fort_rotation;
-	float fort_life[3];
-	for(int i = 0; i < 3; i++)
-	{
-		std::string fort_str = "fort" + std::to_string(i + 1);
-		Object *fort_object = object_manager_->Get(fort_str);
-		XFort *fort = dynamic_cast<XFort*>(fort_object);
-		fort_position = fort_object->parameter().position_;
-		fort_rotation = fort_object->parameter().rotation_;
-		fort_pos.x = fort_position.x_;
-		fort_pos.y = fort_position.y_;
-		fort_pos.z = fort_position.z_;
-		switch(i)
-		{
-			case 0:
-				fort_position.y_ = field->GetHeight(fort_pos) + fort_underground.x;
-				break;
-			case 1:
-				fort_position.y_ = field->GetHeight(fort_pos) + fort_underground.y;
-				break;
-			case 2:
-				fort_position.y_ = field->GetHeight(fort_pos) + fort_underground.z;
-				break;
-			default:
-				break;
-		}
-		fort_object->SetPosition(fort_position);
-
-		fort_life[i] = fort->GetLife();
-
-		// オブジェクトデータ転送
-		send_data.type_ = DATA_OBJ_PARAM;
-		send_data.object_param_.type_ = OBJ_FORT;
-		send_data.object_param_.position_.x_ = fort_position.x_;
-		send_data.object_param_.position_.y_ = fort_position.y_;
-		send_data.object_param_.position_.z_ = fort_position.z_;
-		send_data.object_param_.rotation_.x_ = fort_rotation.x_;
-		send_data.object_param_.rotation_.y_ = fort_rotation.y_;
-		send_data.object_param_.rotation_.z_ = fort_rotation.z_;
-		strcpy_s(send_data.name, MAX_NAME_LEN, fort_str.c_str());
-		NetworkHost::SendTo(DELI_MULTI, send_data);
-
-		// オブジェクトデータ転送
-		send_data.type_ = DATA_UI_PARAM;
-		send_data.id_ = i;
-		send_data.ui_param_.value_f_ = fort_life[i];
-		strcpy_s(send_data.name, MAX_NAME_LEN, "fort_gauge_manager");
-		NetworkHost::SendTo(DELI_MULTI, send_data);
-	}
-
-	//-------------------------------------
-	// 砦にとりあえずエフェクトだす
-	//-------------------------------------
-	int set_camera = 0;
-	if(fort_underground.x != 0.0f && fort_underground.x != -3.0f){
-		set_camera = 1;
-
-		Object *fort_object = object_manager_->Get("fort1");
-		XFort *fort = dynamic_cast<XFort*>(fort_object);
-		fort_position = fort_object->parameter().position_;
-		fort_pos.x = fort_position.x_;
-		fort_pos.y = fort_position.y_;
-		fort_pos.z = fort_position.z_;
-
-		ZeroMemory(&send_data, sizeof(send_data));
-		send_data.type_ = DATA_OBJ_PARAM;
-		send_data.object_param_.type_ = OBJ_EFFECT;
-		send_data.object_param_.position_.x_ = fort_position.x_;
-		send_data.object_param_.position_.y_ = field->GetHeight(fort_pos);
-		send_data.object_param_.position_.z_ = fort_position.z_;
-		strcpy_s(send_data.name, MAX_NAME_LEN, "smoke2");
-		NetworkHost::SendTo(DELI_MULTI, send_data);
-	}
-	if(fort_underground.y != 0.0f && fort_underground.y != -3.0f){
-		set_camera = 2;
-
-		Object *fort_object = object_manager_->Get("fort2");
-		XFort *fort = dynamic_cast<XFort*>(fort_object);
-		fort_position = fort_object->parameter().position_;
-		fort_pos.x = fort_position.x_;
-		fort_pos.y = fort_position.y_;
-		fort_pos.z = fort_position.z_;
-
-		ZeroMemory(&send_data, sizeof(send_data));
-		send_data.type_ = DATA_OBJ_PARAM;
-		send_data.object_param_.type_ = OBJ_EFFECT;
-		send_data.object_param_.position_.x_ = fort_position.x_;
-		send_data.object_param_.position_.y_ = field->GetHeight(fort_pos);
-		send_data.object_param_.position_.z_ = fort_position.z_;
-		strcpy_s(send_data.name, MAX_NAME_LEN, "smoke2");
-		NetworkHost::SendTo(DELI_MULTI, send_data);
-	}
-	if(fort_underground.z != 0.0f && fort_underground.z != -3.0f){
-		set_camera = 3;
-
-		Object *fort_object = object_manager_->Get("fort3");
-		XFort *fort = dynamic_cast<XFort*>(fort_object);
-		fort_position = fort_object->parameter().position_;
-		fort_pos.x = fort_position.x_;
-		fort_pos.y = fort_position.y_;
-		fort_pos.z = fort_position.z_;
-
-		ZeroMemory(&send_data, sizeof(send_data));
-		send_data.type_ = DATA_OBJ_PARAM;
-		send_data.object_param_.type_ = OBJ_EFFECT;
-		send_data.object_param_.position_.x_ = fort_position.x_;
-		send_data.object_param_.position_.y_ = field->GetHeight(fort_pos);
-		send_data.object_param_.position_.z_ = fort_position.z_;
-		strcpy_s(send_data.name, MAX_NAME_LEN, "smoke2");
-		NetworkHost::SendTo(DELI_MULTI, send_data);
-	}
-
-	//-------------------------------------
-	// ゲームステージデバッグ
-	//-------------------------------------
-	if(fort_life[0] == 0.0f){
-		stage_ = 2;
-		if(fort_life[1] == 0.0f){
-			stage_ = 3;
-		}
 	}
 
 	// おじいちゃんワープ
@@ -1055,7 +1040,7 @@ void GameServer::Game()
 					sub_camera_position = sub_camera->position();
 					sub_camera_focus = sub_camera->focus();
 
-					std::string name = "fort" + std::to_string(set_camera);
+					std::string name = "fort" + std::to_string(stage_);
 					Object *fort_object = object_manager_->Get(name);
 					Vector3 focus = fort_object->parameter().position_;
 					Vector3 pos(0.0f, 0.0f, 0.0f);
@@ -1163,6 +1148,13 @@ void GameServer::ChangeServerState(SERVER_STATE next)
 
 		case STATE_GAME:
 			{
+				// 砦高さ補正
+				for(int i = 0; i < 3; i++)
+				{
+					fort_y[i] = -3.0f;
+				}
+				fort_y[0] = 0.0f;
+
 				scene_state_ = STATE_GUEST_WAITING;
 				// ステージ
 				stage_ = 1;
@@ -1194,8 +1186,78 @@ void GameServer::ChangeServerState(SERVER_STATE next)
 						pos = CHILD_POSITION[i - 1];
 						rot = CHILD_ROTATION[i - 1];
 					}
+					// フィールド取得
+					Field *field = dynamic_cast<Field*>(object_manager_->Get("game_field"));
+					D3DXVECTOR3 poss;
+					poss.x = pos.x_;
+					poss.y = pos.y_;
+					poss.z = pos.z_;
+					pos.y_ = field->GetHeight(poss);
+
 					player->SetPosition(pos);
 					player->SetRotation(rot);
+
+					//------------------------------------------------
+					// カメラ調整
+					//------------------------------------------------
+					std::string camera_str = "camera" + std::to_string(i + 1);
+					Camera *main_camera = camera_manager_->Get(camera_str);
+					D3DXVECTOR3 camera_position, camera_focus;
+					D3DXVECTOR3 camera_rotation(main_camera->rotation());
+
+					// モデルの回転Yをそのままカメラの回転Yへ
+					camera_rotation.y = rot.y_;
+					// 一旦モデルを注視点に
+					camera_focus.x = pos.x_;
+					camera_focus.y = pos.y_;
+					camera_focus.z = pos.z_;
+					// 足元基準から体の中心辺りを基準に
+					camera_focus.y += CAMERA_FOCUS_OFFSET_Y;
+					// モデルの少し先を見るように調整
+					camera_focus.x += sinf(camera_rotation.y) * CAMERA_FOCUS_OFFSET * cosf(camera_rotation.x);
+					camera_focus.z += cosf(camera_rotation.y) * CAMERA_FOCUS_OFFSET * cosf(camera_rotation.x);
+					camera_focus.y += sinf(camera_rotation.x) * CAMERA_FOCUS_OFFSET;
+
+					// 注視点を基準にカメラ座標を設定
+					camera_position = camera_focus;
+					camera_position.x -= sinf(camera_rotation.y) * camera_pos_len_[i] * cosf(camera_rotation.x);
+					camera_position.z -= cosf(camera_rotation.y) * camera_pos_len_[i] * cosf(camera_rotation.x);
+					camera_position.y -= sinf(camera_rotation.x) * camera_pos_len_[i];
+
+					// カメラの地面めり込み回避処理
+					D3DXVECTOR3	vec_camera_to_focus = camera_focus - camera_position;
+
+					// 中間にカメラがめり込みそうなところが無いか検査
+					bool camera_re_calculate = false;
+					for(int j = 0; j < 10; ++j){
+						// 中間地点を計算
+						D3DXVECTOR3 lay_point = camera_position + vec_camera_to_focus * (0.1f * j);
+						float pos_y = field->GetHeight(lay_point);
+						// 回避処理
+						if(lay_point.y < pos_y + 0.1f){
+							camera_re_calculate = true;
+							camera_pos_len_[i] -= CAMARA_LEN_SPEED;
+						}
+					}
+
+					//カメラ座標再計算
+					if(camera_re_calculate == true){
+						camera_position = camera_focus;
+						camera_position.x -= sinf(camera_rotation.y) * camera_pos_len_[i] * cosf(camera_rotation.x);
+						camera_position.z -= cosf(camera_rotation.y) * camera_pos_len_[i] * cosf(camera_rotation.x);
+						camera_position.y -= sinf(camera_rotation.x) * camera_pos_len_[i];
+						camera_position.y = field->GetHeight(camera_position) + 0.1f;
+					}
+
+					camera_pos_len_[i] += CAMARA_LEN_SPEED;
+					if(camera_pos_len_[i] > CAMERA_POS_LEN){
+						camera_pos_len_[i] = CAMERA_POS_LEN;
+					}
+
+					// カメラにパラメータを再セット
+					main_camera->SetPosition(camera_position);
+					main_camera->SetFocus(camera_focus);
+					main_camera->SetRotation(camera_rotation);
 				}
 			}
 			break;

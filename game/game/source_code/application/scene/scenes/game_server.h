@@ -89,6 +89,8 @@ private:
 	int shot_late[MAX_GUEST];
 	// ステージ(砦が壊されるごとに進行/1からスタート)
 	int stage_;
+	// 砦高さ補正
+	float fort_y[3];
 	// おじデバフフラグ
 	bool grandfather_debuff_;
 	// 子供死亡フラグ
