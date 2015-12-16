@@ -127,6 +127,7 @@ void FbxGrandfather::Action(
 
 				// …•â‹‹
 				water_gauge_ += GRANDFATHER_SUB_WATERGAUGE;
+				water_gauge_ = std::min<float>(water_gauge_, 1.0f);
 
 				Object *obj = game->object_manager()->Get("water_gage");
 				WaterGage *water_gage_obj = static_cast<WaterGage*>(obj);
