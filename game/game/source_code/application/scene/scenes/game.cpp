@@ -572,6 +572,7 @@ void Game::Update()
 	//-------------------------------------
 	// 変数宣言
 	//-------------------------------------
+	// 動的変数
 	Object *fort1_object = object_manager_->Get("fort1");
 	Object *fort2_object = object_manager_->Get("fort2");
 	Object *fort3_object = object_manager_->Get("fort3");
@@ -585,14 +586,10 @@ void Game::Update()
 	Vector3 grandfather_rotation(grandfather_object->parameter().rotation_);
 	Vector3 child_position(child_object->parameter().position_);
 	Vector3 child_rotation(child_object->parameter().rotation_);
-	static Vector3 grandfather_prevposition(grandfather_object->parameter().position_);
-
-	Field *field = dynamic_cast<Field*>(
-		object_manager_->Get("field"));
+	Field *field = dynamic_cast<Field*>(object_manager_->Get("field"));
 	FbxGrandfather *grandfather = dynamic_cast<FbxGrandfather*>(grandfather_object);
 	FbxChild *child = dynamic_cast<FbxChild*>(child_object);
-    WaterGage *waterGage = dynamic_cast<WaterGage*>(
-		object_manager_->Get("water_gage"));
+    WaterGage *waterGage = dynamic_cast<WaterGage*>(object_manager_->Get("water_gage"));
 	DamageEffect *damage_effect = dynamic_cast<DamageEffect*>(
 		object_manager_->Get("damage_effect"));
     FortGaugeManager *fort_gauge_manager = dynamic_cast<FortGaugeManager*>(
@@ -601,11 +598,7 @@ void Game::Update()
 	XFort *fort2 = dynamic_cast<XFort*>(fort2_object);
 	XFort *fort3 = dynamic_cast<XFort*>(fort3_object);
 	CountDown *countdown = dynamic_cast<CountDown*>(countdown_object);
-
-	static const float player_speed_value = 0.05f;
-	static int shot_late = 0;
-	static D3DXVECTOR3 fort_underground(-3.0f, -3.0f, -3.0f);
-	float player_speed = player_speed_value;
+	float player_speed = CHARANCTER_MOVESPEED;
 	float father_life = grandfather->GetLife();
 	float father_watergauge = grandfather->GetWaterGauge();
 	float child_life = child->GetLife();
@@ -613,6 +606,12 @@ void Game::Update()
 	float fort1_life = fort1->GetLife();
 	float fort2_life = fort2->GetLife();
 	float fort3_life = fort3->GetLife();
+	
+	// 静的変数
+	static int shot_late = 0;
+	static D3DXVECTOR3 fort_underground(-3.0f, -3.0f, -3.0f);
+	static Vector3 grandfather_prevposition(grandfather_object->parameter().position_);
+
 
 	//-------------------------------------
 	// 時間経過
@@ -665,7 +664,7 @@ void Game::Update()
 	//-------------------------------------
 	if (GamePad::isPress(GAMEPAD_GRANDFATHER, PAD_BUTTON_11)){
 
-		player_speed = player_speed_value * 2.0f;
+		player_speed = CHARANCTER_MOVESPEED * 2.0f;
 		// ダッシュエフェクト
 		if (dash_effect_timer_ % 10 == 0){
 			EFFECT_PARAMETER_DESC effect_param;
@@ -733,7 +732,7 @@ void Game::Update()
 	//-------------------------------------
 #ifdef _DEBUG
 	if (KeyBoard::isPress(DIK_Z)){
-		player_speed = player_speed_value * 2.0f;
+		player_speed = CHARANCTER_MOVESPEED * 2.0f;
 		// ダッシュエフェクト
 		if (dash_effect_timer_ % 10 == 0){
 			EFFECT_PARAMETER_DESC effect_param;

@@ -43,6 +43,7 @@ public:
 private:
 	ObjectManager *object_manager_;
 	CameraManager *camera_manager_;
+	EffectManager *effect_manager_;
 	CollisionManager *collision_manager_;
 	DebugFont *font_;
 	float camera_pos_len_;

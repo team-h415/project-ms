@@ -27,6 +27,8 @@
 #include "../../object/objects/model/fbx/fbx_player.h"
 #include "../../object/objects/model/fbx/fbx_grandfather.h"
 #include "../../object/objects/notice/bullet.h"
+#include "../../effect/effect.h"
+#include "../../effect/effect_manager.h"
 #include "../../camera/camera.h"
 #include "../../camera/camera_manager.h"
 #include "../../collision/collision.h"
@@ -49,7 +51,48 @@ Matching::Matching()
 	camera_manager_ = new CameraManager;
 	object_manager_ = new ObjectManager;
 	collision_manager_ = new CollisionManager;
+	effect_manager_ = EffectManager::Get();
 	font_ = new DebugFont;
+
+
+	//-------------------------------------
+	// エフェクトの読み込み
+	//-------------------------------------
+	EFFECT_PARAMETER_DESC water_param;
+	water_param.position_ = { 0.0f, 0.0f, 0.0f };
+	water_param.rotation_ = { 0.0f, 0.0f, 0.0f };
+	water_param.scaling_ = { 1.0f, 1.0f, 1.0f };
+	water_param.speed_ = 1.0f;
+
+	effect_manager_->Create(
+		"water",
+		"resource/effect/BulletFire.efk",
+		water_param);
+
+	effect_manager_->Create(
+		"damage",
+		"resource/effect/Damage3_2.efk",
+		water_param);
+
+	effect_manager_->Create(
+		"dead",
+		"resource/effect/Dead2.efk",
+		water_param);
+
+	effect_manager_->Create(
+		"smoke",
+		"resource/effect/Smoke.efk",
+		water_param);
+
+	effect_manager_->Create(
+		"smoke2",
+		"resource/effect/Smoke2.efk",
+		water_param);
+
+	effect_manager_->Create(
+		"dash",
+		"resource/effect/Dash.efk",
+		water_param);
 
 	//-------------------------------------
 	// メインカメラ
@@ -216,20 +259,22 @@ void Matching::Update()
 	//-------------------------------------
 	// 変数宣言
 	//-------------------------------------
+	// 動的変数
 	Object *grandfather_object = object_manager_->Get("grandfather");
 	Vector3 grandfather_position(grandfather_object->parameter().position_);
 	Vector3 grandfather_rotation(grandfather_object->parameter().rotation_);
-	static Vector3 grandfather_prevposition(grandfather_object->parameter().position_);
-
 	Field *field = dynamic_cast<Field*>(object_manager_->Get("field"));
 	FbxGrandfather *grandfather = dynamic_cast<FbxGrandfather*>(grandfather_object);
 	Camera *main_camera = camera_manager_->Get("MainCamera");
 	D3DXVECTOR3 camera_position, camera_focus;
 	D3DXVECTOR3 camera_rotation(main_camera->rotation());
+	float player_speed = CHARANCTER_MOVESPEED;
 
-	static const float player_speed_value = 0.05f;
+	// 静的変数
+	static Vector3 grandfather_prevposition(grandfather_object->parameter().position_);
 	static int shot_late = 0;
-	float player_speed = player_speed_value;
+
+	
 
 	//-------------------------------------
 	// プレイヤー移動処理
@@ -389,14 +434,14 @@ void Matching::Update()
 	shot_late = std::max<int>(shot_late, 0);
 	if (GamePad::isPress(GAMEPAD_GRANDFATHER, PAD_BUTTON_8) &&
 		shot_late == 0){
-		//EFFECT_PARAMETER_DESC effect_param;
-		//MyEffect *effect = effect_manager_->Get("water");
-		//effect_param = effect->parameter();
-		//effect_param.position_ = grandfather_position;
-		//effect_param.position_.y_ += 0.6f;
-		//effect_param.rotation_ = grandfather_rotation;
-		//effect->SetParameter(effect_param);
-		//effect_manager_->Play("water");
+		EFFECT_PARAMETER_DESC effect_param;
+		MyEffect *effect = effect_manager_->Get("water");
+		effect_param = effect->parameter();
+		effect_param.position_ = grandfather_position;
+		effect_param.position_.y_ += 0.6f;
+		effect_param.rotation_ = grandfather_rotation;
+		effect->SetParameter(effect_param);
+		effect_manager_->Play("water");
 
 
 		OBJECT_PARAMETER_DESC bullet_param;
@@ -433,6 +478,7 @@ void Matching::Update()
 
 	camera_manager_->Update();
 	object_manager_->Update();
+	effect_manager_->Update();
 	collision_manager_->Update();
 
 	font_->Add("シーン名:");
@@ -471,6 +517,7 @@ void Matching::Draw()
 	DirectX9Holder::Clear(color);
 	camera_manager_->Set("MainCamera");
 	object_manager_->Draw();
+	effect_manager_->Draw();
 	collision_manager_->Draw();
 	font_->Draw(rect, font_color);
 	Fade::Draw();
