@@ -162,7 +162,7 @@ void FbxGrandfather::Action(
 					effect_param.position_ = grandfather_parameter.position_;
 					effect_param.position_.y_ += 0.2f;
 					effect->SetParameter(effect_param);
-					game->effect_manager()->Play("watersupplyboble");
+					game->effect_manager()->Play("watersupplybubble");
 
 
 					water_supply_effect_timer_++;

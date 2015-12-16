@@ -35,7 +35,7 @@
 
 #define GAME_TIMER (100)							// ƒQ[ƒ€‚ÌŽžŠÔ
 
-#define LAKE_COLLISION_RANGE (30.0f)				// ŒÎ‚Ì“–‚½‚è”¼Œa
+#define LAKE_COLLISION_RANGE (24.5f)				// ŒÎ‚Ì“–‚½‚è”¼Œa
 
 //-------------------------------------
 // ‚¨‚¶
