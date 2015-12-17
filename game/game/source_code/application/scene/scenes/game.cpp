@@ -819,6 +819,7 @@ void Game::Update()
 			stage_ = 3;
 		}
 	}
+
 	fort_gauge_manager->SetFortLife(0, fort1_life);
 	fort_gauge_manager->SetFortLife(1, fort2_life);
 	fort_gauge_manager->SetFortLife(2, fort3_life);
@@ -986,7 +987,7 @@ void Game::Update()
 		break;
 	case 2:
 		fort_underground.x -= 0.01f;
-		fort_underground.y += 0.01f;
+		if (fort_underground.x < -3.0f)fort_underground.y += 0.01f;
 		fort_underground.z -= 0.01f;
 		fort_underground.x = std::max<float>(fort_underground.x, -3.0f);
 		fort_underground.y = std::min<float>(fort_underground.y, 0.0f);
@@ -995,7 +996,7 @@ void Game::Update()
 	case 3:
 		fort_underground.x -= 0.01f;
 		fort_underground.y -= 0.01f;
-		fort_underground.z += 0.01f;
+		if (fort_underground.y < -3.0f)fort_underground.z += 0.01f;
 		fort_underground.x = std::max<float>(fort_underground.x, -3.0f);
 		fort_underground.y = std::max<float>(fort_underground.y, -3.0f);
 		fort_underground.z = std::min<float>(fort_underground.z, 0.0f);
@@ -1216,11 +1217,20 @@ void Game::Update()
 		}
 		break;
 	case 2:
-		sub_camera_focus = fort2_pos;
-		sub_camera_focus.y = 1.5f;
-		if (fort_underground.y != 0.0f){
+		if (fort_underground.x != -3.0f)
+		{
+			
+			sub_camera_focus = fort1_pos;
+			sub_camera_focus.y = 1.2f;
 			use_camera_name_ = "SubCamera";
-			sub_camera_rotation.y += CAMERA_SUB_ROT_SPEED;
+			//sub_camera_rotation.y = fort1_object->parameter().rotation_.y_;
+			sub_camera_rotation.x -= CAMERA_SUB_ROT_SPEED*0.02f;
+		}
+		else if (fort_underground.y != 0.0f  ){
+			sub_camera_focus = fort2_pos;
+			sub_camera_focus.y = 1.5f;
+			use_camera_name_ = "SubCamera";
+			//sub_camera_rotation.y += CAMERA_SUB_ROT_SPEED;
 			sub_camera_rotation.x += CAMERA_SUB_ROT_SPEED*0.02f;
 		}
 		else{
@@ -1230,11 +1240,19 @@ void Game::Update()
 		}
 		break;
 	case 3:
-		sub_camera_focus = fort3_pos;
-		sub_camera_focus.y = 1.5f;
-		if (fort_underground.z != 0.0f){
+		if (fort_underground.y != -3.0f)
+		{
+			sub_camera_focus = fort2_pos;
+			sub_camera_focus.y = 1.2f;
 			use_camera_name_ = "SubCamera";
-			sub_camera_rotation.y += CAMERA_SUB_ROT_SPEED;
+			//sub_camera_rotation.y = fort2_object->parameter().rotation_.y_;
+			sub_camera_rotation.x -= CAMERA_SUB_ROT_SPEED*0.02f;
+		}
+		else if (fort_underground.z != 0.0f){
+			sub_camera_focus = fort3_pos;
+			sub_camera_focus.y = 1.5f;
+			use_camera_name_ = "SubCamera";
+			//sub_camera_rotation.y += CAMERA_SUB_ROT_SPEED;
 			sub_camera_rotation.x += CAMERA_SUB_ROT_SPEED*0.02f;
 		}
 		else{
