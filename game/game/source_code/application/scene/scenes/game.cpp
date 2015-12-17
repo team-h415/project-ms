@@ -17,6 +17,7 @@
 #include "../../input/input.h"
 #include "../../input/inputs/keyboard.h"
 #include "../../input/inputs/gamepad.h"
+#include "../../sound/sound.h"
 #include "../../font/debug_font.h"
 #include "../../object/object.h"
 #include "../../object/object_manager.h"
@@ -75,6 +76,12 @@ Game::Game()
 	frame_ = 0;
 	// 経過時間
 	timer_ = 0;
+    // サウンドSEが連続で再生させないためのフラグ
+    start_only_se_flg_ = true;
+    sound_se_flg_ = true;
+    // プレイヤー移動時の経過時間
+    walk_timer_ = 0;
+    walk_flg_ = false;
 
 	//-------------------------------------
 	// 各マネージャ・デバッグシステム初期化
@@ -651,6 +658,13 @@ Game::Game()
 		message_param,
 		"resource/texture/game/message/message_grandfather_return.png");
 
+    //-------------------------------------
+    // サウンド(BGM)
+    //-------------------------------------
+    sound_ = nullptr;
+    sound_ = Sound::LoadSound("resource/sound/bgm/game/ms-bgm.wav");
+    sound_->Play(true);
+
 }
 
 
@@ -660,6 +674,7 @@ Game::Game()
 Game::~Game()
 {
 	effect_manager_ = nullptr;
+    sound_->ReleaseSound(&sound_);
 	SAFE_DELETE(object_manager_);
 	SAFE_DELETE(camera_manager_);
 	SAFE_DELETE(font1_);
@@ -724,10 +739,13 @@ void Game::Update()
 	frame_++;
 	if (!(frame_ % 60)){
 		timer_++;
+        if (start_only_se_flg_)
+            sound_se_flg_ = true;
 	}
 
 	//-------------------------------------
 	// 時間経過でカウントダウン
+    // カウントダウンSE再生
 	//-------------------------------------
 	switch (timer_)
 	{
@@ -735,19 +753,40 @@ void Game::Update()
 		countdown->ChangeTexture(4);
 		break;
 	case 1:
-		countdown->ChangeTexture(3);
+        countdown->ChangeTexture(3);
+        if (sound_se_flg_)
+        {
+            Sound::LoadAndPlaySE("resource/sound/se/game/countdown.wav");
+            sound_se_flg_ = false;
+        }
 		break;
 	case 2:
 		countdown->ChangeTexture(2);
+        if (sound_se_flg_)
+        {
+            Sound::LoadAndPlaySE("resource/sound/se/game/countdown.wav");
+            sound_se_flg_ = false;
+        }
 		break;
 	case 3:
 		countdown->ChangeTexture(1);
+        if (sound_se_flg_)
+        {
+            Sound::LoadAndPlaySE("resource/sound/se/game/countdown.wav");
+            sound_se_flg_ = false;
+        }
 		break;
 	case 4:
 		countdown->ChangeTexture(0);
+        if (sound_se_flg_)
+        {
+            Sound::LoadAndPlaySE("resource/sound/se/game/start.wav");
+            sound_se_flg_ = false;
+        }
 		break;
 	default:
 		countdown->ChangeTexture(4);
+        start_only_se_flg_ = false;
 		break;
 	}
 
@@ -1292,6 +1331,9 @@ void Game::Update()
 		
 		Bullet* bullet = object_manager_->GetNoUseBullet();
 		bullet->Fire(bullet_param);
+        //-------------------------------------
+        // おじの弾発射SE再生
+        Sound::LoadAndPlaySE("resource/sound/se/game/shootGrandfather.wav");
 
 		//-------------------------------------
 		// 水ゲージを減少させる
@@ -1334,6 +1376,9 @@ void Game::Update()
 
 		Bullet* bullet = object_manager_->GetNoUseBullet();
 		bullet->Fire(bullet_param);
+        //-------------------------------------
+        // おじの弾発射SE再生
+        Sound::LoadAndPlaySE("resource/sound/se/game/shootGrandfather.wav");
 	}
 
 	//-------------------------------------
@@ -1389,15 +1434,34 @@ void Game::Update()
 		if(grandfather->GetCurrentAnimationId() != FbxGrandfather::WALK)
 		{
 			grandfather->PlayAnimation(FbxGrandfather::WALK);
+            walk_flg_ = true;
 		}
 	}
 	else{
 		if(grandfather->GetCurrentAnimationId() != FbxGrandfather::IDLE)
 		{
 			grandfather->PlayAnimation(FbxGrandfather::IDLE);
+            walk_flg_ = false;
 		}
 	}
-	
+
+
+    //-------------------------------------
+    // 移動SE確認用
+    //-------------------------------------
+    if (walk_flg_)
+    {
+        ++walk_timer_;
+        if (!(walk_timer_ % 30))
+        {
+            Sound::LoadAndPlaySE("resource/sound/se/game/footstep.wav");
+            walk_timer_ = 0;
+        }
+    }
+    else
+    {
+        walk_timer_ = 30;
+    }
 
 	//-------------------------------------
 	// 子供死亡時制御

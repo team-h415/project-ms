@@ -68,13 +68,13 @@ Application::~Application()
 	TextureManager::AllRelease();
 	FbxContainerManager::AllRelease();
 	XContainerManager::AllRelease();
-	Sound::End();
 	EffectManager::Delete();
 	SAFE_DELETE(scene_manager_);
 	SAFE_DELETE(fps_);
 	SAFE_DELETE(renderer_);
 	SAFE_DELETE(keyboard_);
 	SAFE_DELETE(gamepad_);
+    Sound::End();
 }
 
 
