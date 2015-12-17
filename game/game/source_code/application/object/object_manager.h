@@ -93,7 +93,7 @@ public:
 
 private:
 	bool Search(const std::string &name);
-	std::map<std::string, Object*> objects_[LAYER_MAX];
+	std::unordered_map<std::string, Object*> objects_[LAYER_MAX];
 	static int object_count_;
 	bool draw_enable_[LAYER_MAX];
 };

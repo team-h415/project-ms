@@ -45,7 +45,7 @@ private:
 	void SetProjectionMatrix();
 	EffekseerRenderer::Renderer *renderer_;
 	Effekseer::Manager *manager_;
-	std::map<std::string, MyEffect*> effects_;
+	std::unordered_map<std::string, MyEffect*> effects_;
 
 	EffectManager(
 		const int max_sprites);
