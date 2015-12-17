@@ -59,6 +59,9 @@ Matching::Matching()
 	frame_ = 0;
 	// 経過時間
 	timer_ = 0;
+	// シーン終了までのフレーム計測(マッチング完了時)
+	movescene_waitframe_ = 0;
+
 
 	//-------------------------------------
 	// 各マネージャ・デバッグシステム初期化
@@ -84,7 +87,7 @@ Matching::Matching()
 		"resource/effect/BulletFire.efk",
 		water_param);
 
-	water_param.position_ = { 40.00f, 0.00f, -40.00f };
+	water_param.position_ = { 40.00f, 0.3f, -40.00f };
 	effect_manager_->Create(
 		"marker",
 		"resource/effect/Marker.efk",
@@ -96,7 +99,9 @@ Matching::Matching()
 		water_param);
 
 	
-
+	effect_manager_->Play("water");
+	effect_manager_->Play("portal");
+	effect_manager_->Play("marker");
 
 	//-------------------------------------
 	// メインカメラ
@@ -245,12 +250,39 @@ Matching::Matching()
 	bullet_param.layer_ = LAYER_BULLET;
 	for (int i = 0; i < MAX_BULLET; i++)
 	{
-		bullet_param.name_ = "bullet" + std::to_string(i);;
+		bullet_param.name_ = "bullet" + std::to_string(i);
 		object_manager_->Create(
 			bullet_param);
 	}
 
+
+	//-------------------------------------
+	// 出撃準備案内UI
+	//-------------------------------------
+	OBJECT_PARAMETER_DESC standby_param;
+	standby_param.name_ = "standby";
+	standby_param.layer_ = LAYER_SPRITE_2D;
+	standby_param.parent_layer_ = LAYER_NONE;
+	standby_param.position_ = {
+		SCREEN_WIDTH * 0.5f,
+		SCREEN_HEIGHT * 0.5f,
+		0.0f
+	};
+	standby_param.rotation_ = { 0.0f, 0.0f, 0.0f };
+	standby_param.scaling_ = {
+		SCREEN_WIDTH * 0.5f,
+		SCREEN_HEIGHT * 0.5f,
+		0.0f
+	};
 	
+	Object *standby_object = object_manager_->Create(standby_param);
+	Sprite2D *standby = dynamic_cast<Sprite2D*>(standby_object);
+	standby->SetTexture("resource/texture/matching/standby.png");
+
+	//-------------------------------------
+	// UIの描画フラグを切る
+	//-------------------------------------
+	object_manager_->SetDrawEnable(LAYER_SPRITE_2D, false);
 }
 
 
@@ -263,6 +295,7 @@ Matching::~Matching()
 	SAFE_DELETE(camera_manager_);
 	SAFE_DELETE(font_);
 	SAFE_DELETE(collision_manager_);
+	effect_manager_->StopAll();
 	effect_manager_ = nullptr;
 }
 
@@ -277,8 +310,10 @@ void Matching::Update()
 	//-------------------------------------
 	// 動的変数
 	Object *grandfather_object = object_manager_->Get("grandfather");
+	Object *standby_object = object_manager_->Get("standby");
 	Vector3 grandfather_position(grandfather_object->parameter().position_);
 	Vector3 grandfather_rotation(grandfather_object->parameter().rotation_);
+	Sprite2D *standby = dynamic_cast<Sprite2D*>(standby_object);
 	Field *field = dynamic_cast<Field*>(object_manager_->Get("field"));
 	FbxGrandfather *grandfather = dynamic_cast<FbxGrandfather*>(grandfather_object);
 	Camera *main_camera = camera_manager_->Get("MainCamera");
@@ -289,6 +324,9 @@ void Matching::Update()
 	// 静的変数
 	static Vector3 grandfather_prevposition(grandfather_object->parameter().position_);
 	static int shot_late = 0;
+	static float standby_alpha = 0.0f;
+	static float standby_rad = 0.0f;
+
 
 	//-------------------------------------
 	// 時間経過
@@ -298,32 +336,18 @@ void Matching::Update()
 		timer_++;
 	}
 
+
 	//-------------------------------------
-	// 1回だけポータル再生
+	// 集合案内UI点滅処理
 	//-------------------------------------
-	if (frame_ == 1){
-
-		EFFECT_PARAMETER_DESC effect_param;
-		MyEffect *effect = effect_manager_->Get("water");
-		effect_param = effect->parameter();
-		effect_param.position_ = grandfather_position;
-		effect_param.position_.y_ -= 100.0f;
-		effect_param.rotation_ = grandfather_rotation;
-		effect->SetParameter(effect_param);
-		effect_manager_->Play("water");
-
-		effect = effect_manager_->Get("portal");
-		effect_param = effect->parameter();
-		effect_param.position_ = { 40.00f, 0.00f, -40.00f };;
-		effect_param.position_.y_ += 0.3f;
-		effect_param.rotation_ = grandfather_rotation;
-		effect->SetParameter(effect_param);
-		effect_manager_->Play("portal");
-
-		effect = effect_manager_->Get("marker");
-		effect->SetParameter(effect_param);
-		effect_manager_->Play("marker");
+	standby_rad += D3DX_PI * 0.002f;
+	if (standby_rad > D3DX_PI){
+		standby_rad -= D3DX_PI * 2.0f;
 	}
+	standby_alpha = sinf(standby_rad) + 0.5f;
+	standby_alpha = std::max<float>(standby_alpha, 0.0f);
+	D3DXCOLOR standby_color(1.0f, 1.0f, 1.0f, standby_alpha);
+	standby->SetColor(standby_color);
 
 
 	//-------------------------------------
@@ -398,8 +422,13 @@ void Matching::Update()
 	D3DXVECTOR3 vec(grandfather_pos - portal_posiiton);
 	float distance = sqrtf((vec.x * vec.x) + (vec.y * vec.y) + (vec.z * vec.z));
 	if (distance < PORTAL_DISTANCE){
-		effect_manager_->StopAll();
-		SceneManager::RequestScene("Game");
+		if (movescene_waitframe_ == 0){
+			standby->SetTexture("resource/texture/matching/ready.png");
+		}
+		movescene_waitframe_++;
+		if (movescene_waitframe_ > 120){
+			SceneManager::RequestScene("Game");
+		}
 	}
 
 	//-------------------------------------
@@ -638,9 +667,12 @@ void Matching::Draw()
 	MaterialColor color(32, 32, 32, 255);
 	DirectX9Holder::DrawBegin();
 	DirectX9Holder::Clear(color);
+	Sprite2D *standby = 
+		dynamic_cast<Sprite2D*>(object_manager_->Get("standby"));
 	camera_manager_->Set("MainCamera");
 	object_manager_->Draw();
 	effect_manager_->Draw();
+	standby->Draw();
 	collision_manager_->Draw();
 	font_->Draw(rect, font_color);
 	Fade::Draw();

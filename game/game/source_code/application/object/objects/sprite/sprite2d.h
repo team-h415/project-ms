@@ -25,11 +25,19 @@ public:
 	void Draw();
 	void SetTexture(
 		const std::string &path);
+	void SetColor(
+		const D3DXCOLOR &color){
+		color_ = color;
+	}
+	const D3DXCOLOR GetColor(){
+		return color_;
+	}
 
 protected:
 	virtual void CalculateVertex();
 	Vertex2D *vertex_;
 	LPDIRECT3DTEXTURE9 texture_;
+	D3DXCOLOR color_;
 };
 
 
