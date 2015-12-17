@@ -89,6 +89,7 @@ Matching::Matching()
 		"marker",
 		"resource/effect/Marker.efk",
 		water_param);
+
 	effect_manager_->Create(
 		"portal",
 		"resource/effect/Portal2x2.efk",
@@ -505,11 +506,9 @@ void Matching::Update()
 		shot_late = 10;
 	}
 
-	// まーかー
-	EFFECT_PARAMETER_DESC effect_param;
-	MyEffect *effect = effect_manager_->Get("water");
-	effect_param = effect->parameter();
-	effect->SetParameter(effect_param);
+	//-------------------------------------
+	// まーかーの更新
+	//-------------------------------------
 	Vector3 poseffect = grandfather_position;
 	poseffect.y_ += 0.6f;
 	Vector3 speed = { BULLET_DEF_SPEED_XZ, BULLET_DEF_SPEED_Y, BULLET_DEF_SPEED_XZ };
@@ -585,6 +584,7 @@ void Matching::Update()
 
 	if (KeyBoard::isTrigger(DIK_RETURN))
 	{
+		effect_manager_->StopAll();
 		SceneManager::RequestScene("Game");
 	}
 }
