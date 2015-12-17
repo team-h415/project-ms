@@ -15,6 +15,7 @@
 #include "../../../input/input.h"
 #include "../../../input/inputs/keyboard.h"
 #include "../../../shader/shader.h"
+#include "../../../shader/shader_manager.h"
 #include "../../object.h"
 #include "damage_effect.h"
 
@@ -35,7 +36,7 @@ DamageEffect::DamageEffect(
     diffuse_texture_ = NULL;
     alpha_texture_ = NULL;
     shader_ = nullptr;
-    shader_ = new Shader("resource/shader/damage_effect.hlsl");
+    shader_ = ShaderManager::Get("resource/shader/damage_effect.hlsl");
     D3DXCreateTextureFromFile(
         DirectX9Holder::device_,
         "resource/texture/game/damage_diffuse.png", &diffuse_texture_);
@@ -53,7 +54,7 @@ DamageEffect::~DamageEffect()
     SAFE_DELETE_ARRAY(vertex_);
     SAFE_RELEASE(diffuse_texture_);
     SAFE_RELEASE(alpha_texture_);
-    SAFE_DELETE(shader_);
+    shader_ = nullptr;
 }
 
 

@@ -310,6 +310,9 @@
     <ClCompile Include="source_code\application\object\objects\sprite\countdown.cpp">
       <Filter>source_code\application\object\objects\sprite</Filter>
     </ClCompile>
+    <ClCompile Include="source_code\application\shader\shader_manager.cpp">
+      <Filter>source_code\application\shader</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source_code\main.h">
@@ -530,6 +533,9 @@
     </ClInclude>
     <ClInclude Include="source_code\application\object\objects\sprite\countdown.h">
       <Filter>source_code\application\object\objects\sprite</Filter>
+    </ClInclude>
+    <ClInclude Include="source_code\application\shader\shader_manager.h">
+      <Filter>source_code\application\shader</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

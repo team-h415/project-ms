@@ -13,6 +13,7 @@
 #include "../../../render/directx9/directx9_holder.h"
 #include "../../../math/vector.h"
 #include "../../../shader/shader.h"
+#include "../../../shader/shader_manager.h"
 #include "../../object.h"
 #include "field.h"
 #include "../../../resource/texture_manager.h"
@@ -38,7 +39,7 @@ Field::Field(
 	mesh_division_ = { 0, 0 };
 	D3DXMatrixIdentity(&world_);
 	shader_ = nullptr;
-	shader_ = new Shader("resource/shader/field.hlsl");
+	shader_ = ShaderManager::Get("resource/shader/field.hlsl");
 
 	texture_[0] = TextureManager::GetTexture("resource/texture/game/field_1.png");
 	texture_[1] = TextureManager::GetTexture("resource/texture/game/field_2.png");
@@ -55,7 +56,7 @@ Field::~Field()
 	SAFE_RELEASE(vertex_buffer_);
 	SAFE_RELEASE(index_buffer_);
 	SAFE_DELETE_ARRAY(normal_buffer_);
-	SAFE_DELETE(shader_);
+	shader_ = nullptr;
 	for (int i = 0; i < 4; i++){
 		texture_[i] = NULL;
 	}
