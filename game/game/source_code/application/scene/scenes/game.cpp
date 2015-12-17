@@ -378,6 +378,17 @@ Game::Game()
 	collision_manager_->Create(object_manager_->Get("child"),
 		child_collision_param);
 
+	//-------------------------------------
+	// まーかー
+	//-------------------------------------
+	EFFECT_PARAMETER_DESC marker_param;
+	MyEffect *effect_marker = effect_manager_->Get("marker");
+	marker_param = effect_marker->parameter();
+	marker_param.position_ = GRANDFATHER_POSITION_STAGE1;
+	marker_param.position_.y_ = -100.0f;
+	marker_param.rotation_ = { 0.0f, 0.0f, 0.0f };
+	effect_marker->SetParameter(marker_param);
+	effect_manager_->Play("marker");
 
 	//-------------------------------------
 	// タイマー
@@ -1456,6 +1467,48 @@ void Game::Update()
 	shadow_pos.y_ += 0.001f;
 	shadow->SetPosition(shadow_pos);
 
+
+	//-------------------------------------
+	// まーかー表示
+	//-------------------------------------
+	Vector3 poseffect = grandfather_position;
+	poseffect.y_ += 0.6f;
+	Vector3 speed = { BULLET_DEF_SPEED_XZ, BULLET_DEF_SPEED_Y, BULLET_DEF_SPEED_XZ };
+	Vector3 rot = Vector3(camera_rotation.x, camera_rotation.y, camera_rotation.z);
+	// 回転値を少し調整
+	rot.x_ += BULLET_OFFSET_ROT;
+	// 回転値を参照して速度を改良
+	speed.y_ += sinf(rot.x_) * BULLET_ADD_SPEED_Y;
+
+	for (int i = 0; i < 120; i++)
+	{
+		poseffect.x_ += sinf(rot.y_) * speed.x_;
+		poseffect.y_ += speed.y_;
+		poseffect.z_ += cosf(rot.y_) * speed.z_;
+		speed.y_ -= BULLET_GRAVITY;
+
+		float height = field->GetHeight(D3DXVECTOR3(poseffect.x_, poseffect.y_, poseffect.z_));
+		if (height > poseffect.y_)
+		{
+			EFFECT_PARAMETER_DESC effect_param;
+			MyEffect *effect = effect_manager_->Get("marker");
+			effect_param = effect->parameter();
+			effect_param.position_ = poseffect;
+			effect_param.position_.y_ = height;
+			effect_param.rotation_ = { 0.0f, camera_rotation.y, 0.0f };
+			Vector3 vec = poseffect - grandfather_position;
+			float len = sqrt(vec.x_*vec.x_ + vec.z_ * vec.z_);
+			float scaling = 1.0f + len * 0.15f;
+
+			scaling = std::min<float>(scaling, 3.0f);
+
+			effect_param.scaling_ = { scaling, scaling, scaling };
+			effect->SetParameter(effect_param);
+			break;
+		}
+	}
+
+
 	//-------------------------------------
 	// 実更新処理
 	//-------------------------------------
@@ -1520,6 +1573,7 @@ void Game::Update()
 
 	if (KeyBoard::isTrigger(DIK_RETURN))
 	{
+		effect_manager_->StopAll();
 		SceneManager::RequestScene("Result");
 	}
 }
