@@ -84,31 +84,6 @@ Matching::Matching()
 		"resource/effect/BulletFire.efk",
 		water_param);
 
-	//effect_manager_->Create(
-	//	"damage",
-	//	"resource/effect/Damage3_2.efk",
-	//	water_param);
-
-	//effect_manager_->Create(
-	//	"dead",
-	//	"resource/effect/Dead2.efk",
-	//	water_param);
-
-	//effect_manager_->Create(
-	//	"smoke",
-	//	"resource/effect/Smoke.efk",
-	//	water_param);
-
-	//effect_manager_->Create(
-	//	"smoke2",
-	//	"resource/effect/Smoke2.efk",
-	//	water_param);
-
-	//effect_manager_->Create(
-	//	"dash",
-	//	"resource/effect/Dash.efk",
-	//	water_param);
-
 	water_param.position_ = { 40.00f, 0.00f, -40.00f };
 	effect_manager_->Create(
 		"marker",
@@ -555,11 +530,7 @@ void Matching::Update()
 		if (height > poseffect.y_)
 		{
 			EFFECT_PARAMETER_DESC effect_param;
-			MyEffect *effect = effect_manager_->Get("portal");
-			effect_param = effect->parameter();
-			effect_param.position_ = poseffect;
-			effect_param.position_.y_ = poseffect.y_ + 0.1f;
-			effect = effect_manager_->Get("marker");
+			MyEffect *effect = effect_manager_->Get("marker");
 			effect_param = effect->parameter();
 			effect_param.position_ = poseffect;
 			effect_param.position_.y_ = height;
