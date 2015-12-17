@@ -66,28 +66,17 @@ Application::Application(
 //-------------------------------------
 Application::~Application()
 {
-<<<<<<< HEAD
-	TextureManager::AllRelease();
-	FbxContainerManager::AllRelease();
-	XContainerManager::AllRelease();
-	EffectManager::Delete();
-=======
->>>>>>> origin/EX
 	SAFE_DELETE(scene_manager_);
 	SAFE_DELETE(fps_);
 	SAFE_DELETE(renderer_);
 	SAFE_DELETE(keyboard_);
 	SAFE_DELETE(gamepad_);
-<<<<<<< HEAD
-    Sound::End();
-=======
 	ShaderManager::AllRelease();
 	TextureManager::AllRelease();
 	FbxContainerManager::AllRelease();
 	XContainerManager::AllRelease();
 	Sound::End();
 	EffectManager::Delete();
->>>>>>> origin/EX
 }
 
 
