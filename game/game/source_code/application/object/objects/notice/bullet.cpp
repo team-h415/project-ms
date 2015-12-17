@@ -165,7 +165,7 @@ void Bullet::Update()
 	std::string str = SceneManager::GetCurrentSceneName();
 	if (str == "GameServer"){
 		GameServer *game_server = dynamic_cast<GameServer*>(scene);
-		Object *obj = game_server->field();
+		Object *obj = game_server->object_manager()->Get("field");
 		Field *field = dynamic_cast<Field*>(obj);
 		float height = field->GetHeight(
 			D3DXVECTOR3(
@@ -250,7 +250,7 @@ void Bullet::Action(
 			}
 			// Ô
 			else if (target->parameter().layer_ == LAYER_MODEL_FORT &&
-				parameter_.parent_layer_ == LAYER_MODEL_GRANDFATHER){
+				parameter_.parent_layer_ == LAYER_MODEL_CHILD){
 				XFort *fort = dynamic_cast<XFort*>(target);
 				float life = fort->GetLife();
 				life -= FORT_DAMAGE;

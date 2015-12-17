@@ -63,7 +63,6 @@ public:
 	CameraManager *camera_manager(){
 		return camera_manager_;
 	}
-	Object* field();
 
 private:
 	void Matching();

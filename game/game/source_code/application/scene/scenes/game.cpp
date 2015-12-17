@@ -61,33 +61,12 @@
 Game::Game()
 {
 	//-------------------------------------
-	// ゲームルール用パラメータ初期化
-	//-------------------------------------
-	// ステージ
-	stage_ = 1;
-	// おじデバフフラグ
-	grandfather_debuff_ = false;
-	// 子供死亡フラグ
-	child_death_ = false;
-	// 子供リスポーン待ち時間
-	child_respawn_waittime_ = 0;
-	// ダッシュエフェクトタイマー初期化
-	dash_effect_timer_ = 0;
-	// 経過フレーム数
-	frame_ = 0;
-	// 経過時間
-	timer_ = 0;
-
-	//-------------------------------------
 	// 各マネージャ・デバッグシステム初期化
 	//-------------------------------------
 	camera_manager_ = new CameraManager;
 	object_manager_ = new ObjectManager;
 	effect_manager_ = EffectManager::Get();
 	collision_manager_ = new CollisionManager;
-	font1_ = new DebugFont;
-	font2_ = new DebugFont;
-	use_camera_name_ = "MainCamera";
     object_manager_->SetDrawEnable(LAYER_DAMAGE_EFFECT, false);
 
 	//-------------------------------------
@@ -151,26 +130,9 @@ Game::Game()
 	camera_param.up_ = { 0.0f, 1.0f, 0.0f };
 	camera_param.near_ = 0.1f;
 	camera_param.far_ = 800.0f;
-	camera_pos_len_ = CAMERA_POS_LEN;
 
 	camera_manager_->Create(
 		"Perspective", "MainCamera", camera_param);
-
-	//-------------------------------------
-	// サブカメラ
-	//-------------------------------------
-	camera_param.acpect_ = SCREEN_WIDTH / SCREEN_HEIGHT;
-	camera_param.fovy_ = D3DX_PI * 0.25f;
-	camera_param.position_ = { 0.0f, 0.0f, -10.0f };
-	camera_param.focus_ = { 0.0f, 0.0f, 0.0f };
-	camera_param.rotation_ = { 0.0f, 0.0f, 0.0f };
-	camera_param.up_ = { 0.0f, 1.0f, 0.0f };
-	camera_param.near_ = 0.1f;
-	camera_param.far_ = 800.0f;
-	camera_pos_len_ = CAMERA_POS_LEN;
-
-	camera_manager_->Create(
-		"Perspective", "SubCamera", camera_param);
 
 
 	//-------------------------------------
@@ -268,7 +230,7 @@ Game::Game()
 			fort_pos.y_ -= 3.0f;
 		}
 
-		std::string name = "fort" + std::to_string(i + 1);
+		std::string name = "fort" + std::to_string(i);
 		fort_param.name_ = name;
 		fort_param.layer_ = LAYER_MODEL_FORT;
 		fort_param.position_ = fort_pos;
@@ -298,7 +260,7 @@ Game::Game()
 	// FBXおじ
 	//-------------------------------------
 	OBJECT_PARAMETER_DESC grandfather_param;
-	grandfather_param.name_ = "player1";
+	grandfather_param.name_ = "player0";
 	grandfather_param.layer_ = LAYER_MODEL_GRANDFATHER;
 	grandfather_param.position_ = GRANDFATHER_POSITION_STAGE1;
 	grandfather_param.rotation_ = { 0.0f, 0.0f, 0.0f };
@@ -307,7 +269,7 @@ Game::Game()
 	object_manager_->Create(grandfather_param);
 
 	COLLISION_PARAMETER_DESC fbx_collision_param;
-	Object *obj2 = object_manager_->Get("player1");
+	Object *obj2 = object_manager_->Get("player0");
 
 	fbx_collision_param.position_ = {
 		obj2->parameter().position_.x_,
@@ -316,7 +278,7 @@ Game::Game()
 	fbx_collision_param.range_ = 1.0f;
 	fbx_collision_param.offset_ = { 0.0f, 0.5f, 0.0f };
 
-	collision_manager_->Create(object_manager_->Get("player1"), fbx_collision_param);
+	collision_manager_->Create(object_manager_->Get("player0"), fbx_collision_param);
 
 	//-------------------------------------
 	// FBX子供
@@ -328,7 +290,7 @@ Game::Game()
 
 	for(int i = 1; i < MAX_GUEST; i++)
 	{
-		std::string name = "player" + std::to_string(i + 1);
+		std::string name = "player" + std::to_string(i);
 		child_param.name_ = name;
 		child_param.position_ = CHILD_POSITION[i];
 		object_manager_->Create(child_param);
@@ -495,7 +457,7 @@ Game::Game()
         hit_point_param);
 
 	//-------------------------------------
-	// インスタンシングテスト
+	// 木を生やす
 	//-------------------------------------
 	OBJECT_PARAMETER_DESC wood_param;
 	wood_param.name_ = "wood";
@@ -508,11 +470,8 @@ Game::Game()
 	OBJECT_PARAMETER_DESC bench_param;
 	bench_param.name_ = "bench";
 	bench_param.layer_ = LAYER_BENCH;
-	object_manager_->Create(
-		bench_param);
+	object_manager_->Create(bench_param);
 
-	// ダッシュエフェクトタイマー初期化
-	dash_effect_timer_ = 0;
 	//-------------------------------------
 	// 影
 	//-------------------------------------
@@ -521,7 +480,7 @@ Game::Game()
 	shadow_param.scaling_ = Vector3(1.0f, 1.0f, 1.0f);
 	for(int i = 0; i < MAX_GUEST; i++)
 	{
-		shadow_param.name_ = "shadow" + std::to_string(i + 1);
+		shadow_param.name_ = "shadow" + std::to_string(i);
 		object_manager_->Create(shadow_param);
 	}
 
@@ -611,16 +570,14 @@ Game::Game()
 		"resource/texture/game/message/message_grandfather_return.png");
 
 	//-------------------------------------
-	// ゲームルール用パラメータ初期化
+	// マーカー
 	//-------------------------------------
-	// ステージ
-	stage_ = 1;
-	// おじデバフフラグ
-	grandfather_debuff_ = false;
-	// 子供死亡フラグ
-	child_death_ = false;
-	// 子供リスポーン待ち時間
-	child_respawn_waittime_ = 0;
+	ZeroMemory(&effect_param, sizeof(effect_param));
+	MyEffect *effect = effect_manager_->Get("marker");
+	effect_param = effect->parameter();
+	effect = effect_manager_->Get("marker");
+	effect->SetParameter(effect_param);
+	effect_manager_->Play("marker");
 
 #ifdef NETWORK_HOST_MODE
 #else
@@ -640,8 +597,6 @@ Game::~Game()
 	effect_manager_ = NULL;
 	SAFE_DELETE(object_manager_);
 	SAFE_DELETE(camera_manager_);
-	SAFE_DELETE(font1_);
-	SAFE_DELETE(font2_);
 	SAFE_DELETE(collision_manager_);
 }
 
@@ -1446,6 +1401,57 @@ void Game::Update()
 //	shadow->SetPosition(shadow_pos);
 
 	//-------------------------------------
+	// マーカー
+	//-------------------------------------
+	int player_id = NetworkGuest::id();
+	FbxPlayer* player = dynamic_cast<FbxPlayer*>(object_manager_->Get("player" + std::to_string(player_id)));
+	if(player != nullptr)
+	{
+		Vector3 player_pos = player->parameter().position_;
+		Camera *main_camera = camera_manager_->Get("MainCamera");
+		D3DXVECTOR3 camera_position, camera_focus;
+		D3DXVECTOR3 camera_rotation(main_camera->rotation());
+		Field *field = dynamic_cast<Field*>(object_manager_->Get("field"));
+
+		Vector3 poseffect = player_pos;
+		poseffect.y_ += 0.6f;
+		Vector3 speed = {BULLET_DEF_SPEED_XZ, BULLET_DEF_SPEED_Y, BULLET_DEF_SPEED_XZ};
+		Vector3 rot = Vector3(camera_rotation.x, camera_rotation.y, camera_rotation.z);
+		// 回転値を少し調整
+		rot.x_ += BULLET_OFFSET_ROT;
+		// 回転値を参照して速度を改良
+		speed.y_ += sinf(rot.x_) * BULLET_ADD_SPEED_Y;
+
+		for(int i = 0; i < 120; i++)
+		{
+			poseffect.x_ += sinf(rot.y_) * speed.x_;
+			poseffect.y_ += speed.y_;
+			poseffect.z_ += cosf(rot.y_) * speed.z_;
+			speed.y_ -= BULLET_GRAVITY;
+
+			float height = field->GetHeight(D3DXVECTOR3(poseffect.x_, poseffect.y_, poseffect.z_));
+			if(height > poseffect.y_)
+			{
+				EFFECT_PARAMETER_DESC effect_param;
+				MyEffect *effect = effect_manager_->Get("marker");
+				effect_param = effect->parameter();
+				effect_param.position_ = poseffect;
+				effect_param.position_.y_ = height;
+				effect_param.rotation_ = {0.0f, camera_rotation.y, 0.0f};
+				Vector3 vec = poseffect - player_pos;
+				float len = sqrt(vec.x_*vec.x_ + vec.z_ * vec.z_);
+				float scaling = 1.0f + len * 0.15f;
+
+				scaling = std::min<float>(scaling, 3.0f);
+
+				effect_param.scaling_ = {scaling, scaling, scaling};
+				effect->SetParameter(effect_param);
+				break;
+			}
+		}
+	}
+
+	//-------------------------------------
 	// 実更新処理
 	//-------------------------------------
 	camera_manager_->Update();
@@ -1481,14 +1487,12 @@ void Game::Draw()
 
     DamageEffect *damage_effect = dynamic_cast<DamageEffect*>(
                                 object_manager_->Get("damage_effect"));
-	camera_manager_->Set(use_camera_name_);
+	camera_manager_->Set("MainCamera");
 	object_manager_->Draw();
 	effect_manager_->Draw();
-    damage_effect->Draw();
+	damage_effect->Draw();
 	//collision_manager_->Draw();
 
-	font1_->Draw(rect1, font1_color);
-	font2_->Draw(rect2, font2_color);
 	Fade::Draw();
 
 	DirectX9Holder::DrawEnd();

@@ -79,7 +79,7 @@ GameServer::GameServer()
 	for(int i = 0; i < MAX_GUEST; i++)
 	{
 		camera_manager_->Create(
-			"Perspective", "camera" + std::to_string(i + 1), camera_param);
+			"Perspective", "camera" + std::to_string(i), camera_param);
 	}
 
 	//-------------------------------------
@@ -101,17 +101,7 @@ GameServer::GameServer()
 	// 地形
 	//-------------------------------------
 	OBJECT_PARAMETER_DESC param;
-	param.name_ = "matching_field";
-	param.position_ = {0.0f, 0.0f, 0.0f};
-	param.rotation_ = {0.0f, 0.0f, 0.0f};
-	param.scaling_ = {200.0f, 1.0f, 200.0f};
-	param.layer_ = LAYER_MESH_FIELD;
-
-	object_manager_->Create(
-		param,
-		"resource/mesh/map.heightmap");
-
-	param.name_ = "game_field";
+	param.name_ = "field";
 	param.position_ = {0.0f, 0.0f, 0.0f};
 	param.rotation_ = {0.0f, 0.0f, 0.0f};
 	param.scaling_ = {200.0f, 1.0f, 200.0f};
@@ -165,7 +155,7 @@ GameServer::GameServer()
 	Vector3 fort_pos;
 	for(int i = 0; i < 3; i++)
 	{
-		std::string name = "fort" + std::to_string(i + 1);
+		std::string name = "fort" + std::to_string(i);
 		fort_param.name_ = name;
 		fort_param.layer_ = LAYER_MODEL_FORT;
 		fort_param.position_ = FORT_POSITION[i];
@@ -196,7 +186,7 @@ GameServer::GameServer()
 	// FBXおじ
 	//-------------------------------------
 	OBJECT_PARAMETER_DESC grandfather_param;
-	grandfather_param.name_ = "player1";
+	grandfather_param.name_ = "player0";
 	grandfather_param.layer_ = LAYER_MODEL_GRANDFATHER;
 	grandfather_param.position_ = {1.0f, 0.0f, 0.0f};
 	grandfather_param.rotation_ = {0.0f, 0.0f, 0.0f};
@@ -206,7 +196,7 @@ GameServer::GameServer()
 		grandfather_param);
 
 	COLLISION_PARAMETER_DESC fbx_collision_param;
-	Object *obj2 = object_manager_->Get("player1");
+	Object *obj2 = object_manager_->Get("player0");
 
 	fbx_collision_param.position_ = {
 		obj2->parameter().position_.x_,
@@ -215,7 +205,7 @@ GameServer::GameServer()
 	fbx_collision_param.range_ = 1.0f;
 	fbx_collision_param.offset_ = {0.0f, 0.5f, 0.0f};
 
-	collision_manager_->Create(object_manager_->Get("player1"), fbx_collision_param);
+	collision_manager_->Create(object_manager_->Get("player0"), fbx_collision_param);
 
 	//-------------------------------------
 	// FBX子供
@@ -228,7 +218,7 @@ GameServer::GameServer()
 
 	for(int i = 1; i < MAX_GUEST; i++)
 	{
-		std::string name = "player" + std::to_string(i + 1);
+		std::string name = "player" + std::to_string(i);
 		child_param.name_ = name;
 		object_manager_->Create(
 			child_param);
@@ -382,14 +372,14 @@ void GameServer::Matching()
 	}
 
 	// フィールド取得
-	Field *field = dynamic_cast<Field*>(object_manager_->Get("matching_field"));
+	Field *field = dynamic_cast<Field*>(object_manager_->Get("field"));
 
-	for(int i = 0; i < 5; i++){
+	for(int i = 0; i < MAX_GUEST; i++){
 
 		//-------------------------------------
 		// 変数宣言
 		//-------------------------------------
-		std::string player_str = "player" + std::to_string(i + 1);
+		std::string player_str = "player" + std::to_string(i);
 		Object *player_obj = object_manager_->Get(player_str);
 		FbxPlayer *player = dynamic_cast<FbxPlayer*>(player_obj);
 		Vector3 player_position(player->parameter().position_);
@@ -460,11 +450,19 @@ void GameServer::Matching()
 			player_position.y_,
 			player_position.z_);
 		player_position.y_ = field->GetHeight(player_pos);
+
+		//-------------------------------------
 		// 侵入不可領域チェック
+		//-------------------------------------
 		if(player_position.y_ > 0.4f || player_position.y_ < -0.4f){
 			player_position = player_position_old;
 		}
+		player_position.x_ = std::max<float>(player_position.x_, 32.0f);
+		player_position.z_ = std::min<float>(player_position.z_, -35.0f);
 
+		//-------------------------------------
+		// パラメータ適応
+		//-------------------------------------
 		player_pos.x = player_position.x_;
 		player_pos.y = player_position.y_;
 		player_pos.z = player_position.z_;
@@ -474,7 +472,7 @@ void GameServer::Matching()
 		//-------------------------------------
 		// カメラ追従
 		//-------------------------------------
-		std::string camera_str = "camera" + std::to_string(i + 1);
+		std::string camera_str = "camera" + std::to_string(i);
 		Camera *main_camera = camera_manager_->Get(camera_str);
 		D3DXVECTOR3 camera_position, camera_focus;
 		D3DXVECTOR3 camera_rotation(main_camera->rotation());
@@ -587,47 +585,6 @@ void GameServer::Matching()
 			NetworkHost::SendTo(DELI_MULTI, send_data);
 		}
 
-		////-------------------------------------
-		//// マーカー
-		////-------------------------------------
-		//Vector3 poseffect = player_position;
-		//poseffect.y_ += 0.6f;
-		//Vector3 speed = { BULLET_DEF_SPEED_XZ, BULLET_DEF_SPEED_Y, BULLET_DEF_SPEED_XZ };
-		//Vector3 rot = Vector3(camera_rotation.x, camera_rotation.y, camera_rotation.z);
-		//// 回転値を少し調整
-		//rot.x_ += BULLET_OFFSET_ROT;
-		//// 回転値を参照して速度を改良
-		//speed.y_ += sinf(rot.x_) * BULLET_ADD_SPEED_Y;
-
-		//for (int j = 0; j < 120; j++)
-		//{
-		//	poseffect.x_ += sinf(rot.y_) * speed.x_;
-		//	poseffect.y_ += speed.y_;
-		//	poseffect.z_ += cosf(rot.y_) * speed.z_;
-		//	speed.y_ -= BULLET_GRAVITY;
-
-		//	float height = field->GetHeight(D3DXVECTOR3(poseffect.x_, poseffect.y_, poseffect.z_));
-		//	if (height > poseffect.y_)
-		//	{
-		//		Vector3 vec = poseffect - player_position;
-		//		float len = sqrt(vec.x_*vec.x_ + vec.z_ * vec.z_);
-		//		float scaling = 1.0f + len * 0.15f;
-
-		//		scaling = std::min<float>(scaling, 3.0f);
-
-		//		// エフェクト再生
-		//		send_data.type_ = DATA_OBJ_PARAM;
-		//		send_data.object_param_.type_ = OBJ_EFFECT;
-		//		send_data.object_param_.position_.x_ = poseffect.x_;
-		//		send_data.object_param_.position_.y_ = height;
-		//		send_data.object_param_.position_.z_ = poseffect.z_;
-		//		send_data.object_param_.rotation_ = {scaling, camera_rotation.y, 0.0f};
-		//		strcpy_s(send_data.name, MAX_NAME_LEN, "marker");
-		//		NetworkHost::SendTo((DELI_TYPE)i, send_data);
-		//		break;
-		//	}
-		//}
-
 		//------------------------------------------------
 		// プレイヤーデータ転送
 		//------------------------------------------------
@@ -681,6 +638,7 @@ void GameServer::Matching()
 		send_data.object_param_.ex_vec_.x_ = camera_rotation.x;
 		send_data.object_param_.ex_vec_.y_ = camera_rotation.y;
 		send_data.object_param_.ex_vec_.z_ = camera_rotation.z;
+
 		NetworkHost::SendTo((DELI_TYPE)i, send_data);
 	}
 
@@ -697,7 +655,7 @@ void GameServer::Matching()
 	}
 	for(int i = 0; i < access_guest; i++)
 	{
-		std::string player_str = "player" + std::to_string(i + 1);
+		std::string player_str = "player" + std::to_string(i);
 		Object *player_obj = object_manager_->Get(player_str);
 		Vector3 temp = player_obj->parameter().position_;
 		player_pos.x = temp.x_;
@@ -751,7 +709,7 @@ void GameServer::Game()
 	}
 
 	// フィールド取得
-	Field *field = dynamic_cast<Field*>(object_manager_->Get("game_field"));
+	Field *field = dynamic_cast<Field*>(object_manager_->Get("field"));
 
 	switch(scene_state_)
 	{
@@ -769,7 +727,7 @@ void GameServer::Game()
 					//------------------------------------------------
 					// プレイヤーデータ転送
 					//------------------------------------------------
-					FbxPlayer* player = dynamic_cast<FbxPlayer*>(object_manager_->Get("player" + std::to_string(i + 1)));
+					FbxPlayer* player = dynamic_cast<FbxPlayer*>(object_manager_->Get("player" + std::to_string(i)));
 					Vector3 player_position = player->parameter().position_;
 					Vector3 player_rotation = player->parameter().rotation_;
 
@@ -790,12 +748,14 @@ void GameServer::Game()
 					//------------------------------------------------
 					// カメラデータ転送
 					//------------------------------------------------
-					Camera* main_camera = camera_manager_->Get("camera" + std::to_string(i + 1));
+					Camera* main_camera = camera_manager_->Get("camera" + std::to_string(i));
 					D3DXVECTOR3 camera_position = main_camera->position();
 					D3DXVECTOR3 camera_focus = main_camera->focus();
+					D3DXVECTOR3 camera_rotation = main_camera->rotation();
 
 					send_data.type_ = DATA_OBJ_PARAM;
 					send_data.object_param_.type_ = OBJ_CAMERA;
+
 					send_data.object_param_.position_.x_ = camera_position.x;
 					send_data.object_param_.position_.y_ = camera_position.y;
 					send_data.object_param_.position_.z_ = camera_position.z;
@@ -803,6 +763,10 @@ void GameServer::Game()
 					send_data.object_param_.rotation_.x_ = camera_focus.x;
 					send_data.object_param_.rotation_.y_ = camera_focus.y;
 					send_data.object_param_.rotation_.z_ = camera_focus.z;
+
+					send_data.object_param_.ex_vec_.x_ = camera_rotation.x;
+					send_data.object_param_.ex_vec_.y_ = camera_rotation.y;
+					send_data.object_param_.ex_vec_.z_ = camera_rotation.z;
 
 					NetworkHost::SendTo((DELI_TYPE)i, send_data);
 				}
@@ -851,7 +815,7 @@ void GameServer::Game()
 				//------------------------------------------------
 				// プレイヤーデータ転送
 				//------------------------------------------------
-				FbxPlayer* player = dynamic_cast<FbxPlayer*>(object_manager_->Get("player" + std::to_string(i + 1)));
+				FbxPlayer* player = dynamic_cast<FbxPlayer*>(object_manager_->Get("player" + std::to_string(i)));
 				Vector3 player_position = player->parameter().position_;
 				Vector3 player_rotation = player->parameter().rotation_;
 
@@ -872,12 +836,14 @@ void GameServer::Game()
 				//------------------------------------------------
 				// カメラデータ転送
 				//------------------------------------------------
-				Camera* main_camera = camera_manager_->Get("camera" + std::to_string(i + 1));
+				Camera* main_camera = camera_manager_->Get("camera" + std::to_string(i));
 				D3DXVECTOR3 camera_position = main_camera->position();
 				D3DXVECTOR3 camera_focus = main_camera->focus();
+				D3DXVECTOR3 camera_rotation = main_camera->rotation();
 
 				send_data.type_ = DATA_OBJ_PARAM;
 				send_data.object_param_.type_ = OBJ_CAMERA;
+
 				send_data.object_param_.position_.x_ = camera_position.x;
 				send_data.object_param_.position_.y_ = camera_position.y;
 				send_data.object_param_.position_.z_ = camera_position.z;
@@ -885,6 +851,10 @@ void GameServer::Game()
 				send_data.object_param_.rotation_.x_ = camera_focus.x;
 				send_data.object_param_.rotation_.y_ = camera_focus.y;
 				send_data.object_param_.rotation_.z_ = camera_focus.z;
+
+				send_data.object_param_.ex_vec_.x_ = camera_rotation.x;
+				send_data.object_param_.ex_vec_.y_ = camera_rotation.y;
+				send_data.object_param_.ex_vec_.z_ = camera_rotation.z;
 
 				NetworkHost::SendTo((DELI_TYPE)i, send_data);
 			}
@@ -978,7 +948,7 @@ void GameServer::Game()
 				for(int i = 0; i < 3; i++)
 				{
 
-					std::string fort_str = "fort" + std::to_string(i + 1);
+					std::string fort_str = "fort" + std::to_string(i);
 					Object *fort_object = object_manager_->Get(fort_str);
 					XFort *fort = dynamic_cast<XFort*>(fort_object);
 					fort_position = fort_object->parameter().position_;
@@ -1074,7 +1044,7 @@ void GameServer::Game()
 
 	// おじいちゃんワープ
 	if(GamePad::isTrigger(GAMEPAD_GRANDFATHER, PAD_BUTTON_7)){
-		Object *player_obj = object_manager_->Get("player1");
+		Object *player_obj = object_manager_->Get("player0");
 		FbxPlayer *player = dynamic_cast<FbxPlayer*>(player_obj);
 		Vector3 player_position = player->parameter().position_;
 		Vector3 player_rotation = player->parameter().rotation_;
@@ -1117,7 +1087,7 @@ void GameServer::Game()
 		//-------------------------------------
 		// 変数宣言
 		//-------------------------------------
-		std::string player_str = "player" + std::to_string(i + 1);
+		std::string player_str = "player" + std::to_string(i);
 		Object *player_obj = object_manager_->Get(player_str);
 		FbxPlayer *player = dynamic_cast<FbxPlayer*>(player_obj);
 		Vector3 player_position(player->parameter().position_);
@@ -1202,7 +1172,7 @@ void GameServer::Game()
 		//-------------------------------------
 		// カメラ追従
 		//-------------------------------------
-		std::string camera_str = "camera" + std::to_string(i + 1);
+		std::string camera_str = "camera" + std::to_string(i);
 		Camera *main_camera = camera_manager_->Get(camera_str);
 		D3DXVECTOR3 camera_position, camera_focus;
 		D3DXVECTOR3 camera_rotation(main_camera->rotation());
@@ -1440,6 +1410,7 @@ void GameServer::Game()
 		//------------------------------------------------
 		camera_position = main_camera->position();
 		camera_focus = main_camera->focus();
+		camera_rotation = main_camera->rotation();
 
 		send_data.type_ = DATA_OBJ_PARAM;
 		send_data.object_param_.type_ = OBJ_CAMERA;
@@ -1463,6 +1434,10 @@ void GameServer::Game()
 					send_data.object_param_.rotation_.x_ = sub_camera_focus.x;
 					send_data.object_param_.rotation_.y_ = sub_camera_focus.y;
 					send_data.object_param_.rotation_.z_ = sub_camera_focus.z;
+
+					send_data.object_param_.ex_vec_.x_ = camera_rotation.x;
+					send_data.object_param_.ex_vec_.y_ = camera_rotation.y;
+					send_data.object_param_.ex_vec_.z_ = camera_rotation.z;
 				}
 				break;
 
@@ -1474,6 +1449,10 @@ void GameServer::Game()
 				send_data.object_param_.rotation_.x_ = camera_focus.x;
 				send_data.object_param_.rotation_.y_ = camera_focus.y;
 				send_data.object_param_.rotation_.z_ = camera_focus.z;
+
+				send_data.object_param_.ex_vec_.x_ = camera_rotation.x;
+				send_data.object_param_.ex_vec_.y_ = camera_rotation.y;
+				send_data.object_param_.ex_vec_.z_ = camera_rotation.z;
 				break;
 
 		}
@@ -1520,15 +1499,16 @@ void GameServer::ChangeServerState(SERVER_STATE next)
 	{
 		case STATE_MATCHING:
 			{
+				//---------------------------------------
 				// フィールド取得
-				Field *field = dynamic_cast<Field*>(object_manager_->Get("matching_field"));
+				Field *field = dynamic_cast<Field*>(object_manager_->Get("field"));
 				//---------------------------------------
 				// プレイヤー関連パラメータ
 				std::string player_str;
 				FbxPlayer *player;
 				for(int i = 0; i < MAX_GUEST; i++)
 				{
-					player_str = "player" + std::to_string(i + 1);
+					player_str = "player" + std::to_string(i);
 					player = dynamic_cast<FbxPlayer*>(object_manager_->Get(player_str));
 
 					player->SetLife(1.0f);
@@ -1560,13 +1540,15 @@ void GameServer::ChangeServerState(SERVER_STATE next)
 					//------------------------------------------------
 					// カメラ調整
 					//------------------------------------------------
-					std::string camera_str = "camera" + std::to_string(i + 1);
+					std::string camera_str = "camera" + std::to_string(i);
 					Camera *main_camera = camera_manager_->Get(camera_str);
 					D3DXVECTOR3 camera_position, camera_focus;
 					D3DXVECTOR3 camera_rotation(main_camera->rotation());
 
 					// モデルの回転Yをそのままカメラの回転Yへ
 					camera_rotation.y = rot.y_;
+					// カメラのX回転を初期化
+					camera_rotation.x = 0.0f;
 					// 一旦モデルを注視点に
 					camera_focus.x = pos.x_;
 					camera_focus.y = pos.y_;
@@ -1624,8 +1606,9 @@ void GameServer::ChangeServerState(SERVER_STATE next)
 
 		case STATE_GAME:
 			{
+				//---------------------------------------
 				// フィールド取得
-				Field *field = dynamic_cast<Field*>(object_manager_->Get("game_field"));
+				Field *field = dynamic_cast<Field*>(object_manager_->Get("field"));
 				//---------------------------------------
 				// シーンステートリセット
 				scene_state_ = STATE_GUEST_WAITING;
@@ -1636,7 +1619,7 @@ void GameServer::ChangeServerState(SERVER_STATE next)
 				D3DXVECTOR3 temp;
 				for(int i = 0; i < 3; i++)
 				{
-					fort = dynamic_cast<XFort*>(object_manager_->Get("fort" + std::to_string(i + 1)));
+					fort = dynamic_cast<XFort*>(object_manager_->Get("fort" + std::to_string(i)));
 					fort->SetLife(FORT_LIFE[i]);
 
 					fort_pos = FORT_POSITION[i];
@@ -1676,7 +1659,7 @@ void GameServer::ChangeServerState(SERVER_STATE next)
 				FbxPlayer *player;
 				for(int i = 0; i < MAX_GUEST; i++)
 				{
-					player_str = "player" + std::to_string(i + 1);
+					player_str = "player" + std::to_string(i);
 					player = dynamic_cast<FbxPlayer*>(object_manager_->Get(player_str));
 
 					player->SetLife(1.0f);
@@ -1707,13 +1690,15 @@ void GameServer::ChangeServerState(SERVER_STATE next)
 					//------------------------------------------------
 					// カメラ調整
 					//------------------------------------------------
-					std::string camera_str = "camera" + std::to_string(i + 1);
+					std::string camera_str = "camera" + std::to_string(i);
 					Camera *main_camera = camera_manager_->Get(camera_str);
 					D3DXVECTOR3 camera_position, camera_focus;
 					D3DXVECTOR3 camera_rotation(main_camera->rotation());
 
 					// モデルの回転Yをそのままカメラの回転Yへ
 					camera_rotation.y = rot.y_;
+					// カメラのX回転を初期化
+					camera_rotation.x = 0.0f;
 					// 一旦モデルを注視点に
 					camera_focus.x = pos.x_;
 					camera_focus.y = pos.y_;
@@ -1780,17 +1765,12 @@ void GameServer::ChangeServerState(SERVER_STATE next)
 
 
 //-------------------------------------
-// field
-//-------------------------------------
-Object* GameServer::field()
-{
-	if(server_state_ == STATE_MATCHING)
-	{
-		return object_manager()->Get("matching_field");
-	}
-	return object_manager()->Get("game_field");
-}
-
-//-------------------------------------
 // end of file
 //-------------------------------------
+
+/*
+通信パケット大きすぎ問題
+
+子供が砦の位置がわかるように
+タイムアップ時の演出
+*/

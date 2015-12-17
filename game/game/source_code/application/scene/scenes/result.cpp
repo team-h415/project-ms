@@ -51,39 +51,46 @@ Result::Result()
 		"Perspective", "MainCamera", camera_param);
 
 	OBJECT_PARAMETER_DESC param;
-	param.name_ = "test";
+
+	param.position_ = {
+		SCREEN_WIDTH * 0.5f,
+		SCREEN_HEIGHT * 0.5f,
+		0.0f
+	};
+	param.rotation_ = {0.0f, 0.0f, 0.0f};
+	param.scaling_ = {SCREEN_WIDTH, SCREEN_HEIGHT, 0.0f};
+	param.layer_ = LAYER_SPRITE_2D;
+	param.name_ = "winner";
+
+	if(NetworkGuest::winner() == 0)
+	{
+		// ‚¶‚¶‚¢
+		object_manager_->Create(
+			 param,
+			"resource/texture/result/zizi.jpg");
+	}
+	else
+	{
+		// Žq‹Ÿ
+		object_manager_->Create(
+			param,
+			"resource/texture/result/co.jpg");
+	}
+
+	param.name_ = "logo";
 	param.position_ = {
 		SCREEN_WIDTH * 0.25f,
 		SCREEN_HEIGHT * 0.5f,
 		0.0f
 	};
-	param.rotation_ = { 0.0f, 0.0f, 0.0f };
-	param.scaling_ = { 150.0f, 100.0f, 0.0f };
+	param.rotation_ = {0.0f, 0.0f, 0.0f};
+	param.scaling_ = {150.0f, 100.0f, 0.0f};
 	param.layer_ = LAYER_SPRITE_2D;
 
 	object_manager_->Create(
 		param,
 		"resource/texture/result/logo.png");
 
-	param.position_ = {
-		SCREEN_WIDTH * 0.25f,
-		SCREEN_HEIGHT * 0.75f,
-		0.0f
-	};
-
-	param.name_ = "winner";
-	if(NetworkGuest::winner() == 0)
-	{
-		object_manager_->Create(
-			 param,
-			"resource/texture/matching/logo.png");
-	}
-	else
-	{
-		object_manager_->Create(
-			param,
-			"resource/texture/title/logo.png");
-	}
 }
 
 

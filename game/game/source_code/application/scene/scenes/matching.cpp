@@ -53,7 +53,6 @@
 //-------------------------------------
 Matching::Matching()
 {
-
 	//-------------------------------------
 	// ゲームルール用パラメータ初期化
 	//-------------------------------------
@@ -70,7 +69,6 @@ Matching::Matching()
 	collision_manager_ = new CollisionManager;
 	effect_manager_ = EffectManager::Get();
 	font_ = new DebugFont;
-
 
 	//-------------------------------------
 	// エフェクトの読み込み
@@ -128,8 +126,10 @@ Matching::Matching()
 	camera_param.acpect_ = SCREEN_WIDTH / SCREEN_HEIGHT;
 	camera_param.fovy_ = D3DX_PI * 0.25f;
 	camera_param.position_ = GRANDFATHER_POSITION;
-	camera_param.focus_ = { 0.0f, 0.0f, 0.0f };
-	camera_param.rotation_ = { 0.0f, 0.0f, 0.0f };
+	camera_param.focus_ = GRANDFATHER_POSITION;
+	camera_param.position_.z -= 3.0f;
+	camera_param.position_.y += 1.5f;
+	camera_param.rotation_ = {0.0f, 0.0f, 0.0f};
 	camera_param.up_ = { 0.0f, 1.0f, 0.0f };
 	camera_param.near_ = 0.1f;
 	camera_param.far_ = 1000.0f;
@@ -190,7 +190,7 @@ Matching::Matching()
 	// FBXおじ
 	//-------------------------------------
 	OBJECT_PARAMETER_DESC grandfather_param;
-	grandfather_param.name_ = "player1";
+	grandfather_param.name_ = "player0";
 	grandfather_param.layer_ = LAYER_MODEL_GRANDFATHER;
 	grandfather_param.position_ = GRANDFATHER_POSITION;
 	grandfather_param.rotation_ = {0.0f, 4.65f, 0.0f};
@@ -199,7 +199,7 @@ Matching::Matching()
 	object_manager_->Create(grandfather_param);
 
 	COLLISION_PARAMETER_DESC fbx_collision_param;
-	Object *obj2 = object_manager_->Get("player1");
+	Object *obj2 = object_manager_->Get("player0");
 
 	fbx_collision_param.position_ = {
 		obj2->parameter().position_.x_,
@@ -208,7 +208,7 @@ Matching::Matching()
 	fbx_collision_param.range_ = 1.0f;
 	fbx_collision_param.offset_ = {0.0f, 0.5f, 0.0f};
 
-	collision_manager_->Create(object_manager_->Get("player1"), fbx_collision_param);
+	collision_manager_->Create(object_manager_->Get("player0"), fbx_collision_param);
 
 	//-------------------------------------
 	// FBX子供
@@ -220,7 +220,7 @@ Matching::Matching()
 
 	for(int i = 1; i < MAX_GUEST; i++)
 	{
-		std::string name = "player" + std::to_string(i + 1);
+		std::string name = "player" + std::to_string(i);
 		child_param.name_ = name;
 		child_param.position_ = GRANDFATHER_POSITION;
 		child_param.position_.x_ += i * 2.0f;
@@ -252,11 +252,13 @@ Matching::Matching()
 	// 影
 	//-------------------------------------
 	OBJECT_PARAMETER_DESC shadow_param;
-	shadow_param.name_ = "shadow";
 	shadow_param.layer_ = LAYER_SHADOW;
 	shadow_param.scaling_ = Vector3(1.0f, 1.0f, 1.0f);
-	object_manager_->Create(
-		shadow_param);
+	for(int i = 0; i < MAX_GUEST; i++)
+	{
+		shadow_param.name_ = "shadow" + std::to_string(i);
+		object_manager_->Create(shadow_param);
+	}
 
 	//-------------------------------------
 	// バレット生成しておくよ
@@ -290,9 +292,20 @@ Matching::Matching()
 	effect->SetParameter(effect_param);
 	effect_manager_->Play("portal");
 
+	//-------------------------------------
+	// マーカー
+	//-------------------------------------
 	effect = effect_manager_->Get("marker");
 	effect->SetParameter(effect_param);
 	effect_manager_->Play("marker");
+
+	//-------------------------------------
+	// 木を生やす
+	//-------------------------------------
+	OBJECT_PARAMETER_DESC wood_param;
+	wood_param.name_ = "wood";
+	wood_param.layer_ = LAYER_TREE;
+	object_manager_->Create(wood_param);
 
 	//-------------------------------------
 	// あれあれ
@@ -587,7 +600,6 @@ void Matching::Update()
 	//	shot_late = 10;
 	//}
 
-
 	//-------------------------------------
 	// 親探索
 	//-------------------------------------
@@ -609,7 +621,7 @@ void Matching::Update()
 	// マーカー
 	//-------------------------------------
 	int player_id =	NetworkGuest::id();
-	FbxPlayer* player = dynamic_cast<FbxPlayer*>(object_manager_->Get("player" + std::to_string(player_id + 1)));
+	FbxPlayer* player = dynamic_cast<FbxPlayer*>(object_manager_->Get("player" + std::to_string(player_id)));
 	if(player != nullptr)
 	{
 		Vector3 player_pos = player->parameter().position_;
@@ -656,6 +668,10 @@ void Matching::Update()
 		}
 
 	}
+
+	//-------------------------------------
+	// 実更新処理
+	//-------------------------------------
 	camera_manager_->Update();
 	object_manager_->Update();
 	effect_manager_->Update();

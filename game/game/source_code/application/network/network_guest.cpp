@@ -417,7 +417,7 @@ void NetworkGuest::ObjDataAdaptation(
 				{
 					return;
 				}
-				std::string player_str = "player" + std::to_string(rec_data.id_ + 1);
+				std::string player_str = "player" + std::to_string(rec_data.id_);
 				Object *object = object_manager->Get(player_str);
 				if(object == nullptr)
 				{
@@ -440,7 +440,7 @@ void NetworkGuest::ObjDataAdaptation(
 					player->PlayAnimation(rec_data.object_param_.ex_id_);
 				}
 				// ‰e
-				std::string shadow_str = "shadow" + std::to_string(rec_data.id_ + 1);
+				std::string shadow_str = "shadow" + std::to_string(rec_data.id_);
 				Object *shadow = object_manager->Get(shadow_str);
 				if(shadow == nullptr)
 				{

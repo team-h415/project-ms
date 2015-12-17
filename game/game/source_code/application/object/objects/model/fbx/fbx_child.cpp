@@ -7,6 +7,8 @@
 //-------------------------------------
 // include
 //-------------------------------------
+#include "../../../../network/network.h"
+#include "../../../../network/network_host.h"
 #include "../../../../../common/common.h"
 #include "../../../../render/renderer.h"
 #include "../../../../render/directx9/directx9.h"
@@ -110,6 +112,10 @@ void FbxChild::Action(
 	Object *target,
 	const float range)
 {
+#ifndef NETWORK_HOST_MODE
+	return;
+#endif
+
 	//-------------------------------------
 	// モデルと当たったら
 	if (target->parameter().layer_ == LAYER_MODEL_FORT ||
@@ -126,59 +132,62 @@ void FbxChild::Action(
 
 	//-------------------------------------
 	// 湖と当たったら
-	if (target->parameter().layer_ == LAYER_SPRITE_LAKE){
-		//if (GamePad::isPress(GAMEPAD_CHILD1, PAD_BUTTON_6)
-		//&& !GamePad::isPress(GAMEPAD_CHILD1, PAD_BUTTON_8)
-		//&& water_gauge_ < 1.0f){
-		//	if (water_supply_enable_){
-		//		//-------------------------------------
-		//		// シーン取得
-		//		Scene *scene = SceneManager::GetCurrentScene();
-		//		std::string str = SceneManager::GetCurrentSceneName();
-		//		if (str == "Game"){
-		//			Game *game = dynamic_cast<Game*>(scene);
+	if (target->parameter().layer_ == LAYER_SPRITE_LAKE)
+	{
+		char name[10];
+		char temp;
+		strcpy_s(name, 10, parameter_.name_.c_str());
+		temp = name[6];
+		int my_pad = atoi(&temp);
 
-		//			// 水補給
-		//			water_gauge_ += GRANDFATHER_SUB_WATERGAUGE;
-		//			water_gauge_ = std::min<float>(water_gauge_, 1.0f);
-		//			Object *obj = game->object_manager()->Get("water_gage");
-		//			WaterGage *water_gage_obj = static_cast<WaterGage*>(obj);
-		//			water_gage_obj->SetChangeValue(water_gauge_);
-		//			// 重複防止
-		//			water_supply_enable_ = false;
+		if(GamePad::isPress(my_pad, PAD_BUTTON_6)
+			&& !GamePad::isPress(my_pad, PAD_BUTTON_8)
+			&& water_gauge_ < 1.0f){
+			if(water_supply_enable_){
+				// 水補給
+				water_gauge_ += GRANDFATHER_SUB_WATERGAUGE;
+				water_gauge_ = std::min<float>(water_gauge_, 1.0f);
 
-		//			if (water_supply_effect_timer_ % 45 == 0)
-		//			{
-		//				// 補給エフェクト
-		//				OBJECT_PARAMETER_DESC grandfather_parameter = this->parameter();
-		//				EFFECT_PARAMETER_DESC effect_param;
-		//				MyEffect *effect = game->effect_manager()->Get("watersupply");
-		//				effect_param = effect->parameter();
-		//				effect_param.position_ = grandfather_parameter.position_;
-		//				effect_param.position_.x_ += sinf(grandfather_parameter.rotation_.y_)*0.2f;
-		//				effect_param.position_.z_ += cosf(grandfather_parameter.rotation_.y_)*0.2f;
-		//				effect_param.position_.y_ += 0.5f;
-		//				effect->SetParameter(effect_param);
-		//				game->effect_manager()->Play("watersupply");
-		//			}
-		//			// 補給泡エフェクト
-		//			OBJECT_PARAMETER_DESC grandfather_parameter = this->parameter();
-		//			EFFECT_PARAMETER_DESC effect_param;
-		//			MyEffect *effect = game->effect_manager()->Get("watersupplybubble");
-		//			effect_param = effect->parameter();
-		//			effect_param.position_ = grandfather_parameter.position_;
-		//			effect_param.position_.y_ += 0.2f;
-		//			effect->SetParameter(effect_param);
-		//			game->effect_manager()->Play("watersupplybobble");
+				// 重複防止
+				water_supply_enable_ = false;
 
+				NETWORK_DATA send_data;
+				send_data.type_ = DATA_OBJ_PARAM;
+				send_data.object_param_.type_ = OBJ_EFFECT;
+				send_data.object_param_.rotation_ = {0.0f, 0.0f, 0.0f};
 
-		//			water_supply_effect_timer_++;
-		//		}
-		//	}
-		//}
-		//else{
-		//	water_supply_effect_timer_ = 0;
-		//}
+				if(water_supply_effect_timer_ % 45 == 0)
+				{
+					// 補給エフェクト
+					send_data.object_param_.position_.x_ = parameter_.position_.x_;
+					send_data.object_param_.position_.y_ = parameter_.position_.y_;
+					send_data.object_param_.position_.z_ = parameter_.position_.z_;
+
+					send_data.object_param_.position_.x_ += sinf(parameter_.rotation_.y_)*0.2f;
+					send_data.object_param_.position_.z_ += cosf(parameter_.rotation_.y_)*0.2f;
+					send_data.object_param_.position_.y_ += 0.5f;
+
+					strcpy_s(send_data.name, MAX_NAME_LEN, "watersupply");
+					NetworkHost::SendTo(DELI_MULTI, send_data);
+				}
+
+				// 補給泡エフェクト
+				send_data.object_param_.position_.x_ = parameter_.position_.x_;
+				send_data.object_param_.position_.y_ = parameter_.position_.y_;
+				send_data.object_param_.position_.z_ = parameter_.position_.z_;
+				send_data.object_param_.position_.y_ += 0.2f;
+
+				send_data.object_param_.rotation_ = {0.0f, 0.0f, 0.0f};
+				strcpy_s(send_data.name, MAX_NAME_LEN, "watersupplybubble");
+				NetworkHost::SendTo(DELI_MULTI, send_data);
+
+				// タイムインクリメント
+				water_supply_effect_timer_++;
+			}
+		}
+		else{
+			water_supply_effect_timer_ = 0;
+		}
 	}
 }
 

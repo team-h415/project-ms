@@ -289,9 +289,6 @@
     <ClCompile Include="source_code\application\scene\scenes\game_server.cpp">
       <Filter>source_code\application\scene\scenes</Filter>
     </ClCompile>
-    <ClCompile Include="source_code\application\object\objects\model\instancing_tree.cpp">
-      <Filter>source_code\application\object\objects\model</Filter>
-    </ClCompile>
     <ClCompile Include="source_code\application\math\vector.cpp">
       <Filter>source_code\application\math</Filter>
     </ClCompile>
@@ -324,6 +321,9 @@
     </ClCompile>
     <ClCompile Include="source_code\application\object\objects\sprite\countdown.cpp">
       <Filter>source_code\application\object\objects\sprite</Filter>
+    </ClCompile>
+    <ClCompile Include="source_code\application\object\objects\model\x\arrow.cpp">
+      <Filter>source_code\application\object\objects\model\x</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -528,9 +528,6 @@
     <ClInclude Include="source_code\application\scene\scenes\game_server.h">
       <Filter>source_code\application\scene\scenes</Filter>
     </ClInclude>
-    <ClInclude Include="source_code\application\object\objects\model\instancing_tree.h">
-      <Filter>source_code\application\object\objects\model</Filter>
-    </ClInclude>
     <ClInclude Include="source_code\application\object\objects\model\x\x_fort.h">
       <Filter>source_code\application\object\objects\model\x</Filter>
     </ClInclude>
@@ -560,6 +557,9 @@
     </ClInclude>
     <ClInclude Include="source_code\application\object\objects\sprite\countdown.h">
       <Filter>source_code\application\object\objects\sprite</Filter>
+    </ClInclude>
+    <ClInclude Include="source_code\application\object\objects\model\x\arrow.h">
+      <Filter>source_code\application\object\objects\model\x</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
