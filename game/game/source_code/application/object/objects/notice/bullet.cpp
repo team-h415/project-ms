@@ -4,8 +4,6 @@
 //=========================================================
 
 
-
-
 //-------------------------------------
 // include
 //-------------------------------------
@@ -171,7 +169,10 @@ void Bullet::Draw()
 	{
 		return;
 	}
+
+	DirectX9Holder::device_->SetRenderState(D3DRS_LIGHTING, FALSE);
 	XModel::Draw();
+	DirectX9Holder::device_->SetRenderState(D3DRS_LIGHTING, TRUE);
 }
 
 

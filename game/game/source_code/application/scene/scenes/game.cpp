@@ -539,7 +539,7 @@ Game::Game()
         hit_point_param);
 
 	//-------------------------------------
-	// インスタンシングテスト
+	// 木
 	//-------------------------------------
 	OBJECT_PARAMETER_DESC wood_param;
 	wood_param.name_ = "wood";

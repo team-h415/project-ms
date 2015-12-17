@@ -192,6 +192,13 @@ Matching::Matching()
 	collision_manager_->Create(object_manager_->Get("grandfather"),
 		fbx_collision_param);
 
+	//-------------------------------------
+	// 木
+	//-------------------------------------
+	OBJECT_PARAMETER_DESC wood_param;
+	wood_param.name_ = "wood";
+	wood_param.layer_ = LAYER_TREE;
+	object_manager_->Create(wood_param);
 
 	//-------------------------------------
 	// ベンチ
@@ -201,6 +208,25 @@ Matching::Matching()
 	bench_param.layer_ = LAYER_BENCH;
 	object_manager_->Create(
 		bench_param);
+
+	//-------------------------------------
+	// 石碑
+	//-------------------------------------
+	OBJECT_PARAMETER_DESC parkstone_param;
+	parkstone_param.name_ = "parkstone";
+	parkstone_param.layer_ = LAYER_MODEL_X;
+	parkstone_param.position_ = { 34.5f, 0.0f, -34.5f };
+	parkstone_param.rotation_ = { 0.00f, 8.60f, 0.00f };
+	parkstone_param.scaling_ = { 1.0f, 1.0f, 1.0f };
+
+	object_manager_->Create(
+		parkstone_param,
+		"resource/model/x/parkstone.x");
+
+	XModel *parkstone = dynamic_cast<XModel*>(
+		object_manager_->Get("parkstone"));
+	parkstone->SetTexture("resource/texture/matching/parkstone.png");
+
 
 	//-------------------------------------
 	// 影
@@ -237,7 +263,7 @@ Matching::~Matching()
 	SAFE_DELETE(camera_manager_);
 	SAFE_DELETE(font_);
 	SAFE_DELETE(collision_manager_);
-	effect_manager_ = NULL;
+	effect_manager_ = nullptr;
 }
 
 
@@ -337,7 +363,7 @@ void Matching::Update()
 	// プレイヤー座標をXZ平面で領域指定
 	//-------------------------------------
 	grandfather_position.z_ = std::min<float>(grandfather_position.z_, -35.0f);
-	grandfather_position.x_ = std::max<float>(grandfather_position.x_, 32.0f);
+	grandfather_position.x_ = std::max<float>(grandfather_position.x_, 35.0f);
 
 	grandfather_object->SetPosition(grandfather_position);
 	grandfather_object->SetRotation(grandfather_rotation);
