@@ -203,13 +203,6 @@ unsigned __stdcall NetworkHost::Communication()
 					}
 					break;
 
-				case DATA_TEST:
-					//printf("テストを受信\n");
-					//send_data.type_ = DATA_TEST;
-					//sendto(socket_data_, (char*)&send_data, sizeof(send_data), 0, (sockaddr*)&send_addr, sizeof(send_addr));
-					//printf("テストを送信\n");
-					break;
-
 				default:
 					printf("デフォルト\n");
 					break;

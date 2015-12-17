@@ -14,7 +14,7 @@
 //-------------------------------------
 // define
 //-------------------------------------
-#define NETWORK_HOST_MODE						// exeがホストなのかゲストなのかの分岐 通常はホスト、コメントアウトでゲストに
+//#define NETWORK_HOST_MODE						// exeがホストなのかゲストなのかの分岐 通常はホスト、コメントアウトでゲストに
 
 #define ID_NONE -1								// IDの無い状態
 #define PORT_NUMBER_0 20000						// ゲストからホストへの送信時のポート
@@ -40,7 +40,7 @@ enum DATA_TYPE
 	DATA_OBJ_PARAM,				// ホストが使用 オブジェクトのパラメータ情報を送信
 	DATA_UI_PARAM,				// ホストが使用 UIのパラメータ情報を送信
 
-	DATA_TEST,			// テスト
+	DATA_SPRITE2D_TEX,			// スプライト2Dのテクスチャ変更メッセージ
 };
 
 

@@ -53,8 +53,8 @@ private:
 	CameraManager *camera_manager_;
 	EffectManager *effect_manager_;
 	CollisionManager *collision_manager_;
-<<<<<<< HEAD
-=======
+
+
 	DebugFont *font1_;
 	DebugFont *font2_;
     Sound *sound_;
@@ -90,7 +90,6 @@ private:
     bool walk_flg_;
     // デバフエフェクトフラグ
     bool debuff_effect_flg;
->>>>>>> master
 };
 
 

@@ -19,8 +19,7 @@
 //================================================================================
 IXAudio2*					Sound::x_audio2_ = nullptr;					// XAudio2オブジェクトへのインターフェイス
 IXAudio2MasteringVoice*		Sound::mastering_voice_ = nullptr;			// マスターボイス
-vector<Sound*>				Sound::sound_array_;						// サウンドクラスポインタ配列
-int							Sound::count_sound_ = 0;					// サウンドクラスカウント
+list<Sound*>				Sound::sound_list_;							// サウンドクラスポインタ配列
 
 //================================================================================
 // サウンド使用の準備
@@ -67,17 +66,16 @@ void Sound::Setup(void)
 //================================================================================
 void Sound::End(void)
 {
-	// 全サウンド解放
-	int max = sound_array_.size();
-	for(int loop = 0; loop < max; loop++)
+	for(auto it = sound_list_.begin(); it != sound_list_.end(); it++)
 	{
-		if(sound_array_[loop] != nullptr)
+		if((*it) != nullptr)
 		{
-			delete sound_array_[loop];
-			sound_array_[loop] = nullptr;
+			delete (*it);
+			(*it) = nullptr;
 		}
 	}
-	sound_array_.clear();
+	sound_list_.clear();
+
 	// マスターボイスの破棄
 	if(mastering_voice_ != nullptr)
 	{
@@ -97,28 +95,40 @@ void Sound::End(void)
 //================================================================================
 // サウンドのロード
 //================================================================================
-Sound* Sound::LoadSound(const char* sound_path, const float set_max)
+Sound* Sound::LoadSound(const string& sound_path, const float set_max)
 {
 	Sound* pNewSound = nullptr;
 	pNewSound = new Sound(sound_path);
 	pNewSound->SetMaxVolume(set_max);
 	pNewSound->master_flag_ = false;
-	sound_array_.push_back(pNewSound);
+	sound_list_.push_back(pNewSound);
 	return pNewSound;
 }
 
 //================================================================================
 // サウンドのロードと再生
 //================================================================================
-void Sound::LoadAndPlaySE(const char* sound_path, float set_volume)
+void Sound::LoadAndPlaySE(const string& sound_path, float set_volume)
 {
+	for(auto it = sound_list_.begin(); it != sound_list_.end(); it++)
+	{
+		if((*it)->path_ == sound_path)
+		{
+			if((*it)->use_ == false)
+			{
+				(*it)->Play(false);
+				return;
+			}
+		}
+	}
+
 	Sound* pNewSound = nullptr;
 	pNewSound = new Sound(sound_path);
 	pNewSound->SetMaxVolume(set_volume);
 	pNewSound->SetCurrentVolume(set_volume);
 	pNewSound->master_flag_ = true;
 	pNewSound->Play(false);
-	sound_array_.push_back(pNewSound);
+	sound_list_.push_back(pNewSound);
 }
 
 //================================================================================
@@ -153,22 +163,22 @@ void Sound::ReleaseSound(Sound** dp_sound, int fade_time)
 //================================================================================
 void Sound::ReleaseAll(int fade_time)
 {
-	for(int loop = 0; loop < count_sound_; loop++)
+	for(auto it = sound_list_.begin(); it != sound_list_.end(); it++)
 	{
-		if(sound_array_[loop] == nullptr)
+		if((*it) == nullptr)
 		{
 			continue;
 		}
 		// 解放方法チェック
 		if(fade_time > 0)
 		{
-			sound_array_[loop]->fade_flag_ = false;						// フェード
-			sound_array_[loop]->death_flag_ = true;						// デス
+			(*it)->fade_flag_ = false;						// フェード
+			(*it)->death_flag_ = true;						// デス
 		}else
 		{
-			sound_array_[loop]->fade_flag_ = true;						// フェード
-			sound_array_[loop]->death_flag_ = true;						// デス
-			sound_array_[loop]->fade_power_ = -(sound_array_[loop]->GetCurrentVolume() / static_cast<float>(fade_time));	// フェードパワー
+			(*it)->fade_flag_ = true;						// フェード
+			(*it)->death_flag_ = true;						// デス
+			(*it)->fade_power_ = -((*it)->GetCurrentVolume() / static_cast<float>(fade_time));	// フェードパワー
 		}
 	}
 }
@@ -222,6 +232,8 @@ void Sound::Play(bool loop_flag, int fade_time)
 	source_voice_->SubmitSourceBuffer(&buffer);
 	// 再生
 	source_voice_->Start(0);
+	// 使用フラグON
+	use_ = true;
 }
 
 //================================================================================
@@ -256,23 +268,21 @@ void Sound::Stop(int fade_time)
 //================================================================================
 void Sound::UpdateAll(void)
 {
-	int max = sound_array_.size();
-	for(int loop = 0; loop < max; loop++)
+	for(auto it = sound_list_.begin(); it != sound_list_.end(); it++)
 	{
-		if(sound_array_[loop] == nullptr)
+		if((*it) == nullptr)
 		{
 			continue;
 		}
-		sound_array_[loop]->Update();
+		(*it)->Update();
 		// 解放確認
-		if(sound_array_[loop]->death_flag_ && !sound_array_[loop]->fade_flag_)
+		if((*it)->death_flag_ && !(*it)->fade_flag_)
 		{
-			delete sound_array_[loop];
-			sound_array_.erase(sound_array_.begin() + loop);
-			loop--;
-			max--;
+			delete (*it);
+			(*it) = nullptr;
 		}
 	}
+	sound_list_.remove(nullptr);
 }
 
 //================================================================================
@@ -299,7 +309,7 @@ void Sound::Update(void)
 		// 再生状態チェック
 		if(xa2state.BuffersQueued == 0)
 		{
-			death_flag_ = true;
+			use_ = false;
 			fade_flag_ = false;
 		}
 	}
@@ -314,16 +324,18 @@ void Sound::Update(void)
 //================================================================================
 // サウンドのコンストラクタ
 //================================================================================
-Sound::Sound(const char* pName)
+Sound::Sound(const string& sound_path) :
+	source_voice_(nullptr),
+	data_audio_(nullptr),
+	size_audio_(0),
+	max_volume_(1.0f),
+	fade_flag_(false),
+	fade_power_(0.0f),
+	use_(false),
+	path_(sound_path),
+	death_flag_(false),
+	master_flag_(false)
 {
-	// 各種変数初期化
-	source_voice_ = nullptr;			// ソースボイス
-	data_audio_ = nullptr;				// オーディオデータ
-	size_audio_ = 0;					// オーディオデータサイズ
-	fade_flag_ = false;					// フェード
-	fade_power_ = 0.0f;				// フェードパワー
-	death_flag_ = false;					// デス
-
 	HANDLE file_handle;
 	DWORD dwChunkSize = 0;
 	DWORD dwChunkPosition = 0;
@@ -339,7 +351,7 @@ Sound::Sound(const char* pName)
 	HRESULT hr;
 
 	// サウンドデータファイルの生成
-	file_handle = CreateFile(pName, GENERIC_READ, FILE_SHARE_READ, nullptr, OPEN_EXISTING, 0, nullptr);
+	file_handle = CreateFile(path_.c_str(), GENERIC_READ, FILE_SHARE_READ, nullptr, OPEN_EXISTING, 0, nullptr);
 	if(file_handle == INVALID_HANDLE_VALUE)
 	{
 		//MessageBox(nullptr, "サウンドデータファイルの生成に失敗！(1)", "警告！", MB_ICONWARNING);
@@ -416,8 +428,6 @@ Sound::Sound(const char* pName)
 
 	// オーディオバッファの登録
 	source_voice_->SubmitSourceBuffer(&buffer);
-
-	count_sound_++;
 }
 
 //================================================================================
@@ -436,8 +446,6 @@ Sound::~Sound(void)
 		free(data_audio_);
 		data_audio_ = nullptr;
 	}
-
-	count_sound_--;
 }
 
 //================================================================================

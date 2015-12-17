@@ -98,6 +98,10 @@ public:
 		const Vector3 &rotation){
 		parameter_.rotation_ = rotation;
 	}
+	void SetRotationY(
+		const float &y){
+		parameter_.rotation_.y_ = y;
+	}
 	void SetScaling(
 		const Vector3 &scaling){
 		parameter_.scaling_ = scaling;

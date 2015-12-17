@@ -83,25 +83,17 @@ Application::~Application()
 	SAFE_DELETE(renderer_);
 	SAFE_DELETE(keyboard_);
 	SAFE_DELETE(gamepad_);
-<<<<<<< HEAD
 	#ifdef NETWORK_HOST_MODE
 		NetworkHost::CloseCommunication();
 	#else
 		NetworkGuest::CloseCommunication();
 	#endif
-	TextureManager::AllRelease();
-	FbxContainerManager::AllRelease();
-	XContainerManager::AllRelease();
-	EffectManager::Delete();
-	Sound::End();
-=======
 	ShaderManager::AllRelease();
 	TextureManager::AllRelease();
 	FbxContainerManager::AllRelease();
 	XContainerManager::AllRelease();
 	Sound::End();
 	EffectManager::Delete();
->>>>>>> master
 }
 
 

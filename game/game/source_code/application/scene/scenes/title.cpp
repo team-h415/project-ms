@@ -75,6 +75,11 @@ Title::Title()
     object_manager_->Create(
         title_name_param,
         "resource/texture/title/logo.png");
+
+	//-------------------------------------
+	// セットアップ完了
+	//-------------------------------------
+	setup_ = true;
 }
 
 

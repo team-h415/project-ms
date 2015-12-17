@@ -38,6 +38,11 @@ Loading::Loading()
 	object_manager_->Create(
 		param,
 		"resource/texture/loading/now_loading_00.png");
+
+	//-------------------------------------
+	// セットアップ完了
+	//-------------------------------------
+	setup_ = true;
 }
 
 

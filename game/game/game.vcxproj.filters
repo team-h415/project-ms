@@ -319,16 +319,14 @@
     <ClCompile Include="source_code\application\object\objects\sprite\countdown.cpp">
       <Filter>source_code\application\object\objects\sprite</Filter>
     </ClCompile>
-<<<<<<< HEAD
     <ClCompile Include="source_code\application\object\objects\model\x\arrow.cpp">
       <Filter>source_code\application\object\objects\model\x</Filter>
-=======
+    </ClCompile>
     <ClCompile Include="source_code\application\shader\shader_manager.cpp">
       <Filter>source_code\application\shader</Filter>
     </ClCompile>
     <ClCompile Include="source_code\application\object\objects\bullet\bullet.cpp">
       <Filter>source_code\application\object\objects\bullet</Filter>
->>>>>>> master
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -560,16 +558,14 @@
     <ClInclude Include="source_code\application\object\objects\sprite\countdown.h">
       <Filter>source_code\application\object\objects\sprite</Filter>
     </ClInclude>
-<<<<<<< HEAD
     <ClInclude Include="source_code\application\object\objects\model\x\arrow.h">
       <Filter>source_code\application\object\objects\model\x</Filter>
-=======
+    </ClInclude>
     <ClInclude Include="source_code\application\shader\shader_manager.h">
       <Filter>source_code\application\shader</Filter>
     </ClInclude>
     <ClInclude Include="source_code\application\object\objects\bullet\bullet.h">
       <Filter>source_code\application\object\objects\bullet</Filter>
->>>>>>> master
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -40,14 +40,11 @@
 #include "../../../collision/collision.h"
 #include "../../../collision/collision_manager.h"
 #include "bullet.h"
-<<<<<<< HEAD:game/game/source_code/application/object/objects/notice/bullet.cpp
 #include "../../../scene/scene.h"
 #include "../../../scene/scene_manager.h"
 #include "../../../scene/scenes/game.h"
 #include "../../../scene/scenes/game_server.h"
 #include "../../../scene/scenes/matching.h"
-=======
->>>>>>> master:game/game/source_code/application/object/objects/bullet/bullet.cpp
 
 
 //-------------------------------------
@@ -206,11 +203,7 @@ void Bullet::Update()
 	}
 #endif
 
-<<<<<<< HEAD:game/game/source_code/application/object/objects/notice/bullet.cpp
 #if defined(_DEBUG) || !defined(NETWORK_HOST_MODE)
-	XModel::Update();
-#endif
-=======
 	// ワールド計算
 	D3DXMATRIX translate, rotate, scaling;
 	D3DXMatrixIdentity(&translate);
@@ -230,7 +223,7 @@ void Bullet::Update()
 		&translate, parameter_.position_.x_, parameter_.position_.y_, parameter_.position_.z_);
 	D3DXMatrixMultiply(
 		&world_, &world_, &translate);
->>>>>>> master:game/game/source_code/application/object/objects/bullet/bullet.cpp
+#endif
 }
 
 
@@ -373,14 +366,14 @@ void Bullet::Action(
 			}
 			// 砦
 			else if (target->parameter().layer_ == LAYER_MODEL_FORT &&
-				parameter_.parent_layer_ == LAYER_MODEL_CHILD){
+				(parameter_.parent_layer_ == LAYER_MODEL_CHILD ||
+				parameter_.parent_layer_ == LAYER_MODEL_GRANDFATHER)){
 				XFort *fort = dynamic_cast<XFort*>(target);
 				float life = fort->GetLife();
 				life -= FORT_DAMAGE;
 				fort->SetLife(life);
 			}
 
-<<<<<<< HEAD:game/game/source_code/application/object/objects/notice/bullet.cpp
 			// データ転送用構造体用意
 			NETWORK_DATA send_data;
 			send_data.type_ = DATA_OBJ_PARAM;
@@ -397,32 +390,6 @@ void Bullet::Action(
 			NetworkHost::SendTo(DELI_MULTI, send_data);
 
 			// 使用フラグOFF
-=======
-			//-------------------------------------
-			// シーン取得
-			Scene *scene = SceneManager::GetCurrentScene();
-			std::string str = SceneManager::GetCurrentSceneName();
-			if (str == "Game"){
-				Game *game = dynamic_cast<Game*>(scene);
-
-				//-------------------------------------
-				// シーンからエフェクト取得
-				EFFECT_PARAMETER_DESC effect_param;
-				MyEffect *effect = game->effect_manager()->Get("damage");
-				effect_param = effect->parameter();
-				effect_param.position_ = parameter_.position_;
-				effect_param.position_.y_ += 0.5f;
-				effect_param.rotation_ = parameter_.rotation_;
-				effect->SetParameter(effect_param);
-
-				//-------------------------------------
-				// エフェクト再生
-				game->effect_manager()->Play("damage");
-                //-------------------------------------
-                // 水がはじけるSE再生
-                Sound::LoadAndPlaySE("resource/sound/se/game/waterBreak.wav");
-			}
->>>>>>> master:game/game/source_code/application/object/objects/bullet/bullet.cpp
 			use_ = false;
 			collision_->SetUse(false);
 
@@ -433,6 +400,32 @@ void Bullet::Action(
 			send_data.object_param_.ex_id_ = 1;
 			strcpy_s(send_data.name, MAX_NAME_LEN, parameter_.name_.c_str());
 			NetworkHost::SendTo(DELI_MULTI, send_data);
+
+			////-------------------------------------
+			//// シーン取得
+			//Scene *scene = SceneManager::GetCurrentScene();
+			//std::string str = SceneManager::GetCurrentSceneName();
+			//if(str == "Game"){
+			//	Game *game = dynamic_cast<Game*>(scene);
+
+			//	//-------------------------------------
+			//	// シーンからエフェクト取得
+			//	EFFECT_PARAMETER_DESC effect_param;
+			//	MyEffect *effect = game->effect_manager()->Get("damage");
+			//	effect_param = effect->parameter();
+			//	effect_param.position_ = parameter_.position_;
+			//	effect_param.position_.y_ += 0.5f;
+			//	effect_param.rotation_ = parameter_.rotation_;
+			//	effect->SetParameter(effect_param);
+
+			//	//-------------------------------------
+			//	// エフェクト再生
+			//	game->effect_manager()->Play("damage");
+			//	//-------------------------------------
+			//	// 水がはじけるSE再生
+			//	Sound::LoadAndPlaySE("resource/sound/se/game/waterBreak.wav");
+			//}
+
 		}
 	}
 #endif

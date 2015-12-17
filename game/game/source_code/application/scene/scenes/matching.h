@@ -56,6 +56,9 @@ private:
 	int timer_;
 	// シーン終了までのフレーム計測(マッチング完了時)
 	int movescene_waitframe_;
+
+	float sprite_alpha_;
+	float alphar_wave_;
 };
 
 

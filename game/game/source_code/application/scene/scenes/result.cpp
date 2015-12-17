@@ -91,6 +91,10 @@ Result::Result()
 		param,
 		"resource/texture/result/logo.png");
 
+	//-------------------------------------
+	// セットアップ完了
+	//-------------------------------------
+	setup_ = true;
 }
 
 

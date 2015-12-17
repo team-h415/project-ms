@@ -80,13 +80,20 @@
 // くらうダメージ量
 #define GRANDFATHER_DAMAGE 0.01f
 // 座標
-#define GRANDFATHER_POSITION_STAGE1 {  40.0f,  0.0f, -40.0f }
-#define GRANDFATHER_POSITION_STAGE2 { -60.0f,  0.0f,  55.0f }
-#define GRANDFATHER_POSITION_STAGE3 {  40.0f,  0.0f,  65.0f }
+static const Vector3 GRANDFATHER_POSITION_STAGE[3]
+{
+	{  40.0f, 0.0f, -40.0f },
+	{ -60.0f, 0.0f, 55.0f },
+	{  40.0f, 0.0f, 65.0f },
+};
 // 角度
-#define GRANDFATHER_ROTATION_STAGE1 -0.82f
-#define GRANDFATHER_ROTATION_STAGE2  3.14f
-#define GRANDFATHER_ROTATION_STAGE3  4.30f
+static const float GRANDFATHER_ROTATION_STAGE[3]
+{
+	-0.82f,
+	3.14f,
+	4.30f,
+};
+
 // HP自動回復待ち時間
 #define GRANDFATHER_RECOVER_WAITE_TIME 180
 // HP回復量
@@ -113,12 +120,12 @@ static const Vector3 CHILD_POSITION[4]
 };
 
 // 角度
-static const Vector3 CHILD_ROTATION[4]
+static const float CHILD_ROTATION[4]
 {
-	{0.0f, 0.79f, 0.0f},
-	{0.0f, 0.79f, 0.0f},
-	{0.0f, 0.79f, 0.0f},
-	{0.0f, 0.79f, 0.0f},
+	0.79f,
+	0.79f,
+	0.79f,
+	0.79f,
 };
 
 // リスポーン待ち時間

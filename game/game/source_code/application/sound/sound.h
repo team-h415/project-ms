@@ -15,7 +15,8 @@
 #include <xaudio2.h>
 #include <stdio.h>
 #include <memory>
-#include <vector>
+#include <list>
+#include <string>
 using namespace std;
 
 //================================================================================
@@ -50,7 +51,7 @@ public:
 	// 引数1 : サウンドネーム
 	// 引数2 : サウンドの最大ボリューム
 	//================================================================================
-	static Sound* LoadSound(const char* sound_path, const float set_max = 1.0f);
+	static Sound* LoadSound(const string& sound_path, const float set_max = 1.0f);
 
 	//================================================================================
 	// サウンドのロードと再生
@@ -59,7 +60,7 @@ public:
 	// 引数1 : サウンドネーム
 	// 引数2 : サウンドボリューム
 	//================================================================================
-	static void LoadAndPlaySE(const char* sound_path, float set_volume = 1.0f);
+	static void LoadAndPlaySE(const string& sound_path, float set_volume = 1.0f);
 
 	//================================================================================
 	// サウンドの解放
@@ -113,7 +114,7 @@ private:
 	// 返り値 : なし
 	// 引数1 : サウンドネーム
 	//================================================================================
-	Sound(const char* pName);
+	Sound(const string& sound_path);
 
 	//================================================================================
 	// サウンドのデストラクタ
@@ -148,14 +149,15 @@ private:
 	//================================================================================
 	static IXAudio2*				x_audio2_;					// XAudio2オブジェクトへのインターフェイス
 	static IXAudio2MasteringVoice*	mastering_voice_;			// マスターボイス
-	static vector<Sound*>			sound_array_;				// サウンドクラスポインタ配列
-	static int						count_sound_;				// サウンドクラスカウント
+	static list<Sound*>				sound_list_;				// サウンドクラスポインタ配列
 	IXAudio2SourceVoice*			source_voice_;				// ソースボイス
 	BYTE*							data_audio_;				// オーディオデータ
 	DWORD							size_audio_;				// オーディオデータサイズ
 	float							max_volume_;				// 最大ボリューム
 	bool							fade_flag_;					// フェード
 	float							fade_power_;				// フェードパワー
+	bool							use_;						// 使用フラグ
+	string							path_;						// サウンドパス
 	bool							death_flag_;				// デス
 	bool							master_flag_;				// 管理者確認
 };

@@ -32,7 +32,7 @@
 #include "../object/objects/sprite/countdown.h"
 #include "../object/objects/model/x_model.h"
 #include "../object/objects/model/fbx_model.h"
-#include "../object/objects/notice/bullet.h"
+#include "../object/objects/bullet/bullet.h"
 #include "../object/objects/model/fbx/fbx_player.h"
 #include "../object/objects/model/fbx/fbx_grandfather.h"
 #include "../object/objects/model/fbx/fbx_child.h"
@@ -300,6 +300,10 @@ unsigned __stdcall NetworkGuest::Communication()
 						{
 							continue;
 						}
+						if(!matching->setup())
+						{
+							continue;
+						}
 						ObjDataAdaptation(matching->object_manager(),
 							matching->camera_manager(), matching->effect_manager(), rec_data);
 					}
@@ -308,6 +312,10 @@ unsigned __stdcall NetworkGuest::Communication()
 						// ゲームクラス取得
 						Game *game = dynamic_cast<Game*>(scene_manager_->GetCurrentScene());
 						if(game == nullptr)
+						{
+							continue;
+						}
+						if(!game->setup())
 						{
 							continue;
 						}
@@ -322,6 +330,10 @@ unsigned __stdcall NetworkGuest::Communication()
 					{
 						Game *game = dynamic_cast<Game*>(scene_manager_->GetCurrentScene());
 						if(game == nullptr)
+						{
+							continue;
+						}
+						if(!game->setup())
 						{
 							continue;
 						}
@@ -388,8 +400,30 @@ unsigned __stdcall NetworkGuest::Communication()
 					}
 					break;
 
-				case DATA_TEST:						// テスト
-					//printf("テストを受信\n");
+				case DATA_SPRITE2D_TEX:
+					{
+						scene_name = scene_manager_->GetCurrentSceneName();
+						if("Matching" == scene_name)
+						{
+							// マッチングクラス取得
+							Matching *matching = dynamic_cast<Matching*>(scene_manager_->GetCurrentScene());
+							if(matching == nullptr)
+							{
+								continue;
+							}
+							if(!matching->setup())
+							{
+								continue;
+							}
+							Sprite2D* sprite = dynamic_cast<Sprite2D*>
+												(matching->object_manager()->Get("standby"));
+							if(sprite == nullptr)
+							{
+								continue;
+							}
+							sprite->SetTexture("resource/texture/matching/standby.png");
+						}
+					}
 					break;
 
 				default:
@@ -424,6 +458,10 @@ void NetworkGuest::ObjDataAdaptation(
 					return;
 				}
 				FbxPlayer *player = dynamic_cast<FbxPlayer*>(object);
+				if(player == nullptr)
+				{
+					return;
+				}
 				Vector3 set_param;
 				// 回転
 				set_param.x_ = rec_data.object_param_.rotation_.x_;
@@ -472,6 +510,19 @@ void NetworkGuest::ObjDataAdaptation(
 					effect_param.scaling_ = {	rec_data.object_param_.rotation_.x_,
 												rec_data.object_param_.rotation_.x_,
 												rec_data.object_param_.rotation_.x_};
+					effect->SetParameter(effect_param);
+				}
+				else if(name == "SpeedDown")
+				{
+					EFFECT_PARAMETER_DESC effect_param;
+					MyEffect *effect = effect_manager->Get(name);
+					effect_param = effect->parameter();
+					effect_param.position_.x_ = rec_data.object_param_.position_.x_;
+					effect_param.position_.y_ = rec_data.object_param_.position_.y_;
+					effect_param.position_.z_ = rec_data.object_param_.position_.z_;
+					effect_param.rotation_ = {0.0f, 0.0f, 0.0f};
+					effect_param.scaling_ = {1.0f, 1.0f, 1.0f};
+					effect_param.speed_ = 1.0f;
 					effect->SetParameter(effect_param);
 				}
 				else

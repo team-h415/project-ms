@@ -19,6 +19,11 @@ public:
 	virtual ~Scene();
 	virtual void Update() = 0;
 	virtual void Draw() = 0;
+	
+	bool setup(){ return setup_; }
+
+protected:
+	bool setup_;
 };
 
 

@@ -82,18 +82,11 @@ Object *ObjectFactory::Create(
 		break;
 	case LAYER_COUNTDOWN:
 		object = new CountDown(parameter);
-<<<<<<< HEAD
-	}
-
-	else if(param.layer_ == LAYER_ARROW){
+		break;
+	case LAYER_ARROW:
 		object = new Arrow(parameter);
-	}
-
-	else{
-=======
 		break;
 	default:
->>>>>>> master
 		ASSERT_ERROR("無効なオブジェクト生成カテゴリです");
 		break;
 	}
