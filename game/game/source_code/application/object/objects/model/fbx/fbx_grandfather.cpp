@@ -15,6 +15,7 @@
 #include "../../../../input/input.h"
 #include "../../../../input/inputs/gamepad.h"
 #include "../../../../math/vector.h"
+#include "../../../../sound/sound.h"
 #include "../../../../shader/shader.h"
 #include "../../../../resource/texture_manager.h"
 #include "../../../../scene/scene.h"
@@ -155,6 +156,9 @@ void FbxGrandfather::Action(
 						effect_param.position_.y_ += 0.5f;
 						effect->SetParameter(effect_param);
 						game->effect_manager()->Play("watersupply");
+                        //-------------------------------------
+                        // ’e•â‹‹SEÄ¶
+                        Sound::LoadAndPlaySE("resource/sound/se/game/chargeWater.wav");
 					}
 					// •â‹‹–AƒGƒtƒFƒNƒg
 					OBJECT_PARAMETER_DESC grandfather_parameter = this->parameter();

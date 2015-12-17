@@ -20,6 +20,7 @@ using namespace EffekseerRenderer;
 class ObjectManager;
 class CameraManager;
 class EffectManager;
+class Sound;
 class DebugFont;
 class CollisionManager;
 class Collision;
@@ -54,6 +55,7 @@ private:
 	CollisionManager *collision_manager_;
 	DebugFont *font1_;
 	DebugFont *font2_;
+    Sound *sound_;
 	int current_id_;
 	float camera_pos_len_;
 
@@ -76,6 +78,14 @@ private:
 	int frame_;
 	// 経過時間
 	int timer_;
+    // サウンドSEが連続で再生させないためのフラグ
+    bool sound_se_flg_;
+    // ゲーム開始時だけのSEフラグ
+    bool start_only_se_flg_;
+    // プレイヤー移動時の経過時間
+    int walk_timer_;
+    // 歩きSEフラグ（確認用）
+    bool walk_flg_;
 };
 
 

@@ -23,6 +23,7 @@
 #include "../../../collision/collision_manager.h"
 #include "../../../effect/effect.h"
 #include "../../../effect/effect_manager.h"
+#include "../../../sound/sound.h"
 #include "../mesh/field.h"
 #include "../../../config/config.h"
 #include "../model/x_model.h"
@@ -245,6 +246,9 @@ void Bullet::Action(
 				//-------------------------------------
 				// エフェクト再生
 				game->effect_manager()->Play("damage");
+                //-------------------------------------
+                // 水がはじけるSE再生
+                Sound::LoadAndPlaySE("resource/sound/se/game/waterBreak.wav");
 			}
 			use_ = false;
 			collision_->SetUse(false);
