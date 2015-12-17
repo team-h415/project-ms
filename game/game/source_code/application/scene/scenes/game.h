@@ -86,6 +86,8 @@ private:
     int walk_timer_;
     // 歩きSEフラグ（確認用）
     bool walk_flg_;
+    // デバフエフェクトフラグ
+    bool debuff_effect_flg;
 };
 
 
