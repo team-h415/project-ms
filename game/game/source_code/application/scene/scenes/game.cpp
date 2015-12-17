@@ -1479,17 +1479,17 @@ void Game::Update()
 	rot.x_ += BULLET_OFFSET_ROT;
 	// 回転値を参照して速度を改良
 	speed.y_ += sinf(rot.x_) * BULLET_ADD_SPEED_Y;
+	// 判定が取れたか
+	bool hit_point_field = false;
 
-	for (int i = 0; i < 120; i++)
-	{
+	for (int i = 0; i < 120; i++){
 		poseffect.x_ += sinf(rot.y_) * speed.x_;
 		poseffect.y_ += speed.y_;
 		poseffect.z_ += cosf(rot.y_) * speed.z_;
 		speed.y_ -= BULLET_GRAVITY;
 
 		float height = field->GetHeight(D3DXVECTOR3(poseffect.x_, poseffect.y_, poseffect.z_));
-		if (height > poseffect.y_)
-		{
+		if (height > poseffect.y_){
 			EFFECT_PARAMETER_DESC effect_param;
 			MyEffect *effect = effect_manager_->Get("marker");
 			effect_param = effect->parameter();
@@ -1504,8 +1504,18 @@ void Game::Update()
 
 			effect_param.scaling_ = { scaling, scaling, scaling };
 			effect->SetParameter(effect_param);
+			hit_point_field = true;
 			break;
 		}
+	}
+
+	// 判定外
+	if (!hit_point_field){
+		EFFECT_PARAMETER_DESC effect_param;
+		MyEffect *effect = effect_manager_->Get("marker");
+		effect_param = effect->parameter();
+		effect_param.position_.y_ = -100.0f;
+		effect->SetParameter(effect_param);
 	}
 
 
