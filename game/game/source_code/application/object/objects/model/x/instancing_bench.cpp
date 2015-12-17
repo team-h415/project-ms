@@ -13,6 +13,7 @@
 #include "../../../../render/directx9/directx9_holder.h"
 #include "../../../../math/vector.h"
 #include "../../../../shader/shader.h"
+#include "../../../../shader/shader_manager.h"
 #include "../../../object.h"
 #include "../../../../resource/x_container.h"
 #include "../../../../resource/x_container_manager.h"
@@ -60,7 +61,7 @@ InstancingBench::InstancingBench(
 	count_vertex_ = 0;
 	count_face_ = 0;
 	object_count_ = 0;
-	shader_ = new Shader("resource/shader/instancing_bench.hlsl");
+	shader_ = ShaderManager::Get("resource/shader/instancing_bench.hlsl");
 	texture_ = TextureManager::GetTexture("resource/texture/game/bench.jpg");
 
 	XContainer* container = XContainerManager::GetContainer("./resource/model/x/bench.x");
@@ -114,7 +115,7 @@ InstancingBench::~InstancingBench()
 	SAFE_RELEASE(world_buffer_);
 	SAFE_RELEASE(index_buffer_);
 	SAFE_RELEASE(vertex_buffer_);
-	SAFE_DELETE(shader_);
+	shader_ = nullptr;
 }
 
 

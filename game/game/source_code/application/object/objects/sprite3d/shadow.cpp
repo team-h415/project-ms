@@ -13,6 +13,7 @@
 #include "../../../render/directx9/directx9_holder.h"
 #include "../../../math/vector.h"
 #include "../../../shader/shader.h"
+#include "../../../shader/shader_manager.h"
 #include "../../object.h"
 #include "../../object_manager.h"
 #include "shadow.h"
@@ -27,7 +28,7 @@ Shadow::Shadow(
 {
 	parameter_ = parameter;
 
-	shader_ = new Shader("resource/shader/shadow.hlsl");
+	shader_ = ShaderManager::Get("resource/shader/shadow.hlsl");
 	texture_ = TextureManager::GetTexture("resource/texture/game/shadow.jpg");
 
 	if(FAILED(DirectX9Holder::device_->CreateVertexBuffer(
@@ -66,7 +67,7 @@ Shadow::Shadow(
 Shadow::~Shadow()
 {
 	SAFE_RELEASE(vertex_buffer_);
-	SAFE_DELETE(shader_);
+	shader_ = nullptr;
 }
 
 

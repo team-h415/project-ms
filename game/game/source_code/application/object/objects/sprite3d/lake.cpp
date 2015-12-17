@@ -13,6 +13,7 @@
 #include "../../../render/directx9/directx9_holder.h"
 #include "../../../math/vector.h"
 #include "../../../shader/shader.h"
+#include "../../../shader/shader_manager.h"
 #include "../../object.h"
 #include "../../object_manager.h"
 #include "lake.h"
@@ -27,7 +28,7 @@ Lake::Lake(
 	const OBJECT_PARAMETER_DESC &parameter)
 {
 	parameter_ = parameter;
-	shader_ = new Shader("resource/shader/halflambert_lighting.hlsl");
+	shader_ = ShaderManager::Get("resource/shader/halflambert_lighting.hlsl");
 	texture_ = TextureManager::GetTexture("resource/texture/game/lake_upper.jpg");
 
 	vertex_[0].position_ = { -1.0f, 0.0f, 1.0f };
@@ -57,7 +58,7 @@ Lake::Lake(
 //-------------------------------------
 Lake::~Lake()
 {
-	SAFE_DELETE(shader_);
+	shader_ = nullptr;
 }
 
 

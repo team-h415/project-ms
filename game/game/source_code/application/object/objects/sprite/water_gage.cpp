@@ -15,6 +15,7 @@
 #include "../../../input/input.h"
 #include "../../../input/inputs/keyboard.h"
 #include "../../../shader/shader.h"
+#include "../../../shader/shader_manager.h"
 #include "../../object.h"
 #include "../../../resource/texture_manager.h"
 #include "water_gage.h"
@@ -33,7 +34,7 @@ WaterGage::WaterGage(
     diffuse_texture_ = NULL;
     alpha_texture_ = NULL;
     shader_ = nullptr;
-    shader_ = new Shader("resource/shader/water_gage.hlsl");
+    shader_ = ShaderManager::Get("resource/shader/water_gage.hlsl");
     D3DXCreateTextureFromFile(
         DirectX9Holder::device_,
         "resource/texture/game/water_gage_alpha.png", &alpha_texture_);
@@ -47,7 +48,7 @@ WaterGage::~WaterGage()
     SAFE_DELETE_ARRAY(vertex_);
     diffuse_texture_ = NULL;
     SAFE_RELEASE(alpha_texture_);
-    SAFE_DELETE(shader_);
+    shader_ = nullptr;
 }
 
 
