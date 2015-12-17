@@ -588,6 +588,35 @@ void NetworkGuest::ObjDataAdaptation(
 			}
 			break;
 
+		case OBJ_ARROW:
+			{
+				if(object_manager == nullptr)
+				{
+					return;
+				}
+				// ƒAƒ[
+				Object *object = object_manager->Get("arrow");
+				if(object == nullptr)
+				{
+					return;
+				}
+				Vector3 position =
+				{
+					rec_data.object_param_.position_.x_,
+					rec_data.object_param_.position_.y_,
+					rec_data.object_param_.position_.z_
+				};
+				Vector3 rotation =
+				{
+					rec_data.object_param_.rotation_.x_,
+					rec_data.object_param_.rotation_.y_,
+					rec_data.object_param_.rotation_.z_
+				};
+				object->SetPosition(position);
+				object->SetRotation(rotation);
+			}
+			break;
+
 		case OBJ_CAMERA:
 			{
 				if(camera_manager == nullptr)

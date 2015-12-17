@@ -30,7 +30,7 @@ Arrow::Arrow(
 	mesh_ = NULL;
 	material_buffer_ = NULL;
 	shader_ = nullptr;
-	shader_ = new Shader("resource/shader/halflambert_lighting.hlsl");
+	shader_ = new Shader("resource/shader/arrow.hlsl");
 	texture_ = NULL;
 
 	texture_ = TextureManager::GetTexture("./resource/texture/red.tga");
@@ -95,26 +95,8 @@ void Arrow::Draw()
 	DirectX9Holder::device_->GetTransform(D3DTS_PROJECTION, &projection);
 	wvp = world_ * view * projection;
 
-	D3DXVECTOR3 light_vec(0.5f, -0.5f, 0.5f);
-	D3DXVec3Normalize(&light_vec, &light_vec);
-	D3DXCOLOR light_diffuse(1.0f, 1.0f, 1.0f, 1.0f);
-
 	shader_->vertex_table()->SetMatrix(
 		DirectX9Holder::device_, "matrix_wvp", &wvp);
-	shader_->vertex_table()->SetMatrix(
-		DirectX9Holder::device_, "matrix_w", &world_);
-
-	shader_->vertex_table()->SetFloatArray(
-		DirectX9Holder::device_,
-		"light_direction",
-		reinterpret_cast<float*>(&light_vec),
-		3);
-
-	shader_->vertex_table()->SetFloatArray(
-		DirectX9Holder::device_,
-		"light_diffuse",
-		reinterpret_cast<float*>(&light_diffuse),
-		4);
 
 	DirectX9Holder::device_->SetTexture(
 		shader_->pixel_table()->GetSamplerIndex("texture_0"), texture_);
@@ -122,17 +104,10 @@ void Arrow::Draw()
 	DirectX9Holder::device_->SetVertexShader(shader_->vertex_shader());
 	DirectX9Holder::device_->SetPixelShader(shader_->pixel_shader());
 
-	D3DMATERIAL9 default_material;
-	D3DXMATERIAL *material;
-	DirectX9Holder::device_->GetMaterial(&default_material);
-	material = (D3DXMATERIAL*)material_buffer_->GetBufferPointer();
-
 	for (DWORD i = 0; i < material_count_; i++)
 	{
 		mesh_->DrawSubset(i);
 	}
-
-	DirectX9Holder::device_->SetMaterial(&default_material);
 
 	DirectX9Holder::device_->SetVertexShader(NULL);
 	DirectX9Holder::device_->SetPixelShader(NULL);

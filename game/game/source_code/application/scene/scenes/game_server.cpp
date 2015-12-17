@@ -318,7 +318,7 @@ void GameServer::Draw()
 	DirectX9Holder::Clear(color);
 
 #ifdef _DEBUG
-	camera_manager_->Set("camera1");
+	camera_manager_->Set("camera0");
 
 	switch(server_state_)
 	{
@@ -891,7 +891,7 @@ void GameServer::Game()
 				Object *fort_object = object_manager_->Get(fort_str);
 				XFort *fort = dynamic_cast<XFort*>(fort_object);
 				send_data.type_ = DATA_UI_PARAM;
-				send_data.id_ = now_target_fort_ - 1;
+				send_data.id_ = now_target_fort_;
 				float life(fort->GetLife());
 				send_data.ui_param_.value_f_ = life;
 				strcpy_s(send_data.name, MAX_NAME_LEN, "fort_gauge_manager");
@@ -920,10 +920,10 @@ void GameServer::Game()
 					fort_announce_state_ = 75;
 
 					now_target_fort_++;
-					if(now_target_fort_ >= 4)
+					if(now_target_fort_ >= 3)
 					{
 						// ガキの勝利
-						now_target_fort_ = 3;
+						now_target_fort_ = 2;
 						// シーンチェンジ命令送信
 						ZeroMemory(&send_data, sizeof(send_data));
 						send_data.type_ = DATA_SCENE_CHANGE_RESULT;
@@ -959,7 +959,7 @@ void GameServer::Game()
 					fort_pos.z = fort_position.z_;
 
 					float field_height = field->GetHeight(fort_pos);
-					if((now_target_fort_ - 1) == i)
+					if(now_target_fort_ == i)
 					{
 						fort_y[i] += 0.01f;
 						if(fort_y[i] > 0.0f)
@@ -1457,6 +1457,30 @@ void GameServer::Game()
 
 		}
 		NetworkHost::SendTo((DELI_TYPE)i, send_data);
+
+		//------------------------------------------------
+		// アローデータ転送
+		//------------------------------------------------
+		if(i != 0)
+		{
+
+			ZeroMemory(&send_data, sizeof(send_data));
+			send_data.type_ = DATA_OBJ_PARAM;
+			send_data.object_param_.type_ = OBJ_ARROW;
+
+			send_data.object_param_.position_.x_ = player_position.x_;
+			send_data.object_param_.position_.y_ = player_position.y_ + 1.5f;
+			send_data.object_param_.position_.z_ = player_position.z_;
+
+			std::string name = "fort" + std::to_string(now_target_fort_);
+			Object *fort_object = object_manager_->Get(name);
+			Vector3 fpos = fort_object->parameter().position_;
+			Vector3 temp = fpos - player_position;
+			send_data.object_param_.rotation_ = {0.0f, 0.0f, 0.0f};
+			send_data.object_param_.rotation_.y_ = atan2(temp.x_, temp.z_);
+			
+			NetworkHost::SendTo((DELI_TYPE)i, send_data);
+		}
 	}
 }
 
@@ -1493,7 +1517,7 @@ void GameServer::ChangeServerState(SERVER_STATE next)
 		shot_late[i] = 0;
 	}
 	collision_manager_->Update();
-	now_target_fort_ = 1;
+	now_target_fort_ = 0;
 	server_state_ = next;
 	switch(server_state_)
 	{
@@ -1641,7 +1665,7 @@ void GameServer::ChangeServerState(SERVER_STATE next)
 				}
 
 				fort_announce_state_ = 75;
-				now_target_fort_ = 1;
+				now_target_fort_ = 0;
 				//---------------------------------------
 				// おじ関連パラメータ
 				dash_effect_timer_ = 0;
@@ -1770,7 +1794,5 @@ void GameServer::ChangeServerState(SERVER_STATE next)
 
 /*
 通信パケット大きすぎ問題
-
-子供が砦の位置がわかるように
 タイムアップ時の演出
 */

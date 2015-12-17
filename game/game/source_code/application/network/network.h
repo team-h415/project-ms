@@ -14,7 +14,7 @@
 //-------------------------------------
 // define
 //-------------------------------------
-//#define NETWORK_HOST_MODE						// exeがホストなのかゲストなのかの分岐 通常はホスト、コメントアウトでゲストに
+#define NETWORK_HOST_MODE						// exeがホストなのかゲストなのかの分岐 通常はホスト、コメントアウトでゲストに
 
 #define ID_NONE -1								// IDの無い状態
 #define PORT_NUMBER_0 20000						// ゲストからホストへの送信時のポート
@@ -51,6 +51,7 @@ enum OBJ_TYPE
 	OBJ_FORT,					// 砦
 	OBJ_BULLET,					// 球
 	OBJ_UI,						// UI
+	OBJ_ARROW,					// ARROW
 
 	OBJ_CAMERA,					// めんどいのでカメラもオブジェクト扱い
 };

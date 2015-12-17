@@ -18,6 +18,7 @@
 #include "objects/sprite/countdown.h"
 #include "objects/mesh/field.h"
 #include "objects/model/x_model.h"
+#include "objects/model/x/arrow.h"
 #include "objects/model/x/instancing_tree.h"
 #include "objects/model/x/instancing_bench.h"
 #include "objects/sprite3d/shadow.h"
@@ -87,6 +88,10 @@ Object *ObjectFactory::Create(
 
 	else if (param.layer_ == LAYER_COUNTDOWN){
 		object = new CountDown(parameter);
+	}
+
+	else if(param.layer_ == LAYER_ARROW){
+		object = new Arrow(parameter);
 	}
 
 	else{

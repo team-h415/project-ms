@@ -579,6 +579,16 @@ Game::Game()
 	effect->SetParameter(effect_param);
 	effect_manager_->Play("marker");
 
+	//-------------------------------------
+	// ƒAƒ[ì¬
+	//-------------------------------------
+	OBJECT_PARAMETER_DESC arrow_param;
+	arrow_param.name_ = "arrow";
+	arrow_param.layer_ = LAYER_ARROW;
+	arrow_param.position_ = {0.0f, -5000.0f, 0.0f};
+	arrow_param.scaling_ = {1.0f, 1.0f, 1.0f};
+	object_manager_->Create(arrow_param);
+
 #ifdef NETWORK_HOST_MODE
 #else
 	NETWORK_DATA network_data;
