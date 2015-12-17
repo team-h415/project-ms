@@ -30,7 +30,7 @@
 #include "objects/sprite/fort_gauge_manager.h"
 #include "objects/model/fbx/fbx_grandfather.h"
 #include "objects/model/fbx/fbx_child.h"
-#include "objects/notice/bullet.h"
+#include "objects/bullet/bullet.h"
 #include "objects/mesh/skydome.h"
 #include "objects/model/x/x_fort.h"
 

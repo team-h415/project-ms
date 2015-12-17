@@ -16,9 +16,8 @@
 // class
 //-------------------------------------
 class Collision;
-class XModel;
 class MyEffect;
-class Bullet : public XModel
+class Bullet : public Object
 {
 public:
 	Bullet(
@@ -32,8 +31,18 @@ public:
 		const float range);
 
 private:
+	void LoadMesh(
+		const std::string &path);
+	void SetTexture(
+		const std::string &path);
 	Collision *collision_;
 	D3DXVECTOR3 speed_;
+	LPD3DXMESH mesh_;
+	LPD3DXBUFFER material_buffer_;
+	DWORD material_count_;
+	D3DXMATRIX world_;
+	LPDIRECT3DTEXTURE9 texture_;
+	Shader *shader_;
 };
 
 

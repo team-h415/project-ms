@@ -35,7 +35,7 @@
 #include "../../object/objects/sprite/water_gage.h"
 #include "../../object/objects/sprite/fort_gauge_manager.h"
 #include "../../object/objects/sprite/message.h"
-#include "../../object/objects/notice/bullet.h"
+#include "../../object/objects/bullet/bullet.h"
 #include "../../effect/effect.h"
 #include "../../effect/effect_manager.h"
 #include "../../camera/camera.h"

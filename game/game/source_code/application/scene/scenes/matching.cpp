@@ -26,7 +26,7 @@
 #include "../../object/objects/model/fbx_model.h"
 #include "../../object/objects/model/fbx/fbx_player.h"
 #include "../../object/objects/model/fbx/fbx_grandfather.h"
-#include "../../object/objects/notice/bullet.h"
+#include "../../object/objects/bullet/bullet.h"
 #include "../../effect/effect.h"
 #include "../../effect/effect_manager.h"
 #include "../../camera/camera.h"

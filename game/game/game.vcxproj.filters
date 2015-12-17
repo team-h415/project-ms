@@ -83,9 +83,6 @@
     <Filter Include="source_code\application\collision">
       <UniqueIdentifier>{c09705a5-6fd5-416a-a7c8-f5890c109e2e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="source_code\application\object\objects\notice">
-      <UniqueIdentifier>{7f67fc37-b121-4bb2-82e8-fd68939f9b56}</UniqueIdentifier>
-    </Filter>
     <Filter Include="source_code\application\config">
       <UniqueIdentifier>{52a6b0e7-89e4-46d9-9144-769d0090ea01}</UniqueIdentifier>
     </Filter>
@@ -97,6 +94,9 @@
     </Filter>
     <Filter Include="source_code\application\object\objects\sprite3d">
       <UniqueIdentifier>{260a024d-bde2-44c6-a71f-35064ad339fe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source_code\application\object\objects\bullet">
+      <UniqueIdentifier>{7f67fc37-b121-4bb2-82e8-fd68939f9b56}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -262,9 +262,6 @@
     <ClCompile Include="source_code\application\resource\x_container.cpp">
       <Filter>source_code\application\resource</Filter>
     </ClCompile>
-    <ClCompile Include="source_code\application\object\objects\notice\bullet.cpp">
-      <Filter>source_code\application\object\objects\notice</Filter>
-    </ClCompile>
     <ClCompile Include="source_code\application\object\objects\model\fbx\fbx_child.cpp">
       <Filter>source_code\application\object\objects\model\fbx</Filter>
     </ClCompile>
@@ -312,6 +309,9 @@
     </ClCompile>
     <ClCompile Include="source_code\application\shader\shader_manager.cpp">
       <Filter>source_code\application\shader</Filter>
+    </ClCompile>
+    <ClCompile Include="source_code\application\object\objects\bullet\bullet.cpp">
+      <Filter>source_code\application\object\objects\bullet</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -486,9 +486,6 @@
     <ClInclude Include="source_code\application\resource\x_container.h">
       <Filter>source_code\application\resource</Filter>
     </ClInclude>
-    <ClInclude Include="source_code\application\object\objects\notice\bullet.h">
-      <Filter>source_code\application\object\objects\notice</Filter>
-    </ClInclude>
     <ClInclude Include="source_code\application\config\config.h">
       <Filter>source_code\application\config</Filter>
     </ClInclude>
@@ -536,6 +533,9 @@
     </ClInclude>
     <ClInclude Include="source_code\application\shader\shader_manager.h">
       <Filter>source_code\application\shader</Filter>
+    </ClInclude>
+    <ClInclude Include="source_code\application\object\objects\bullet\bullet.h">
+      <Filter>source_code\application\object\objects\bullet</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

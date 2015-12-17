@@ -15,7 +15,7 @@
 #include "object.h"
 #include "../shader/shader.h"
 #include "objects/model/x_model.h"
-#include "objects/notice/bullet.h"
+#include "objects/bullet/bullet.h"
 #include "object_factory.h"
 #include "object_manager.h"
 
