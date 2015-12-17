@@ -54,6 +54,8 @@ private:
 	int frame_;
 	// 経過時間
 	int timer_;
+	// シーン終了までのフレーム計測(マッチング完了時)
+	int movescene_waitframe_;
 };
 
 

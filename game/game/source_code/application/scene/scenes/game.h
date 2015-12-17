@@ -20,6 +20,7 @@ using namespace EffekseerRenderer;
 class ObjectManager;
 class CameraManager;
 class EffectManager;
+class Sound;
 class DebugFont;
 class CollisionManager;
 class Collision;
@@ -52,6 +53,44 @@ private:
 	CameraManager *camera_manager_;
 	EffectManager *effect_manager_;
 	CollisionManager *collision_manager_;
+<<<<<<< HEAD
+=======
+	DebugFont *font1_;
+	DebugFont *font2_;
+    Sound *sound_;
+	int current_id_;
+	float camera_pos_len_;
+
+	//-------------------------------------
+	// ゲームルール用パラメータ
+	//-------------------------------------
+	// ステージ(砦が壊されるごとに進行/1からスタート)
+	int stage_;
+	// おじデバフフラグ
+	bool grandfather_debuff_;
+	// 子供死亡フラグ
+	bool child_death_;
+	// 子供リスポーンタイマー
+	int child_respawn_waittime_;
+	// ダッシュエフェクトタイマー
+	int dash_effect_timer_;
+	// 現在表示に使ってるカメラ
+	std::string use_camera_name_;
+	// 経過フレーム数
+	int frame_;
+	// 経過時間
+	int timer_;
+    // サウンドSEが連続で再生させないためのフラグ
+    bool sound_se_flg_;
+    // ゲーム開始時だけのSEフラグ
+    bool start_only_se_flg_;
+    // プレイヤー移動時の経過時間
+    int walk_timer_;
+    // 歩きSEフラグ（確認用）
+    bool walk_flg_;
+    // デバフエフェクトフラグ
+    bool debuff_effect_flg;
+>>>>>>> master
 };
 
 

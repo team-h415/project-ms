@@ -108,6 +108,7 @@
     <ClCompile Include="source_code\application\network\network_guest.cpp" />
     <ClCompile Include="source_code\application\network\network_host.cpp" />
     <ClCompile Include="source_code\application\object\object.cpp" />
+    <ClCompile Include="source_code\application\object\objects\bullet\bullet.cpp" />
     <ClCompile Include="source_code\application\object\objects\mesh\field.cpp" />
     <ClCompile Include="source_code\application\object\objects\mesh\skydome.cpp" />
     <ClCompile Include="source_code\application\object\objects\model\fbx\fbx_child.cpp" />
@@ -119,7 +120,6 @@
     <ClCompile Include="source_code\application\object\objects\model\x\instancing_tree.cpp" />
     <ClCompile Include="source_code\application\object\objects\model\x\x_fort.cpp" />
     <ClCompile Include="source_code\application\object\objects\model\x_model.cpp" />
-    <ClCompile Include="source_code\application\object\objects\notice\bullet.cpp" />
     <ClCompile Include="source_code\application\object\objects\sprite3d\lake.cpp" />
     <ClCompile Include="source_code\application\object\objects\sprite3d\shadow.cpp" />
     <ClCompile Include="source_code\application\object\objects\sprite\countdown.cpp" />
@@ -156,6 +156,7 @@
     <ClCompile Include="source_code\application\scene\scene_factory.cpp" />
     <ClCompile Include="source_code\application\scene\scene_manager.cpp" />
     <ClCompile Include="source_code\application\shader\shader.cpp" />
+    <ClCompile Include="source_code\application\shader\shader_manager.cpp" />
     <ClCompile Include="source_code\application\sound\sound.cpp" />
     <ClCompile Include="source_code\application\thread\thread.cpp" />
     <ClCompile Include="source_code\application\window\window.cpp" />
@@ -187,6 +188,7 @@
     <ClInclude Include="source_code\application\network\network_guest.h" />
     <ClInclude Include="source_code\application\network\network_host.h" />
     <ClInclude Include="source_code\application\object\object.h" />
+    <ClInclude Include="source_code\application\object\objects\bullet\bullet.h" />
     <ClInclude Include="source_code\application\object\objects\mesh\field.h" />
     <ClInclude Include="source_code\application\object\objects\mesh\skydome.h" />
     <ClInclude Include="source_code\application\object\objects\model\fbx\fbx_child.h" />
@@ -198,7 +200,6 @@
     <ClInclude Include="source_code\application\object\objects\model\x\instancing_tree.h" />
     <ClInclude Include="source_code\application\object\objects\model\x\x_fort.h" />
     <ClInclude Include="source_code\application\object\objects\model\x_model.h" />
-    <ClInclude Include="source_code\application\object\objects\notice\bullet.h" />
     <ClInclude Include="source_code\application\object\objects\sprite3d\lake.h" />
     <ClInclude Include="source_code\application\object\objects\sprite3d\shadow.h" />
     <ClInclude Include="source_code\application\object\objects\sprite\countdown.h" />
@@ -235,6 +236,7 @@
     <ClInclude Include="source_code\application\scene\scene_factory.h" />
     <ClInclude Include="source_code\application\scene\scene_manager.h" />
     <ClInclude Include="source_code\application\shader\shader.h" />
+    <ClInclude Include="source_code\application\shader\shader_manager.h" />
     <ClInclude Include="source_code\application\sound\sound.h" />
     <ClInclude Include="source_code\application\thread\thread.h" />
     <ClInclude Include="source_code\application\window\window.h" />

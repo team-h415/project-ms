@@ -31,7 +31,7 @@
 #include "objects/sprite/fort_gauge_manager.h"
 #include "objects/model/fbx/fbx_grandfather.h"
 #include "objects/model/fbx/fbx_child.h"
-#include "objects/notice/bullet.h"
+#include "objects/bullet/bullet.h"
 #include "objects/mesh/skydome.h"
 #include "objects/model/x/x_fort.h"
 
@@ -46,48 +46,43 @@ Object *ObjectFactory::Create(
 	OBJECT_PARAMETER_DESC param = parameter;
 	Object *object = nullptr;
 
-	if (param.layer_ == LAYER_SPRITE_2D){
-		object = new Sprite2D(parameter);
-	}
-
-	else if (param.layer_ == LAYER_TIMER){
-		object = new Timer(parameter);
-	}
-
-    else if (param.layer_ == LAYER_DAMAGE_EFFECT){
-        object = new DamageEffect(parameter);
-    }
-
-	else if (param.layer_ == LAYER_MODEL_GRANDFATHER){
-		object = new FbxGrandfather(parameter);
-	}
-
-	else if (param.layer_ == LAYER_MODEL_CHILD){
-		object = new FbxChild(parameter);
-	}
-
-	else if (param.layer_ == LAYER_BULLET){
-		object = new Bullet(parameter);
-	}
-
-	else if(param.layer_ == LAYER_TREE){
-		object = new InstancingTree(parameter);
-	}
-
-	else if (param.layer_ == LAYER_BENCH){
-		object = new InstancingBench(parameter);
-	}
-
-	else if(param.layer_ == LAYER_SHADOW){
-		object = new Shadow(parameter);
-	}
-
-	else if (param.layer_ == LAYER_SPRITE_LAKE){
+	switch (param.layer_)
+	{
+	case LAYER_SPRITE_LAKE:
 		object = new Lake(parameter);
-	}
-
-	else if (param.layer_ == LAYER_COUNTDOWN){
+		break;
+	case LAYER_MODEL_GRANDFATHER:
+		object = new FbxGrandfather(parameter);
+		break;
+	case LAYER_MODEL_CHILD:
+		object = new FbxChild(parameter);
+		break;
+	case LAYER_BULLET:
+		object = new Bullet(parameter);
+		break;
+	case LAYER_TREE:
+		object = new InstancingTree(parameter);
+		break;
+	case LAYER_BENCH:
+		object = new InstancingBench(parameter);
+		break;
+	case LAYER_SHADOW:
+		object = new Shadow(parameter);
+		break;
+	case LAYER_DAMAGE_EFFECT:
+		object = new DamageEffect(parameter);
+		break;
+	case LAYER_TIMER:
+		object = new Timer(parameter);
+		break;
+	case LAYER_SPRITE_2D:
+		object = new Sprite2D(parameter);
+		break;
+	case LAYER_FORT_GAUGE:
+		break;
+	case LAYER_COUNTDOWN:
 		object = new CountDown(parameter);
+<<<<<<< HEAD
 	}
 
 	else if(param.layer_ == LAYER_ARROW){
@@ -95,10 +90,13 @@ Object *ObjectFactory::Create(
 	}
 
 	else{
+=======
+		break;
+	default:
+>>>>>>> master
 		ASSERT_ERROR("無効なオブジェクト生成カテゴリです");
+		break;
 	}
-
-
 	return object;
 }
 
@@ -111,62 +109,66 @@ Object *ObjectFactory::Create(
 	OBJECT_PARAMETER_DESC param = parameter;
 	Object *object = nullptr;
 
-	if (param.layer_ == LAYER_MESH_FIELD){
-		object = new Field(parameter);
-		Field *field = dynamic_cast<Field*>(object);
-		field->LoadMesh(object_path);
-	}
-
-	else if (param.layer_ == LAYER_MESH_SKYDOME){
+	switch (param.layer_)
+	{
+	case LAYER_MESH_SKYDOME:{
 		object = new SkyDome(parameter);
 		SkyDome *sky = dynamic_cast<SkyDome*>(object);
 		sky->LoadMesh(object_path);
+		break;
 	}
-	 
-	else if (param.layer_ == LAYER_MODEL_X){
+	case LAYER_MESH_FIELD:{
+		object = new Field(parameter);
+		Field *field = dynamic_cast<Field*>(object);
+		field->LoadMesh(object_path);
+		break;
+	}
+	case LAYER_MODEL_X:{
 		object = new XModel(parameter);
-		XModel *model = dynamic_cast<XModel*>(object);
-		model->LoadMesh(object_path);
+		XModel *x_model = dynamic_cast<XModel*>(object);
+		x_model->LoadMesh(object_path);
+		break;
 	}
-
-	else if (param.layer_ == LAYER_MODEL_FORT){
+	case LAYER_MODEL_FBX:{
+		object = new FbxModel(parameter);
+		FbxModel *fbx_model = dynamic_cast<FbxModel*>(object);
+		fbx_model->Load(object_path);
+		break;
+	}
+	case LAYER_MODEL_FORT:{
 		object = new XFort(parameter);
 		XFort *fort = dynamic_cast<XFort*>(object);
 		fort->LoadMesh(object_path);
+		break;
 	}
-
-	else if (param.layer_ == LAYER_MODEL_FBX){
-		object = new FbxModel(parameter);
-		FbxModel *model = dynamic_cast<FbxModel*>(object);
-		model->Load(object_path);
-	}
-
-    else if (param.layer_ == LAYER_WATER_GAGE){
-        object = new WaterGage(parameter);
-        WaterGage *sprite = dynamic_cast<WaterGage*>(object);
-        sprite->SetTexture(object_path);
-    }
-
-    else if (param.layer_ == LAYER_FORT_GAUGE){
-        object = new FortGaugeManager(parameter);
-        FortGaugeManager *fort_sprite = dynamic_cast<FortGaugeManager*>(object);
-        fort_sprite->SetTexture(object_path);
-    }
-
-	else if (param.layer_ == LAYER_SPRITE_2D){
-		object = new Sprite2D(parameter);
-		Sprite2D *sprite = dynamic_cast<Sprite2D*>(object);
-		sprite->SetTexture(object_path);
-	}
-
-	else if (param.layer_ == LAYER_MESSAGE){
+	case LAYER_MESSAGE:{
 		object = new Message(parameter);
 		Message *message = dynamic_cast<Message*>(object);
 		message->SetTexture(object_path);
+		break;
 	}
-
-	else{
+	case LAYER_WATER_GAGE:{
+		object = new WaterGage(parameter);
+		WaterGage *water_gauge = dynamic_cast<WaterGage*>(object);
+		water_gauge->SetTexture(object_path);
+		break;
+	}
+	case LAYER_SPRITE_2D:{
+		object = new Sprite2D(parameter);
+		Sprite2D *sprite_2d = dynamic_cast<Sprite2D*>(object);
+		sprite_2d->SetTexture(object_path);
+		break;
+	}
+	case LAYER_FORT_GAUGE:{
+		object = new FortGaugeManager(parameter);
+		FortGaugeManager *fort_sprite = dynamic_cast<FortGaugeManager*>(object);
+		fort_sprite->SetTexture(object_path);
+		break;
+	}
+	default:{
 		ASSERT_ERROR("無効なオブジェクト生成カテゴリです");
+		break;
+	}
 	}
 
 	return object;

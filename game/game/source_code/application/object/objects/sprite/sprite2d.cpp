@@ -25,6 +25,7 @@ Sprite2D::Sprite2D(
 {
 	parameter_ = parameter;
 	vertex_ = new Vertex2D[4];
+	color_ = { 1.0f, 1.0f, 1.0f, 1.0f };
 	CalculateVertex();
 	texture_ = NULL;
 }
@@ -111,10 +112,10 @@ void Sprite2D::CalculateVertex()
 	vertex_[2].rhw_ = 1.0f;
 	vertex_[3].rhw_ = 1.0f;
 
-	vertex_[0].diffuse_ = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-	vertex_[1].diffuse_ = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-	vertex_[2].diffuse_ = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-	vertex_[3].diffuse_ = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+	vertex_[0].diffuse_ = color_;
+	vertex_[1].diffuse_ = color_;
+	vertex_[2].diffuse_ = color_;
+	vertex_[3].diffuse_ = color_;
 
 	vertex_[0].texture_ = { 0.0f, 0.0f };
 	vertex_[1].texture_ = { 1.0f, 0.0f };

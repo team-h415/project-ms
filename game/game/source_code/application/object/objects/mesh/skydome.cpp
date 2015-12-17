@@ -13,6 +13,7 @@
 #include "../../../render/directx9/directx9_holder.h"
 #include "../../../math/vector.h"
 #include "../../../shader/shader.h"
+#include "../../../shader/shader_manager.h"
 #include "../../object.h"
 #include "skydome.h"
 #include "../../../resource/texture_manager.h"
@@ -37,8 +38,7 @@ SkyDome::SkyDome(
 	mesh_radius_ = 0.0f;
 	mesh_division_ = { 0, 0 };
 	D3DXMatrixIdentity(&world_);
-	shader_ = nullptr;
-	shader_ = new Shader("resource/shader/no_lighting.hlsl");
+	shader_ = ShaderManager::Get("resource/shader/no_lighting.hlsl");
 	texture_ = NULL;
 	mesh_diffuse_ = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
 }
@@ -52,7 +52,7 @@ SkyDome::~SkyDome()
 	SAFE_RELEASE(vertex_buffer_);
 	SAFE_RELEASE(index_buffer_);
 	SAFE_DELETE_ARRAY(normal_buffer_);
-	SAFE_DELETE(shader_);
+	shader_ = nullptr;
 	texture_ = NULL;
 }
 

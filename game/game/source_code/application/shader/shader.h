@@ -33,6 +33,10 @@ public:
 	const LPDIRECT3DPIXELSHADER9 &pixel_shader(){
 		return pixel_shader_;
 	}
+	const std::string &file_path(){
+		return file_path_;
+	}
+
 private:
 	LPD3DXCONSTANTTABLE vertex_table_;
 	LPD3DXCONSTANTTABLE pixel_table_;
@@ -40,6 +44,7 @@ private:
 	LPDIRECT3DPIXELSHADER9 pixel_shader_;
 	LPD3DXBUFFER error_;
 	LPD3DXBUFFER code_;
+	std::string file_path_;
 };
 
 

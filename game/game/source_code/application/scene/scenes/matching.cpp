@@ -29,7 +29,7 @@
 #include "../../object/objects/model/fbx_model.h"
 #include "../../object/objects/model/fbx/fbx_player.h"
 #include "../../object/objects/model/fbx/fbx_grandfather.h"
-#include "../../object/objects/notice/bullet.h"
+#include "../../object/objects/bullet/bullet.h"
 #include "../../effect/effect.h"
 #include "../../effect/effect_manager.h"
 #include "../../camera/camera.h"
@@ -60,6 +60,9 @@ Matching::Matching()
 	frame_ = 0;
 	// 経過時間
 	timer_ = 0;
+	// シーン終了までのフレーム計測(マッチング完了時)
+	movescene_waitframe_ = 0;
+
 
 	//-------------------------------------
 	// 各マネージャ・デバッグシステム初期化
@@ -84,6 +87,7 @@ Matching::Matching()
 		"resource/effect/BulletFire.efk",
 		water_param);
 
+<<<<<<< HEAD
 	effect_manager_->Create(
 		"damage",
 		"resource/effect/Damage3_2.efk",
@@ -110,15 +114,27 @@ Matching::Matching()
 		water_param);
 
 	water_param.position_ = { 40.00f, 0.00f, -40.00f };
+=======
+	water_param.position_ = { 40.00f, 0.3f, -40.00f };
+>>>>>>> master
 	effect_manager_->Create(
 		"marker",
 		"resource/effect/Marker.efk",
 		water_param);
+
 	effect_manager_->Create(
 		"portal",
 		"resource/effect/Portal2x2.efk",
 		water_param);
 
+<<<<<<< HEAD
+=======
+	
+	effect_manager_->Play("water");
+	effect_manager_->Play("portal");
+	effect_manager_->Play("marker");
+
+>>>>>>> master
 	//-------------------------------------
 	// メインカメラ
 	//-------------------------------------
@@ -211,6 +227,7 @@ Matching::Matching()
 	collision_manager_->Create(object_manager_->Get("player0"), fbx_collision_param);
 
 	//-------------------------------------
+<<<<<<< HEAD
 	// FBX子供
 	//-------------------------------------
 	OBJECT_PARAMETER_DESC child_param;
@@ -238,6 +255,14 @@ Matching::Matching()
 		collision_manager_->Create(object_manager_->Get(name),
 			child_collision_param);
 	}
+=======
+	// 木
+	//-------------------------------------
+	OBJECT_PARAMETER_DESC wood_param;
+	wood_param.name_ = "wood";
+	wood_param.layer_ = LAYER_TREE;
+	object_manager_->Create(wood_param);
+>>>>>>> master
 
 	//-------------------------------------
 	// ベンチ
@@ -247,6 +272,25 @@ Matching::Matching()
 	bench_param.layer_ = LAYER_BENCH;
 	object_manager_->Create(
 		bench_param);
+
+	//-------------------------------------
+	// 石碑
+	//-------------------------------------
+	OBJECT_PARAMETER_DESC parkstone_param;
+	parkstone_param.name_ = "parkstone";
+	parkstone_param.layer_ = LAYER_MODEL_X;
+	parkstone_param.position_ = { 34.5f, 0.0f, -34.5f };
+	parkstone_param.rotation_ = { 0.00f, 8.60f, 0.00f };
+	parkstone_param.scaling_ = { 1.0f, 1.0f, 1.0f };
+
+	object_manager_->Create(
+		parkstone_param,
+		"resource/model/x/parkstone.x");
+
+	XModel *parkstone = dynamic_cast<XModel*>(
+		object_manager_->Get("parkstone"));
+	parkstone->SetTexture("resource/texture/matching/parkstone.png");
+
 
 	//-------------------------------------
 	// 影
@@ -267,11 +311,12 @@ Matching::Matching()
 	bullet_param.layer_ = LAYER_BULLET;
 	for (int i = 0; i < MAX_BULLET; i++)
 	{
-		bullet_param.name_ = "bullet" + std::to_string(i);;
+		bullet_param.name_ = "bullet" + std::to_string(i);
 		object_manager_->Create(
 			bullet_param);
 	}
 
+<<<<<<< HEAD
 	//-------------------------------------
 	// ポータルエフェクト
 	//-------------------------------------
@@ -318,6 +363,36 @@ Matching::Matching()
 	object_manager_->Create(
 		search_param,
 		"./resource/texture/matching/search_host.png");
+=======
+
+	//-------------------------------------
+	// 出撃準備案内UI
+	//-------------------------------------
+	OBJECT_PARAMETER_DESC standby_param;
+	standby_param.name_ = "standby";
+	standby_param.layer_ = LAYER_SPRITE_2D;
+	standby_param.parent_layer_ = LAYER_NONE;
+	standby_param.position_ = {
+		SCREEN_WIDTH * 0.5f,
+		SCREEN_HEIGHT * 0.5f,
+		0.0f
+	};
+	standby_param.rotation_ = { 0.0f, 0.0f, 0.0f };
+	standby_param.scaling_ = {
+		SCREEN_WIDTH * 0.5f,
+		SCREEN_HEIGHT * 0.5f,
+		0.0f
+	};
+	
+	Object *standby_object = object_manager_->Create(standby_param);
+	Sprite2D *standby = dynamic_cast<Sprite2D*>(standby_object);
+	standby->SetTexture("resource/texture/matching/standby.png");
+
+	//-------------------------------------
+	// UIの描画フラグを切る
+	//-------------------------------------
+	object_manager_->SetDrawEnable(LAYER_SPRITE_2D, false);
+>>>>>>> master
 }
 
 
@@ -331,7 +406,11 @@ Matching::~Matching()
 	SAFE_DELETE(font_);
 	SAFE_DELETE(collision_manager_);
 	effect_manager_->StopAll();
+<<<<<<< HEAD
 	effect_manager_ = NULL;
+=======
+	effect_manager_ = nullptr;
+>>>>>>> master
 }
 
 
@@ -340,6 +419,7 @@ Matching::~Matching()
 //-------------------------------------
 void Matching::Update()
 {
+<<<<<<< HEAD
 	////-------------------------------------
 	//// 変数宣言
 	////-------------------------------------
@@ -607,14 +687,139 @@ void Matching::Update()
 	{
 		frame_++;
 		if(frame_ % (60 * 5) == 0)
+=======
+	//-------------------------------------
+	// 変数宣言
+	//-------------------------------------
+	// 動的変数
+	Object *grandfather_object = object_manager_->Get("grandfather");
+	Object *standby_object = object_manager_->Get("standby");
+	Vector3 grandfather_position(grandfather_object->parameter().position_);
+	Vector3 grandfather_rotation(grandfather_object->parameter().rotation_);
+	Sprite2D *standby = dynamic_cast<Sprite2D*>(standby_object);
+	Field *field = dynamic_cast<Field*>(object_manager_->Get("field"));
+	FbxGrandfather *grandfather = dynamic_cast<FbxGrandfather*>(grandfather_object);
+	Camera *main_camera = camera_manager_->Get("MainCamera");
+	D3DXVECTOR3 camera_position, camera_focus;
+	D3DXVECTOR3 camera_rotation(main_camera->rotation());
+	float player_speed = CHARANCTER_MOVESPEED;
+
+	// 静的変数
+	static Vector3 grandfather_prevposition(grandfather_object->parameter().position_);
+	static int shot_late = 0;
+	static float standby_alpha = 0.0f;
+	static float standby_rad = 0.0f;
+
+
+	//-------------------------------------
+	// 時間経過
+	//-------------------------------------
+	frame_++;
+	if (!(frame_ % 60)){
+		timer_++;
+	}
+
+
+	//-------------------------------------
+	// 集合案内UI点滅処理
+	//-------------------------------------
+	standby_rad += D3DX_PI * 0.002f;
+	if (standby_rad > D3DX_PI){
+		standby_rad -= D3DX_PI * 2.0f;
+	}
+	standby_alpha = sinf(standby_rad) + 0.5f;
+	standby_alpha = std::max<float>(standby_alpha, 0.0f);
+	D3DXCOLOR standby_color(1.0f, 1.0f, 1.0f, standby_alpha);
+	standby->SetColor(standby_color);
+
+
+	//-------------------------------------
+	// プレイヤー移動処理
+	//-------------------------------------
+	grandfather_position.x_ += (
+		cosf(grandfather_rotation.y_) * GamePad::isStick(GAMEPAD_GRANDFATHER).lsx_ +
+		sinf(-grandfather_rotation.y_) * GamePad::isStick(GAMEPAD_GRANDFATHER).lsy_) * player_speed;
+	grandfather_position.z_ -= (
+		sinf(grandfather_rotation.y_) * GamePad::isStick(GAMEPAD_GRANDFATHER).lsx_ +
+		cosf(-grandfather_rotation.y_) * GamePad::isStick(GAMEPAD_GRANDFATHER).lsy_) * player_speed;
+
+	if (GamePad::isPress(GAMEPAD_GRANDFATHER, PAD_RS_LEFT)){
+		grandfather_rotation.y_ += CHAR_ROT_SPEED*GamePad::isStick(GAMEPAD_GRANDFATHER).rsx_;
+		if (grandfather_rotation.y_ < D3DX_PI){
+			grandfather_rotation.y_ += D3DX_PI * 2.0f;
+		}
+	}
+	if (GamePad::isPress(GAMEPAD_GRANDFATHER, PAD_RS_RIGHT)){
+		grandfather_rotation.y_ += CHAR_ROT_SPEED*GamePad::isStick(GAMEPAD_GRANDFATHER).rsx_;
+		if (grandfather_rotation.y_ > D3DX_PI){
+			grandfather_rotation.y_ -= D3DX_PI * 2.0f;
+		}
+	}
+
+	D3DXVECTOR3 grandfather_pos(
+		grandfather_position.x_,
+		grandfather_position.y_,
+		grandfather_position.z_);
+	grandfather_position.y_ = field->GetHeight(grandfather_pos);
+	if (grandfather_position.y_ > 0.4f ||
+		grandfather_position.y_ < -0.4f){
+		grandfather_position = grandfather_prevposition;
+	}
+
+	//-------------------------------------
+	// プレイヤー座標をXZ平面で領域指定
+	//-------------------------------------
+	grandfather_position.z_ = std::min<float>(grandfather_position.z_, -35.0f);
+	grandfather_position.x_ = std::max<float>(grandfather_position.x_, 35.0f);
+
+	grandfather_object->SetPosition(grandfather_position);
+	grandfather_object->SetRotation(grandfather_rotation);
+
+
+	//-------------------------------------
+	// アニメーション制御
+	//-------------------------------------
+	if (GamePad::isPress(GAMEPAD_GRANDFATHER, PAD_LS_DOWN) ||
+		GamePad::isPress(GAMEPAD_GRANDFATHER, PAD_LS_UP) ||
+		GamePad::isPress(GAMEPAD_GRANDFATHER, PAD_LS_LEFT) ||
+		GamePad::isPress(GAMEPAD_GRANDFATHER, PAD_LS_RIGHT)){
+		if (grandfather->GetCurrentAnimationId() != FbxGrandfather::WALK)
+		{
+			grandfather->PlayAnimation(FbxGrandfather::WALK);
+		}
+	}
+	else{
+		if (grandfather->GetCurrentAnimationId() != FbxGrandfather::IDLE)
+>>>>>>> master
 		{
 			NetworkGuest::TrySearchHost();
 		}
 	}
+<<<<<<< HEAD
 	else
 	{
 		Object* search = object_manager_->Get("search");
 		search->SetPosition({-500.0f, -100.0f, 0.0f});
+=======
+
+
+	//-------------------------------------
+	// 全員集合したらシーン遷移
+	//-------------------------------------
+	// 今はおじだけ集まったら遷移、全員分用意すること
+	D3DXVECTOR3 portal_posiiton = PORTAL_POSITION;
+	grandfather_pos = { grandfather_position.x_, grandfather_position.y_, grandfather_position.z_ };
+	D3DXVECTOR3 vec(grandfather_pos - portal_posiiton);
+	float distance = sqrtf((vec.x * vec.x) + (vec.y * vec.y) + (vec.z * vec.z));
+	if (distance < PORTAL_DISTANCE){
+		if (movescene_waitframe_ == 0){
+			standby->SetTexture("resource/texture/matching/ready.png");
+		}
+		movescene_waitframe_++;
+		if (movescene_waitframe_ > 120){
+			SceneManager::RequestScene("Game");
+		}
+>>>>>>> master
 	}
 
 	//-------------------------------------
@@ -672,12 +877,99 @@ void Matching::Update()
 	//-------------------------------------
 	// 実更新処理
 	//-------------------------------------
+<<<<<<< HEAD
+=======
+	shot_late--;
+	shot_late = std::max<int>(shot_late, 0);
+	if (GamePad::isPress(GAMEPAD_GRANDFATHER, PAD_BUTTON_8) &&
+		shot_late == 0){
+		EFFECT_PARAMETER_DESC effect_param;
+		MyEffect *effect = effect_manager_->Get("water");
+		effect_param = effect->parameter();
+		effect_param.position_ = grandfather_position;
+		effect_param.position_.y_ += 0.6f;
+		effect_param.rotation_ = grandfather_rotation;
+		effect->SetParameter(effect_param);
+		effect_manager_->Play("water");
+
+
+		OBJECT_PARAMETER_DESC bullet_param;
+		bullet_param.layer_ = LAYER_BULLET;
+		bullet_param.parent_layer_ = LAYER_MODEL_GRANDFATHER;
+		bullet_param.position_ = grandfather_position;
+		bullet_param.position_.y_ += 0.6f;
+		bullet_param.rotation_ = grandfather_rotation;
+
+		// カメラの回転Xを利用
+		bullet_param.rotation_.x_ = camera_rotation.x;
+
+		bullet_param.scaling_ = { 1.0f, 1.0f, 1.0f };
+
+		Bullet* bullet = object_manager_->GetNoUseBullet();
+		bullet->Fire(bullet_param);
+
+		shot_late = 10;
+	}
+
+	//-------------------------------------
+	// まーかーの更新
+	//-------------------------------------
+	Vector3 poseffect = grandfather_position;
+	poseffect.y_ += 0.6f;
+	Vector3 speed = { BULLET_DEF_SPEED_XZ, BULLET_DEF_SPEED_Y, BULLET_DEF_SPEED_XZ };
+	Vector3 rot = Vector3(camera_rotation.x, camera_rotation.y, camera_rotation.z);
+	// 回転値を少し調整
+	rot.x_ += BULLET_OFFSET_ROT;
+	// 回転値を参照して速度を改良
+	speed.y_ += sinf(rot.x_) * BULLET_ADD_SPEED_Y;
+	// 判定が取れたか
+	bool hit_point_field = false;
+
+	for (int i = 0; i < 120; i++){
+		poseffect.x_ += sinf(rot.y_) * speed.x_;
+		poseffect.y_ += speed.y_;
+		poseffect.z_ += cosf(rot.y_) * speed.z_;
+		speed.y_ -= BULLET_GRAVITY;
+
+		float height = field->GetHeight(D3DXVECTOR3(poseffect.x_, poseffect.y_, poseffect.z_));
+		if (height > poseffect.y_){
+			EFFECT_PARAMETER_DESC effect_param;
+			MyEffect *effect = effect_manager_->Get("marker");
+			effect_param = effect->parameter();
+			effect_param.position_ = poseffect;
+			effect_param.position_.y_ = height;
+			effect_param.rotation_ = { 0.0f, camera_rotation.y, 0.0f };
+			Vector3 vec = poseffect - grandfather_position;
+			float len = sqrt(vec.x_*vec.x_ + vec.z_ * vec.z_);
+			float scaling = 1.0f + len * 0.15f;
+
+			scaling = std::min<float>(scaling, 3.0f);
+
+			effect_param.scaling_ = { scaling, scaling, scaling };
+			effect->SetParameter(effect_param);
+			hit_point_field = true;
+			break;
+		}
+	}
+
+	// 判定外
+	if (!hit_point_field){
+		EFFECT_PARAMETER_DESC effect_param;
+		MyEffect *effect = effect_manager_->Get("marker");
+		effect_param = effect->parameter();
+		effect_param.position_.y_ = -100.0f;
+		effect->SetParameter(effect_param);
+	}
+	
+
+>>>>>>> master
 	camera_manager_->Update();
 	object_manager_->Update();
 	effect_manager_->Update();
 
 	if (KeyBoard::isTrigger(DIK_RETURN))
 	{
+		effect_manager_->StopAll();
 		SceneManager::RequestScene("Game");
 	}
 }
@@ -696,10 +988,17 @@ void Matching::Draw()
 	MaterialColor color(32, 32, 32, 255);
 	DirectX9Holder::DrawBegin();
 	DirectX9Holder::Clear(color);
+	Sprite2D *standby = 
+		dynamic_cast<Sprite2D*>(object_manager_->Get("standby"));
 	camera_manager_->Set("MainCamera");
 	object_manager_->Draw();
 	effect_manager_->Draw();
+<<<<<<< HEAD
 	//collision_manager_->Draw();
+=======
+	standby->Draw();
+	collision_manager_->Draw();
+>>>>>>> master
 	font_->Draw(rect, font_color);
 	Fade::Draw();
 	DirectX9Holder::DrawEnd();

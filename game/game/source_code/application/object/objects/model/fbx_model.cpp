@@ -13,6 +13,7 @@
 #include "../../../render/directx9/directx9_holder.h"
 #include "../../../math/vector.h"
 #include "../../../shader/shader.h"
+#include "../../../shader/shader_manager.h"
 #include "../../../resource/fbx_my_container.h"
 #include "../../../resource/fbx_container_manager.h"
 #include "../../object.h"
@@ -40,7 +41,7 @@ const OBJECT_PARAMETER_DESC &parameter)
 	bone_cursor_ = 0;
 	root_ = NULL;
 	cur_time_ = 0;
-	shader_ = new Shader("resource/shader/halflambert_lighting_fbx.hlsl");
+	shader_ = ShaderManager::Get("resource/shader/halflambert_lighting_fbx.hlsl");
 	animation_ = nullptr;
 	animation_previous_time_ = 0.0f;
 	current_animation_id_ = 0;
@@ -62,7 +63,7 @@ FbxModel::~FbxModel()
 	}
 	SAFE_DELETE_ARRAY(bone_);
 	SAFE_DELETE_ARRAY(animation_);
-	SAFE_DELETE(shader_);
+	shader_ = nullptr;
 	texture_ = NULL;
 }
 

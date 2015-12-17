@@ -13,6 +13,7 @@
 #include "../../../render/directx9/directx9_holder.h"
 #include "../../../math/vector.h"
 #include "../../../shader/shader.h"
+#include "../../../shader/shader_manager.h"
 #include "../../object.h"
 #include "../../../resource/x_container.h"
 #include "../../../resource/x_container_manager.h"
@@ -30,7 +31,7 @@ XModel::XModel(
 	mesh_ = NULL;
 	material_buffer_ = NULL;
 	shader_ = nullptr;
-	shader_ = new Shader("resource/shader/halflambert_lighting.hlsl");
+	shader_ = ShaderManager::Get("resource/shader/halflambert_lighting.hlsl");
 	texture_ = NULL;
 }
 
@@ -40,7 +41,7 @@ XModel::XModel(
 //-------------------------------------
 XModel::~XModel()
 {
-	SAFE_DELETE(shader_);
+	shader_ = nullptr;
 }
 
 

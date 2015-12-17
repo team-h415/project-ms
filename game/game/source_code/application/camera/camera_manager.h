@@ -51,7 +51,7 @@ public:
 private:
 	bool Search(
 		const std::string &name);
-	std::map<std::string, Camera*>cameras_;
+	std::unordered_map<std::string, Camera*>cameras_;
 };
 
 

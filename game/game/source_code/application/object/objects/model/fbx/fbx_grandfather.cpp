@@ -16,7 +16,11 @@
 #include "../../../../input/input.h"
 #include "../../../../input/inputs/gamepad.h"
 #include "../../../../math/vector.h"
+<<<<<<< HEAD
 #include "../../../../config/config.h"
+=======
+#include "../../../../sound/sound.h"
+>>>>>>> master
 #include "../../../../shader/shader.h"
 #include "../../../../resource/texture_manager.h"
 #include "../../../../scene/scene.h"
@@ -50,6 +54,7 @@ FbxGrandfather::FbxGrandfather(const OBJECT_PARAMETER_DESC &parameter) :
 	texture_ = TextureManager::GetTexture("resource/texture/game/ogchan.jpg");
 	life_ = 1.0f;
 	water_gauge_ = 1.0f;
+    debuff_power_ = 0.0f;
 
 #ifdef _DEBUG
 	int x;
@@ -138,6 +143,7 @@ void FbxGrandfather::Action(
 			&& !GamePad::isPress(GAMEPAD_GRANDFATHER, PAD_BUTTON_8)
 			&& water_gauge_ < 1.0f){
 			if (water_supply_enable_){
+<<<<<<< HEAD
 				// 水補給
 				water_gauge_ += GRANDFATHER_SUB_WATERGAUGE;
 				water_gauge_ = std::min<float>(water_gauge_, 1.0f);
@@ -163,6 +169,53 @@ void FbxGrandfather::Action(
 
 					strcpy_s(send_data.name, MAX_NAME_LEN, "watersupply");
 					NetworkHost::SendTo(DELI_MULTI, send_data);
+=======
+				//-------------------------------------
+				// シーン取得
+				Scene *scene = SceneManager::GetCurrentScene();
+				std::string str = SceneManager::GetCurrentSceneName();
+				if (str == "Game"){
+					Game *game = dynamic_cast<Game*>(scene);
+
+					// 水補給
+					water_gauge_ += GRANDFATHER_SUB_WATERGAUGE;
+					water_gauge_ = std::min<float>(water_gauge_, 1.0f);
+					Object *obj = game->object_manager()->Get("water_gage");
+					WaterGage *water_gage_obj = static_cast<WaterGage*>(obj);
+					water_gage_obj->SetChangeValue(water_gauge_);
+					// 重複防止
+					water_supply_enable_ = false;
+
+					if (water_supply_effect_timer_ % 45 == 0)
+					{
+						// 補給エフェクト
+						OBJECT_PARAMETER_DESC grandfather_parameter = this->parameter();
+						EFFECT_PARAMETER_DESC effect_param;
+						MyEffect *effect = game->effect_manager()->Get("watersupply");
+						effect_param = effect->parameter();
+						effect_param.position_ = grandfather_parameter.position_;
+						effect_param.position_.x_ += sinf(grandfather_parameter.rotation_.y_)*0.2f;
+						effect_param.position_.z_ += cosf(grandfather_parameter.rotation_.y_)*0.2f;
+						effect_param.position_.y_ += 0.5f;
+						effect->SetParameter(effect_param);
+						game->effect_manager()->Play("watersupply");
+                        //-------------------------------------
+                        // 弾補給SE再生
+                        Sound::LoadAndPlaySE("resource/sound/se/game/chargeWater.wav");
+					}
+					// 補給泡エフェクト
+					OBJECT_PARAMETER_DESC grandfather_parameter = this->parameter();
+					EFFECT_PARAMETER_DESC effect_param;
+					MyEffect *effect = game->effect_manager()->Get("watersupplybubble");
+					effect_param = effect->parameter();
+					effect_param.position_ = grandfather_parameter.position_;
+					effect_param.position_.y_ += 0.2f;
+					effect->SetParameter(effect_param);
+					game->effect_manager()->Play("watersupplybobble");
+
+
+					water_supply_effect_timer_++;
+>>>>>>> master
 				}
 
 				// 補給泡エフェクト

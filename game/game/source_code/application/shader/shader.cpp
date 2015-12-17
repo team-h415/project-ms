@@ -20,6 +20,8 @@
 Shader::Shader(
 	const std::string &path)
 {
+	file_path_ = path;
+
 	if (FAILED(D3DXCompileShaderFromFile(
 		path.c_str(),
 		NULL,

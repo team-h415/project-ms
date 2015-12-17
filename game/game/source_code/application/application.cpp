@@ -35,6 +35,7 @@
 #include "math/vector.h"
 #include "effect/effect.h"
 #include "effect/effect_manager.h"
+#include "shader/shader_manager.h"
 #include "application.h"
 
 
@@ -82,6 +83,7 @@ Application::~Application()
 	SAFE_DELETE(renderer_);
 	SAFE_DELETE(keyboard_);
 	SAFE_DELETE(gamepad_);
+<<<<<<< HEAD
 	#ifdef NETWORK_HOST_MODE
 		NetworkHost::CloseCommunication();
 	#else
@@ -92,6 +94,14 @@ Application::~Application()
 	XContainerManager::AllRelease();
 	EffectManager::Delete();
 	Sound::End();
+=======
+	ShaderManager::AllRelease();
+	TextureManager::AllRelease();
+	FbxContainerManager::AllRelease();
+	XContainerManager::AllRelease();
+	Sound::End();
+	EffectManager::Delete();
+>>>>>>> master
 }
 
 
