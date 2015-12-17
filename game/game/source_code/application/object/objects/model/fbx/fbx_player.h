@@ -68,6 +68,7 @@ public:
 	void ResetGameParameters(){
 		life_ = 1.0f;
 		water_gauge_ = 1.0f;
+        debuff_power_ = 0.0f;
 	}
 	// 体力
 	const float &GetLife(){
@@ -101,6 +102,13 @@ public:
 		water_supply_enable_ = flag;
 	}
 
+    // デバフパワー
+    const float &GetDebuffPower(){
+        return debuff_power_; 
+    }
+    void SetDebuffPower(const float &power){ 
+        debuff_power_ = power;
+    }
 protected:
 	void UpdateBoneMatrix(BONE *subject, D3DXMATRIX *parent);
 
@@ -128,6 +136,9 @@ protected:
 	bool water_supply_enable_;
 
 	int water_supply_effect_timer_;
+
+    // デバフパワー
+    float debuff_power_;
 };
 
 
