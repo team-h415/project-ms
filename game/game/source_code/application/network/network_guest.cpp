@@ -276,8 +276,6 @@ unsigned __stdcall NetworkGuest::Communication()
 					scene_name = scene_manager_->GetCurrentSceneName();
 					if("Game" == scene_name)
 					{
-						// ŸÒ•Û‘¶
-						winner_ = rec_data.id_;
 						SceneManager::RequestScene("Result");
 					}
 					break;
@@ -287,6 +285,42 @@ unsigned __stdcall NetworkGuest::Communication()
 					if("Result" == scene_name)
 					{
 						SceneManager::RequestScene("Matching");
+					}
+					break;
+
+				case DATA_GAME_WINNER:
+					{
+						// ŸÒ•Û‘¶
+						winner_ = rec_data.id_;
+						// ƒQ[ƒ€‰æ–Ê‚ÉŸ”s•\¦
+						scene_name = scene_manager_->GetCurrentSceneName();
+						if("Game" == scene_name)
+						{
+							// ƒQ[ƒ€ƒNƒ‰ƒXæ“¾
+							Game *game = dynamic_cast<Game*>(scene_manager_->GetCurrentScene());
+							if(game == nullptr)
+							{
+								continue;
+							}
+							if(!game->setup())
+							{
+								continue;
+							}
+							Sprite2D* result_sprite = dynamic_cast<Sprite2D*>(game->object_manager()->Get("result_sprite"));
+							if(result_sprite == nullptr)
+							{
+								continue;
+							}
+							if(winner_ == 0)
+							{
+								result_sprite->SetTexture("resource/texture/result/zizi.jpg");
+							}
+							else
+							{
+								result_sprite->SetTexture("resource/texture/result/co.jpg");
+							}
+							result_sprite->SetPosition({SCREEN_WIDTH * 0.5f, SCREEN_HEIGHT * 0.15f, 0.0f});
+						}
 					}
 					break;
 
@@ -421,7 +455,7 @@ unsigned __stdcall NetworkGuest::Communication()
 							{
 								continue;
 							}
-							sprite->SetTexture("resource/texture/matching/standby.png");
+							sprite->SetTexture("resource/texture/matching/ready.png");
 						}
 					}
 					break;

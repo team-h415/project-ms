@@ -51,6 +51,7 @@ Loading::Loading()
 //-------------------------------------
 Loading::~Loading()
 {
+	setup_ = false;
 	SAFE_DELETE(object_manager_);
 }
 

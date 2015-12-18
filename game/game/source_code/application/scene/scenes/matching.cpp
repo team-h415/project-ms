@@ -76,32 +76,79 @@ Matching::Matching()
 	//-------------------------------------
 	// エフェクトの読み込み
 	//-------------------------------------
-	EFFECT_PARAMETER_DESC water_param;
-	water_param.position_ = { 0.0f, 0.0f, 0.0f };
-	water_param.rotation_ = { 0.0f, 0.0f, 0.0f };
-	water_param.scaling_ = { 1.0f, 1.0f, 1.0f };
-	water_param.speed_ = 1.0f;
+	EFFECT_PARAMETER_DESC effect_param;
+	effect_param.position_ = {0.0f, 0.0f, 0.0f};
+	effect_param.rotation_ = {0.0f, 0.0f, 0.0f};
+	effect_param.scaling_ = {1.0f, 1.0f, 1.0f};
+	effect_param.speed_ = 1.0f;
 
 	effect_manager_->Create(
 		"water",
 		"resource/effect/BulletFire.efk",
-		water_param);
+		effect_param);
 
-	water_param.position_ = { 40.00f, 0.3f, -40.00f };
+	effect_manager_->Create(
+		"damage",
+		"resource/effect/Damage3_2.efk",
+		effect_param);
 
+	effect_manager_->Create(
+		"dead",
+		"resource/effect/Dead2.efk",
+		effect_param);
+
+	effect_manager_->Create(
+		"smoke",
+		"resource/effect/Smoke.efk",
+		effect_param);
+
+	effect_manager_->Create(
+		"smoke2",
+		"resource/effect/Smoke2.efk",
+		effect_param);
+
+	effect_manager_->Create(
+		"dash",
+		"resource/effect/Dash.efk",
+		effect_param);
+
+	effect_manager_->Create(
+		"watersupply",
+		"resource/effect/WaterSupply.efk",
+		effect_param);
+
+	effect_manager_->Create(
+		"watersupplybubble",
+		"resource/effect/WaterSupply2.efk",
+		effect_param);
+
+	effect_manager_->Create(
+		"SpeedDown",
+		"resource/effect/SpeedDown.efk",
+		effect_param);
+
+	effect_manager_->Create(
+		"water",
+		"resource/effect/BulletFire.efk",
+		effect_param);
+
+	effect_manager_->Play("water");
+
+	effect_param.position_ = {0.0f, 1000.0f, 0.0f};
 	effect_manager_->Create(
 		"marker",
 		"resource/effect/Marker.efk",
-		water_param);
+		effect_param);
 
+	effect_manager_->Play("marker");
+
+	effect_param.position_ = {40.00f, 0.3f, -40.00f};
 	effect_manager_->Create(
 		"portal",
 		"resource/effect/Portal2x2.efk",
-		water_param);
+		effect_param);
 	
-	effect_manager_->Play("water");
 	effect_manager_->Play("portal");
-	effect_manager_->Play("marker");
 
 	//-------------------------------------
 	// メインカメラ
@@ -247,7 +294,7 @@ Matching::Matching()
 	parkstone_param.name_ = "parkstone";
 	parkstone_param.layer_ = LAYER_MODEL_X;
 	parkstone_param.position_ = { 34.5f, 0.0f, -34.5f };
-	parkstone_param.rotation_ = { 0.00f, 8.60f, 0.00f };
+	parkstone_param.rotation_ = {0.0f, 2.31f, 0.0f};
 	parkstone_param.scaling_ = { 1.0f, 1.0f, 1.0f };
 
 	object_manager_->Create(
@@ -327,6 +374,18 @@ Matching::Matching()
 	alphar_wave_ = 0.0f;
 
 	//-------------------------------------
+	// カメラ調整
+	//-------------------------------------
+	Camera* camera = camera_manager_->Get("MainCamera");
+	D3DXVECTOR3 set_vec(34.5f, 0.0f, -34.5f);
+	camera->SetFocus(set_vec);
+	float first_len(CAMERA_POS_LEN * 1.8f);
+	set_vec.x -= sinf(2.31f - D3DX_PI) * first_len * cosf(D3DX_PI * -0.1f);
+	set_vec.z -= cosf(2.31f - D3DX_PI) * first_len * cosf(D3DX_PI * -0.1f);
+	set_vec.y -= sinf(D3DX_PI * -0.1f) * CAMERA_POS_LEN;
+	camera->SetPosition(set_vec);
+
+	//-------------------------------------
 	// セットアップ完了
 	//-------------------------------------
 	setup_ = true;
@@ -338,6 +397,7 @@ Matching::Matching()
 //-------------------------------------
 Matching::~Matching()
 {
+	setup_ = false;
 	SAFE_DELETE(object_manager_);
 	SAFE_DELETE(camera_manager_);
 	SAFE_DELETE(font_);

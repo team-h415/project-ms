@@ -103,6 +103,7 @@ Result::Result()
 //-------------------------------------
 Result::~Result()
 {
+	setup_ = false;
 	SAFE_DELETE(object_manager_);
 	SAFE_DELETE(camera_manager_);
 	SAFE_DELETE(font_);

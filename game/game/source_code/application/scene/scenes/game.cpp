@@ -359,7 +359,7 @@ Game::Game()
 
 	timer->SetTexture("resource/texture/figure_all.png");
 	timer->SetFigureOffset(-30.0f);
-	timer->SetValue(GAME_TIMER);
+	timer->SetValue(60 * GAME_TIME);
 	timer->SetState(TIMER_STOP);
 	//パラメータ設定後に実行
 	timer->GenerateNumber();
@@ -640,6 +640,17 @@ Game::Game()
 	effect->SetParameter(effect_param);
 	effect_manager_->Play(speed_down_name);
 
+	//-------------------------------------
+	// 勝敗
+	//-------------------------------------
+	OBJECT_PARAMETER_DESC result_sprite_param;
+	result_sprite_param.name_ = "result_sprite";
+	result_sprite_param.layer_ = LAYER_SPRITE_2D;
+	result_sprite_param.position_ = {0.0f, -5000.0f, 0.0f};
+	result_sprite_param.scaling_ = {SCREEN_WIDTH * 0.2f, SCREEN_HEIGHT * 0.2f, 1.0f};
+	object_manager_->Create(result_sprite_param,
+							"resource/texture/result/zizi.jpg");
+
 #ifdef NETWORK_HOST_MODE
 #else
 	NETWORK_DATA network_data;
@@ -659,6 +670,7 @@ Game::Game()
 //-------------------------------------
 Game::~Game()
 {
+	setup_ = false;
 	effect_manager_->StopAll();
 	effect_manager_ = NULL;
 	sound_->ReleaseSound(&sound_);

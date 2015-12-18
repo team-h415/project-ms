@@ -717,6 +717,7 @@ void GameServer::Game()
 	font_->Add("Time:%d\n", time_);
 
 	NETWORK_DATA send_data;
+	ZeroMemory(&send_data, sizeof(send_data));
 
 	// デバッグ用遷移勝者じじい
 	if(KeyBoard::isTrigger(DIK_9))
@@ -839,7 +840,7 @@ void GameServer::Game()
 					NetworkHost::SendTo(DELI_MULTI, send_data);
 
 					scene_state_ = STATE_RUN;
-					time_ = 60 * 180;
+					time_ = 60 * GAME_TIME;
 				}
 			}
 			// 演出入るまではプレイヤー見てる
@@ -911,13 +912,15 @@ void GameServer::Game()
 				{
 					// ゲームエンド条件１ タイムアップ
 					// じじい勝利
-					// シーンチェンジ命令送信
+					// 勝敗メッセージ
+					// 勝敗メッセージ
+					time_ = 60 * 5;
+					scene_state_ = STATE_GAME_END;
+
 					ZeroMemory(&send_data, sizeof(send_data));
-					send_data.type_ = DATA_SCENE_CHANGE_RESULT;
+					send_data.type_ = DATA_GAME_WINNER;
 					send_data.id_ = 0;
 					NetworkHost::SendTo(DELI_MULTI, send_data);
-					// サーバーステート変更
-					ChangeServerState(STATE_RESULT);
 				}
 
 				// 砦ライフ管理
@@ -958,12 +961,14 @@ void GameServer::Game()
 					{
 						// ガキの勝利
 						now_target_fort_ = 2;
-						// シーンチェンジ命令送信
+						// 勝敗メッセージ
+						time_ = 60 * 5;
+						scene_state_ = STATE_GAME_END;
+
 						ZeroMemory(&send_data, sizeof(send_data));
-						send_data.type_ = DATA_SCENE_CHANGE_RESULT;
+						send_data.type_ = DATA_GAME_WINNER;
 						send_data.id_ = 1;
 						NetworkHost::SendTo(DELI_MULTI, send_data);
-						ChangeServerState(STATE_RESULT);
 					}
 					else
 					{
@@ -1139,7 +1144,23 @@ void GameServer::Game()
 			}
 			break;
 
+		case STATE_GAME_END:
+			{
+				time_--;
+				if(time_ < 0)
+				{
+					// シーンチェンジ命令送信
+					ZeroMemory(&send_data, sizeof(send_data));
+					send_data.type_ = DATA_SCENE_CHANGE_RESULT;
+					NetworkHost::SendTo(DELI_MULTI, send_data);
+					ChangeServerState(STATE_RESULT);
+				}
+			}
+			break;
+
 		case STATE_END:
+			{
+			}
 			break;
 
 		default:
@@ -1173,14 +1194,14 @@ void GameServer::Game()
 		}
 		if(input)
 		{
-			if(i == 0)
+			if(i == GAMEPAD_GRANDFATHER)
 			{
 				// おじいちゃんワープ
 				if(GamePad::isTrigger(GAMEPAD_GRANDFATHER, PAD_BUTTON_7)){
 					Object *player_obj = object_manager_->Get("player0");
 					FbxPlayer *player = dynamic_cast<FbxPlayer*>(player_obj);
-					Vector3 player_position = player->parameter().position_;
-					Vector3 player_rotation = player->parameter().rotation_;
+					player_position = player->parameter().position_;
+					player_rotation = player->parameter().rotation_;
 
 					ZeroMemory(&send_data, sizeof(send_data));
 					send_data.type_ = DATA_OBJ_PARAM;
@@ -1198,13 +1219,11 @@ void GameServer::Game()
 					send_data.object_param_.position_.y_ = player_position.y_;
 					send_data.object_param_.position_.z_ = player_position.z_;
 					NetworkHost::SendTo(DELI_MULTI, send_data);
-
-					player->SetPosition(player_position);
-					player->SetRotation(player_rotation);
 				}
 
 				// じじいダッシュ
-				if(GamePad::isPress(i, PAD_BUTTON_11)){
+				if(GamePad::isPress(GAMEPAD_GRANDFATHER, PAD_BUTTON_11))
+				{
 					player_speed = CHARANCTER_MOVESPEED * 2.0f;
 					// ダッシュエフェクト
 					if (dash_effect_timer_ % 10 == 0){
@@ -1925,5 +1944,4 @@ void GameServer::ChangeServerState(SERVER_STATE next)
 
 /*
 通信パケット大きすぎ問題
-タイムアップ時の演出
 */
