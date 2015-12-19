@@ -29,6 +29,7 @@ class Game : public Scene
 public:
 	Game();
 	virtual ~Game();
+	void Initialize();
 	void Update();
 	void Draw();
 

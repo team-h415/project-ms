@@ -24,120 +24,135 @@
 //-------------------------------------
 // variable
 //-------------------------------------
-const D3DXVECTOR3 instance_position[] = {
+const D3DXVECTOR3 instance_position1[] = {
 
-	{ 27.35f, 0.50f, -43.90f },
-	{ 22.75f, 0.50f, -46.71f },
-	{ 22.29f, 0.50f, -39.76f },
-	{ 19.05f, 0.50f, -35.65f },
-	{ 12.47f, 0.50f, -34.16f },
-	{ 9.93f, 0.50f, -38.03f },
-	{ 10.02f, 0.50f, -44.29f },
-	{ 4.65f, 0.50f, -41.70f },
-	{ 2.29f, 0.50f, -36.69f },
-	{ -0.55f, 0.50f, -31.73f },
-	{ -5.62f, 0.40f, -29.58f },
-	{ -6.80f, 0.41f, -34.07f },
-	{ -9.25f, 0.50f, -40.01f },
-	{ -13.82f, 0.50f, -43.15f },
-	{ -17.31f, 0.50f, -39.56f },
-	{ -23.46f, 0.50f, -35.93f },
-	{ -28.18f, 0.50f, -38.06f },
-	{ -28.69f, 0.65f, -44.05f },
-	{ -35.03f, 0.50f, -47.16f },
-	{ 49.68f, 0.50f, -0.31f },
-	{ 48.44f, 0.50f, 7.15f },
-	{ 42.71f, 0.50f, 9.60f },
-	{ 45.15f, 0.50f, 15.03f },
-	{ 50.16f, 0.50f, 18.03f },
-	{ 44.90f, 0.50f, 24.27f },
-	{ 45.28f, 0.50f, 30.63f },
-	{ 44.22f, 0.50f, 36.80f },
-	{ 42.37f, 0.50f, 42.29f },
-	{ 39.56f, 0.50f, 49.04f },
-	{ 34.34f, 0.50f, 51.50f },
-	{ 32.61f, 0.50f, 47.47f },
-	{ 35.05f, 0.50f, 42.46f },
-	{ 36.71f, 0.50f, 35.71f },
-	{ 37.18f, 0.50f, 28.70f },
-	{ 35.68f, 0.50f, 20.43f },
-	{ 28.90f, 0.50f, 23.21f },
-	{ 27.57f, 0.50f, 29.68f },
-	{ 24.61f, 0.50f, 34.76f },
-	{ 23.06f, 0.50f, 40.95f },
-	{ 18.52f, 0.50f, 45.85f },
-	{ 12.81f, 0.50f, 44.40f },
-	{ 9.46f, 0.50f, 47.87f },
-	{ 2.89f, 0.50f, 44.80f },
-	{ -2.13f, 0.50f, 47.12f },
-	{ -6.46f, 0.50f, 44.92f },
-	{ -9.46f, 0.50f, 49.56f },
-	{ -13.01f, 0.50f, 52.37f },
-	{ -16.09f, 0.50f, 56.50f },
-	{ -18.72f, 0.50f, 59.97f },
-	{ -19.05f, 0.50f, 54.71f },
-	{ -19.66f, 0.50f, 49.37f },
-	{ -21.40f, 0.50f, 43.79f },
-	{ -22.49f, 0.50f, 37.71f },
-	{ 30.05f, 0.50f, 38.50f },
-	{ -34.33f, 0.50f, 59.57f },
-	{ -39.63f, 0.50f, 56.83f },
-	{ -33.70f, 0.50f, 53.89f },
-	{ -31.12f, 0.50f, 57.90f },
-	{ -40.80f, 0.50f, 51.57f },
-	{ -45.58f, 0.50f, 51.00f },
-	{ -47.94f, 0.50f, 48.07f },
-	{ -50.53f, 0.50f, 43.56f },
-	{ -49.42f, 0.50f, 39.76f },
-	{ -46.83f, 0.50f, 35.76f },
-	{ -44.61f, 0.50f, 32.32f },
-	{ -42.72f, 0.50f, 29.11f },
-	{ -40.50f, 0.50f, 25.68f },
-	{ -38.88f, 0.50f, 22.19f },
-	{ -35.88f, 0.50f, 23.62f },
-	{ -35.73f, 0.50f, 26.83f },
-	{ -36.25f, 0.50f, 29.68f },
-	{ -37.10f, 0.50f, 33.32f },
-	{ -37.87f, 0.50f, 36.94f },
-	{ -36.80f, 0.50f, 44.05f },
-	{ -39.30f, 0.47f, 45.63f },
-	{ -42.51f, 0.50f, 43.52f },
-	{ -44.08f, 0.50f, 40.24f },
-	{ -35.72f, 0.50f, 50.10f },
-	{ -37.15f, 0.50f, 51.40f },
-	{ -34.71f, 0.50f, 53.80f },
-	{ -32.43f, 0.50f, 58.19f },
-	{ -39.04f, 0.50f, 21.63f },
-	{ -35.85f, 0.50f, 24.99f },
-	{ -33.82f, 0.50f, 28.99f },
-	{ -37.93f, 0.50f, 27.30f },
-	{ -41.80f, 0.50f, 26.15f },
-	{ -45.11f, 0.50f, 29.17f },
-	{ -40.81f, 0.50f, 30.17f },
-	{ -37.18f, 0.50f, 30.81f },
-	{ -34.72f, 0.50f, 33.41f },
-	{ -38.54f, 0.50f, 35.65f },
-	{ -42.89f, 0.50f, 36.48f },
-	{ -46.63f, 0.50f, 35.49f },
-	{ -49.62f, 0.50f, 36.90f },
-	{ -50.24f, 0.50f, 40.03f },
-	{ -50.47f, 0.50f, 44.40f },
-	{ -47.41f, 0.48f, 43.22f },
-	{ -44.78f, 0.50f, 42.56f },
-	{ -41.54f, 0.50f, 42.20f },
-	{ -37.80f, 0.50f, 43.24f },
-	{ -36.34f, 0.50f, 46.39f },
-	{ -35.68f, 0.50f, 49.67f },
-	{ -39.59f, 0.50f, 51.14f },
-	{ -42.64f, 0.40f, 50.25f },
-	{ -45.53f, 0.50f, 51.68f },
-	{ -42.88f, 0.50f, 54.46f },
-	{ -40.06f, 0.50f, 57.47f },
-	{ -38.16f, 0.50f, 59.27f },
-	{ -35.45f, 0.50f, 59.74f },
-	{ -32.10f, 0.50f, 58.62f },
-	{ -33.42f, 0.50f, 55.45f },
-	{ -36.97f, 0.50f, 56.13f },
+	{ -26.00f, 0.50f, 81.81f },
+	{ -20.04f, 0.50f, 76.80f },
+	{ -13.87f, 0.50f, 77.66f },
+	{ -1.66f, 0.50f, 66.59f },
+	{ 3.33f, 0.50f, 72.77f },
+	{ 2.65f, 0.50f, 67.71f },
+	{ -1.27f, 0.50f, 63.36f },
+	{ -1.91f, 0.50f, 57.76f },
+	{ -18.95f, 0.50f, 26.86f },
+	{ -24.04f, 0.50f, 20.60f },
+	{ -22.46f, 0.50f, 17.61f },
+	{ -19.61f, 0.50f, 21.71f },
+	{ -12.58f, 0.50f, 16.03f },
+	{ -5.79f, 0.50f, 21.08f },
+	{ -11.09f, 0.50f, 25.86f },
+	{ -11.63f, 0.50f, 20.26f },
+	{ 4.56f, 0.50f, 6.09f },
+	{ 4.26f, 0.50f, -0.52f },
+	{ 13.40f, 0.50f, 3.96f },
+	{ 8.30f, 0.50f, -2.61f },
+	{ 3.54f, 0.50f, -8.14f },
+	{ 12.63f, 0.50f, -5.41f },
+	{ 17.85f, 0.50f, -6.61f },
+	{ 12.22f, 0.50f, -11.31f },
+	{ 6.39f, 0.50f, -16.76f },
+	{ 16.34f, 0.50f, 29.79f },
+	{ 20.79f, 0.50f, 26.20f },
+	{ 22.20f, 0.50f, 23.92f },
+	{ 26.26f, 0.50f, 20.11f },
+	{ -21.54f, 0.50f, -43.96f },
+	{ -25.23f, 0.50f, -37.29f },
+	{ -22.93f, 0.50f, -60.25f },
+	{ -18.56f, 0.50f, -62.08f },
+	{ -23.87f, 0.50f, -68.85f },
+	{ -15.83f, 0.50f, -64.64f },
+	{ -20.29f, 0.50f, -71.69f },
+	{ -14.06f, 0.50f, -73.44f },
+	{ 2.75f, 0.50f, -66.25f },
+	{ 9.63f, 0.50f, -67.28f },
+	{ 14.81f, 0.50f, -69.30f },
+};
+const D3DXVECTOR3 instance_position2[] = {
+
+	{ -21.66f, 0.50f, 82.52f },
+	{ -18.29f, 0.50f, 80.28f },
+	{ -15.95f, 0.50f, 74.57f },
+	{ -1.58f, 0.50f, 69.47f },
+	{ 6.24f, 0.50f, 71.37f },
+	{ 2.39f, 0.50f, 64.59f },
+	{ -1.82f, 0.50f, 65.49f },
+	{ -23.26f, 0.50f, 57.36f },
+	{ -22.27f, 0.50f, 26.14f },
+	{ -26.52f, 0.50f, 18.97f },
+	{ -20.53f, 0.50f, 19.44f },
+	{ -16.88f, 0.50f, 21.29f },
+	{ -10.04f, 0.50f, 17.67f },
+	{ -5.75f, 0.50f, 23.39f },
+	{ -12.84f, 0.50f, 27.83f },
+	{ -14.46f, 0.50f, 21.52f },
+	{ 2.58f, 0.50f, 3.00f },
+	{ 6.30f, 0.50f, 1.45f },
+	{ 14.48f, 0.50f, 1.06f },
+	{ 6.22f, 0.50f, -5.10f },
+	{ 6.43f, 0.50f, -8.93f },
+	{ 15.46f, 0.50f, -4.94f },
+	{ 16.43f, 0.50f, -8.97f },
+	{ 11.26f, 0.50f, -14.92f },
+	{ 7.43f, 0.50f, -13.41f },
+	{ 20.33f, 0.50f, 30.25f },
+	{ 16.76f, 0.50f, 26.24f },
+	{ 26.32f, 0.50f, 24.73f },
+	{ 22.53f, 0.50f, 18.12f },
+	{ -25.26f, 0.50f, -44.90f },
+	{ -24.96f, 0.50f, -34.35f },
+	{ -20.88f, 0.50f, -60.43f },
+	{ -20.98f, 0.50f, -65.16f },
+	{ -19.66f, 0.50f, -69.20f },
+	{ -14.42f, 0.50f, -69.60f },
+	{ -22.04f, 0.50f, -73.53f },
+	{ 2.55f, 0.50f, -61.59f },
+	{ 4.81f, 0.50f, -63.90f },
+	{ 11.29f, 0.50f, -70.74f },
+	{ 16.62f, 0.50f, -66.78f },
+};
+
+const D3DXVECTOR3 instance_position3[] = {
+	{ -23.17f, 0.50f, 79.11f },
+	{ -14.29f, 0.50f, 80.74f },
+	{ -15.76f, 0.50f, 72.04f },
+	{ -0.57f, 0.50f, 72.81f },
+	{ 5.53f, 0.50f, 68.90f },
+	{ 1.49f, 0.50f, 61.74f },
+	{ -3.62f, 0.50f, 59.89f },
+	{ -26.04f, 0.50f, 55.26f },
+	{ -23.88f, 0.50f, 23.83f },
+	{ -25.62f, 0.49f, 15.86f },
+	{ -18.04f, 0.50f, 18.46f },
+	{ -15.24f, 0.50f, 18.07f },
+	{ -7.87f, 0.50f, 19.59f },
+	{ -8.38f, 0.50f, 25.22f },
+	{ -12.29f, 0.50f, 23.71f },
+	{ 7.41f, 0.50f, 8.09f },
+	{ 1.39f, 0.50f, -0.56f },
+	{ 9.41f, 0.50f, 3.83f },
+	{ 11.74f, 0.50f, -1.50f },
+	{ 3.42f, 0.50f, -5.98f },
+	{ 9.22f, 0.50f, -8.01f },
+	{ 16.47f, 0.50f, -2.38f },
+	{ 15.17f, 0.50f, -12.79f },
+	{ 9.76f, 0.50f, -17.80f },
+	{ 5.08f, 0.50f, -12.54f },
+	{ 24.42f, 0.50f, 29.29f },
+	{ 18.44f, 0.50f, 22.98f },
+	{ 28.89f, 0.50f, 23.13f },
+	{ -19.38f, 0.38f, -46.17f },
+	{ -25.55f, 0.50f, -41.14f },
+	{ -26.16f, 0.50f, -32.03f },
+	{ -22.70f, 0.50f, -62.20f },
+	{ -24.36f, 0.50f, -66.39f },
+	{ -16.85f, 0.50f, -67.31f },
+	{ -16.58f, 0.19f, -71.69f },
+	{ -17.82f, 0.50f, -74.94f },
+	{ 1.77f, 0.50f, -64.25f },
+	{ 6.37f, 0.50f, -67.05f },
+	{ 13.58f, 0.50f, -72.29f },
+	{ 18.71f, 0.50f, -67.49f },
+
 };
 
 //-------------------------------------
@@ -151,36 +166,47 @@ InstancingTree::InstancingTree(
 	count_vertex_ = 0;
 	count_face_ = 0;
 	object_count_ = 0;
+	position_patern_ = 0;
 	shader_ = ShaderManager::Get("resource/shader/instancing.hlsl");
-	texture_ = TextureManager::GetTexture("resource/texture/game/tree01.png");
+	texture_ = NULL;
+	container_ = nullptr;
 
-	XContainer* container = XContainerManager::GetContainer("./resource/model/x/tree03.x");
 
-	LPD3DXMESH mesh = container->mesh_;
-	mesh->GetVertexBuffer(&vertex_buffer_);	// 頂点バッファオブジェクトへのポインタをゲット
-	mesh->GetIndexBuffer(&index_buffer_);	// インデックスバッファオブジェクトへのポインタをゲット
-	count_vertex_ = mesh->GetNumVertices();	// 頂点数をゲット
-	count_face_ = mesh->GetNumFaces();		// 面数をゲット
-
-	// テスト用オブジェクト数
-	object_count_ = sizeof(instance_position) / sizeof(D3DXVECTOR3);
-	DirectX9Holder::device_->CreateVertexBuffer(
-		sizeof(D3DXVECTOR3) * object_count_,
-		D3DUSAGE_WRITEONLY,
-		0,
-		D3DPOOL_MANAGED,
-		&world_buffer_,
-		NULL);
-
-	// テスト用座標設定
-	D3DXVECTOR3 *world;
-	world_buffer_->Lock(0, 0, (void**)&world, 0);
-	for(int i = 0; i < object_count_; i++)
+	for (int i = 0; i < 3; i++)
 	{
-		world[i] = instance_position[i];
+		// テスト用オブジェクト数
+		object_count_ = 40;
+		DirectX9Holder::device_->CreateVertexBuffer(
+			sizeof(D3DXVECTOR3) * object_count_,
+			D3DUSAGE_WRITEONLY,
+			0,
+			D3DPOOL_MANAGED,
+			&world_buffer_[i],
+			NULL);
+
+		// テスト用座標設定
+		D3DXVECTOR3 *world;
+		world_buffer_[i]->Lock(0, 0, (void**)&world, 0);
+		for (int j = position_patern_ * 40; j < position_patern_ * 40 + 40; j++)
+		{
+			switch (i)
+			{
+			case 0:
+				world[j] = instance_position1[j];
+				break;
+			case 1:
+				world[j] = instance_position2[j];
+				break;
+			case 2:
+				world[j] = instance_position3[j];
+				break;
+			}
+		}
+
+		world_buffer_[i]->Unlock();
 	}
-	world_buffer_->Unlock();
 }
+
 
 
 //-------------------------------------
@@ -188,9 +214,12 @@ InstancingTree::InstancingTree(
 //-------------------------------------
 InstancingTree::~InstancingTree()
 {
-	SAFE_RELEASE(world_buffer_);
+	SAFE_RELEASE(world_buffer_[0]);
+	SAFE_RELEASE(world_buffer_[1]);
+	SAFE_RELEASE(world_buffer_[2]);
 	SAFE_RELEASE(index_buffer_);
 	SAFE_RELEASE(vertex_buffer_);
+	container_ = nullptr;
 	shader_ = nullptr;
 }
 
@@ -260,11 +289,30 @@ void InstancingTree::Draw()
 		0,
 		sizeof(VertexInstancing3D));
 
-	DirectX9Holder::device_->SetStreamSource(
-		1,
-		world_buffer_,
-		0,
-		sizeof(D3DXVECTOR3));
+	switch (position_patern_)
+	{
+	case 0:
+		DirectX9Holder::device_->SetStreamSource(
+			1,
+			world_buffer_[0],
+			0,
+			sizeof(D3DXVECTOR3));
+		break;
+	case 1:
+		DirectX9Holder::device_->SetStreamSource(
+			1,
+			world_buffer_[1],
+			0,
+			sizeof(D3DXVECTOR3));
+		break;
+	case 2:
+		DirectX9Holder::device_->SetStreamSource(
+			1,
+			world_buffer_[2],
+			0,
+			sizeof(D3DXVECTOR3));
+		break;
+	}
 
 	DirectX9Holder::device_->SetIndices(index_buffer_);
 
@@ -288,6 +336,40 @@ void InstancingTree::Draw()
 	DirectX9Holder::device_->SetStreamSourceFreq(1, 1);
 	DirectX9Holder::device_->SetStreamSourceFreq(2, 1);
 	DirectX9Holder::device_->SetRenderState(D3DRS_ALPHATESTENABLE, FALSE);
+}
+
+
+//-------------------------------------
+// SetTexture()
+//-------------------------------------
+void InstancingTree::SetTexture(
+	const std::string &path)
+{
+	texture_ = TextureManager::GetTexture(path.c_str());
+}
+
+//-------------------------------------
+// SetMesh()
+//-------------------------------------
+void InstancingTree::SetMesh(
+	const std::string &path)
+{
+	container_ = XContainerManager::GetContainer(path.c_str());
+
+	LPD3DXMESH mesh = container_->mesh_;
+	mesh->GetVertexBuffer(&vertex_buffer_);	// 頂点バッファオブジェクトへのポインタをゲット
+	mesh->GetIndexBuffer(&index_buffer_);	// インデックスバッファオブジェクトへのポインタをゲット
+	count_vertex_ = mesh->GetNumVertices();	// 頂点数をゲット
+	count_face_ = mesh->GetNumFaces();		// 面数をゲット
+}
+
+
+//-------------------------------------
+// SetPositionPatern()
+//-------------------------------------
+void InstancingTree::SetPositionPatern(
+	int patern){
+	position_patern_ = patern;
 }
 
 

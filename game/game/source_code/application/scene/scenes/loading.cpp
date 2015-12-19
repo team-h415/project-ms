@@ -23,7 +23,24 @@
 Loading::Loading()
 {
 	object_manager_ = new ObjectManager;
+}
 
+
+//-------------------------------------
+// ~Loading()
+//-------------------------------------
+Loading::~Loading()
+{
+	setup_ = false;
+	SAFE_DELETE(object_manager_);
+}
+
+
+//-------------------------------------
+// Initialize()
+//-------------------------------------
+void Loading::Initialize()
+{
 	OBJECT_PARAMETER_DESC param;
 	param.name_ = "now_loading";
 	param.position_ = {
@@ -43,16 +60,6 @@ Loading::Loading()
 	// セットアップ完了
 	//-------------------------------------
 	setup_ = true;
-}
-
-
-//-------------------------------------
-// ~Loading()
-//-------------------------------------
-Loading::~Loading()
-{
-	setup_ = false;
-	SAFE_DELETE(object_manager_);
 }
 
 

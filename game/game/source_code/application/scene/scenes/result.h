@@ -23,6 +23,7 @@ class Result : public Scene
 public:
 	Result();
 	virtual ~Result();
+	void Initialize();
 	void Update();
 	void Draw();
 private:

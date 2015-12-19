@@ -7,10 +7,17 @@
 //-------------------------------------
 // include
 //-------------------------------------
+#include "../../../network/network.h"
+#include "../../../network/network_guest.h"
 #include "../../../../common/common.h"
 #include "../../../render/renderer.h"
 #include "../../../render/directx9/directx9.h"
 #include "../../../render/directx9/directx9_holder.h"
+#include "../../../scene/scene.h"
+#include "../../../scene/scene_manager.h"
+#include "../../../scene/scenes/game.h"
+#include "../../../scene/scenes/game_server.h"
+#include "../../../scene/scenes/matching.h"
 #include "../../../math/vector.h"
 #include "../../../shader/shader.h"
 #include "../../../shader/shader_manager.h"
@@ -18,7 +25,17 @@
 #include "../../object_manager.h"
 #include "lake.h"
 #include "../../../resource/texture_manager.h"
+#include "../../../collision/collision.h"
+#include "../../../collision/collision_manager.h"
 
+
+//-------------------------------------
+// constant
+//-------------------------------------
+const D3DXVECTOR4 collision_offset_and_range[] = {
+	// xyz : position_offset / w : range
+	{ 28.5f, 0.0f, 60.5f, 17.0f },
+};
 
 
 //-------------------------------------
@@ -47,9 +64,52 @@ Lake::Lake(
 	vertex_[3].normal_ = { 0.0f, 1.0f, 0.0f };
 
 	vertex_[0].texture_ = { 0.0f, 0.0f };
-	vertex_[1].texture_ = { 5.0f, 0.0f };
-	vertex_[2].texture_ = { 0.0f, 5.0f };
-	vertex_[3].texture_ = { 5.0f, 5.0f };
+	vertex_[1].texture_ = { 50.0f, 0.0f };
+	vertex_[2].texture_ = { 0.0f, 50.0f };
+	vertex_[3].texture_ = { 50.0f, 50.0f };
+
+	
+	//-------------------------------------
+	// マッチングかゲームの時のみ、あたり判定を生成
+	//-------------------------------------
+
+	//// シーンを判定
+	//std::string scene_name = SceneManager::GetCurrentSceneName();
+	//if (scene_name != "Game" &&	scene_name != "Matching") return;
+
+	// シーン取得
+	Scene *scene = SceneManager::GetCurrentScene();
+	
+	// 変数宣言
+	COLLISION_PARAMETER_DESC collision_param;
+	collision_param.position_ = { 0.0f, 0.0f, 0.0f };
+
+	// 定数バッファの数だけあたり判定を生成
+	int collision_count = sizeof(collision_offset_and_range) / sizeof(D3DXVECTOR4);
+	for (int i = 0; i < collision_count; i++){
+		collision_param.offset_ = {
+			collision_offset_and_range[i].x,
+			collision_offset_and_range[i].y,
+			collision_offset_and_range[i].z };
+		collision_param.range_ = collision_offset_and_range[i].w;
+
+		// シーンで分岐
+		GameServer *game_server = dynamic_cast<GameServer*>(scene);
+		game_server->collision_manager()->Create(
+			this, collision_param);
+		//if (scene_name == "Game")
+		//{
+		//	Game *game = dynamic_cast<Game*>(scene);
+		//	game->collision_manager()->Create(
+		//		this, collision_param);
+		//}
+		//else
+		//{
+		//	Matching *matching = dynamic_cast<Matching*>(scene);
+		//	matching->collision_manager()->Create(
+		//		this, collision_param);
+		//}
+	}
 }
 
 

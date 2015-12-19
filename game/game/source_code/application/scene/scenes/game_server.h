@@ -52,6 +52,7 @@ class GameServer : public Scene
 {
 public:
 	GameServer();
+	void Initialize();
 	virtual ~GameServer();
 	void Update();
 	void Draw();

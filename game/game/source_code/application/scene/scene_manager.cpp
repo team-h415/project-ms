@@ -43,6 +43,8 @@ SceneManager::SceneManager()
 	#else
 		current_scene_ = Create("Matching");
 	#endif
+	loading_scene_->Initialize();
+	current_scene_->Initialize();
 	fade_ = new Fade();
 	fade_->SetFade(FADE_OUT);
 }
@@ -147,6 +149,7 @@ void SceneManager::ChangeScene()
 void SceneManager::CreateScene()
 {
 	current_scene_ = Create(next_name_);
+	current_scene_->Initialize();
 	loading_ = false;
 }
 

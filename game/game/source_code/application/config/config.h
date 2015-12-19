@@ -67,8 +67,6 @@ static const float MATCHING_ROTATION[5]
 #define GAME_TIMER (100)							// ゲームの時間
 
 #define MAX_BULLET (100)							// バレット最大数
-#define LAKE_RANGE	(35.0f)							// 湖の半径
-#define LAKE_COLLISION_RANGE (24.5f)				// 湖の当たり半径
 
 
 
@@ -85,16 +83,16 @@ static const float MATCHING_ROTATION[5]
 // 座標
 static const Vector3 GRANDFATHER_POSITION_STAGE[3]
 {
-	{  40.0f, 0.0f, -40.0f },
-	{ -60.0f, 0.0f, 55.0f },
-	{  40.0f, 0.0f, 65.0f },
+	{28.76f, 0.30f, 69.61f},
+	{27.30f, 0.00f, 5.67f},
+	{-2.36f, 0.00f, -78.30f},
 };
 // 角度
 static const float GRANDFATHER_ROTATION_STAGE[3]
 {
-	-0.82f,
-	3.14f,
-	4.30f,
+	1.70f,
+	2.21f,
+	-0.23f,
 };
 
 // HP自動回復待ち時間
@@ -114,21 +112,43 @@ static const float GRANDFATHER_ROTATION_STAGE[3]
 // くらうダメージ量
 #define CHILD_DAMAGE 0.02f
 // 座標
-static const Vector3 CHILD_POSITION[4]
+static const Vector3 CHILD_POSITION[]
 {
-	{-55.0f, 0.0f, -50.0f},
-	{-50.0f, 0.0f, -50.0f},
-	{-55.0f, 0.0f, -55.0f},
-	{-50.0f, 0.0f, -55.0f},
+	// ステージ１
+	{37.58f, 0.00f, 75.41f},
+	{34.39f, 0.00f, 77.99f},
+	{34.49f, 0.00f, 82.64f},
+	{36.32f, 0.00f, 85.72f},
+	// ステージ２
+	{-36.52f, 0.30f, 61.88f},
+	{-32.16f, 0.30f, 64.62f},
+	{-30.39f, 0.30f, 69.10f},
+	{-31.84f, 0.30f, 73.71f},
+	// ステージ３
+	{27.03f, 0.00f, -12.50f},
+	{28.01f, 0.00f, -16.77f},
+	{30.53f, 0.00f, -19.73f},
+	{35.23f, 0.00f, -20.31f},
 };
 
 // 角度
-static const float CHILD_ROTATION[4]
+static const float CHILD_ROTATION[]
 {
-	0.79f,
-	0.79f,
-	0.79f,
-	0.79f,
+	// ステージ１
+	-1.49f,
+	-1.49f,
+	-1.49f,
+	-1.49f,
+	// ステージ２
+	0.30f,
+	0.30f,
+	0.30f,
+	0.30f,
+	// ステージ３
+	-2.47f,
+	-2.47f,
+	-2.47f,
+	-2.47f,
 };
 
 // リスポーン待ち時間
@@ -147,10 +167,11 @@ static const float CHILD_ROTATION[4]
 // 座標
 static const Vector3 FORT_POSITION[3]
 {
-	{  50.0f, 0.0f, -50.0f },
-	{ -56.0f, 0.0f, 63.0f },
-	{  53.0f, 0.0f, 62.0f },
+	{-37.86f, 0.30f, 68.30f},
+	{35.51f, 0.30f, -1.87f},
+	{0.53f, 0.30f, -88.43f},
 };
+
 // 体力
 static const float FORT_LIFE[3]{
 	1.0f,

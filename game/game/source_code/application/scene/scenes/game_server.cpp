@@ -62,7 +62,14 @@ GameServer::GameServer()
 	collision_manager_ = new CollisionManager;
 	font_ = new DebugFont;
 	scene_state_ = 0;
+}
 
+
+//-------------------------------------
+// Initialize()
+//-------------------------------------
+void GameServer::Initialize()
+{
 	//-------------------------------------
 	// BGM･SE先行読み込み
 	//-------------------------------------
@@ -91,10 +98,10 @@ GameServer::GameServer()
 	CAMERA_PARAMETER_DESC camera_param;
 	camera_param.acpect_ = SCREEN_WIDTH / SCREEN_HEIGHT;
 	camera_param.fovy_ = D3DX_PI * 0.25f;
-	camera_param.position_ = { 0.0f, 0.0f, -10.0f };
-	camera_param.focus_ = { 0.0f, 0.0f, 0.0f };
-	camera_param.rotation_ = { 0.0f, 0.0f, 0.0f };
-	camera_param.up_ = { 0.0f, 1.0f, 0.0f };
+	camera_param.position_ = {0.0f, 0.0f, -10.0f};
+	camera_param.focus_ = {0.0f, 0.0f, 0.0f};
+	camera_param.rotation_ = {0.0f, 0.0f, 0.0f};
+	camera_param.up_ = {0.0f, 1.0f, 0.0f};
 	camera_param.near_ = 0.1f;
 	camera_param.far_ = 1000.0f;
 
@@ -145,27 +152,6 @@ GameServer::GameServer()
 
 	object_manager_->Create(
 		lake_param);
-
-	// 湖
-	Object *obj_lake = object_manager_->Get("lake");
-	COLLISION_PARAMETER_DESC lake_collision_param;
-	lake_collision_param.position_ = {
-		obj_lake->parameter().position_.x_,
-		5.0f,
-		obj_lake->parameter().position_.z_};
-	lake_collision_param.range_ = LAKE_COLLISION_RANGE;
-	// 上
-	lake_collision_param.offset_ = {-0.5f, 0.0f, 11.5f};
-	collision_manager_->Create(object_manager_->Get("lake"),
-		lake_collision_param);
-	// 右下
-	lake_collision_param.offset_ = {5.0f, 0.0f, 2.0f};
-	collision_manager_->Create(object_manager_->Get("lake"),
-		lake_collision_param);
-	// 左上
-	lake_collision_param.offset_ = {-3.5f, 0.0f, 0.0f};
-	collision_manager_->Create(object_manager_->Get("lake"),
-		lake_collision_param);
 
 	//-------------------------------------
 	// 砦
@@ -1988,6 +1974,7 @@ void GameServer::GameChild()
 	Vector3 child_rotation;
 	Vector3 child_position_old;
 	NETWORK_DATA send_data;
+	int my_id;
 
 	for(int i = 1; i < 5; i++)
 	{
@@ -1999,13 +1986,13 @@ void GameServer::GameChild()
 		child_position = child->parameter().position_;
 		child_rotation = child->parameter().rotation_;
 		child_position_old = child_position;
-
+		my_id = i - 1;
 
 		//-------------------------------------
 		// プレイヤーを地形に沿って移動させる
 		//-------------------------------------
 		bool input(true);
-		if(child_death_[i - 1])
+		if(child_death_[my_id])
 		{
 			input = false;
 		}
@@ -2173,10 +2160,11 @@ void GameServer::GameChild()
 		// 子供死亡時制御
 		//-------------------------------------
 		float child_life = child->GetLife();
-		if(child_life < 0 && !child_death_[i - 1]){
+		if(child_life < 0 && !child_death_[my_id])
+		{
 			child->PlayAnimation(FbxChild::DOWN);
-			child_death_[i - 1] = true;
-			child_respawn_waittime_[i - 1] = CHILD_RESPAWN_WAITTIME;
+			child_death_[my_id] = true;
+			child_respawn_waittime_[my_id] = CHILD_RESPAWN_WAITTIME;
 
 			Vector3 child_position = child->parameter().position_;
 
@@ -2191,22 +2179,31 @@ void GameServer::GameChild()
 			strcpy_s(send_data.name, MAX_NAME_LEN, "dead");
 			NetworkHost::SendTo(DELI_MULTI, send_data);
 		}
-		else if(child_death_[i - 1] && !child_respawn_waittime_[i - 1]){
+		else if(child_death_[my_id] && !child_respawn_waittime_[my_id])
+		{
 			child->PlayAnimation(FbxChild::IDLE);
-			child_death_[i - 1] = false;
+			child_death_[my_id] = false;
 			child_life = CHILD_LIFE;
 			child->SetLife(child_life);
-			child->SetPosition(CHILD_POSITION[i - 1]);
-			child->SetRotationY(CHILD_ROTATION[i - 1]);
+			if(now_target_fort_ <= 2)
+			{
+				child->SetPosition(CHILD_POSITION[my_id + (now_target_fort_ * 4)]);
+				child->SetRotationY(CHILD_ROTATION[my_id + (now_target_fort_ * 4)]);
+			}
+			else
+			{
+				child->SetPosition(CHILD_POSITION[my_id + (2 * 4)]);
+				child->SetRotationY(CHILD_ROTATION[my_id + (2 * 4)]);
+			}
 		}
 
-		child_respawn_waittime_[i - 1]--;
-		child_respawn_waittime_[i - 1] = std::max<int>(child_respawn_waittime_[i - 1], 0);
+		child_respawn_waittime_[my_id]--;
+		child_respawn_waittime_[my_id] = std::max<int>(child_respawn_waittime_[my_id], 0);
 
 		//-------------------------------------
 		// 子供体力自動回復制御
 		//-------------------------------------
-		if(child_life < 1.0f && !child_death_[i - 1]){
+		if(child_life < 1.0f && !child_death_[my_id]){
 			int child_recover_wait_timer = child->GetRecoverWaitTimer();
 
 			if(child_recover_wait_timer > CHILD_RECOVER_WAITE_TIME){
@@ -2335,32 +2332,29 @@ void GameServer::GameChild()
 		//------------------------------------------------
 		// アローデータ転送
 		//------------------------------------------------
-		if(i != 0)
+		ZeroMemory(&send_data, sizeof(send_data));
+		send_data.type_ = DATA_OBJ_PARAM;
+		send_data.object_param_.type_ = OBJ_ARROW;
+
+		if(now_target_fort_ <= 2)
 		{
-			ZeroMemory(&send_data, sizeof(send_data));
-			send_data.type_ = DATA_OBJ_PARAM;
-			send_data.object_param_.type_ = OBJ_ARROW;
+			send_data.object_param_.position_.x_ = child_position.x_;
+			send_data.object_param_.position_.y_ = child_position.y_ + 1.5f;
+			send_data.object_param_.position_.z_ = child_position.z_;
 
-			if(now_target_fort_ <= 2)
-			{
-				send_data.object_param_.position_.x_ = child_position.x_;
-				send_data.object_param_.position_.y_ = child_position.y_ + 1.5f;
-				send_data.object_param_.position_.z_ = child_position.z_;
-
-				std::string name = "fort" + std::to_string(now_target_fort_);
-				Object *fort_object = object_manager_->Get(name);
-				Vector3 fpos = fort_object->parameter().position_;
-				Vector3 temp = fpos - child_position;
-				send_data.object_param_.rotation_ = {0.0f, 0.0f, 0.0f};
-				send_data.object_param_.rotation_.y_ = atan2(temp.x_, temp.z_);
-			}
-			else
-			{
-				send_data.object_param_.position_.y_ = 5000.0f;
-			}
-
-			NetworkHost::SendTo((DELI_TYPE)i, send_data);
+			std::string name = "fort" + std::to_string(now_target_fort_);
+			Object *fort_object = object_manager_->Get(name);
+			Vector3 fpos = fort_object->parameter().position_;
+			Vector3 temp = fpos - child_position;
+			send_data.object_param_.rotation_ = {0.0f, 0.0f, 0.0f};
+			send_data.object_param_.rotation_.y_ = atan2(temp.x_, temp.z_);
 		}
+		else
+		{
+			send_data.object_param_.position_.y_ = 5000.0f;
+		}
+
+		NetworkHost::SendTo((DELI_TYPE)i, send_data);
 	}
 }
 
