@@ -145,9 +145,9 @@ void GameServer::Initialize()
 	//-------------------------------------
 	OBJECT_PARAMETER_DESC lake_param;
 	lake_param.name_ = "lake";
-	lake_param.position_ = {0.0f, -0.5f, 0.0f};
+	lake_param.position_ = {0.0f, -0.8f, 0.0f};
 	lake_param.rotation_ = {0.0f, 0.0f, 0.0f};
-	lake_param.scaling_ = {30.0f, 1.0f, 30.0f};
+	lake_param.scaling_ = {300.0f, 1.0f, 300.0f};
 	lake_param.layer_ = LAYER_SPRITE_LAKE;
 
 	object_manager_->Create(

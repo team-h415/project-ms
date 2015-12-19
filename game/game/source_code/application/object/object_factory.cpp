@@ -14,7 +14,7 @@
 #include "object.h"
 #include "object_factory.h"
 #include "objects/sprite/sprite2d.h"
-#include "objects/sprite/message.h"
+#include "objects/sprite/message/message.h"
 #include "objects/sprite/countdown.h"
 #include "objects/mesh/field.h"
 #include "objects/model/x_model.h"

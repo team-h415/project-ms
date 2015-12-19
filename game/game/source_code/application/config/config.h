@@ -23,7 +23,7 @@
 //-=--=--=--=--=--=--=--=--=--=--=--=--=--=--=-//
 static const Vector3 MATCHING_POSITION[5]
 {
-	{59.75f, 0.00f, -39.26f},
+	{30.75f, 0.00f, -39.26f},
 	{39.42f, 0.00f, -55.70f},
 	{42.95f, 0.00f, -55.60f},
 	{47.24f, 0.00f, -55.67f},
@@ -39,7 +39,7 @@ static const float MATCHING_ROTATION[5]
 	0.0f,
 };
 
-#define PORTAL_POSITION { 40.00f, 0.00f, -40.00f }
+#define PORTAL_POSITION { 20.0f, 0.30f, -30.00f }
 #define PORTAL_DISTANCE 3.0f
 
 

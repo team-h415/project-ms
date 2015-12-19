@@ -36,7 +36,7 @@
 #include "../object/objects/model/fbx/fbx_player.h"
 #include "../object/objects/model/fbx/fbx_grandfather.h"
 #include "../object/objects/model/fbx/fbx_child.h"
-#include "../object/objects/sprite/message.h"
+#include "../object/objects/sprite/message/message.h"
 #include "../effect/effect.h"
 #include "../effect/effect_manager.h"
 #include "../camera/camera.h"
