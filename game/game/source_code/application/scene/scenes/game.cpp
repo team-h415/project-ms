@@ -113,7 +113,7 @@ Game::Game()
 
 	effect_manager_->Create(
 		"damage",
-		"resource/effect/Damage3_2.efk",
+		"resource/effect/Damage3_3x0.5.efk",
 		effect_param);
 
 	effect_manager_->Create(
