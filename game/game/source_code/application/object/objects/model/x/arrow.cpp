@@ -96,8 +96,26 @@ void Arrow::Draw()
 	DirectX9Holder::device_->GetTransform(D3DTS_PROJECTION, &projection);
 	wvp = world_ * view * projection;
 
+	D3DXVECTOR3 light_vec(0.5f, -0.5f, 0.5f);
+	D3DXVec3Normalize(&light_vec, &light_vec);
+	D3DXCOLOR light_diffuse(1.0f, 1.0f, 1.0f, 1.0f);
+
 	shader_->vertex_table()->SetMatrix(
 		DirectX9Holder::device_, "matrix_wvp", &wvp);
+	shader_->vertex_table()->SetMatrix(
+		DirectX9Holder::device_, "matrix_w", &world_);
+
+	shader_->vertex_table()->SetFloatArray(
+		DirectX9Holder::device_,
+		"light_direction",
+		reinterpret_cast<float*>(&light_vec),
+		3);
+
+	shader_->vertex_table()->SetFloatArray(
+		DirectX9Holder::device_,
+		"light_diffuse",
+		reinterpret_cast<float*>(&light_diffuse),
+		4);
 
 	DirectX9Holder::device_->SetTexture(
 		shader_->pixel_table()->GetSamplerIndex("texture_0"), texture_);

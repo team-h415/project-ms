@@ -46,6 +46,8 @@ class CollisionManager;
 class Object;
 class Field;
 class Sound;
+class FbxGrandfather;
+class FbxChild;
 class GameServer : public Scene
 {
 public:
@@ -73,6 +75,12 @@ private:
 	void Matching();
 	void Game();
 	void Result();
+
+	void MatchingGrandfather();
+	void MatchingChild();
+
+	void GameGrandfather();
+	void GameChild();
 
 	void ChangeServerState(SERVER_STATE next);
 

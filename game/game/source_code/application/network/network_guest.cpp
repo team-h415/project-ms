@@ -590,6 +590,11 @@ void NetworkGuest::ObjDataAdaptation(
 					effect_param.position_.x_ = rec_data.object_param_.position_.x_;
 					effect_param.position_.y_ = rec_data.object_param_.position_.y_;
 					effect_param.position_.z_ = rec_data.object_param_.position_.z_;
+
+					effect_param.rotation_.x_ = rec_data.object_param_.rotation_.x_;
+					effect_param.rotation_.y_ = rec_data.object_param_.rotation_.y_;
+					effect_param.rotation_.z_ = rec_data.object_param_.rotation_.z_;
+
 					effect->SetParameter(effect_param);
 					effect_manager->Play(name);
 				}

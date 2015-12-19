@@ -158,7 +158,7 @@ static const float FORT_LIFE[3]{
 	1.0f,
 };
 // Ç≠ÇÁÇ§É_ÉÅÅ[ÉWó 
-#define FORT_DAMAGE 0.01f;
+#define FORT_DAMAGE 0.05f;
 
 
 //-=--=--=--=--=--=--=--=--=--=--=--=--=--=--=-//
