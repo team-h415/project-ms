@@ -15,26 +15,28 @@
 //-------------------------------------
 // class
 //-------------------------------------
-class Message : public Sprite2D
+class Message : public Object
 {
 public:
 	Message(
 		const OBJECT_PARAMETER_DESC &parameter);
-	virtual ~Message();
+	~Message();
 	void Update();
-	int GetTimer(){
-		return timer_;
-	}
-	void Play(){
-		play_ = true;
-		timer_ = 0;
-		alpha_ = 0.0f;
+	void Draw();
+	void SetTexture(
+		const std::string &path);
+	void Play();
+	void Move(float value){
+		dest_position_ += value;
 	}
 
 private:
 	void CalculateVertex();
-	int timer_;
-	float alpha_;
+	Vertex2D *vertex_;
+	LPDIRECT3DTEXTURE9 frame_texture_;
+	LPDIRECT3DTEXTURE9 message_texture_;
+	int frame_count_;
+	float dest_position_;
 	bool play_;
 };
 

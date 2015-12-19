@@ -633,11 +633,11 @@ void Game::Initialize()
 	OBJECT_PARAMETER_DESC message_param;
 	message_param.name_ = "message_child1_death";
 	message_param.position_ = {
-		SCREEN_WIDTH + 200.0f,
-		SCREEN_HEIGHT - 200.0f,
+		0.0f,
+		MESSAGE_DISP_POSITION_Y,
 		0.0f };
 	message_param.rotation_ = { 0.0f, 0.0f, 0.0f };
-	message_param.scaling_ = { 400.0f, 100.0f, 0.0f };
+	message_param.scaling_ = { 1.0f, 1.0f, 0.0f };
 	message_param.layer_ = LAYER_MESSAGE;
 
 	object_manager_->Create(
@@ -805,59 +805,55 @@ void Game::Update()
     //-------------------------------------
     // メッセージの再生
     //-------------------------------------
+	Object *message_object_25 = object_manager_->Get("message_fort_25");
+	Message *message_25 = dynamic_cast<Message*>(message_object_25);
+
+	Object *message_object_50 = object_manager_->Get("message_fort_50");
+	Message *message_50 = dynamic_cast<Message*>(message_object_50);
+
+	Object *message_object_75 = object_manager_->Get("message_fort_75");
+	Message *message_75 = dynamic_cast<Message*>(message_object_75);
+
+	Object *message_object_100 = object_manager_->Get("message_fort_100");
+	Message *message_100 = dynamic_cast<Message*>(message_object_100);
+
     // 砦が破壊された！
     if ((fort_damage_state == 75 && (fort1_life <= 0.0f) && stage_ == 1) ||
         (fort_damage_state == 75 && (fort2_life <= 0.0f) && stage_ == 2)){
-        Object *message_object = object_manager_->Get("message_fort_100");
-        Message *message = dynamic_cast<Message*>(message_object);
-        Vector3 message_position = {
-            SCREEN_WIDTH + 200.0f,
-            SCREEN_HEIGHT - 200.0f,
-            0.0f };
-        message_object->SetPosition(message_position);
-        message->Play();
+		message_100->Play();
+		message_25->Move(-100.0f);
+		message_50->Move(-100.0f);
+		message_75->Move(-100.0f);
         fort_damage_state = 0;
     }
     // 損壊率75%
     else if ((fort_damage_state == 50 && fort1_life < FORT1_LiFE * 0.25f && stage_ == 1) ||
         (fort_damage_state == 50 && fort2_life < FORT2_LiFE * 0.25f && stage_ == 2) ||
         (fort_damage_state == 50 && fort3_life < FORT3_LiFE * 0.25f && stage_ == 3)){
-        Object *message_object = object_manager_->Get("message_fort_75");
-        Message *message = dynamic_cast<Message*>(message_object);
-        Vector3 message_position = {
-            SCREEN_WIDTH + 200.0f,
-            SCREEN_HEIGHT - 200.0f,
-            0.0f };
-        message_object->SetPosition(message_position);
-        message->Play();
+		message_75->Play();
+		message_25->Move(-100.0f);
+		message_50->Move(-100.0f);
+		message_100->Move(-100.0f);
         fort_damage_state = 75;
     }
     // 損壊率50%
     else if ((fort_damage_state == 25 && fort1_life < FORT1_LiFE * 0.5f && stage_ == 1) ||
         (fort_damage_state == 25 && fort2_life < FORT2_LiFE * 0.5f && stage_ == 2) ||
         (fort_damage_state == 25 && fort3_life < FORT3_LiFE * 0.5f && stage_ == 3)){
-        Object *message_object = object_manager_->Get("message_fort_50");
-        Message *message = dynamic_cast<Message*>(message_object);
-        Vector3 message_position = {
-            SCREEN_WIDTH + 200.0f,
-            SCREEN_HEIGHT - 200.0f,
-            0.0f };
-        message_object->SetPosition(message_position);
-        message->Play();
+ 		message_50->Play();
+		message_25->Move(-100.0f);
+		message_75->Move(-100.0f);
+		message_100->Move(1-00.0f);
         fort_damage_state = 50;
     }
     // 損壊率25%
     else if ((fort_damage_state == 0 && fort1_life < FORT1_LiFE * 0.75f && stage_ == 1) ||
         (fort_damage_state == 0 && fort2_life < FORT2_LiFE * 0.75f && stage_ == 2) ||
         (fort_damage_state == 0 && fort3_life < FORT3_LiFE * 0.75f && stage_ == 3)){
-        Object *message_object = object_manager_->Get("message_fort_25");
-        Message *message = dynamic_cast<Message*>(message_object);
-        Vector3 message_position = {
-            SCREEN_WIDTH + 200.0f,
-            SCREEN_HEIGHT - 200.0f,
-            0.0f };
-        message_object->SetPosition(message_position);
-        message->Play();
+   		message_25->Play();
+		message_50->Move(-100.0f);
+		message_75->Move(-100.0f);
+		message_100->Move(-100.0f);
         fort_damage_state = 25;
     }
 
@@ -1676,7 +1672,8 @@ void Game::Update()
 	font1_->Add("OBJECT : %d\n", ObjectManager::GetCount());
 	font1_->Add("EFFECT : %d\n", EffectManager::GetCount());
 	font1_->Add("COLLISION : %d\n", CollisionManager::GetCount());
-
+	font1_->Add("MESSAGE_25 : %3.2f\n", message_object_25->parameter().position_.y_);
+	
 	font2_->Add("----------操作説明----------\n");
 	font2_->Add("【ゲームパッド使用時】\n");
 	font2_->Add("左スティック：移動\n");

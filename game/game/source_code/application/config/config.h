@@ -56,6 +56,7 @@
 
 #define MAX_BULLET (100)							// バレット最大数
 
+#define MESSAGE_DISP_POSITION_Y 500.0f				// メッセージ表示座標
 
 
 //-------------------------------------
