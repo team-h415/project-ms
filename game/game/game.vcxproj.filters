@@ -136,9 +136,6 @@
     <ClCompile Include="source_code\application\scene\scenes\loading.cpp">
       <Filter>source_code\application\scene\scenes</Filter>
     </ClCompile>
-    <ClCompile Include="source_code\application\scene\scenes\title.cpp">
-      <Filter>source_code\application\scene\scenes</Filter>
-    </ClCompile>
     <ClCompile Include="source_code\application\window\window.cpp">
       <Filter>source_code\application\window</Filter>
     </ClCompile>
@@ -352,9 +349,6 @@
       <Filter>source_code\application\scene\scenes</Filter>
     </ClInclude>
     <ClInclude Include="source_code\application\scene\scenes\loading.h">
-      <Filter>source_code\application\scene\scenes</Filter>
-    </ClInclude>
-    <ClInclude Include="source_code\application\scene\scenes\title.h">
       <Filter>source_code\application\scene\scenes</Filter>
     </ClInclude>
     <ClInclude Include="source_code\application\window\window.h">

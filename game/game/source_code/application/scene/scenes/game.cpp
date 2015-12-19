@@ -24,6 +24,7 @@
 #include "../../object/objects/mesh/field.h"
 #include "../../object/objects/model/x_model.h"
 #include "../../object/objects/model/x/x_fort.h"
+#include "../../object/objects/model/x/instancing_tree.h"
 #include "../../object/objects/model/fbx_model.h"
 #include "../../object/objects/model/fbx/fbx_player.h"
 #include "../../object/objects/model/fbx/fbx_grandfather.h"
@@ -97,6 +98,31 @@ Game::Game()
 	use_camera_name_ = "MainCamera";
     object_manager_->SetDrawEnable(LAYER_DAMAGE_EFFECT, false);
 
+	
+
+}
+
+
+//-------------------------------------
+// ~Game()
+//-------------------------------------
+Game::~Game()
+{
+	effect_manager_ = nullptr;
+    sound_->ReleaseSound(&sound_);
+	SAFE_DELETE(object_manager_);
+	SAFE_DELETE(camera_manager_);
+	SAFE_DELETE(font1_);
+	SAFE_DELETE(font2_);
+	SAFE_DELETE(collision_manager_);
+}
+
+
+//-------------------------------------
+// Initialize()
+//-------------------------------------
+void Game::Initialize()
+{
 	//-------------------------------------
 	// エフェクトの読み込み
 	//-------------------------------------
@@ -146,10 +172,10 @@ Game::Game()
 		"resource/effect/WaterSupply2.efk",
 		effect_param);
 
-    effect_manager_->Create(
-        "SpeedDown",
-        "resource/effect/SpeedDown.efk",
-        effect_param);
+	effect_manager_->Create(
+		"SpeedDown",
+		"resource/effect/SpeedDown.efk",
+		effect_param);
 
 	//-------------------------------------
 	// メインカメラ
@@ -192,12 +218,12 @@ Game::Game()
 	field_param.name_ = "field";
 	field_param.position_ = { 0.0f, 0.0f, 0.0f };
 	field_param.rotation_ = { 0.0f, 0.0f, 0.0f };
-	field_param.scaling_ = { 200.0f, 1.0f, 200.0f };
+	field_param.scaling_ = { 100.0f, 1.0f, 200.0f };
 	field_param.layer_ = LAYER_MESH_FIELD;
 
 	object_manager_->Create(
 		field_param,
-		"resource/mesh/map.heightmap");
+		"resource/mesh/map3.heightmap");
 
 
 	//-------------------------------------
@@ -227,35 +253,13 @@ Game::Game()
 	//-------------------------------------
 	OBJECT_PARAMETER_DESC lake_param;
 	lake_param.name_ = "lake";
-	lake_param.position_ = { 0.0f, -0.5f, 0.0f };
+	lake_param.position_ = { 0.0f, -0.6f, 0.0f };
 	lake_param.rotation_ = { 0.0f, 0.0f, 0.0f };
-	lake_param.scaling_ = { 30.0f, 1.0f, 30.0f };
+	lake_param.scaling_ = { 300.0f, 1.0f, 300.0f };
 	lake_param.layer_ = LAYER_SPRITE_LAKE;
 
 	object_manager_->Create(
 		lake_param);
-
-	// 湖
-	Object *obj_lake = object_manager_->Get("lake");
-	COLLISION_PARAMETER_DESC lake_collision_param;
-	lake_collision_param.position_ = {
-		obj_lake->parameter().position_.x_,
-		5.0f,
-		obj_lake->parameter().position_.z_ };
-	lake_collision_param.range_ = LAKE_COLLISION_RANGE;
-	// 上
-	lake_collision_param.offset_ = { -0.5f, 0.0f, 11.5f };
-	collision_manager_->Create(object_manager_->Get("lake"),
-		lake_collision_param);
-	// 右下
-	lake_collision_param.offset_ = { 5.0f, 0.0f, 2.0f };
-	collision_manager_->Create(object_manager_->Get("lake"),
-		lake_collision_param);
-	// 左上
-	lake_collision_param.offset_ = { -3.5f, 0.0f, 0.0f };
-	collision_manager_->Create(object_manager_->Get("lake"),
-		lake_collision_param);
-
 
 
 	//-------------------------------------
@@ -349,7 +353,7 @@ Game::Game()
 	grandfather_param.name_ = "grandfather";
 	grandfather_param.layer_ = LAYER_MODEL_GRANDFATHER;
 	grandfather_param.position_ = GRANDFATHER_POSITION_STAGE1;
-	grandfather_param.rotation_ = { 0.0f, 0.0f, 0.0f };
+	grandfather_param.rotation_ = { 0.0f, GRANDFATHER_ROTATION_STAGE1, 0.0f };
 	grandfather_param.scaling_ = { 1.0f, 1.0f, 1.0f };
 
 	object_manager_->Create(
@@ -373,8 +377,8 @@ Game::Game()
 	OBJECT_PARAMETER_DESC child_param;
 	child_param.name_ = "child";
 	child_param.layer_ = LAYER_MODEL_CHILD;
-	child_param.position_ = CHILD_POSITION1;
-	child_param.rotation_ = { 0.0f, 0.0f, 0.0f };
+	child_param.position_ = CHILD1_POSITION1;
+	child_param.rotation_ = CHILD1_ROTATION1;
 	child_param.scaling_ = { 1.0f, 1.0f, 1.0f };
 
 	object_manager_->Create(
@@ -407,16 +411,16 @@ Game::Game()
 	//-------------------------------------
 	// タイマー
 	//-------------------------------------
-    OBJECT_PARAMETER_DESC time_param;
+	OBJECT_PARAMETER_DESC time_param;
 	time_param.name_ = "time";
-    time_param.position_ = {
-        SCREEN_WIDTH * 0.5f,
-        40.0f,
-        0.0f
-    };
-    time_param.rotation_ = { 0.0f, 0.0f, 0.0f };
-    time_param.scaling_ = { 80.0f, 80.0f, 0.0f };
-    time_param.layer_ = LAYER_TIMER;
+	time_param.position_ = {
+		SCREEN_WIDTH * 0.5f,
+		40.0f,
+		0.0f
+	};
+	time_param.rotation_ = { 0.0f, 0.0f, 0.0f };
+	time_param.scaling_ = { 80.0f, 80.0f, 0.0f };
+	time_param.layer_ = LAYER_TIMER;
 
 	Timer* timer = static_cast<Timer*>(
 		object_manager_->Create(
@@ -432,133 +436,148 @@ Game::Game()
 	//-------------------------------------
 	// 砦UI
 	//-------------------------------------
-    OBJECT_PARAMETER_DESC fort_state_param;
+	OBJECT_PARAMETER_DESC fort_state_param;
 	fort_state_param.name_ = "fort_state";
-    fort_state_param.position_ = {
-        SCREEN_WIDTH * 0.5f,
-        100.0f,
-        0.0f
-    };
-    fort_state_param.rotation_ = { 0.0f, 0.0f, 0.0f };
-    fort_state_param.scaling_ = { 160.0f, 40.0f, 0.0f };
-    fort_state_param.layer_ = LAYER_SPRITE_2D;
+	fort_state_param.position_ = {
+		SCREEN_WIDTH * 0.5f,
+		100.0f,
+		0.0f
+	};
+	fort_state_param.rotation_ = { 0.0f, 0.0f, 0.0f };
+	fort_state_param.scaling_ = { 160.0f, 40.0f, 0.0f };
+	fort_state_param.layer_ = LAYER_SPRITE_2D;
 
-    object_manager_->Create(
+	object_manager_->Create(
 		fort_state_param);
 
 
-    OBJECT_PARAMETER_DESC fort_gauge_param;
+	OBJECT_PARAMETER_DESC fort_gauge_param;
 	fort_gauge_param.name_ = "fort_gauge_manager";
-    fort_gauge_param.position_ = {
-        SCREEN_WIDTH * 0.5f,
-        100.0f,
-        0.0f
-    };
-    fort_gauge_param.rotation_ = { 0.0f, 0.0f, 0.0f };
-    fort_gauge_param.scaling_ = { 40.0f, 40.0f, 0.0f };
-    fort_gauge_param.layer_ = LAYER_FORT_GAUGE;
+	fort_gauge_param.position_ = {
+		SCREEN_WIDTH * 0.5f,
+		100.0f,
+		0.0f
+	};
+	fort_gauge_param.rotation_ = { 0.0f, 0.0f, 0.0f };
+	fort_gauge_param.scaling_ = { 40.0f, 40.0f, 0.0f };
+	fort_gauge_param.layer_ = LAYER_FORT_GAUGE;
 
-    object_manager_->Create(
+	object_manager_->Create(
 		fort_gauge_param,
-        "resource/texture/game/Child_01.jpg");
+		"resource/texture/game/Child_01.jpg");
 
 
-    //-------------------------------------
-    // 水ゲージ下地UI
-    //-------------------------------------
+	//-------------------------------------
+	// 水ゲージ下地UI
+	//-------------------------------------
 	OBJECT_PARAMETER_DESC water_design_param;
 	water_design_param.name_ = "water_design";
-    water_design_param.position_ = {
-        128.0f,
-        624.0f,
-        0.0f
-    };
-    water_design_param.rotation_ = { 0.0f, 0.0f, 0.0f };
-    water_design_param.scaling_ = { 192.0f, 192.0f, 0.0f };
-    water_design_param.layer_ = LAYER_WATER_GAGE;
+	water_design_param.position_ = {
+		128.0f,
+		624.0f,
+		0.0f
+	};
+	water_design_param.rotation_ = { 0.0f, 0.0f, 0.0f };
+	water_design_param.scaling_ = { 192.0f, 192.0f, 0.0f };
+	water_design_param.layer_ = LAYER_WATER_GAGE;
 
-    object_manager_->Create(
-		 water_design_param,
-        "resource/texture/game/water_gage_background.png");
+	object_manager_->Create(
+		water_design_param,
+		"resource/texture/game/water_gage_background.png");
 
-    //-------------------------------------
-    // 水ゲージ（ゲージ本体）UI
-    //-------------------------------------
-    OBJECT_PARAMETER_DESC water_gage_param;
+	//-------------------------------------
+	// 水ゲージ（ゲージ本体）UI
+	//-------------------------------------
+	OBJECT_PARAMETER_DESC water_gage_param;
 	water_gage_param.name_ = "water_gage";
-    water_gage_param.position_ = {
-        128.0f,
-        624.0f,
-        0.0f
-    };
-    water_gage_param.rotation_ = { 0.0f, 0.0f, 0.0f };
-    water_gage_param.scaling_ = { 192.0f, 192.0f, 0.0f };
-    water_gage_param.layer_ = LAYER_WATER_GAGE;
+	water_gage_param.position_ = {
+		128.0f,
+		624.0f,
+		0.0f
+	};
+	water_gage_param.rotation_ = { 0.0f, 0.0f, 0.0f };
+	water_gage_param.scaling_ = { 192.0f, 192.0f, 0.0f };
+	water_gage_param.layer_ = LAYER_WATER_GAGE;
 
-    object_manager_->Create(
-        water_gage_param,
-        "resource/texture/game/water_gage_diffuse.png");
+	object_manager_->Create(
+		water_gage_param,
+		"resource/texture/game/water_gage_diffuse.png");
 
-    //-------------------------------------
-    // 水ゲージ（周り）UI
-    //-------------------------------------
-    OBJECT_PARAMETER_DESC water_gage_around_param;
+	//-------------------------------------
+	// 水ゲージ（周り）UI
+	//-------------------------------------
+	OBJECT_PARAMETER_DESC water_gage_around_param;
 	water_gage_around_param.name_ = "water_gage_around";
-    water_gage_around_param.position_ = {
-        128.0f,
-        624.0f,
-        0.0f
-    };
-    water_gage_around_param.rotation_ = { 0.0f, 0.0f, 0.0f };
-    water_gage_around_param.scaling_ = { 192.0f, 192.0f, 0.0f };
-    water_gage_around_param.layer_ = LAYER_SPRITE_2D;
+	water_gage_around_param.position_ = {
+		128.0f,
+		624.0f,
+		0.0f
+	};
+	water_gage_around_param.rotation_ = { 0.0f, 0.0f, 0.0f };
+	water_gage_around_param.scaling_ = { 192.0f, 192.0f, 0.0f };
+	water_gage_around_param.layer_ = LAYER_SPRITE_2D;
 
-    object_manager_->Create(
-         water_gage_around_param,
-        "resource/texture/game/water_gage_around.png");
+	object_manager_->Create(
+		water_gage_around_param,
+		"resource/texture/game/water_gage_around.png");
 
-    //-------------------------------------
-    // 水ポリゴンUI
-    //-------------------------------------
-    OBJECT_PARAMETER_DESC water_poly_param;
+	//-------------------------------------
+	// 水ポリゴンUI
+	//-------------------------------------
+	OBJECT_PARAMETER_DESC water_poly_param;
 	water_poly_param.name_ = "water_poly";
-    water_poly_param.position_ = {
-        128.0f,
-        624.0f,
-        0.0f
-    };
-    water_poly_param.rotation_ = { 0.0f, 0.0f, 0.0f };
-    water_poly_param.scaling_ = { 192.0f, 192.0f, 0.0f };
-    water_poly_param.layer_ = LAYER_SPRITE_2D;
+	water_poly_param.position_ = {
+		128.0f,
+		624.0f,
+		0.0f
+	};
+	water_poly_param.rotation_ = { 0.0f, 0.0f, 0.0f };
+	water_poly_param.scaling_ = { 192.0f, 192.0f, 0.0f };
+	water_poly_param.layer_ = LAYER_SPRITE_2D;
 
-    object_manager_->Create(
-        water_poly_param,
-        "resource/texture/game/water_desine.png");
+	object_manager_->Create(
+		water_poly_param,
+		"resource/texture/game/water_desine.png");
 
-    //-------------------------------------
-    // ダメージエフェクトUI
-    //-------------------------------------
-    OBJECT_PARAMETER_DESC hit_point_param;
+	//-------------------------------------
+	// ダメージエフェクトUI
+	//-------------------------------------
+	OBJECT_PARAMETER_DESC hit_point_param;
 	hit_point_param.name_ = "damage_effect";
-    hit_point_param.position_ = {
-        SCREEN_WIDTH * 0.5f,
-        SCREEN_HEIGHT * 0.5f,
-        0.0f
-    };
-    hit_point_param.rotation_ = { 0.0f, 0.0f, 0.0f };
-    hit_point_param.scaling_ = { SCREEN_WIDTH, SCREEN_HEIGHT, 0.0f };
-    hit_point_param.layer_ = LAYER_DAMAGE_EFFECT;
+	hit_point_param.position_ = {
+		SCREEN_WIDTH * 0.5f,
+		SCREEN_HEIGHT * 0.5f,
+		0.0f
+	};
+	hit_point_param.rotation_ = { 0.0f, 0.0f, 0.0f };
+	hit_point_param.scaling_ = { SCREEN_WIDTH, SCREEN_HEIGHT, 0.0f };
+	hit_point_param.layer_ = LAYER_DAMAGE_EFFECT;
 
-    object_manager_->Create(
-        hit_point_param);
+	object_manager_->Create(
+		hit_point_param);
 
 	//-------------------------------------
 	// 木
 	//-------------------------------------
 	OBJECT_PARAMETER_DESC wood_param;
-	wood_param.name_ = "wood";
+	wood_param.name_ = "wood1";
 	wood_param.layer_ = LAYER_TREE;
-	object_manager_->Create(wood_param);
+	InstancingTree *tree1 = dynamic_cast<InstancingTree*>(object_manager_->Create(wood_param));
+	tree1->SetMesh("resource/model/x/tree01.x");
+	tree1->SetTexture("resource/texture/game/tree01.png");
+	tree1->SetPositionPatern(0);
+
+	wood_param.name_ = "wood2";
+	InstancingTree *tree2 = dynamic_cast<InstancingTree*>(object_manager_->Create(wood_param));
+	tree2->SetMesh("resource/model/x/tree02.x");
+	tree2->SetTexture("resource/texture/game/tree02.png");
+	tree2->SetPositionPatern(1);
+
+	wood_param.name_ = "wood3";
+	InstancingTree *tree3 = dynamic_cast<InstancingTree*>(object_manager_->Create(wood_param));
+	tree3->SetMesh("resource/model/x/tree03.x");
+	tree3->SetTexture("resource/texture/game/tree01.png");
+	tree3->SetPositionPatern(2);
 
 	//-------------------------------------
 	// ベンチ
@@ -601,9 +620,9 @@ Game::Game()
 	//-------------------------------------
 	OBJECT_PARAMETER_DESC bullet_param;
 	bullet_param.layer_ = LAYER_BULLET;
-	for(int i = 0; i < MAX_BULLET; i++)
+	for (int i = 0; i < MAX_BULLET; i++)
 	{
-		bullet_param.name_ = "bullet" + std::to_string(i); ;
+		bullet_param.name_ = "bullet" + std::to_string(i);;
 		object_manager_->Create(
 			bullet_param);
 	}
@@ -665,28 +684,12 @@ Game::Game()
 		message_param,
 		"resource/texture/game/message/message_grandfather_return.png");
 
-    //-------------------------------------
-    // サウンド(BGM)
-    //-------------------------------------
-    sound_ = nullptr;
-    sound_ = Sound::LoadSound("resource/sound/bgm/game/ms-bgm.wav");
-    sound_->Play(true);
-
-}
-
-
-//-------------------------------------
-// ~Game()
-//-------------------------------------
-Game::~Game()
-{
-	effect_manager_ = nullptr;
-    sound_->ReleaseSound(&sound_);
-	SAFE_DELETE(object_manager_);
-	SAFE_DELETE(camera_manager_);
-	SAFE_DELETE(font1_);
-	SAFE_DELETE(font2_);
-	SAFE_DELETE(collision_manager_);
+	//-------------------------------------
+	// サウンド(BGM)
+	//-------------------------------------
+	sound_ = nullptr;
+	sound_ = Sound::LoadSound("resource/sound/bgm/game/ms-bgm.wav");
+	sound_->Play(true);
 }
 
 
@@ -901,7 +904,7 @@ void Game::Update()
 
     if (GamePad::isPress(GAMEPAD_GRANDFATHER, PAD_RS_LEFT)){
         grandfather_rotation.y_ += CHAR_ROT_SPEED*GamePad::isStick(GAMEPAD_GRANDFATHER).rsx_;
-        if (grandfather_rotation.y_ < D3DX_PI){
+        if (grandfather_rotation.y_ < -D3DX_PI){
             grandfather_rotation.y_ += D3DX_PI * 2.0f;
         }
     }
@@ -981,10 +984,16 @@ void Game::Update()
         if (grandfather_rotation.y_ > D3DX_PI){
             grandfather_rotation.y_ -= D3DX_PI * 2.0f;
         }
+		if (grandfather_rotation.y_ < -D3DX_PI){
+			grandfather_rotation.y_ += D3DX_PI * 2.0f;
+		}
     }
     if (KeyBoard::isPress(DIK_LEFT)){
         grandfather_rotation.y_ -= CHAR_ROT_SPEED;
-        if (grandfather_rotation.y_ < -D3DX_PI){
+		if (grandfather_rotation.y_ > D3DX_PI){
+			grandfather_rotation.y_ -= D3DX_PI * 2.0f;
+		}
+		if (grandfather_rotation.y_ < -D3DX_PI){
             grandfather_rotation.y_ += D3DX_PI * 2.0f;
         }
     }
@@ -1075,10 +1084,10 @@ void Game::Update()
         grandfather_position.y_,
         grandfather_position.z_);
     grandfather_position.y_ = field->GetHeight(grandfather_pos);
-    if (grandfather_position.y_ > 0.4f ||
+ /*   if (grandfather_position.y_ > 0.4f ||
         grandfather_position.y_ < -0.4f){
         grandfather_position = grandfather_prevposition;
-    }
+    }*/
 
     D3DXVECTOR3 child_pos(
         child_position.x_,
@@ -1512,8 +1521,8 @@ void Game::Update()
         child_death_ = false;
         child_life = CHILD_LIFE;
         child->SetLife(child_life);
-        child_position = CHILD_POSITION1;
-        child_rotation.y_ = CHILD_ROTATION1;
+		child_position = CHILD1_POSITION1;
+		child_rotation = CHILD1_ROTATION1;
         child->SetPosition(child_position);
         child->SetRotation(child_rotation);
     }

@@ -23,7 +23,23 @@
 Loading::Loading()
 {
 	object_manager_ = new ObjectManager;
+}
 
+
+//-------------------------------------
+// ~Loading()
+//-------------------------------------
+Loading::~Loading()
+{
+	SAFE_DELETE(object_manager_);
+}
+
+
+//-------------------------------------
+// Initialize()
+//-------------------------------------
+void Loading::Initialize()
+{
 	OBJECT_PARAMETER_DESC param;
 	param.name_ = "now_loading";
 	param.position_ = {
@@ -38,15 +54,6 @@ Loading::Loading()
 	object_manager_->Create(
 		param,
 		"resource/texture/loading/now_loading_00.png");
-}
-
-
-//-------------------------------------
-// ~Loading()
-//-------------------------------------
-Loading::~Loading()
-{
-	SAFE_DELETE(object_manager_);
 }
 
 

@@ -148,7 +148,6 @@
     <ClCompile Include="source_code\application\scene\scenes\loading.cpp" />
     <ClCompile Include="source_code\application\scene\scenes\matching.cpp" />
     <ClCompile Include="source_code\application\scene\scenes\result.cpp" />
-    <ClCompile Include="source_code\application\scene\scenes\title.cpp" />
     <ClCompile Include="source_code\application\scene\scene_factory.cpp" />
     <ClCompile Include="source_code\application\scene\scene_manager.cpp" />
     <ClCompile Include="source_code\application\shader\shader.cpp" />
@@ -223,7 +222,6 @@
     <ClInclude Include="source_code\application\scene\scenes\loading.h" />
     <ClInclude Include="source_code\application\scene\scenes\matching.h" />
     <ClInclude Include="source_code\application\scene\scenes\result.h" />
-    <ClInclude Include="source_code\application\scene\scenes\title.h" />
     <ClInclude Include="source_code\application\scene\scene_factory.h" />
     <ClInclude Include="source_code\application\scene\scene_manager.h" />
     <ClInclude Include="source_code\application\shader\shader.h" />

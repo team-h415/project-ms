@@ -14,7 +14,6 @@
 #include "scene_manager.h"
 #include "scene_factory.h"
 #include "scenes/loading.h"
-#include "scenes/title.h"
 #include "scenes/game.h"
 #include "scenes/matching.h"
 #include "scenes/result.h"
@@ -34,10 +33,6 @@ Scene *SceneFactory::Create(
 	}
 	if (name == "Game"){
 		scene = new Game();
-		return scene;
-	}
-	if (name == "Title"){
-		scene = new Title();
 		return scene;
 	}
 	if (name == "Matching"){

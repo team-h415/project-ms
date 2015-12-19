@@ -24,6 +24,7 @@ class Matching : public Scene
 public:
 	Matching();
 	virtual ~Matching();
+	void Initialize();
 	void Update();
 	void Draw();
 

@@ -33,7 +33,25 @@ Result::Result()
 	camera_manager_ = new CameraManager;
 	object_manager_ = new ObjectManager;
 	font_ = new DebugFont;
+}
 
+
+//-------------------------------------
+// ~Result()
+//-------------------------------------
+Result::~Result()
+{
+	SAFE_DELETE(object_manager_);
+	SAFE_DELETE(camera_manager_);
+	SAFE_DELETE(font_);
+}
+
+
+//-------------------------------------
+// Initialize()
+//-------------------------------------
+void Result::Initialize()
+{
 	CAMERA_PARAMETER_DESC camera_param;
 	camera_param.acpect_ = SCREEN_WIDTH / SCREEN_HEIGHT;
 	camera_param.fovy_ = D3DX_PI * 0.25f;
@@ -61,17 +79,6 @@ Result::Result()
 	object_manager_->Create(
 		param,
 		"resource/texture/result/logo.png");
-}
-
-
-//-------------------------------------
-// ~Result()
-//-------------------------------------
-Result::~Result()
-{
-	SAFE_DELETE(object_manager_);
-	SAFE_DELETE(camera_manager_);
-	SAFE_DELETE(font_);
 }
 
 

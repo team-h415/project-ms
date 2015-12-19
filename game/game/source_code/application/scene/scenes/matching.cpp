@@ -71,8 +71,28 @@ Matching::Matching()
 	collision_manager_ = new CollisionManager;
 	effect_manager_ = EffectManager::Get();
 	font_ = new DebugFont;
+}
 
 
+//-------------------------------------
+// ~Matching()
+//-------------------------------------
+Matching::~Matching()
+{
+	SAFE_DELETE(object_manager_);
+	SAFE_DELETE(camera_manager_);
+	SAFE_DELETE(font_);
+	SAFE_DELETE(collision_manager_);
+	effect_manager_->StopAll();
+	effect_manager_ = nullptr;
+}
+
+
+//-------------------------------------
+// Initialize()
+//-------------------------------------
+void Matching::Initialize()
+{
 	//-------------------------------------
 	// エフェクトの読み込み
 	//-------------------------------------
@@ -98,7 +118,7 @@ Matching::Matching()
 		"resource/effect/Portal2x2.efk",
 		water_param);
 
-	
+
 	effect_manager_->Play("water");
 	effect_manager_->Play("portal");
 	effect_manager_->Play("marker");
@@ -120,7 +140,7 @@ Matching::Matching()
 	camera_manager_->Create(
 		"Perspective", "MainCamera", camera_param);
 
-	
+
 	//-------------------------------------
 	// 地形
 	//-------------------------------------
@@ -274,7 +294,7 @@ Matching::Matching()
 		SCREEN_HEIGHT * 0.5f,
 		0.0f
 	};
-	
+
 	Object *standby_object = object_manager_->Create(standby_param);
 	Sprite2D *standby = dynamic_cast<Sprite2D*>(standby_object);
 	standby->SetTexture("resource/texture/matching/standby.png");
@@ -283,20 +303,6 @@ Matching::Matching()
 	// UIの描画フラグを切る
 	//-------------------------------------
 	object_manager_->SetDrawEnable(LAYER_SPRITE_2D, false);
-}
-
-
-//-------------------------------------
-// ~Matching()
-//-------------------------------------
-Matching::~Matching()
-{
-	SAFE_DELETE(object_manager_);
-	SAFE_DELETE(camera_manager_);
-	SAFE_DELETE(font_);
-	SAFE_DELETE(collision_manager_);
-	effect_manager_->StopAll();
-	effect_manager_ = nullptr;
 }
 
 

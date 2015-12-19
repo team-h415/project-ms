@@ -24,17 +24,8 @@
 #define GRANDFATHER_POSITION { 59.75f, 0.00f, -39.26f }
 #define GRANDFATHER_ROTATION { 0.00f, 4.68f, 0.00f }
 
-#define CHILD1_POSITION { 39.42f, 0.00f, -55.70f }
-#define CHILD1_ROTATION { 0.00f, -0.03f, 0.00f }
 
-#define CHILD2_POSITION { 42.95f, 0.00f, -55.60f }
-#define CHILD2_ROTATION { 0.00f, -0.03f, 0.00f }
 
-#define CHILD3_POSITION { 47.24f, 0.00f, -55.67f }
-#define CHILD3_ROTATION { 0.00f, -0.03f, 0.00f }
-
-#define CHILD4_POSITION { 51.98f, 0.00f, -55.83f }
-#define CHILD4_ROTATION { 0.00f, -0.03f, 0.00f }
 
 #define PORTAL_POSITION { 40.00f, 0.00f, -40.00f }
 #define PORTAL_DISTANCE 3.0f
@@ -64,8 +55,6 @@
 #define GAME_TIMER (100)							// ゲームの時間
 
 #define MAX_BULLET (100)							// バレット最大数
-#define LAKE_RANGE	(35.0f)							// 湖の半径
-#define LAKE_COLLISION_RANGE (24.5f)				// 湖の当たり半径
 
 
 
@@ -80,13 +69,13 @@
 // くらうダメージ量
 #define GRANDFATHER_DAMAGE 0.01f
 // 座標
-#define GRANDFATHER_POSITION_STAGE1 {  40.0f,  0.0f, -40.0f }
-#define GRANDFATHER_POSITION_STAGE2 { -60.0f,  0.0f,  55.0f }
-#define GRANDFATHER_POSITION_STAGE3 {  40.0f,  0.0f,  65.0f }
+#define GRANDFATHER_POSITION_STAGE1 { -28.76f, 0.30f, 69.61f }
+#define GRANDFATHER_POSITION_STAGE2 { 27.30f, 0.00f, 5.67f }
+#define GRANDFATHER_POSITION_STAGE3 { -2.36f, 0.00f, -78.30f }
 // 角度
-#define GRANDFATHER_ROTATION_STAGE1 -0.82f
-#define GRANDFATHER_ROTATION_STAGE2  3.14f
-#define GRANDFATHER_ROTATION_STAGE3  4.30f
+#define GRANDFATHER_ROTATION_STAGE1 1.70f
+#define GRANDFATHER_ROTATION_STAGE2  2.21f
+#define GRANDFATHER_ROTATION_STAGE3  -0.23f
 // HP自動回復待ち時間
 #define GRANDFATHER_RECOVER_WAITE_TIME 180
 // HP回復量
@@ -103,16 +92,33 @@
 #define CHILD_SUB_WATERGAUGE 0.01f
 // くらうダメージ量
 #define CHILD_DAMAGE 0.02f
-// 座標
-#define CHILD_POSITION1 { -55.0f,  0.0f, -50.0f }
-#define CHILD_POSITION2 { -50.0f,  0.0f, -50.0f }
-#define CHILD_POSITION3 { -55.0f,  0.0f, -55.0f }
-#define CHILD_POSITION4 { -50.0f,  0.0f, -55.0f }
-// 角度
-#define CHILD_ROTATION1 0.79f
-#define CHILD_ROTATION2 0.79f
-#define CHILD_ROTATION3 0.79f
-#define CHILD_ROTATION4 0.79f
+// 座標、角度
+#define CHILD1_POSITION1 { 37.58f, 0.00f, 75.41f }
+#define CHILD1_ROTATION1 { 0.00f, -1.49f, 0.00f }
+#define CHILD2_POSITION1 { 34.39f, 0.00f, 77.99f }
+#define CHILD2_ROTATION1 { 0.00f, -1.49f, 0.00f }
+#define CHILD3_POSITION1 { 34.49f, 0.00f, 82.64f }
+#define CHILD3_ROTATION1 { 0.00f, -1.49f, 0.00f }
+#define CHILD4_POSITION1 { 36.32f, 0.00f, 85.72f }
+#define CHILD4_ROTATION1 { 0.00f, -1.49f, 0.00f }
+
+#define CHILD1_POSITION2 { -36.52f, 0.30f, 61.88f }
+#define CHILD1_ROTATION2 { 0.00f, 2.29f, 0.00f }
+#define CHILD2_POSITION2 { -32.16f, 0.30f, 64.62f }
+#define CHILD2_ROTATION2 { 0.00f, 2.29f, 0.00f }
+#define CHILD3_POSITION2 { -30.39f, 0.30f, 69.10f }
+#define CHILD3_ROTATION2 { 0.00f, 2.29f, 0.00f }
+#define CHILD4_POSITION2 { -31.84f, 0.30f, 73.71f }
+#define CHILD4_ROTATION2 { 0.00f, 2.29f, 0.00f }
+
+#define CHILD1_POSITION3 { 27.03f, 0.00f, -12.50f }
+#define CHILD1_ROTATION3 { 0.00f, -2.47f, 0.00f }
+#define CHILD2_POSITION3 { 28.01f, 0.00f, -16.77f }
+#define CHILD2_ROTATION3 { 0.00f, -2.47f, 0.00f }
+#define CHILD3_POSITION3 { 30.53f, 0.00f, -19.73f }
+#define CHILD3_ROTATION3 { 0.00f, -2.47f, 0.00f }
+#define CHILD4_POSITION3 { 35.23f, 0.00f, -20.31f }
+#define CHILD4_ROTATION3 { 0.00f, -2.47f, 0.00f }
 // リスポーン待ち時間
 #define CHILD_RESPAWN_WAITTIME 120
 // HP自動回復待ち時間
@@ -125,9 +131,9 @@
 // 砦
 
 // 座標
-#define FORT1_POSITION {  50.0f,  0.0f, -50.0f }
-#define FORT2_POSITION { -56.0f,  0.0f,  63.0f }
-#define FORT3_POSITION {  53.0f,  0.0f,  62.0f }
+#define FORT1_POSITION { -37.86f, 0.30f, 68.30f }
+#define FORT2_POSITION { 35.51f, 0.30f, -1.87f }
+#define FORT3_POSITION { 0.53f, 0.30f, -88.43f }
 // 体力
 #define FORT1_LiFE 1.0f
 #define FORT2_LiFE 1.0f

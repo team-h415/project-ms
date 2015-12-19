@@ -20,6 +20,7 @@ class Loading : public Scene
 public:
 	Loading();
 	virtual ~Loading();
+	void Initialize();
 	void Update();
 	void Draw();
 private:
