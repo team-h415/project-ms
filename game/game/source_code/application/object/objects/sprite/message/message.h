@@ -26,14 +26,16 @@ public:
 		return timer_;
 	}
 	void Play(){
-		timer_ = 120;
-		alpha_ = 1.0f;
+		play_ = true;
+		timer_ = 0;
+		alpha_ = 0.0f;
 	}
 
 private:
 	void CalculateVertex();
 	int timer_;
 	float alpha_;
+	bool play_;
 };
 
 
