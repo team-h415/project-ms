@@ -98,6 +98,9 @@
     <Filter Include="source_code\application\object\objects\bullet">
       <UniqueIdentifier>{7f67fc37-b121-4bb2-82e8-fd68939f9b56}</UniqueIdentifier>
     </Filter>
+    <Filter Include="source_code\application\object\objects\sprite\message">
+      <UniqueIdentifier>{e0dc0fc5-cea5-4acf-b2e7-fd8c7bb6afc4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source_code\main.cpp">
@@ -286,9 +289,6 @@
     <ClCompile Include="source_code\application\object\objects\sprite3d\lake.cpp">
       <Filter>source_code\application\object\objects\sprite3d</Filter>
     </ClCompile>
-    <ClCompile Include="source_code\application\object\objects\sprite\message.cpp">
-      <Filter>source_code\application\object\objects\sprite</Filter>
-    </ClCompile>
     <ClCompile Include="source_code\application\object\objects\sprite\fort_gage.cpp">
       <Filter>source_code\application\object\objects\sprite</Filter>
     </ClCompile>
@@ -309,6 +309,9 @@
     </ClCompile>
     <ClCompile Include="source_code\application\object\objects\bullet\bullet.cpp">
       <Filter>source_code\application\object\objects\bullet</Filter>
+    </ClCompile>
+    <ClCompile Include="source_code\application\object\objects\sprite\message\message.cpp">
+      <Filter>source_code\application\object\objects\sprite\message</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -507,9 +510,6 @@
     <ClInclude Include="source_code\application\object\objects\sprite3d\lake.h">
       <Filter>source_code\application\object\objects\sprite3d</Filter>
     </ClInclude>
-    <ClInclude Include="source_code\application\object\objects\sprite\message.h">
-      <Filter>source_code\application\object\objects\sprite</Filter>
-    </ClInclude>
     <ClInclude Include="source_code\application\object\objects\sprite\fort_gage.h">
       <Filter>source_code\application\object\objects\sprite</Filter>
     </ClInclude>
@@ -530,6 +530,9 @@
     </ClInclude>
     <ClInclude Include="source_code\application\object\objects\bullet\bullet.h">
       <Filter>source_code\application\object\objects\bullet</Filter>
+    </ClInclude>
+    <ClInclude Include="source_code\application\object\objects\sprite\message\message.h">
+      <Filter>source_code\application\object\objects\sprite\message</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

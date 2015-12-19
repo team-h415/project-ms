@@ -35,7 +35,7 @@
 #include "../../object/objects/sprite/countdown.h"
 #include "../../object/objects/sprite/water_gage.h"
 #include "../../object/objects/sprite/fort_gauge_manager.h"
-#include "../../object/objects/sprite/message.h"
+#include "../../object/objects/sprite/message/message.h"
 #include "../../object/objects/bullet/bullet.h"
 #include "../../effect/effect.h"
 #include "../../effect/effect_manager.h"
@@ -223,7 +223,7 @@ void Game::Initialize()
 
 	object_manager_->Create(
 		field_param,
-		"resource/mesh/map3.heightmap");
+		"resource/mesh/map.heightmap");
 
 
 	//-------------------------------------
@@ -253,7 +253,7 @@ void Game::Initialize()
 	//-------------------------------------
 	OBJECT_PARAMETER_DESC lake_param;
 	lake_param.name_ = "lake";
-	lake_param.position_ = { 0.0f, -0.6f, 0.0f };
+	lake_param.position_ = { 0.0f, -0.8f, 0.0f };
 	lake_param.rotation_ = { 0.0f, 0.0f, 0.0f };
 	lake_param.scaling_ = { 300.0f, 1.0f, 300.0f };
 	lake_param.layer_ = LAYER_SPRITE_LAKE;
@@ -622,7 +622,7 @@ void Game::Initialize()
 	bullet_param.layer_ = LAYER_BULLET;
 	for (int i = 0; i < MAX_BULLET; i++)
 	{
-		bullet_param.name_ = "bullet" + std::to_string(i);;
+		bullet_param.name_ = "bullet" + std::to_string(i);
 		object_manager_->Create(
 			bullet_param);
 	}
@@ -1084,10 +1084,10 @@ void Game::Update()
         grandfather_position.y_,
         grandfather_position.z_);
     grandfather_position.y_ = field->GetHeight(grandfather_pos);
- /*   if (grandfather_position.y_ > 0.4f ||
+    if (grandfather_position.y_ > 0.4f ||
         grandfather_position.y_ < -0.4f){
         grandfather_position = grandfather_prevposition;
-    }*/
+    }
 
     D3DXVECTOR3 child_pos(
         child_position.x_,

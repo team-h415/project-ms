@@ -21,13 +21,13 @@
 //-=--=--=--=--=--=--=--=--=--=--=--=--=--=--=-//
 // Matching
 //-=--=--=--=--=--=--=--=--=--=--=--=--=--=--=-//
-#define GRANDFATHER_POSITION { 59.75f, 0.00f, -39.26f }
+#define GRANDFATHER_POSITION { 30.75f, 0.00f, -39.26f }
 #define GRANDFATHER_ROTATION { 0.00f, 4.68f, 0.00f }
 
 
 
 
-#define PORTAL_POSITION { 40.00f, 0.00f, -40.00f }
+#define PORTAL_POSITION { 20.0f, 0.30f, -30.00f }
 #define PORTAL_DISTANCE 3.0f
 
 

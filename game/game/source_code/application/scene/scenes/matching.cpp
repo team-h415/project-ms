@@ -20,9 +20,10 @@
 #include "../../object/object.h"
 #include "../../object/object_manager.h"
 #include "../../object/objects/sprite/sprite2d.h"
-#include "../../object/objects/sprite/message.h"
+#include "../../object/objects/sprite/message/message.h"
 #include "../../object/objects/mesh/field.h"
 #include "../../object/objects/model/x_model.h"
+#include "../../object/objects/model/x/instancing_tree.h"
 #include "../../object/objects/model/fbx_model.h"
 #include "../../object/objects/model/fbx/fbx_player.h"
 #include "../../object/objects/model/fbx/fbx_grandfather.h"
@@ -107,7 +108,7 @@ void Matching::Initialize()
 		"resource/effect/BulletFire.efk",
 		water_param);
 
-	water_param.position_ = { 40.00f, 0.3f, -40.00f };
+	water_param.position_ = PORTAL_POSITION;
 	effect_manager_->Create(
 		"marker",
 		"resource/effect/Marker.efk",
@@ -148,7 +149,7 @@ void Matching::Initialize()
 	field_param.name_ = "field";
 	field_param.position_ = { 0.0f, 0.0f, 0.0f };
 	field_param.rotation_ = { 0.0f, 0.0f, 0.0f };
-	field_param.scaling_ = { 200.0f, 1.0f, 200.0f };
+	field_param.scaling_ = { 100.0f, 1.0f, 200.0f };
 	field_param.layer_ = LAYER_MESH_FIELD;
 
 	object_manager_->Create(
@@ -183,9 +184,9 @@ void Matching::Initialize()
 	//-------------------------------------
 	OBJECT_PARAMETER_DESC lake_param;
 	lake_param.name_ = "lake";
-	lake_param.position_ = { 0.0f, -0.5f, 0.0f };
+	lake_param.position_ = { 0.0f, -0.8f, 0.0f };
 	lake_param.rotation_ = { 0.0f, 0.0f, 0.0f };
-	lake_param.scaling_ = { 30.0f, 1.0f, 30.0f };
+	lake_param.scaling_ = { 300.0f, 1.0f, 300.0f };
 	lake_param.layer_ = LAYER_SPRITE_LAKE;
 
 	object_manager_->Create(
@@ -221,9 +222,24 @@ void Matching::Initialize()
 	// 木
 	//-------------------------------------
 	OBJECT_PARAMETER_DESC wood_param;
-	wood_param.name_ = "wood";
+	wood_param.name_ = "wood1";
 	wood_param.layer_ = LAYER_TREE;
-	object_manager_->Create(wood_param);
+	InstancingTree *tree1 = dynamic_cast<InstancingTree*>(object_manager_->Create(wood_param));
+	tree1->SetMesh("resource/model/x/tree01.x");
+	tree1->SetTexture("resource/texture/game/tree01.png");
+	tree1->SetPositionPatern(0);
+
+	wood_param.name_ = "wood2";
+	InstancingTree *tree2 = dynamic_cast<InstancingTree*>(object_manager_->Create(wood_param));
+	tree2->SetMesh("resource/model/x/tree02.x");
+	tree2->SetTexture("resource/texture/game/tree02.png");
+	tree2->SetPositionPatern(1);
+
+	wood_param.name_ = "wood3";
+	InstancingTree *tree3 = dynamic_cast<InstancingTree*>(object_manager_->Create(wood_param));
+	tree3->SetMesh("resource/model/x/tree03.x");
+	tree3->SetTexture("resource/texture/game/tree01.png");
+	tree3->SetPositionPatern(2);
 
 	//-------------------------------------
 	// ベンチ
@@ -392,8 +408,9 @@ void Matching::Update()
 	//-------------------------------------
 	// プレイヤー座標をXZ平面で領域指定
 	//-------------------------------------
-	grandfather_position.z_ = std::min<float>(grandfather_position.z_, -35.0f);
-	grandfather_position.x_ = std::max<float>(grandfather_position.x_, 35.0f);
+	grandfather_position.z_ = std::min<float>(grandfather_position.z_, -25.0f);
+	grandfather_position.z_ = std::max<float>(grandfather_position.z_, -45.0f);
+	grandfather_position.x_ = std::max<float>(grandfather_position.x_, 15.0f);
 
 	grandfather_object->SetPosition(grandfather_position);
 	grandfather_object->SetRotation(grandfather_rotation);
