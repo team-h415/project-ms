@@ -87,6 +87,11 @@ Matching::Matching()
 		"resource/effect/BulletFire.efk",
 		water_param);
 
+	effect_manager_->Create(
+		"fieldhit",
+		"resource/effect/FieldHit2.efk",
+		water_param);
+
 	water_param.position_ = { 40.00f, 0.3f, -40.00f };
 	effect_manager_->Create(
 		"marker",

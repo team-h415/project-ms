@@ -147,8 +147,26 @@ void Bullet::Update()
 		if (parameter_.position_.y_ < height){
 			use_ = false;
 			collision_->SetUse(false);
+
+			//-------------------------------------
+			// シーンからエフェクト取得
+			EFFECT_PARAMETER_DESC effect_param;
+			MyEffect *effect = game->effect_manager()->Get("fieldhit");
+			effect_param = effect->parameter();
+			effect_param.position_ = parameter_.position_;
+			effect_param.position_.y_ = height;
+			effect_param.rotation_ = { 0.0f, parameter_.rotation_.y_, 0.0f };
+			effect->SetParameter(effect_param);
+
+			//-------------------------------------
+			// エフェクト再生
+			game->effect_manager()->Play("fieldhit");
+
 			parameter_.position_.y_ = 10000.0f;
 		}
+
+		
+
 	}
 
 	if (str == "Matching"){
@@ -164,6 +182,20 @@ void Bullet::Update()
 			use_ = false;
 			collision_->SetUse(false);
 			parameter_.position_.y_ = 10000.0f;
+
+			//-------------------------------------
+			// シーンからエフェクト取得
+			EFFECT_PARAMETER_DESC effect_param;
+			MyEffect *effect = matching->effect_manager()->Get("fieldhit");
+			effect_param = effect->parameter();
+			effect_param.position_ = parameter_.position_;
+			effect_param.position_.y_ = height;
+			effect_param.rotation_ = { 0.0f, parameter_.rotation_.y_, 0.0f };
+			effect->SetParameter(effect_param);
+
+			//-------------------------------------
+			// エフェクト再生
+			matching->effect_manager()->Play("fieldhit");
 		}
 	}
 
