@@ -108,7 +108,16 @@ void Matching::Initialize()
 		"resource/effect/BulletFire.efk",
 		water_param);
 
+<<<<<<< HEAD
 	water_param.position_ = PORTAL_POSITION;
+=======
+	effect_manager_->Create(
+		"fieldhit",
+		"resource/effect/FieldHit2.efk",
+		water_param);
+
+	water_param.position_ = { 40.00f, 0.3f, -40.00f };
+>>>>>>> origin/fuka
 	effect_manager_->Create(
 		"marker",
 		"resource/effect/Marker.efk",
