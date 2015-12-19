@@ -132,6 +132,24 @@ void Sound::LoadAndPlaySE(const string& sound_path, float set_volume)
 }
 
 //================================================================================
+// SEのストック
+// 使うことになるであろうSEをあらかじめ先行ロードします
+// 返り値 : サウンドクラスポインタ
+// 引数1 : サウンドネーム
+// 引数2 : サウンドボリューム
+//================================================================================
+void Sound::StockSE(const string& sound_path, float set_volume)
+{
+	Sound* pNewSound = nullptr;
+	pNewSound = new Sound(sound_path);
+	pNewSound->SetMaxVolume(set_volume);
+	pNewSound->SetCurrentVolume(set_volume);
+	pNewSound->master_flag_ = true;
+	pNewSound->use_ = false;
+	sound_list_.push_back(pNewSound);
+}
+
+//================================================================================
 // サウンドの解放
 //================================================================================
 void Sound::ReleaseSound(Sound** dp_sound, int fade_time)
@@ -354,13 +372,13 @@ Sound::Sound(const string& sound_path) :
 	file_handle = CreateFile(path_.c_str(), GENERIC_READ, FILE_SHARE_READ, nullptr, OPEN_EXISTING, 0, nullptr);
 	if(file_handle == INVALID_HANDLE_VALUE)
 	{
-		//MessageBox(nullptr, "サウンドデータファイルの生成に失敗！(1)", "警告！", MB_ICONWARNING);
+		MessageBox(nullptr, "サウンドデータファイルの生成に失敗！(1)", "警告！", MB_ICONWARNING);
 		return;
 	}
 	if(SetFilePointer(file_handle, 0, nullptr, FILE_BEGIN) == INVALID_SET_FILE_POINTER)
 	{
 		// ファイルポインタを先頭に移動
-		//MessageBox(nullptr, "サウンドデータファイルの生成に失敗！(2)", "警告！", MB_ICONWARNING);
+		MessageBox(nullptr, "サウンドデータファイルの生成に失敗！(2)", "警告！", MB_ICONWARNING);
 		return;
 	}
 	
@@ -368,18 +386,18 @@ Sound::Sound(const string& sound_path) :
 	hr = CheckChunk(file_handle, 'FFIR', &dwChunkSize, &dwChunkPosition);
 	if(FAILED(hr))
 	{
-		//MessageBox(nullptr, "WAVEファイルのチェックに失敗！(1)", "警告！", MB_ICONWARNING);
+		MessageBox(nullptr, "WAVEファイルのチェックに失敗！(1)", "警告！", MB_ICONWARNING);
 		return;
 	}
 	hr = ReadChunkData(file_handle, &dwFiletype, sizeof(DWORD), dwChunkPosition);
 	if(FAILED(hr))
 	{
-		//MessageBox(nullptr, "WAVEファイルのチェックに失敗！(2)", "警告！", MB_ICONWARNING);
+		MessageBox(nullptr, "WAVEファイルのチェックに失敗！(2)", "警告！", MB_ICONWARNING);
 		return;
 	}
 	if(dwFiletype != 'EVAW')
 	{
-		//MessageBox(nullptr, "WAVEファイルのチェックに失敗！(3)", "警告！", MB_ICONWARNING);
+		MessageBox(nullptr, "WAVEファイルのチェックに失敗！(3)", "警告！", MB_ICONWARNING);
 		return;
 	}
 	
@@ -387,13 +405,13 @@ Sound::Sound(const string& sound_path) :
 	hr = CheckChunk(file_handle, ' tmf', &dwChunkSize, &dwChunkPosition);
 	if(FAILED(hr))
 	{
-		//MessageBox(nullptr, "フォーマットチェックに失敗！(1)", "警告！", MB_ICONWARNING);
+		MessageBox(nullptr, "フォーマットチェックに失敗！(1)", "警告！", MB_ICONWARNING);
 		return;
 	}
 	hr = ReadChunkData(file_handle, &wfx, dwChunkSize, dwChunkPosition);
 	if(FAILED(hr))
 	{
-		//MessageBox(nullptr, "フォーマットチェックに失敗！(2)", "警告！", MB_ICONWARNING);
+		MessageBox(nullptr, "フォーマットチェックに失敗！(2)", "警告！", MB_ICONWARNING);
 		return;
 	}
 
@@ -401,14 +419,14 @@ Sound::Sound(const string& sound_path) :
 	hr = CheckChunk(file_handle, 'atad', &size_audio_, &dwChunkPosition);
 	if(FAILED(hr))
 	{
-		//MessageBox(nullptr, "オーディオデータ読み込みに失敗！(1)", "警告！", MB_ICONWARNING);
+		MessageBox(nullptr, "オーディオデータ読み込みに失敗！(1)", "警告！", MB_ICONWARNING);
 		return;
 	}
 	data_audio_ = (BYTE*)malloc(size_audio_);
 	hr = ReadChunkData(file_handle, data_audio_, size_audio_, dwChunkPosition);
 	if(FAILED(hr))
 	{
-		//MessageBox(nullptr, "オーディオデータ読み込みに失敗！(2)", "警告！", MB_ICONWARNING);
+		MessageBox(nullptr, "オーディオデータ読み込みに失敗！(2)", "警告！", MB_ICONWARNING);
 		return;
 	}
 	
@@ -416,7 +434,7 @@ Sound::Sound(const string& sound_path) :
 	hr = x_audio2_->CreateSourceVoice(&source_voice_, &(wfx.Format));
 	if(FAILED(hr))
 	{
-		//MessageBox(nullptr, "ソースボイスの生成に失敗！", "警告！", MB_ICONWARNING);
+		MessageBox(nullptr, "ソースボイスの生成に失敗！", "警告！", MB_ICONWARNING);
 		return;
 	}
 

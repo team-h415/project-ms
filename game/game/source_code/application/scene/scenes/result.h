@@ -29,6 +29,9 @@ private:
 	ObjectManager *object_manager_;
 	CameraManager *camera_manager_;
 	DebugFont *font_;
+
+	float alphar_wave_;
+	float sprite_alpha_;
 };
 
 

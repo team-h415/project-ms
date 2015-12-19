@@ -20,6 +20,7 @@
 #include "../../font/debug_font.h"
 #include "../../object/object.h"
 #include "../../object/object_manager.h"
+#include "../../object/objects/sprite/sprite2d.h"
 #include "../../camera/camera.h"
 #include "../../camera/camera_manager.h"
 #include "../scene.h"
@@ -67,29 +68,32 @@ Result::Result()
 		// じじい
 		object_manager_->Create(
 			 param,
-			"resource/texture/result/zizi.jpg");
+			"resource/texture/result/win_grandfather.png");
 	}
 	else
 	{
 		// 子供
 		object_manager_->Create(
 			param,
-			"resource/texture/result/co.jpg");
+			"resource/texture/result/win_child.png");
 	}
 
-	param.name_ = "logo";
+	param.name_ = "push8";
 	param.position_ = {
-		SCREEN_WIDTH * 0.25f,
+		SCREEN_WIDTH * 0.5f,
 		SCREEN_HEIGHT * 0.5f,
 		0.0f
 	};
 	param.rotation_ = {0.0f, 0.0f, 0.0f};
-	param.scaling_ = {150.0f, 100.0f, 0.0f};
+	param.scaling_ = {SCREEN_WIDTH, SCREEN_HEIGHT, 0.0f};
 	param.layer_ = LAYER_SPRITE_2D;
 
 	object_manager_->Create(
 		param,
-		"resource/texture/result/logo.png");
+		"resource/texture/result/push_8_button.png");
+
+	alphar_wave_ = 0.0f;
+	sprite_alpha_ = 0.0f;
 
 	//-------------------------------------
 	// セットアップ完了
@@ -115,6 +119,17 @@ Result::~Result()
 //-------------------------------------
 void Result::Update()
 {
+	// アルファ値変更
+	alphar_wave_ += D3DX_PI * 0.02f;
+	if(alphar_wave_ > D3DX_PI){
+		alphar_wave_ -= D3DX_PI * 2.0f;
+	}
+	sprite_alpha_ = (sinf(alphar_wave_) + 1.0f) * 0.5f;
+
+	Sprite2D *push8 = dynamic_cast<Sprite2D*>(object_manager_->Get("push8"));
+	D3DXCOLOR search_color(1.0f, 1.0f, 1.0f, sprite_alpha_);
+	push8->SetColor(search_color);
+
 	camera_manager_->Update();
 	object_manager_->Update();
 

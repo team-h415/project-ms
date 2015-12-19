@@ -313,13 +313,33 @@ unsigned __stdcall NetworkGuest::Communication()
 							}
 							if(winner_ == 0)
 							{
-								result_sprite->SetTexture("resource/texture/result/zizi.jpg");
+								// ‚¶‚¶‚¢Ÿ—˜
+								if(id_ == 0)
+								{
+									// Ž©•ª‚¶‚¶‚¢
+									result_sprite->SetTexture("resource/texture/game/win.png");
+								}
+								else
+								{
+									// Ž©•ªŽq‹Ÿ
+									result_sprite->SetTexture("resource/texture/game/lose.png");
+								}
 							}
 							else
 							{
-								result_sprite->SetTexture("resource/texture/result/co.jpg");
+								// Žq‹ŸŸ—˜
+								if(id_ == 0)
+								{
+									// Ž©•ª‚¶‚¶‚¢
+									result_sprite->SetTexture("resource/texture/game/lose.png");
+								}
+								else
+								{
+									// Ž©•ªŽq‹Ÿ
+									result_sprite->SetTexture("resource/texture/game/win.png");
+								}
 							}
-							result_sprite->SetPosition({SCREEN_WIDTH * 0.5f, SCREEN_HEIGHT * 0.15f, 0.0f});
+							result_sprite->SetPosition({SCREEN_WIDTH * 0.5f, SCREEN_HEIGHT * 0.5f, 0.0f});
 						}
 					}
 					break;
@@ -713,26 +733,32 @@ void NetworkGuest::ObjDataAdaptation(
 				{
 					return;
 				}
-				D3DXVECTOR3 camera_position;
-				D3DXVECTOR3 camera_focus;
-				D3DXVECTOR3 camera_rotation;
+				if(rec_data.object_param_.ex_id_ == 0)
+				{
+					D3DXVECTOR3 camera_position;
+					D3DXVECTOR3 camera_focus;
 
-				camera_position.x = rec_data.object_param_.position_.x_;
-				camera_position.y = rec_data.object_param_.position_.y_;
-				camera_position.z = rec_data.object_param_.position_.z_;
+					camera_position.x = rec_data.object_param_.position_.x_;
+					camera_position.y = rec_data.object_param_.position_.y_;
+					camera_position.z = rec_data.object_param_.position_.z_;
 
-				camera_focus.x = rec_data.object_param_.rotation_.x_;
-				camera_focus.y = rec_data.object_param_.rotation_.y_;
-				camera_focus.z = rec_data.object_param_.rotation_.z_;
+					camera_focus.x = rec_data.object_param_.rotation_.x_;
+					camera_focus.y = rec_data.object_param_.rotation_.y_;
+					camera_focus.z = rec_data.object_param_.rotation_.z_;
 
-				camera_rotation.x = rec_data.object_param_.ex_vec_.x_;
-				camera_rotation.y = rec_data.object_param_.ex_vec_.y_;
-				camera_rotation.z = rec_data.object_param_.ex_vec_.z_;
+					main_camera->SetPosition(camera_position);
+					main_camera->SetFocus(camera_focus);
+				}
+				else
+				{
+					D3DXVECTOR3 camera_rotation;
 
-				main_camera->SetPosition(camera_position);
-				main_camera->SetFocus(camera_focus);
-				main_camera->SetRotation(camera_rotation);
+					camera_rotation.x = rec_data.object_param_.rotation_.x_;
+					camera_rotation.y = rec_data.object_param_.rotation_.y_;
+					camera_rotation.z = rec_data.object_param_.rotation_.z_;
 
+					main_camera->SetRotation(camera_rotation);
+				}
 			}
 			break;
 

@@ -52,6 +52,7 @@ Application::Application(
 	HINSTANCE instance,
 	int command_show)
 {
+	Sound::Setup();
 	fps_ = new Fps;
 	Window::Create(
 		instance,
@@ -64,7 +65,6 @@ Application::Application(
 		"KeyBoard");
 	gamepad_ = InputFactory::Create(
 		"GamePad");
-	Sound::Setup();
 #ifdef NETWORK_HOST_MODE
 	NetworkHost::StartCommunication(scene_manager_);
 #else

@@ -41,7 +41,7 @@
 #include "game_server.h"
 #include "../fade/fade.h"
 #include "../../fps/fps.h"
-
+#include "../../sound/sound.h"
 
 //-------------------------------------
 // warning
@@ -62,6 +62,28 @@ GameServer::GameServer()
 	collision_manager_ = new CollisionManager;
 	font_ = new DebugFont;
 	scene_state_ = 0;
+
+	//-------------------------------------
+	// BGM･SE先行読み込み
+	//-------------------------------------
+	matching_bgm_ = Sound::LoadSound("resource/sound/bgm/game/ms-bgm.wav");
+	game_bgm_ = Sound::LoadSound("resource/sound/bgm/game/ms-bgm.wav");
+	result_bgm_ = Sound::LoadSound("resource/sound/bgm/game/ms-bgm.wav");
+	Sound::StockSE("resource/sound/se/game/countdown.wav");
+	Sound::StockSE("resource/sound/se/game/start.wav");
+	for(int i = 0; i < 10; i++)
+	{
+		Sound::StockSE("resource/sound/se/game/shootGrandfather.wav");
+
+		for(int j = 0; j < 4; j++)
+		{
+			Sound::StockSE("resource/sound/se/game/shootChild.wav");
+		}
+	}
+	for(int i = 0; i < MAX_GUEST; i++)
+	{
+		Sound::StockSE("resource/sound/se/game/footstep.wav");
+	}
 
 	//-------------------------------------
 	// カメラ
@@ -376,6 +398,7 @@ void GameServer::Matching()
 		ZeroMemory(&send_data, sizeof(send_data));
 		send_data.type_ = DATA_SCENE_CHANGE_GAME;
 		NetworkHost::SendTo(DELI_MULTI, send_data);
+		return;
 	}
 
 	// フィールド取得
@@ -430,26 +453,23 @@ void GameServer::Matching()
 					dash_effect_timer_++;
 				}
 			}
-
+			// 向き
+			player_rotation.y_ += GamePad::isStick(i).rsx_ * CHAR_ROT_SPEED;
+			if(player_rotation.y_ > D3DX_PI)
+			{
+				player_rotation.y_ -= D3DX_PI * 2.0f;
+			}
+			else if(player_rotation.y_ < D3DX_PI)
+			{
+				player_rotation.y_ += D3DX_PI * 2.0f;
+			}
+			// 移動
 			player_position.x_ += (
 				cosf(player_rotation.y_) * GamePad::isStick(i).lsx_ +
 				sinf(-player_rotation.y_) * GamePad::isStick(i).lsy_) * player_speed;
 			player_position.z_ -= (
 				sinf(player_rotation.y_) * GamePad::isStick(i).lsx_ +
 				cosf(-player_rotation.y_) * GamePad::isStick(i).lsy_) * player_speed;
-
-			if(GamePad::isPress(i, PAD_RS_LEFT)){
-				player_rotation.y_ -= CHAR_ROT_SPEED;
-				if(player_rotation.y_ < D3DX_PI){
-					player_rotation.y_ += D3DX_PI * 2.0f;
-				}
-			}
-			if(GamePad::isPress(i, PAD_RS_RIGHT)){
-				player_rotation.y_ += CHAR_ROT_SPEED;
-				if(player_rotation.y_ > D3DX_PI){
-					player_rotation.y_ -= D3DX_PI * 2.0f;
-				}
-			}
 		}
 
 		D3DXVECTOR3 player_pos(
@@ -484,17 +504,15 @@ void GameServer::Matching()
 		D3DXVECTOR3 camera_position, camera_focus;
 		D3DXVECTOR3 camera_rotation(main_camera->rotation());
 
-		if(GamePad::isPress(i, PAD_RS_UP)){
-			camera_rotation.x -= CAMERA_ROT_SPEED;
-			if(camera_rotation.x < -CAMERA_ROT_X_LIMIT){
-				camera_rotation.x = -CAMERA_ROT_X_LIMIT;
-			}
+		// 向き
+		camera_rotation.x += GamePad::isStick(i).rsy_ * CHAR_ROT_SPEED;
+		if(camera_rotation.x > CAMERA_ROT_X_LIMIT)
+		{
+			camera_rotation.x = CAMERA_ROT_X_LIMIT;
 		}
-		if(GamePad::isPress(i, PAD_RS_DOWN)){
-			camera_rotation.x += CAMERA_ROT_SPEED;
-			if(camera_rotation.x > CAMERA_ROT_X_LIMIT){
-				camera_rotation.x = CAMERA_ROT_X_LIMIT;
-			}
+		else if(camera_rotation.x < -CAMERA_ROT_X_LIMIT)
+		{
+			camera_rotation.x = -CAMERA_ROT_X_LIMIT;
 		}
 
 		// モデルの回転Yをそのままカメラの回転Yへ
@@ -552,11 +570,11 @@ void GameServer::Matching()
 		//-------------------------------------
 		// バレット発射
 		//-------------------------------------
-		shot_late[i]--;
-		shot_late[i] = std::max<int>(shot_late[i], 0);
+		shot_late_[i]--;
+		shot_late_[i] = std::max<int>(shot_late_[i], 0);
 
-		if(GamePad::isPress(i, PAD_BUTTON_8) && shot_late[i] == 0){
-			shot_late[i] = 10;
+		if(GamePad::isPress(i, PAD_BUTTON_8) && shot_late_[i] == 0){
+			shot_late_[i] = 10;
 
 			OBJECT_PARAMETER_DESC bullet_param;
 			bullet_param.layer_ = LAYER_BULLET;
@@ -633,6 +651,7 @@ void GameServer::Matching()
 
 		send_data.type_ = DATA_OBJ_PARAM;
 		send_data.object_param_.type_ = OBJ_CAMERA;
+		send_data.object_param_.ex_id_ = 0;
 
 		send_data.object_param_.position_.x_ = camera_position.x;
 		send_data.object_param_.position_.y_ = camera_position.y;
@@ -641,11 +660,13 @@ void GameServer::Matching()
 		send_data.object_param_.rotation_.x_ = camera_focus.x;
 		send_data.object_param_.rotation_.y_ = camera_focus.y;
 		send_data.object_param_.rotation_.z_ = camera_focus.z;
+		NetworkHost::SendTo((DELI_TYPE)i, send_data);
 
-		send_data.object_param_.ex_vec_.x_ = camera_rotation.x;
-		send_data.object_param_.ex_vec_.y_ = camera_rotation.y;
-		send_data.object_param_.ex_vec_.z_ = camera_rotation.z;
-
+		// 回転
+		send_data.object_param_.ex_id_ = 1;
+		send_data.object_param_.rotation_.x_ = camera_rotation.x;
+		send_data.object_param_.rotation_.y_ = camera_rotation.y;
+		send_data.object_param_.rotation_.z_ = camera_rotation.z;
 		NetworkHost::SendTo((DELI_TYPE)i, send_data);
 	}
 
@@ -729,6 +750,7 @@ void GameServer::Game()
 		NetworkHost::SendTo(DELI_MULTI, send_data);
 		// サーバーステート変更
 		ChangeServerState(STATE_RESULT);
+		return;
 	}
 	// デバッグ用遷移勝者ガキ
 	else if(KeyBoard::isTrigger(DIK_0))
@@ -740,6 +762,7 @@ void GameServer::Game()
 		NetworkHost::SendTo(DELI_MULTI, send_data);
 		// サーバーステート変更
 		ChangeServerState(STATE_RESULT);
+		return;
 	}
 
 	// フィールド取得
@@ -789,6 +812,7 @@ void GameServer::Game()
 
 					send_data.type_ = DATA_OBJ_PARAM;
 					send_data.object_param_.type_ = OBJ_CAMERA;
+					send_data.object_param_.ex_id_ = 0;
 
 					send_data.object_param_.position_.x_ = camera_position.x;
 					send_data.object_param_.position_.y_ = camera_position.y;
@@ -797,11 +821,13 @@ void GameServer::Game()
 					send_data.object_param_.rotation_.x_ = camera_focus.x;
 					send_data.object_param_.rotation_.y_ = camera_focus.y;
 					send_data.object_param_.rotation_.z_ = camera_focus.z;
+					NetworkHost::SendTo((DELI_TYPE)i, send_data);
 
-					send_data.object_param_.ex_vec_.x_ = camera_rotation.x;
-					send_data.object_param_.ex_vec_.y_ = camera_rotation.y;
-					send_data.object_param_.ex_vec_.z_ = camera_rotation.z;
-
+					// 回転
+					send_data.object_param_.ex_id_ = 1;
+					send_data.object_param_.rotation_.x_ = camera_rotation.x;
+					send_data.object_param_.rotation_.y_ = camera_rotation.y;
+					send_data.object_param_.rotation_.z_ = camera_rotation.z;
 					NetworkHost::SendTo((DELI_TYPE)i, send_data);
 				}
 
@@ -814,22 +840,14 @@ void GameServer::Game()
 					}
 				}
 				scene_state_ = STATE_COUNTDOWN;
-				time_ = 60 * (5 + 10);
+				time_ = 60 * (5 + 4);
 				return;
 			}
 			break;
 
 		case STATE_COUNTDOWN:
-			time_--;
-			if(time_ <= (60 * 4))
 			{
-				ZeroMemory(&send_data, sizeof(send_data));
-				send_data.type_ = DATA_UI_PARAM;
-				send_data.object_param_.type_ = OBJ_UI;
-				strcpy_s(send_data.name, MAX_NAME_LEN, "countdown");
-				send_data.ui_param_.value_i_ = time_ / 60;
-				NetworkHost::SendTo(DELI_MULTI, send_data);
-
+				time_--;
 				if(time_ == 0)
 				{
 					ZeroMemory(&send_data, sizeof(send_data));
@@ -841,58 +859,207 @@ void GameServer::Game()
 
 					scene_state_ = STATE_RUN;
 					time_ = 60 * GAME_TIME;
+
+					Sound::LoadAndPlaySE("resource/sound/se/game/start.wav");
 				}
-			}
-			// 演出入るまではプレイヤー見てる
-			for(int i = 0; i < MAX_GUEST; i++)
-			{
+				else if(time_ <= (60 * 4))
+				{
+					ZeroMemory(&send_data, sizeof(send_data));
+					send_data.type_ = DATA_UI_PARAM;
+					send_data.object_param_.type_ = OBJ_UI;
+					strcpy_s(send_data.name, MAX_NAME_LEN, "countdown");
+					send_data.ui_param_.value_i_ = time_ / 60;
+					NetworkHost::SendTo(DELI_MULTI, send_data);
+
+					if(time_ % 60 == 0)
+					{
+						Sound::LoadAndPlaySE("resource/sound/se/game/countdown.wav");
+					}
+				}
+
 				//------------------------------------------------
 				// プレイヤーデータ転送
 				//------------------------------------------------
-				FbxPlayer* player = dynamic_cast<FbxPlayer*>(object_manager_->Get("player" + std::to_string(i)));
-				Vector3 player_position = player->parameter().position_;
-				Vector3 player_rotation = player->parameter().rotation_;
+				for(int i = 0; i < MAX_GUEST; i++)
+				{
+					FbxPlayer* player = dynamic_cast<FbxPlayer*>(object_manager_->Get("player" + std::to_string(i)));
+					Vector3 player_position = player->parameter().position_;
+					Vector3 player_rotation = player->parameter().rotation_;
 
-				send_data.type_ = DATA_OBJ_PARAM;
-				send_data.id_ = i;
-				send_data.object_param_.ex_id_ = 0;
-				send_data.object_param_.type_ = OBJ_PLAYER;
-				send_data.object_param_.position_.x_ = player_position.x_;
-				send_data.object_param_.position_.y_ = player_position.y_;
-				send_data.object_param_.position_.z_ = player_position.z_;
+					send_data.type_ = DATA_OBJ_PARAM;
+					send_data.id_ = i;
+					send_data.object_param_.ex_id_ = 0;
+					send_data.object_param_.type_ = OBJ_PLAYER;
+					send_data.object_param_.position_.x_ = player_position.x_;
+					send_data.object_param_.position_.y_ = player_position.y_;
+					send_data.object_param_.position_.z_ = player_position.z_;
 
-				send_data.object_param_.rotation_.x_ = player_rotation.x_;
-				send_data.object_param_.rotation_.y_ = player_rotation.y_;
-				send_data.object_param_.rotation_.z_ = player_rotation.z_;
+					send_data.object_param_.rotation_.x_ = player_rotation.x_;
+					send_data.object_param_.rotation_.y_ = player_rotation.y_;
+					send_data.object_param_.rotation_.z_ = player_rotation.z_;
 
-				NetworkHost::SendTo(DELI_MULTI, send_data);
+					NetworkHost::SendTo(DELI_MULTI, send_data);
+				}
 
-				//------------------------------------------------
-				// カメラデータ転送
-				//------------------------------------------------
-				Camera* main_camera = camera_manager_->Get("camera" + std::to_string(i));
-				D3DXVECTOR3 camera_position = main_camera->position();
-				D3DXVECTOR3 camera_focus = main_camera->focus();
-				D3DXVECTOR3 camera_rotation = main_camera->rotation();
+				int real_time = time_ / 60;
+				switch(real_time)
+				{
+					case 3:
+						{
+							//------------------------------------------------
+							// カメラデータ転送
+							//------------------------------------------------
+							Camera* sub_camera = camera_manager_->Get("SubCamera");
+							D3DXVECTOR3 sub_camera_position, sub_camera_rotation, sub_camera_focus;
+							sub_camera_rotation = sub_camera->rotation();
+							sub_camera_position = sub_camera->position();
+							sub_camera_focus = sub_camera->focus();
 
-				send_data.type_ = DATA_OBJ_PARAM;
-				send_data.object_param_.type_ = OBJ_CAMERA;
+							FbxPlayer* player = dynamic_cast<FbxPlayer*>(object_manager_->Get("player" + std::to_string(1)));
+							Vector3 focus = player->parameter().position_;
+							// フォーカス設定
+							sub_camera_focus.x = focus.x_;
+							sub_camera_focus.y = focus.y_;
+							sub_camera_focus.z = focus.z_;
+							sub_camera_focus.y = 1.5f;
+							// 注視点を基準にカメラ座標を設定
+							sub_camera_position = sub_camera_focus;
+							sub_camera_position.x -=
+								sinf(sub_camera_rotation.y) * CAMERA_POS_LEN * cosf(sub_camera_rotation.x);
+							sub_camera_position.z -=
+								cosf(sub_camera_rotation.y) * CAMERA_POS_LEN * cosf(sub_camera_rotation.x);
+							sub_camera_position.y -=
+								sinf(sub_camera_rotation.x) * CAMERA_POS_LEN;
 
-				send_data.object_param_.position_.x_ = camera_position.x;
-				send_data.object_param_.position_.y_ = camera_position.y;
-				send_data.object_param_.position_.z_ = camera_position.z;
+							// サブカメラへ値装填
+							sub_camera->SetPosition(sub_camera_position);
+							sub_camera->SetFocus(sub_camera_focus);
+							sub_camera->SetRotation(sub_camera_rotation);
 
-				send_data.object_param_.rotation_.x_ = camera_focus.x;
-				send_data.object_param_.rotation_.y_ = camera_focus.y;
-				send_data.object_param_.rotation_.z_ = camera_focus.z;
+							D3DXVECTOR3 camera_position = sub_camera->position();
+							D3DXVECTOR3 camera_focus = sub_camera->focus();
+							D3DXVECTOR3 camera_rotation = sub_camera->rotation();
+							for(int i = 0; i < MAX_GUEST; i++)
+							{
+								send_data.type_ = DATA_OBJ_PARAM;
+								send_data.object_param_.type_ = OBJ_CAMERA;
+								send_data.object_param_.ex_id_ = 0;
 
-				send_data.object_param_.ex_vec_.x_ = camera_rotation.x;
-				send_data.object_param_.ex_vec_.y_ = camera_rotation.y;
-				send_data.object_param_.ex_vec_.z_ = camera_rotation.z;
+								send_data.object_param_.position_.x_ = camera_position.x;
+								send_data.object_param_.position_.y_ = camera_position.y;
+								send_data.object_param_.position_.z_ = camera_position.z;
 
-				NetworkHost::SendTo((DELI_TYPE)i, send_data);
+								send_data.object_param_.rotation_.x_ = camera_focus.x;
+								send_data.object_param_.rotation_.y_ = camera_focus.y;
+								send_data.object_param_.rotation_.z_ = camera_focus.z;
+								NetworkHost::SendTo((DELI_TYPE)i, send_data);
+							}
+						}
+						break;
+					case 2:
+						{
+							//------------------------------------------------
+							// カメラデータ転送
+							//------------------------------------------------
+							Camera* sub_camera = camera_manager_->Get("SubCamera");
+							D3DXVECTOR3 sub_camera_position, sub_camera_rotation, sub_camera_focus;
+							sub_camera_rotation = sub_camera->rotation();
+							sub_camera_position = sub_camera->position();
+							sub_camera_focus = sub_camera->focus();
+
+							FbxPlayer* player = dynamic_cast<FbxPlayer*>(object_manager_->Get("player" + std::to_string(0)));
+							Vector3 focus = player->parameter().position_;
+							// フォーカス設定
+							sub_camera_focus.x = focus.x_;
+							sub_camera_focus.y = focus.y_;
+							sub_camera_focus.z = focus.z_;
+							sub_camera_focus.y = 1.5f;
+							// 注視点を基準にカメラ座標を設定
+							sub_camera_position = sub_camera_focus;
+							sub_camera_position.x -=
+								sinf(sub_camera_rotation.y) * CAMERA_POS_LEN * cosf(sub_camera_rotation.x);
+							sub_camera_position.z -=
+								cosf(sub_camera_rotation.y) * CAMERA_POS_LEN * cosf(sub_camera_rotation.x);
+							sub_camera_position.y -=
+								sinf(sub_camera_rotation.x) * CAMERA_POS_LEN;
+
+							// サブカメラへ値装填
+							sub_camera->SetPosition(sub_camera_position);
+							sub_camera->SetFocus(sub_camera_focus);
+							sub_camera->SetRotation(sub_camera_rotation);
+
+							D3DXVECTOR3 camera_position = sub_camera->position();
+							D3DXVECTOR3 camera_focus = sub_camera->focus();
+							D3DXVECTOR3 camera_rotation = sub_camera->rotation();
+							for(int i = 0; i < MAX_GUEST; i++)
+							{
+								send_data.type_ = DATA_OBJ_PARAM;
+								send_data.object_param_.type_ = OBJ_CAMERA;
+								send_data.object_param_.ex_id_ = 0;
+
+								send_data.object_param_.position_.x_ = camera_position.x;
+								send_data.object_param_.position_.y_ = camera_position.y;
+								send_data.object_param_.position_.z_ = camera_position.z;
+
+								send_data.object_param_.rotation_.x_ = camera_focus.x;
+								send_data.object_param_.rotation_.y_ = camera_focus.y;
+								send_data.object_param_.rotation_.z_ = camera_focus.z;
+								NetworkHost::SendTo((DELI_TYPE)i, send_data);
+							}
+						}
+						break;
+
+					case 1:
+					default:
+						// プレイヤー見てる
+						for(int i = 0; i < MAX_GUEST; i++)
+						{
+							//------------------------------------------------
+							// カメラデータ転送
+							//------------------------------------------------
+							FbxPlayer* player = dynamic_cast<FbxPlayer*>(object_manager_->Get("player" + std::to_string(i)));
+							Vector3 player_position = player->parameter().position_;
+							Vector3 player_rotation = player->parameter().rotation_;
+
+							Camera* main_camera = camera_manager_->Get("camera" + std::to_string(i));
+							D3DXVECTOR3 camera_position = main_camera->position();
+							D3DXVECTOR3 camera_focus = main_camera->focus();
+							D3DXVECTOR3 camera_rotation = main_camera->rotation();
+
+							send_data.type_ = DATA_OBJ_PARAM;
+							send_data.object_param_.type_ = OBJ_CAMERA;
+							send_data.object_param_.ex_id_ = 0;
+
+							send_data.object_param_.position_.x_ = camera_position.x;
+							send_data.object_param_.position_.y_ = camera_position.y;
+							send_data.object_param_.position_.z_ = camera_position.z;
+
+							send_data.object_param_.rotation_.x_ = camera_focus.x;
+							send_data.object_param_.rotation_.y_ = camera_focus.y;
+							send_data.object_param_.rotation_.z_ = camera_focus.z;
+							NetworkHost::SendTo((DELI_TYPE)i, send_data);
+
+							// 回転
+							send_data.object_param_.ex_id_ = 1;
+							send_data.object_param_.rotation_.x_ = camera_rotation.x;
+							send_data.object_param_.rotation_.y_ = camera_rotation.y;
+							send_data.object_param_.rotation_.z_ = camera_rotation.z;
+							NetworkHost::SendTo((DELI_TYPE)i, send_data);
+
+							#ifdef _DEBUG
+								if(i == 0)
+								{
+									Camera* sub_camera = camera_manager_->Get("SubCamera");
+									sub_camera->SetPosition(camera_position);
+									sub_camera->SetFocus(camera_focus);
+								}
+							#endif
+						}
+						break;
+				}
+			
+				return;
 			}
-			return;
 			break;
 
 		case STATE_RUN:
@@ -912,7 +1079,6 @@ void GameServer::Game()
 				{
 					// ゲームエンド条件１ タイムアップ
 					// じじい勝利
-					// 勝敗メッセージ
 					// 勝敗メッセージ
 					time_ = 60 * 5;
 					scene_state_ = STATE_GAME_END;
@@ -998,10 +1164,10 @@ void GameServer::Game()
 
 				float field_height = field->GetHeight(fort_pos);
 
-				fort_y[i] -= 0.01f;
-				if(fort_y[i] < -3.0f)
+				fort_y_[i] -= 0.01f;
+				if(fort_y_[i] < -3.0f)
 				{
-					fort_y[i] = -3.0f;
+					fort_y_[i] = -3.0f;
 					scene_state_ = STATE_FORT_IN;
 				}
 				// 砦エフェクト
@@ -1014,7 +1180,7 @@ void GameServer::Game()
 				strcpy_s(send_data.name, MAX_NAME_LEN, "smoke2");
 				NetworkHost::SendTo(DELI_MULTI, send_data);
 
-				fort_position.y_ = field_height + fort_y[i];
+				fort_position.y_ = field_height + fort_y_[i];
 
 				fort->SetPosition(fort_position);
 
@@ -1080,10 +1246,10 @@ void GameServer::Game()
 				fort_pos.z = fort_position.z_;
 
 				float field_height = field->GetHeight(fort_pos);
-				fort_y[i] += 0.01f;
-				if(fort_y[i] > 0.0f)
+				fort_y_[i] += 0.01f;
+				if(fort_y_[i] > 0.0f)
 				{
-					fort_y[i] = 0.0f;
+					fort_y_[i] = 0.0f;
 					scene_state_ = STATE_RUN;
 					Camera* sub_camera = camera_manager_->Get("SubCamera");
 					sub_camera->SetRotation(D3DXVECTOR3(0.0f, 0.0f, 0.0f));
@@ -1098,7 +1264,7 @@ void GameServer::Game()
 				strcpy_s(send_data.name, MAX_NAME_LEN, "smoke2");
 				NetworkHost::SendTo(DELI_MULTI, send_data);
 
-				fort_position.y_ = field_height + fort_y[i];
+				fort_position.y_ = field_height + fort_y_[i];
 				fort->SetPosition(fort_position);
 
 				// オブジェクトデータ転送
@@ -1244,26 +1410,23 @@ void GameServer::Game()
 				// じじいデバフ
 				player_speed -= player_speed * player->GetDebuffPower();
 			}
-
+			// 向き
+			player_rotation.y_ += GamePad::isStick(i).rsx_ * CHAR_ROT_SPEED;
+			if(player_rotation.y_ > D3DX_PI)
+			{
+				player_rotation.y_ -= D3DX_PI * 2.0f;
+			}
+			else if(player_rotation.y_ < D3DX_PI)
+			{
+				player_rotation.y_ += D3DX_PI * 2.0f;
+			}
+			// 移動
 			player_position.x_ += (
 				cosf(player_rotation.y_) * GamePad::isStick(i).lsx_ +
 				sinf(-player_rotation.y_) * GamePad::isStick(i).lsy_) * player_speed;
 			player_position.z_ -= (
 				sinf(player_rotation.y_) * GamePad::isStick(i).lsx_ +
 				cosf(-player_rotation.y_) * GamePad::isStick(i).lsy_) * player_speed;
-
-			if(GamePad::isPress(i, PAD_RS_LEFT)){
-				player_rotation.y_ -= CHAR_ROT_SPEED;
-				if(player_rotation.y_ < D3DX_PI){
-					player_rotation.y_ += D3DX_PI * 2.0f;
-				}
-			}
-			if(GamePad::isPress(i, PAD_RS_RIGHT)){
-				player_rotation.y_ += CHAR_ROT_SPEED;
-				if(player_rotation.y_ > D3DX_PI){
-					player_rotation.y_ -= D3DX_PI * 2.0f;
-				}
-			}
 		}
 
 		D3DXVECTOR3 player_pos(
@@ -1290,17 +1453,15 @@ void GameServer::Game()
 		D3DXVECTOR3 camera_position, camera_focus;
 		D3DXVECTOR3 camera_rotation(main_camera->rotation());
 
-		if(GamePad::isPress(i, PAD_RS_UP)){
-			camera_rotation.x -= CAMERA_ROT_SPEED;
-			if(camera_rotation.x < -CAMERA_ROT_X_LIMIT){
-				camera_rotation.x = -CAMERA_ROT_X_LIMIT;
-			}
+		// 向き
+		camera_rotation.x += GamePad::isStick(i).rsy_ * CHAR_ROT_SPEED;
+		if(camera_rotation.x > CAMERA_ROT_X_LIMIT)
+		{
+			camera_rotation.x = CAMERA_ROT_X_LIMIT;
 		}
-		if(GamePad::isPress(i, PAD_RS_DOWN)){
-			camera_rotation.x += CAMERA_ROT_SPEED;
-			if(camera_rotation.x > CAMERA_ROT_X_LIMIT){
-				camera_rotation.x = CAMERA_ROT_X_LIMIT;
-			}
+		else if(camera_rotation.x < -CAMERA_ROT_X_LIMIT)
+		{
+			camera_rotation.x = -CAMERA_ROT_X_LIMIT;
 		}
 
 		// モデルの回転Yをそのままカメラの回転Yへ
@@ -1359,11 +1520,11 @@ void GameServer::Game()
 		// バレット発射
 		//-------------------------------------
 		float watergauge = player->GetWaterGauge();
-		shot_late[i]--;
-		shot_late[i] = std::max<int>(shot_late[i], 0);
+		shot_late_[i]--;
+		shot_late_[i] = std::max<int>(shot_late_[i], 0);
 
-		if(GamePad::isPress(i, PAD_BUTTON_8) && watergauge > 0.0f && shot_late[i] == 0){
-			shot_late[i] = 10;
+		if(GamePad::isPress(i, PAD_BUTTON_8) && watergauge > 0.0f && shot_late_[i] == 0){
+			shot_late_[i] = 10;
 
 			OBJECT_PARAMETER_DESC bullet_param;
 			bullet_param.layer_ = LAYER_BULLET;
@@ -1404,6 +1565,18 @@ void GameServer::Game()
 			watergauge -= GRANDFATHER_SUB_WATERGAUGE;
 			watergauge = std::max<float>(watergauge, 0.0f);
 			player->SetWaterGauge(watergauge);
+
+			//-------------------------------------
+			// 弾発射SE再生
+			//-------------------------------------
+			if(i == 0)
+			{
+				Sound::LoadAndPlaySE("resource/sound/se/game/shootGrandfather.wav");
+			}
+			else
+			{
+				Sound::LoadAndPlaySE("resource/sound/se/game/shootChild.wav");
+			}
 		}
 
 		//-------------------------------------
@@ -1421,6 +1594,11 @@ void GameServer::Game()
 			// おじのデバフパワーをセット
 			//-------------------------------------
 			float life = player->GetLife();
+			// HP回復
+			life = std::max<float>(life, 0.0f);
+			life += CHILD_RECOVER_HP;
+			life = std::min<float>(life, 1.0f);
+			player->SetLife(life);
 			if(life < 0.5f)
 			{
 				float debuff_power = life - 0.75f;
@@ -1534,6 +1712,13 @@ void GameServer::Game()
 				GamePad::isPress(i, PAD_LS_LEFT) ||
 				GamePad::isPress(i, PAD_LS_RIGHT)){
 				send_data.object_param_.ex_id_ = 1;
+				walk_timer_[i]++;
+				if ((walk_timer_[i] >= 30))
+				{
+					Sound::LoadAndPlaySE("resource/sound/se/game/footstep.wav");
+					walk_timer_[i] = 0;
+				}
+
 			}
 		}
 		else
@@ -1558,8 +1743,10 @@ void GameServer::Game()
 		camera_focus = main_camera->focus();
 		camera_rotation = main_camera->rotation();
 
+		ZeroMemory(&send_data, sizeof(send_data));
 		send_data.type_ = DATA_OBJ_PARAM;
 		send_data.object_param_.type_ = OBJ_CAMERA;
+		send_data.object_param_.ex_id_ = 0;
 
 		switch(scene_state_)
 		{
@@ -1581,10 +1768,6 @@ void GameServer::Game()
 					send_data.object_param_.rotation_.x_ = sub_camera_focus.x;
 					send_data.object_param_.rotation_.y_ = sub_camera_focus.y;
 					send_data.object_param_.rotation_.z_ = sub_camera_focus.z;
-
-					send_data.object_param_.ex_vec_.x_ = camera_rotation.x;
-					send_data.object_param_.ex_vec_.y_ = camera_rotation.y;
-					send_data.object_param_.ex_vec_.z_ = camera_rotation.z;
 				}
 				break;
 
@@ -1597,12 +1780,16 @@ void GameServer::Game()
 				send_data.object_param_.rotation_.y_ = camera_focus.y;
 				send_data.object_param_.rotation_.z_ = camera_focus.z;
 
-				send_data.object_param_.ex_vec_.x_ = camera_rotation.x;
-				send_data.object_param_.ex_vec_.y_ = camera_rotation.y;
-				send_data.object_param_.ex_vec_.z_ = camera_rotation.z;
 				break;
 
 		}
+		NetworkHost::SendTo((DELI_TYPE)i, send_data);
+
+		// 回転
+		send_data.object_param_.ex_id_ = 1;
+		send_data.object_param_.rotation_.x_ = camera_rotation.x;
+		send_data.object_param_.rotation_.y_ = camera_rotation.y;
+		send_data.object_param_.rotation_.z_ = camera_rotation.z;
 		NetworkHost::SendTo((DELI_TYPE)i, send_data);
 
 		//------------------------------------------------
@@ -1649,6 +1836,19 @@ void GameServer::Result()
 		send_data.type_ = DATA_SCENE_CHANGE_MATCHING;
 		NetworkHost::SendTo(DELI_MULTI, send_data);
 	}
+
+	for(int i = 0; i < MAX_GUEST; i++)
+	{
+		if(GamePad::isPress(i, PAD_BUTTON_8))
+		{
+			ChangeServerState(STATE_MATCHING);
+			// シーンチェンジ命令送信
+			ZeroMemory(&send_data, sizeof(send_data));
+			send_data.type_ = DATA_SCENE_CHANGE_MATCHING;
+			NetworkHost::SendTo(DELI_MULTI, send_data);
+			break;
+		}
+	}
 }
 
 
@@ -1657,11 +1857,28 @@ void GameServer::Result()
 //-------------------------------------
 void GameServer::ChangeServerState(SERVER_STATE next)
 {
-	// 各種設定初期化
+	// サウンドフェードアウト
+	switch(server_state_)
+	{
+		case STATE_MATCHING:
+			matching_bgm_->Stop(60);
+			break;
+		case STATE_GAME:
+			game_bgm_->Stop(60);
+			break;
+		case STATE_RESULT:
+			result_bgm_->Stop(60);
+			break;
+		default:
+			break;
+	}
+
+	// 共通設定初期化
 	for(int i = 0; i < MAX_GUEST; i++)
 	{
 		camera_pos_len_[i] = CAMERA_POS_LEN;
-		shot_late[i] = 0;
+		shot_late_[i] = 0;
+		walk_timer_[i] = 0;
 	}
 	collision_manager_->Update();
 	now_target_fort_ = 0;
@@ -1691,17 +1908,9 @@ void GameServer::ChangeServerState(SERVER_STATE next)
 					player->SetWaterSupplyEnable(0);
 
 					Vector3 pos, rot;
-					if(i == 0)
-					{
-						pos = GRANDFATHER_POSITION;
-						rot = {0.0f, 45.0f, 0.0f};
-					}
-					else
-					{
-						pos = GRANDFATHER_POSITION;
-						pos.x_ += i * 2.0f;
-						rot = {0.0f, 45.0f, 0.0f};
-					}
+					pos = MATCHING_POSITION[i];
+					rot = {0.0f, MATCHING_ROTATION[i], 0.0f};
+
 					D3DXVECTOR3 poss;
 					poss.x = pos.x_;
 					poss.y = pos.y_;
@@ -1775,6 +1984,7 @@ void GameServer::ChangeServerState(SERVER_STATE next)
 					main_camera->SetFocus(camera_focus);
 					main_camera->SetRotation(camera_rotation);
 				}
+				matching_bgm_->Play(true, 120);
 			}
 			break;
 
@@ -1803,13 +2013,13 @@ void GameServer::ChangeServerState(SERVER_STATE next)
 
 					if(i == 0)
 					{
-						fort_y[i] = 0.0f;
+						fort_y_[i] = 0.0f;
 					}
 					else
 					{
-						fort_y[i] = -3.0f;
+						fort_y_[i] = -3.0f;
 					}
-					fort_pos.y_ = field->GetHeight(temp) + fort_y[i];
+					fort_pos.y_ = field->GetHeight(temp) + fort_y_[i];
 
 					fort->SetPosition(fort_pos);
 				}
@@ -1925,10 +2135,12 @@ void GameServer::ChangeServerState(SERVER_STATE next)
 					main_camera->SetFocus(camera_focus);
 					main_camera->SetRotation(camera_rotation);
 				}
+				game_bgm_->Play(true, 120);
 			}
 			break;
 
 		case STATE_RESULT:
+			result_bgm_->Play(true, 120);
 			break;
 
 		default:

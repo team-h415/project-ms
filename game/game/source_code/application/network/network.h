@@ -14,14 +14,14 @@
 //-------------------------------------
 // define
 //-------------------------------------
-#define NETWORK_HOST_MODE						// exeがホストなのかゲストなのかの分岐 通常はホスト、コメントアウトでゲストに
+//#define NETWORK_HOST_MODE						// exeがホストなのかゲストなのかの分岐 通常はホスト、コメントアウトでゲストに
 
 #define ID_NONE -1								// IDの無い状態
 #define PORT_NUMBER_0 20000						// ゲストからホストへの送信時のポート
 #define PORT_NUMBER_1 20001						// ホストからゲストへの送信時のポート
 #define MULTICAST_ADDRESS "239.0.0.25"			// マルチキャスト用のアドレス
 #define MAX_GUEST 5								// 接続ゲスト最大数
-#define MAX_NAME_LEN 100						// 最大文字数
+#define MAX_NAME_LEN 20						// 最大文字数
 
 //-------------------------------------
 // enum
@@ -80,7 +80,6 @@ struct OBJ_PARAM
 	OBJ_TYPE	type_;			// オブジェクトタイプ
 	VEC3		position_;		// 座標
 	VEC3		rotation_;		// 回転
-	VEC3		ex_vec_;		// 特殊項目
 	int			ex_id_;			// EX項目 FBXのアニメーションIDなどで
 };
 

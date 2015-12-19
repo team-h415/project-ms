@@ -151,13 +151,23 @@ Matching::Matching()
 	effect_manager_->Play("portal");
 
 	//-------------------------------------
+	// カメラ初期座標演算
+	//-------------------------------------
+	D3DXVECTOR3 camera_focus(34.5f, 0.0f, -34.5f);
+	D3DXVECTOR3 camera_pos(camera_focus);
+	float first_len(CAMERA_POS_LEN * 1.8f);
+	camera_pos.x -= sinf(2.31f - D3DX_PI) * first_len * cosf(D3DX_PI * -0.1f);
+	camera_pos.z -= cosf(2.31f - D3DX_PI) * first_len * cosf(D3DX_PI * -0.1f);
+	camera_pos.y -= sinf(D3DX_PI * -0.1f) * CAMERA_POS_LEN;
+
+	//-------------------------------------
 	// メインカメラ
 	//-------------------------------------
 	CAMERA_PARAMETER_DESC camera_param;
 	camera_param.acpect_ = SCREEN_WIDTH / SCREEN_HEIGHT;
 	camera_param.fovy_ = D3DX_PI * 0.25f;
-	camera_param.position_ = GRANDFATHER_POSITION;
-	camera_param.focus_ = GRANDFATHER_POSITION;
+	camera_param.position_ = camera_pos;
+	camera_param.focus_ = camera_focus;
 	camera_param.position_.z -= 3.0f;
 	camera_param.position_.y += 1.5f;
 	camera_param.rotation_ = {0.0f, 0.0f, 0.0f};
@@ -223,7 +233,7 @@ Matching::Matching()
 	OBJECT_PARAMETER_DESC grandfather_param;
 	grandfather_param.name_ = "player0";
 	grandfather_param.layer_ = LAYER_MODEL_GRANDFATHER;
-	grandfather_param.position_ = GRANDFATHER_POSITION;
+	grandfather_param.position_ = MATCHING_POSITION[0];
 	grandfather_param.rotation_ = {0.0f, 4.65f, 0.0f};
 	grandfather_param.scaling_ = {1.0f, 1.0f, 1.0f};
 
@@ -253,8 +263,7 @@ Matching::Matching()
 	{
 		std::string name = "player" + std::to_string(i);
 		child_param.name_ = name;
-		child_param.position_ = GRANDFATHER_POSITION;
-		child_param.position_.x_ += i * 2.0f;
+		child_param.position_ = MATCHING_POSITION[i];
 		object_manager_->Create(child_param);
 
 		COLLISION_PARAMETER_DESC child_collision_param;
@@ -372,18 +381,6 @@ Matching::Matching()
 
 	sprite_alpha_ = 0.0f;
 	alphar_wave_ = 0.0f;
-
-	//-------------------------------------
-	// カメラ調整
-	//-------------------------------------
-	Camera* camera = camera_manager_->Get("MainCamera");
-	D3DXVECTOR3 set_vec(34.5f, 0.0f, -34.5f);
-	camera->SetFocus(set_vec);
-	float first_len(CAMERA_POS_LEN * 1.8f);
-	set_vec.x -= sinf(2.31f - D3DX_PI) * first_len * cosf(D3DX_PI * -0.1f);
-	set_vec.z -= cosf(2.31f - D3DX_PI) * first_len * cosf(D3DX_PI * -0.1f);
-	set_vec.y -= sinf(D3DX_PI * -0.1f) * CAMERA_POS_LEN;
-	camera->SetPosition(set_vec);
 
 	//-------------------------------------
 	// セットアップ完了

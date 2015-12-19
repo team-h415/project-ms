@@ -45,6 +45,7 @@ class DebugFont;
 class CollisionManager;
 class Object;
 class Field;
+class Sound;
 class GameServer : public Scene
 {
 public:
@@ -84,15 +85,20 @@ private:
 	bool				guest_scene_change_[MAX_GUEST];
 	float				camera_pos_len_[MAX_GUEST];
 	int					time_;
+	// BGM
+	Sound				*matching_bgm_;
+	Sound				*game_bgm_;
+	Sound				*result_bgm_;
 
 	//-------------------------------------
 	// ゲームルール用パラメータ
 	//-------------------------------------
-	int shot_late[MAX_GUEST];
+	int shot_late_[MAX_GUEST];
+	int walk_timer_[MAX_GUEST];
 	// ステージ(砦が壊されるごとに進行/1からスタート)
 	int now_target_fort_;
 	// 砦高さ補正
-	float fort_y[3];
+	float fort_y_[3];
 	// おじデバフフラグ
 	bool grandfather_debuff_;
 	// 子供死亡フラグ

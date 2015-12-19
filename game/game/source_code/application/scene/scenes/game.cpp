@@ -359,7 +359,7 @@ Game::Game()
 
 	timer->SetTexture("resource/texture/figure_all.png");
 	timer->SetFigureOffset(-30.0f);
-	timer->SetValue(60 * GAME_TIME);
+	timer->SetValue(GAME_TIME);
 	timer->SetState(TIMER_STOP);
 	//パラメータ設定後に実行
 	timer->GenerateNumber();
@@ -647,9 +647,9 @@ Game::Game()
 	result_sprite_param.name_ = "result_sprite";
 	result_sprite_param.layer_ = LAYER_SPRITE_2D;
 	result_sprite_param.position_ = {0.0f, -5000.0f, 0.0f};
-	result_sprite_param.scaling_ = {SCREEN_WIDTH * 0.2f, SCREEN_HEIGHT * 0.2f, 1.0f};
+	result_sprite_param.scaling_ = {SCREEN_WIDTH * 0.3f, SCREEN_HEIGHT * 0.3f, 1.0f};
 	object_manager_->Create(result_sprite_param,
-							"resource/texture/result/zizi.jpg");
+							"resource/texture/game/win.png");
 
 #ifdef NETWORK_HOST_MODE
 #else
