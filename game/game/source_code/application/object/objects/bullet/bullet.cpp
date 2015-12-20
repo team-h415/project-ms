@@ -206,6 +206,9 @@ void Bullet::Update()
 		send_data.object_param_.ex_id_ = 1;
 		strcpy_s(send_data.name_, MAX_NAME_LEN, parameter_.name_.c_str());
 		NetworkHost::SendTo(DELI_MULTI, send_data);
+
+		// サウンド
+		Sound::LoadAndPlaySE("resource/sound/se/game/waterBreak.wav");
 	}
 	else
 	{
@@ -247,6 +250,9 @@ void Bullet::Update()
 			send_data.object_param_.ex_id_ = 1;
 			strcpy_s(send_data.name_, MAX_NAME_LEN, parameter_.name_.c_str());
 			NetworkHost::SendTo(DELI_MULTI, send_data);
+
+			// サウンド
+			Sound::LoadAndPlaySE("resource/sound/se/game/waterBreak.wav");
 		}
 	}
 

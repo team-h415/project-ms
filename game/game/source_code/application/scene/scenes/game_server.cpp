@@ -1281,6 +1281,11 @@ void GameServer::MatchingGrandfather()
 			Bullet* bullet = object_manager_->GetNoUseBullet();
 			bullet->Fire(bullet_param);
 		}
+
+		//-------------------------------------
+		// íeî≠éÀSEçƒê∂
+		//-------------------------------------
+		Sound::LoadAndPlaySE("resource/sound/se/game/shootGrandfather.wav");
 	}
 
 	//------------------------------------------------
@@ -1522,6 +1527,11 @@ void GameServer::MatchingChild()
 			send_data.object_param_.rotation_ = {0.0f, child_rotation.y_, 0.0f};
 			strcpy_s(send_data.name_, MAX_NAME_LEN, "water");
 			NetworkHost::SendTo(DELI_MULTI, send_data);
+
+			//-------------------------------------
+			// íeî≠éÀSEçƒê∂
+			//-------------------------------------
+			Sound::LoadAndPlaySE("resource/sound/se/game/shootChild.wav");
 		}
 
 		//------------------------------------------------

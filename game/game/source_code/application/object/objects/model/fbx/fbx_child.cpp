@@ -31,6 +31,7 @@
 #include "fbx_player.h"
 #include "fbx_child.h"
 #include "../../../../resource/texture_manager.h"
+#include "../../../../sound/sound.h"
 
 
 //-------------------------------------
@@ -169,6 +170,9 @@ void FbxChild::Action(
 
 					strcpy_s(send_data.name_, MAX_NAME_LEN, "watersupply");
 					NetworkHost::SendTo(DELI_MULTI, send_data);
+
+					// 補給SE再生
+					Sound::LoadAndPlaySE("resource/sound/se/game/chargeWater.wav");
 				}
 
 				// 補給泡エフェクト

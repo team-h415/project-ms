@@ -55,7 +55,7 @@ static const float MATCHING_ROTATION[5]
 #define CAMERA_FOCUS_OFFSET 0.5f					// キャラクターの中心からのオフセット
 #define CAMERA_POS_LEN 5.5f							// カメラ注視点からカメラ座標までの距離
 #define CAMERA_ROT_X_LIMIT (D3DX_PI * 0.4f)			// カメラX回転の限界値
-#define CAMERA_ROT_SPEED (D3DX_PI * 0.01f)			// カメラ回転速度
+#define CAMERA_ROT_SPEED (D3DX_PI * 0.005f)			// カメラ回転速度
 #define CAMARA_LEN_SPEED (CAMERA_POS_LEN * 0.01f)	// カメラ注視点→座標距離の加算スピード
 
 #define CAMERA_SUB_ROT_SPEED (D3DX_PI * 0.007f)		// サブカメラ回転速度
@@ -80,7 +80,7 @@ static const float MATCHING_ROTATION[5]
 #define GRANDFATHER_LIFE 1.0f
 // 水ゲージ
 #define GRANDFATHER_WATERGAUGE 1.0f
-#define GRANDFATHER_SUB_WATERGAUGE 0.01f
+#define GRANDFATHER_SUB_WATERGAUGE 0.0015f
 // くらうダメージ量
 #define GRANDFATHER_DAMAGE 0.05f
 // 座標
@@ -111,7 +111,7 @@ static const float GRANDFATHER_ROTATION_STAGE[]
 #define CHILD_LIFE 1.0f
 // 水ゲージ
 #define CHILD_WATERGAUGE 1.0f
-#define CHILD_SUB_WATERGAUGE 0.01f
+#define CHILD_SUB_WATERGAUGE 0.001f
 // くらうダメージ量
 #define CHILD_DAMAGE 0.2f
 // 座標

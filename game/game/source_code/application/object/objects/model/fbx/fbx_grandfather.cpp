@@ -141,7 +141,7 @@ void FbxGrandfather::Action(
 			&& water_gauge_ < 1.0f){
 			if (water_supply_enable_){
 				// 水補給
-				water_gauge_ += GRANDFATHER_SUB_WATERGAUGE;
+				water_gauge_ += CHILD_SUB_WATERGAUGE;
 				water_gauge_ = std::min<float>(water_gauge_, 1.0f);
 
 				// 重複防止
@@ -165,6 +165,9 @@ void FbxGrandfather::Action(
 
 					strcpy_s(send_data.name_, MAX_NAME_LEN, "watersupply");
 					NetworkHost::SendTo(DELI_MULTI, send_data);
+
+					// 補給SE再生
+					Sound::LoadAndPlaySE("resource/sound/se/game/chargeWater.wav");
 				}
 
 				// 補給泡エフェクト
