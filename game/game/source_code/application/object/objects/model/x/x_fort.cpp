@@ -31,7 +31,7 @@ XFort::XFort(
 	// ƒpƒ‰ƒ[ƒ^‰Šú‰»
 	life_ = 0.0f;
 
-	SetTexture("resource/texture/game/flag.png");
+	SetTexture("resource/texture/game/fort.jpg");
 }
 
 

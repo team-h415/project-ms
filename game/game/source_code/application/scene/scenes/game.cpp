@@ -283,7 +283,7 @@ void Game::Initialize()
 
 	object_manager_->Create(
 		fort1_param,
-		"resource/model/x/test.x");
+		"resource/model/x/fort.x");
 
 	COLLISION_PARAMETER_DESC fort1_collision_param;
 	Object *fort1_obj = object_manager_->Get("fort1");
@@ -310,7 +310,7 @@ void Game::Initialize()
 
 	object_manager_->Create(
 		fort2_param,
-		"resource/model/x/test.x");
+		"resource/model/x/fort.x");
 
 	COLLISION_PARAMETER_DESC fort2_collision_param;
 	Object *fort2_obj = object_manager_->Get("fort2");
@@ -337,7 +337,7 @@ void Game::Initialize()
 
 	object_manager_->Create(
 		fort3_param,
-		"resource/model/x/test.x");
+		"resource/model/x/fort.x");
 
 	COLLISION_PARAMETER_DESC fort3_collision_param;
 	Object *fort3_obj = object_manager_->Get("fort3");
