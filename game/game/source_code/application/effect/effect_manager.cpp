@@ -17,10 +17,50 @@
 
 
 //-------------------------------------
+// const
+//-------------------------------------
+static const int MAX_EFFECT(13);
+static const char* EFFECT_NAME[MAX_EFFECT]
+{
+	"water",
+	"watersupply",
+	"watersupplybubble",
+	"damage",
+	"dead",
+	"smoke",
+	"smoke2",
+	"dash",
+	"SpeedDown",
+	"BombFire",
+	"fieldhit",
+	"marker",
+	"portal",
+};
+
+static const char* EFFECT_PATH[MAX_EFFECT]
+{
+	"resource/effect/BulletFire.efk",
+	"resource/effect/WaterSupply.efk",
+	"resource/effect/WaterSupply2.efk",
+	"resource/effect/Damage3_3x0.5.efk",
+	"resource/effect/Dead2.efk",
+	"resource/effect/Smoke.efk",
+	"resource/effect/Smoke2.efk",
+	"resource/effect/Dash.efk",
+	"resource/effect/SpeedDown2.efk",
+	"resource/effect/BombFire.efk",
+	"resource/effect/FieldHit2.efk",
+	"resource/effect/Marker.efk",
+	"resource/effect/Portal2x2.efk",
+};
+
+
+//-------------------------------------
 // variable
 //-------------------------------------
 EffectManager* EffectManager::effect_manager_ = nullptr;
 int EffectManager::effect_count_ = 0;
+
 
 //-------------------------------------
 // Get
@@ -30,11 +70,34 @@ EffectManager* EffectManager::Get()
 	if(effect_manager_ == nullptr)
 	{
 		effect_manager_ = new EffectManager(50000);
+		effect_manager_->CreateEffects();
 	}
 
 	return effect_manager_;
 }
 
+
+//-------------------------------------
+// CreateEffects
+//-------------------------------------
+void EffectManager::CreateEffects()
+{
+	//-------------------------------------
+	// エフェクトの読み込み
+	//-------------------------------------
+	EFFECT_PARAMETER_DESC effect_param;
+	ZeroMemory(&effect_param, sizeof(effect_param));
+	effect_param.scaling_ = {1.0f, 1.0f, 1.0f};
+	effect_param.speed_ = 1.0f;
+
+	for(int i = 0; i < MAX_EFFECT; i++)
+	{
+		effect_manager_->Create(
+			EFFECT_NAME[i],
+			EFFECT_PATH[i],
+			effect_param);
+	}
+}
 
 //-------------------------------------
 // Delete

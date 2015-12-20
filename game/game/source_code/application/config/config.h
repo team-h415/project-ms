@@ -41,7 +41,7 @@ static const float MATCHING_ROTATION[5]
 
 #define SEA_HEIGHT -0.8f
 
-#define PORTAL_POSITION { 28.63f, 0.00f, -34.24f }
+#define PORTAL_POSITION { 28.63f, 0.05f, -34.24f }
 #define PORTAL_DISTANCE 3.0f
 
 

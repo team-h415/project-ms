@@ -77,7 +77,7 @@ void FortGaugeManager::Update()
         fort_gauge_[num]->Update();
         // ƒ‰ƒCƒt‚ª–³‚­‚È‚Á‚½Žž‚É•\Ž¦‚ð•Ï‚¦‚é
         if (fort_gauge_[num]->GetFortState() == DEAD){
-            texture_ = TextureManager::GetTexture("resource/texture/game/map2.png");
+            texture_ = TextureManager::GetTexture("resource/texture/game/TowerCollapse000.png");
             fort_gauge_[num]->SetTexture(texture_);
         }
     }

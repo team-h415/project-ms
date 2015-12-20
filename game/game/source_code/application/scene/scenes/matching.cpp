@@ -97,90 +97,6 @@ Matching::~Matching()
 void Matching::Initialize()
 {
 	//-------------------------------------
-	// エフェクトの読み込み
-	//-------------------------------------
-	EFFECT_PARAMETER_DESC effect_param;
-	effect_param.position_ = {0.0f, 0.0f, 0.0f};
-	effect_param.rotation_ = {0.0f, 0.0f, 0.0f};
-	effect_param.scaling_ = {1.0f, 1.0f, 1.0f};
-	effect_param.speed_ = 1.0f;
-
-	effect_manager_->Create(
-		"water",
-		"resource/effect/BulletFire.efk",
-		effect_param);
-
-	effect_manager_->Create(
-		"fieldhit",
-		"resource/effect/FieldHit2.efk",
-		effect_param);
-
-	effect_manager_->Create(
-		"damage",
-		"resource/effect/Damage3_3x0.5.efk",
-		effect_param);
-
-	effect_manager_->Create(
-		"dead",
-		"resource/effect/Dead2.efk",
-		effect_param);
-
-	effect_manager_->Create(
-		"smoke",
-		"resource/effect/Smoke.efk",
-		effect_param);
-
-	effect_manager_->Create(
-		"smoke2",
-		"resource/effect/Smoke2.efk",
-		effect_param);
-
-	effect_manager_->Create(
-		"dash",
-		"resource/effect/Dash.efk",
-		effect_param);
-
-	effect_manager_->Create(
-		"watersupply",
-		"resource/effect/WaterSupply.efk",
-		effect_param);
-
-	effect_manager_->Create(
-		"watersupplybubble",
-		"resource/effect/WaterSupply2.efk",
-		effect_param);
-
-	effect_manager_->Create(
-		"SpeedDown",
-		"resource/effect/SpeedDown.efk",
-		effect_param);
-
-	effect_manager_->Create(
-		"water",
-		"resource/effect/BulletFire.efk",
-		effect_param);
-
-	effect_manager_->Play("water");
-
-	effect_param.position_ = {0.0f, 1000.0f, 0.0f};
-
-	effect_manager_->Create(
-		"marker",
-		"resource/effect/Marker.efk",
-		effect_param);
-
-	effect_manager_->Play("marker");
-
-	effect_param.position_ = PORTAL_POSITION;
-	effect_manager_->Create(
-		"portal",
-		"resource/effect/Portal2x2.efk",
-		effect_param);
-
-	effect_manager_->Play("water");
-	effect_manager_->Play("portal");
-
-	//-------------------------------------
 	// カメラ初期座標演算
 	//-------------------------------------
 	D3DXVECTOR3 camera_focus(34.94f, 0.0f, -34.39f);
@@ -438,6 +354,29 @@ void Matching::Initialize()
 
 	sprite_alpha_ = 0.0f;
 	alphar_wave_ = 0.0f;
+
+	//-------------------------------------
+	// マーカー
+	//-------------------------------------
+	EFFECT_PARAMETER_DESC effect_param;
+	MyEffect *effect = effect_manager_->Get("marker");
+	ZeroMemory(&effect_param, sizeof(effect_param));
+	effect_param.scaling_ = {1.0f, 1.0f, 1.0f};
+	effect_param.speed_ = 1.0f;
+	effect->SetParameter(effect_param);
+	effect_manager_->Play("marker");
+
+	//-------------------------------------
+	// ポータル
+	//-------------------------------------
+	effect = effect_manager_->Get("portal");
+	ZeroMemory(&effect_param, sizeof(effect_param));
+	effect_param.position_ = PORTAL_POSITION;
+	effect_param.scaling_ = {1.0f, 1.0f, 1.0f};
+	effect_param.speed_ = 1.0f;
+	effect->SetParameter(effect_param);
+	effect_manager_->Play("water");
+	effect_manager_->Play("portal");
 
 	//-------------------------------------
 	// セットアップ完了

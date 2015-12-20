@@ -100,12 +100,12 @@ void Result::Initialize()
 
 	param.name_ = "push8";
 	param.position_ = {
-		SCREEN_WIDTH * 0.5f,
-		SCREEN_HEIGHT * 0.5f,
+		SCREEN_WIDTH - 200.0f,
+		SCREEN_HEIGHT - 25.0f,
 		0.0f
 	};
 	param.rotation_ = {0.0f, 0.0f, 0.0f};
-	param.scaling_ = {SCREEN_WIDTH, SCREEN_HEIGHT, 0.0f};
+	param.scaling_ = {400.0f, 50.0f, 0.0f};
 	param.layer_ = LAYER_SPRITE_2D;
 
 	object_manager_->Create(

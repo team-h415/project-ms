@@ -176,7 +176,7 @@ void GameServer::Initialize()
 
 		object_manager_->Create(
 			fort_param,
-			"resource/model/x/test.x");
+			"resource/model/x/fort.x");
 
 		fort_obj = object_manager_->Get(name);
 		fort = dynamic_cast<XFort*>(fort_obj);

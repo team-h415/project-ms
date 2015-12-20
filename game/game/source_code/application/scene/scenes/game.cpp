@@ -123,60 +123,6 @@ Game::~Game()
 void Game::Initialize()
 {
 	//-------------------------------------
-	// エフェクトの読み込み
-	//-------------------------------------
-	EFFECT_PARAMETER_DESC effect_param;
-	ZeroMemory(&effect_param, sizeof(effect_param));
-	effect_param.scaling_ = { 1.0f, 1.0f, 1.0f };
-	effect_param.speed_ = 1.0f;
-
-	effect_manager_->Create(
-		"water",
-		"resource/effect/BulletFire.efk",
-		effect_param);
-
-	effect_manager_->Create(
-		"damage",
-		"resource/effect/Damage3_3x0.5.efk",
-		effect_param);
-
-	effect_manager_->Create(
-		"dead",
-		"resource/effect/Dead2.efk",
-		effect_param);
-
-	effect_manager_->Create(
-		"smoke",
-		"resource/effect/Smoke.efk",
-		effect_param);
-
-	effect_manager_->Create(
-		"smoke2",
-		"resource/effect/Smoke2.efk",
-		effect_param);
-
-	effect_manager_->Create(
-		"dash",
-		"resource/effect/Dash.efk",
-		effect_param);
-
-	effect_manager_->Create(
-		"watersupply",
-		"resource/effect/WaterSupply.efk",
-		effect_param);
-
-	effect_manager_->Create(
-		"watersupplybubble",
-		"resource/effect/WaterSupply2.efk",
-		effect_param);
-
-	effect_manager_->Create(
-		"SpeedDown",
-		"resource/effect/SpeedDown2.efk",
-		effect_param);
-
-
-	//-------------------------------------
 	// メインカメラ
 	//-------------------------------------
 	CAMERA_PARAMETER_DESC camera_param;
@@ -265,7 +211,6 @@ void Game::Initialize()
 		{
 			fort_pos.y_ -= 3.0f;
 		}
-
 		std::string name = "fort" + std::to_string(i);
 		fort_param.name_ = name;
 		fort_param.layer_ = LAYER_MODEL_FORT;
@@ -275,7 +220,7 @@ void Game::Initialize()
 
 		object_manager_->Create(
 			fort_param,
-			"resource/model/x/test.x");
+			"resource/model/x/fort.x");
 
 		fort_obj = object_manager_->Get(name);
 		fort = dynamic_cast<XFort*>(fort_obj);
@@ -361,7 +306,7 @@ void Game::Initialize()
 		object_manager_->Create(
 		time_param));
 
-	timer->SetTexture("resource/texture/figure_all.png");
+	timer->SetTexture("resource/texture/number.png");
 	timer->SetFigureOffset(-30.0f);
 	timer->SetValue(GAME_TIME);
 	timer->SetState(TIMER_STOP);
@@ -383,7 +328,8 @@ void Game::Initialize()
 	fort_state_param.layer_ = LAYER_SPRITE_2D;
 
 	object_manager_->Create(
-		fort_state_param);
+		fort_state_param,
+		"resource/texture/game/TowerCollapse_Background.png");
 
 
 	OBJECT_PARAMETER_DESC fort_gauge_param;
@@ -399,8 +345,13 @@ void Game::Initialize()
 
 	object_manager_->Create(
 		fort_gauge_param,
-		"resource/texture/game/Child_01.jpg");
+		"resource/texture/game/TowerCollapse100.png");
 
+
+	// UI用に自身のIDを取得
+	int my_id = NetworkGuest::id();
+	my_id = std::max<int>(my_id, 0);
+	my_id = std::min<int>(my_id, 4);
 
 	//-------------------------------------
 	// 水ゲージ下地UI
@@ -418,7 +369,8 @@ void Game::Initialize()
 
 	object_manager_->Create(
 		water_design_param,
-		"resource/texture/game/water_gage_background.png");
+		"resource/texture/game/water_gage_background.pmg");
+		//"resource/texture/game/water_gage_background_" + std::to_string(my_id) + ".png");
 
 	//-------------------------------------
 	// 水ゲージ（ゲージ本体）UI
@@ -454,7 +406,7 @@ void Game::Initialize()
 
 	object_manager_->Create(
 		water_gage_around_param,
-		"resource/texture/game/water_gage_around.png");
+		"resource/texture/game/water_gage_around_" + std::to_string(my_id) + ".png");
 
 	//-------------------------------------
 	// 水ポリゴンUI
@@ -472,7 +424,7 @@ void Game::Initialize()
 
 	object_manager_->Create(
 		water_poly_param,
-		"resource/texture/game/water_desine.png");
+		"resource/texture/game/water_desine_" + std::to_string(my_id) + ".png");
 
 	//-------------------------------------
 	// ダメージエフェクトUI
@@ -634,22 +586,14 @@ void Game::Initialize()
 	//-------------------------------------
 	// マーカー
 	//-------------------------------------
+	EFFECT_PARAMETER_DESC effect_param;
 	ZeroMemory(&effect_param, sizeof(effect_param));
 	MyEffect *effect = effect_manager_->Get("marker");
 	effect_param = effect->parameter();
-	effect = effect_manager_->Get("marker");
+	effect_param.scaling_ = {1.0f, 1.0f, 1.0f};
+	effect_param.speed_ = 1.0f;
 	effect->SetParameter(effect_param);
 	effect_manager_->Play("marker");
-
-	//-------------------------------------
-	// アロー作成
-	//-------------------------------------
-	OBJECT_PARAMETER_DESC arrow_param;
-	arrow_param.name_ = "arrow";
-	arrow_param.layer_ = LAYER_ARROW;
-	arrow_param.position_ = {0.0f, -5000.0f, 0.0f};
-	arrow_param.scaling_ = {1.0f, 1.0f, 1.0f};
-	object_manager_->Create(arrow_param);
 
 	//-------------------------------------
 	// スピードダウンエフェクト☆
@@ -663,6 +607,16 @@ void Game::Initialize()
 	effect_param.speed_ = 1.0f;
 	effect->SetParameter(effect_param);
 	effect_manager_->Play(speed_down_name);
+
+	//-------------------------------------
+	// アロー作成
+	//-------------------------------------
+	OBJECT_PARAMETER_DESC arrow_param;
+	arrow_param.name_ = "arrow";
+	arrow_param.layer_ = LAYER_ARROW;
+	arrow_param.position_ = {0.0f, -5000.0f, 0.0f};
+	arrow_param.scaling_ = {1.0f, 1.0f, 1.0f};
+	object_manager_->Create(arrow_param);
 
 	//-------------------------------------
 	// 勝敗
@@ -751,27 +705,6 @@ void Game::Update()
 	camera_manager_->Update();
 	object_manager_->Update();
 	effect_manager_->Update();
-
-	////-------------------------------------
-	//// デバッグ出力
-	////-------------------------------------
-	//if (KeyBoard::isTrigger(DIK_F1)){
-	//	object_manager_->ExportObjectParameter(
-	//		"resource/object_patameter.txt");
-	//}
-
-	//if (KeyBoard::isTrigger(DIK_F2)){
-	//	FILE *file = fopen("DebugParam.txt", "a");
-	//	fprintf(file, "\n{ %3.2ff, %3.2ff, %3.2ff },\n",
-	//		grandfather_position.x_,
-	//		grandfather_position.y_,
-	//		grandfather_position.z_);
-	//	fprintf(file, "{ %3.2ff, %3.2ff, %3.2ff },\n",
-	//		grandfather_rotation.x_,
-	//		grandfather_rotation.y_,
-	//		grandfather_rotation.z_);
-	//	fclose(file);
-	//}
 
 	if (KeyBoard::isTrigger(DIK_RETURN))
 	{

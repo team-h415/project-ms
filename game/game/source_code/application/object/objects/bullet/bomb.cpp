@@ -185,11 +185,11 @@ void Bomb::Update()
 		parameter_.position_.y_,
 		parameter_.position_.z_));
 
-	if (parameter_.position_.y_ < height + 0.35f){
+	if (parameter_.position_.y_ < height + 0.35f)
+	{
 		parameter_.position_.y_ = height + 0.35f;
 		speed_ *= 0.9f;
 	}
-
 	if (frame_count_ == BOMB_TIMER)
 	{
 		collision_->SetUse(true);
@@ -204,7 +204,7 @@ void Bomb::Update()
 		send_data.object_param_.position_.y_ = height;
 		send_data.object_param_.position_.z_ = parameter_.position_.z_;
 		send_data.object_param_.rotation_ = {0.0f, parameter_.rotation_.y_, 0.0f};
-		strcpy_s(send_data.name_, MAX_NAME_LEN, "fieldhit");
+		strcpy_s(send_data.name_, MAX_NAME_LEN, "BombFire");
 		NetworkHost::SendTo(DELI_MULTI, send_data);
 
 		parameter_.position_.y_ = 10000.0f;
