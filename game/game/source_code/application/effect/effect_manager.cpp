@@ -21,7 +21,6 @@
 //-------------------------------------
 EffectManager* EffectManager::effect_manager_ = nullptr;
 int EffectManager::effect_count_ = 0;
-bool EffectManager::lock_(false);
 
 //-------------------------------------
 // Get
@@ -96,8 +95,6 @@ EffectManager::~EffectManager()
 //-------------------------------------
 void EffectManager::Update()
 {
-	//lock_ = true;
-
 	SetViewMatrix();
 	SetProjectionMatrix();
 	manager_->Flip();
@@ -106,8 +103,6 @@ void EffectManager::Update()
 	}
 	manager_->Update();
 	effect_count_ = effects_.size();
-
-	//lock_ = false;
 }
 
 
@@ -116,13 +111,9 @@ void EffectManager::Update()
 //-------------------------------------
 void EffectManager::Draw()
 {
-	//lock_ = true;
-
 	renderer_->BeginRendering();
 	manager_->Draw();
 	renderer_->EndRendering();
-
-	//lock_ = false;
 
 	DirectX9Holder::device_->SetSamplerState(0, D3DSAMP_ADDRESSU, D3DTADDRESS_WRAP);
 	DirectX9Holder::device_->SetSamplerState(0, D3DSAMP_ADDRESSV, D3DTADDRESS_WRAP);

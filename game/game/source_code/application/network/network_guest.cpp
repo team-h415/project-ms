@@ -550,10 +550,6 @@ void NetworkGuest::ObjDataAdaptation(
 				{
 					return;
 				}
-				//// ƒƒbƒN’†‚Í‘Ò‹@
-				//while(effect_manager->lock())
-				//{
-				//}
 
 				EFFECT_PARAMETER_DESC effect_param;
 				std::string name = rec_data.name_;
