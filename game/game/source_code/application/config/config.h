@@ -87,7 +87,7 @@ static const float MATCHING_ROTATION[5]
 #define GRANDFATHER_LIFE 1.0f
 // 水ゲージ
 #define GRANDFATHER_WATERGAUGE 1.0f
-#define GRANDFATHER_RECOVER_WATERGAUGE 0.0015f
+#define GRANDFATHER_RECOVER_WATERGAUGE 0.005f
 #define GRANDFATHER_SUB_BULLET_WATERGAUGE 0.01f
 #define GRANDFATHER_SUB_BOMB_WATERGAUGE 0.7f
 
@@ -123,7 +123,7 @@ static const float GRANDFATHER_ROTATION_STAGE[]
 // 水ゲージ
 #define CHILD_WATERGAUGE 1.0f
 #define CHILD_RECOVER_WATERGAUGE 0.0015f
-#define CHILD_SUB_WATERGAUGE 0.001f
+#define CHILD_SUB_WATERGAUGE 0.01f
 // くらうダメージ量
 #define CHILD_DAMAGE 0.2f
 // 座標
@@ -195,7 +195,7 @@ static const float FORT_LIFE[]
 	1.0f,
 };
 // くらうダメージ量
-#define FORT_DAMAGE 0.05f;
+#define FORT_DAMAGE 0.015f;
 
 
 //-=--=--=--=--=--=--=--=--=--=--=--=--=--=--=-//

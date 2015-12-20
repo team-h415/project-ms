@@ -21,7 +21,7 @@
 //-------------------------------------
 EffectManager* EffectManager::effect_manager_ = nullptr;
 int EffectManager::effect_count_ = 0;
-
+bool EffectManager::lock_(false);
 
 //-------------------------------------
 // Get
@@ -30,7 +30,7 @@ EffectManager* EffectManager::Get()
 {
 	if(effect_manager_ == nullptr)
 	{
-		effect_manager_ = new EffectManager(10000);
+		effect_manager_ = new EffectManager(50000);
 	}
 
 	return effect_manager_;
@@ -58,7 +58,7 @@ EffectManager::EffectManager(
 	// インスタンス生成
 	renderer_ = EffekseerRendererDX9::Renderer::Create(
 		DirectX9Holder::device_, max_sprites);
-	manager_ = Effekseer::Manager::Create(max_sprites);
+	manager_ = Effekseer::Manager::Create(max_sprites, false);
 
 	// 描画システムの設定
 	manager_->SetSpriteRenderer(renderer_->CreateSpriteRenderer());
@@ -96,13 +96,18 @@ EffectManager::~EffectManager()
 //-------------------------------------
 void EffectManager::Update()
 {
+	//lock_ = true;
+
 	SetViewMatrix();
 	SetProjectionMatrix();
+	manager_->Flip();
 	for (auto it = effects_.begin(); it != effects_.end(); ++it){
 		(*it).second->Update(manager_);
 	}
 	manager_->Update();
 	effect_count_ = effects_.size();
+
+	//lock_ = false;
 }
 
 
@@ -111,9 +116,13 @@ void EffectManager::Update()
 //-------------------------------------
 void EffectManager::Draw()
 {
+	//lock_ = true;
+
 	renderer_->BeginRendering();
 	manager_->Draw();
 	renderer_->EndRendering();
+
+	//lock_ = false;
 
 	DirectX9Holder::device_->SetSamplerState(0, D3DSAMP_ADDRESSU, D3DTADDRESS_WRAP);
 	DirectX9Holder::device_->SetSamplerState(0, D3DSAMP_ADDRESSV, D3DTADDRESS_WRAP);

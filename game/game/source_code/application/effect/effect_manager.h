@@ -40,6 +40,8 @@ public:
 		return effect_count_;
 	}
 
+	static bool lock(){ return lock_; }
+
 private:
 	void SetViewMatrix();
 	void SetProjectionMatrix();
@@ -51,6 +53,7 @@ private:
 		const int max_sprites);
 	virtual ~EffectManager();
 
+	static bool lock_;
 	static EffectManager* effect_manager_;
 	static int effect_count_;
 };

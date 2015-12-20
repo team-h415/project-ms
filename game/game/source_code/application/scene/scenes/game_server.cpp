@@ -260,6 +260,18 @@ void GameServer::Initialize()
 	}
 
 	//-------------------------------------
+	// ボムも生成しておくよ
+	//-------------------------------------
+	OBJECT_PARAMETER_DESC bomb_param;
+	bomb_param.layer_ = LAYER_BOMB;
+	for(int i = 0; i < MAX_BULLET; i++)
+	{
+		bomb_param.name_ = "bomb" + std::to_string(i);
+		object_manager_->Create(
+			bomb_param);
+	}
+
+	//-------------------------------------
 	// ステートセット
 	//-------------------------------------
 	ChangeServerState(STATE_MATCHING);
@@ -1540,7 +1552,7 @@ void GameServer::MatchingChild()
 
 			OBJECT_PARAMETER_DESC bullet_param;
 			bullet_param.layer_ = LAYER_BULLET;
-			bullet_param.parent_layer_ = LAYER_MODEL_GRANDFATHER;
+			bullet_param.parent_layer_ = LAYER_MODEL_CHILD;
 			bullet_param.position_ = child_position;
 			bullet_param.position_.x_ += sinf(child_rotation.y_) * 0.8f;
 			bullet_param.position_.z_ += cosf(child_rotation.y_) * 0.8f;
@@ -2201,7 +2213,8 @@ void GameServer::GameChild()
 		}
 
 		//カメラ座標再計算
-		if(camera_re_calculate == true){
+		if(camera_re_calculate == true)
+		{
 			camera_position = camera_focus;
 			camera_position.x -= sinf(camera_rotation.y) * camera_pos_len_[i] * cosf(camera_rotation.x);
 			camera_position.z -= cosf(camera_rotation.y) * camera_pos_len_[i] * cosf(camera_rotation.x);
@@ -2232,7 +2245,7 @@ void GameServer::GameChild()
 
 			OBJECT_PARAMETER_DESC bullet_param;
 			bullet_param.layer_ = LAYER_BULLET;
-			bullet_param.parent_layer_ = LAYER_MODEL_GRANDFATHER;
+			bullet_param.parent_layer_ = LAYER_MODEL_CHILD;
 			bullet_param.position_ = child_position;
 			bullet_param.position_.x_ += sinf(child_rotation.y_) * 0.8f;
 			bullet_param.position_.z_ += cosf(child_rotation.y_) * 0.8f;

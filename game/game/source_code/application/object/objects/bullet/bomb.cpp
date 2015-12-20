@@ -50,6 +50,7 @@ Bomb::Bomb(
 {
 	// 弾実体生成
 	parameter_ = parameter;
+	parameter_.scaling_ = {0.35f, 0.35f, 0.35f};
 	mesh_ = NULL;
 	material_buffer_ = NULL;
 	shader_ = nullptr;
@@ -105,8 +106,10 @@ Bomb::~Bomb()
 void Bomb::Fire(OBJECT_PARAMETER_DESC &parameter)
 {
 #ifdef NETWORK_HOST_MODE
+	std::string temp = parameter_.name_;
 
 	parameter_ = parameter;
+	parameter_.name_ = temp;
 	parameter_.scaling_ = {0.35f, 0.35f, 0.35f};
 	frame_count_ = 0;
 
@@ -134,10 +137,10 @@ void Bomb::Fire(OBJECT_PARAMETER_DESC &parameter)
 	strcpy_s(send_data.name_, MAX_NAME_LEN, parameter_.name_.c_str());
 	NetworkHost::SendTo(DELI_MULTI, send_data);
 
-	// 使用フラグOFF
-	use_ = true;
 	collision_->SetUse(false);
 #endif 
+	// 使用フラグON
+	use_ = true;
 }
 
 
@@ -158,8 +161,21 @@ void Bomb::Update()
 	parameter_.position_.z_ += cosf(parameter_.rotation_.y_) * speed_.z;
 	speed_.y -= BOMB_GRAVITY;
 
-	Scene *scene = SceneManager::GetCurrentScene();
+	// ゲストへ座標報告
+	NETWORK_DATA send_data;
+	send_data.type_ = DATA_OBJ_PARAM;
+	send_data.object_param_.type_ = OBJ_BOMB;
+	send_data.object_param_.ex_id_ = 0;
+	send_data.object_param_.position_.x_ = parameter_.position_.x_;
+	send_data.object_param_.position_.y_ = parameter_.position_.y_;
+	send_data.object_param_.position_.z_ = parameter_.position_.z_;
+	send_data.object_param_.rotation_.x_ = parameter_.rotation_.x_;
+	send_data.object_param_.rotation_.y_ = parameter_.rotation_.y_;
+	send_data.object_param_.rotation_.z_ = parameter_.rotation_.z_;
+	strcpy_s(send_data.name_, MAX_NAME_LEN, parameter_.name_.c_str());
+	NetworkHost::SendTo(DELI_MULTI, send_data);
 
+	Scene *scene = SceneManager::GetCurrentScene();
 	GameServer *game_server = dynamic_cast<GameServer*>(scene);
 	Object *obj = game_server->object_manager()->Get("field");
 	Field *field = dynamic_cast<Field*>(obj);
@@ -174,7 +190,8 @@ void Bomb::Update()
 		speed_ *= 0.9f;
 	}
 
-	if (frame_count_ == BOMB_TIMER){
+	if (frame_count_ == BOMB_TIMER)
+	{
 		collision_->SetUse(true);
 			
 		//-------------------------------------

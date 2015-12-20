@@ -550,6 +550,11 @@ void NetworkGuest::ObjDataAdaptation(
 				{
 					return;
 				}
+				//// ƒƒbƒN’†‚Í‘Ò‹@
+				//while(effect_manager->lock())
+				//{
+				//}
+
 				EFFECT_PARAMETER_DESC effect_param;
 				std::string name = rec_data.name_;
 				if(name == "marker")
@@ -699,11 +704,8 @@ void NetworkGuest::ObjDataAdaptation(
 					rot.y_ = rec_data.object_param_.rotation_.y_;
 					rot.z_ = rec_data.object_param_.rotation_.z_;
 
-					scl = {1.0f, 1.0f, 1.0f};
-
 					bomb->SetPosition(pos);
 					bomb->SetRotation(rot);
-					bomb->SetScaling(scl);
 					bomb->SetUse(true);
 				}
 				else if(rec_data.object_param_.ex_id_ == 1)

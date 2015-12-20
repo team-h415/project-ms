@@ -385,6 +385,18 @@ void Matching::Initialize()
 	}
 
 	//-------------------------------------
+	// É{ÉÄÇ‡ê∂ê¨ÇµÇƒÇ®Ç≠ÇÊ
+	//-------------------------------------
+	OBJECT_PARAMETER_DESC bomb_param;
+	bomb_param.layer_ = LAYER_BOMB;
+	for(int i = 0; i < MAX_BULLET; i++)
+	{
+		bomb_param.name_ = "bomb" + std::to_string(i);
+		object_manager_->Create(
+			bomb_param);
+	}
+
+	//-------------------------------------
 	// èoåÇèÄîıàƒì‡UI
 	//-------------------------------------
 	OBJECT_PARAMETER_DESC standby_param;
