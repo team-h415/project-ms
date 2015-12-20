@@ -162,7 +162,11 @@ void Bomb::Update()
 			//-------------------------------------
 			// シーンからエフェクト取得
 			EFFECT_PARAMETER_DESC effect_param;
+<<<<<<< HEAD
 			MyEffect *effect = game->effect_manager()->Get("BombFire");
+=======
+			MyEffect *effect = game->effect_manager()->Get("bombfire");
+>>>>>>> origin/fuka
 			effect_param = effect->parameter();
 			effect_param.position_ = parameter_.position_;
 			effect_param.position_.y_ = height;
@@ -171,7 +175,11 @@ void Bomb::Update()
 
 			//-------------------------------------
 			// エフェクト再生
+<<<<<<< HEAD
 			game->effect_manager()->Play("BombFire");
+=======
+			game->effect_manager()->Play("bombfire");
+>>>>>>> origin/fuka
 		}
 	}
 
