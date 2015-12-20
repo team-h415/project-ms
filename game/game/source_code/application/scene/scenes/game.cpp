@@ -16,6 +16,8 @@
 #include "../../render/renderer.h"
 #include "../../render/directx9/directx9.h"
 #include "../../render/directx9/directx9_holder.h"
+#include "../../math/my_math.h"
+#include "../../math/vector.h"
 #include "../../input/input.h"
 #include "../../input/inputs/keyboard.h"
 #include "../../input/inputs/gamepad.h"
@@ -1331,21 +1333,25 @@ void Game::Update()
 //        effect->SetParameter(effect_param);
 //        effect_manager_->Play("water");
 //
+//		for (int i = 0; i < 3; i++){
+//			OBJECT_PARAMETER_DESC bullet_param;
+//			bullet_param.layer_ = LAYER_BULLET;
+//			bullet_param.parent_layer_ = LAYER_MODEL_GRANDFATHER;
+//			bullet_param.position_ = grandfather_position;
+//			bullet_param.position_.y_ += 0.6f;
+//			bullet_param.rotation_ = grandfather_rotation;
 //
-//        OBJECT_PARAMETER_DESC bullet_param;
-//        bullet_param.layer_ = LAYER_BULLET;
-//        bullet_param.parent_layer_ = LAYER_MODEL_GRANDFATHER;
-//        bullet_param.position_ = grandfather_position;
-//        bullet_param.position_.y_ += 0.6f;
-//        bullet_param.rotation_ = grandfather_rotation;
+//			// ƒJƒƒ‰‚Ì‰ñ“]X‚ğ—˜—p
+//			bullet_param.rotation_.x_ = camera_rotation.x;
+//			float range = MyMath::Random_Range(-5, 5) * 0.01f;
+//			bullet_param.rotation_.y_ += range;
 //
-//        // ƒJƒƒ‰‚Ì‰ñ“]X‚ğ—˜—p
-//        bullet_param.rotation_.x_ = camera_rotation.x;
+//			bullet_param.scaling_ = { 1.0f, 1.0f, 1.0f };
 //
-//        bullet_param.scaling_ = { 1.0f, 1.0f, 1.0f };
+//			Bullet* bullet = object_manager_->GetNoUseBullet();
+//			bullet->Fire(bullet_param);
+//		}
 //
-//        Bullet* bullet = object_manager_->GetNoUseBullet();
-//        bullet->Fire(bullet_param);
 //        //-------------------------------------
 //        // ‚¨‚¶‚Ì’e”­ËSEÄ¶
 //        Sound::LoadAndPlaySE("resource/sound/se/game/shootGrandfather.wav");

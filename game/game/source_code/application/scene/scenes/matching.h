@@ -18,6 +18,7 @@
 class ObjectManager;
 class CameraManager;
 class DebugFont;
+class Sound;
 class CollisionManager;
 class Matching : public Scene
 {
@@ -50,6 +51,7 @@ private:
 	EffectManager *effect_manager_;
 	CollisionManager *collision_manager_;
 	DebugFont *font_;
+	Sound *sound_;
 	float camera_pos_len_;
 	// Œo‰ßƒtƒŒ[ƒ€”
 	int frame_;

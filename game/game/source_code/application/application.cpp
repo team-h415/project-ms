@@ -52,7 +52,6 @@ Application::Application(
 	HINSTANCE instance,
 	int command_show)
 {
-	Sound::Setup();
 	fps_ = new Fps;
 	Window::Create(
 		instance,
@@ -60,6 +59,7 @@ Application::Application(
 	renderer_ = RendererFactory::Create(
 		WindowHolder::handle_,
 		"DirectX9");
+	Sound::Setup();
 	scene_manager_ = new SceneManager;
 	keyboard_ = InputFactory::Create(
 		"KeyBoard");

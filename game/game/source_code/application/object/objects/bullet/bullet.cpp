@@ -66,6 +66,26 @@ Bullet::Bullet(
 	// 使用フラグOFF
 	collision_ = nullptr;
 	use_ = false;
+
+#ifdef NETWORK_HOST_MODE
+	// 当たり判定作成
+	Scene *scene = SceneManager::GetCurrentScene();
+	std::string str = SceneManager::GetCurrentSceneName();
+	if(str != "GameServer"){
+		ASSERT_ERROR("弾が生成されるべきシーンではありません");
+		return;
+	}
+	COLLISION_PARAMETER_DESC param;
+	param.position_ = {
+		parameter_.position_.x_,
+		parameter_.position_.y_,
+		parameter_.position_.z_};
+	param.range_ = 0.5f;
+	param.offset_ = {0.0f, 0.0f, 0.0f};
+
+	GameServer *game_server = dynamic_cast<GameServer*>(scene);
+	collision_ = game_server->collision_manager()->Create(this, param);
+#endif
 }
 
 
@@ -115,25 +135,6 @@ void Bullet::Fire(OBJECT_PARAMETER_DESC &parameter)
 	strcpy_s(send_data.name_, MAX_NAME_LEN, parameter_.name_.c_str());
 	NetworkHost::SendTo(DELI_MULTI, send_data);
 
-	if(collision_ == nullptr)
-	{
-		Scene *scene = SceneManager::GetCurrentScene();
-		std::string str = SceneManager::GetCurrentSceneName();
-		if(str != "GameServer"){
-			ASSERT_ERROR("弾が生成されるべきシーンではありません");
-			return;
-		}
-		COLLISION_PARAMETER_DESC param;
-		param.position_ = {
-			parameter_.position_.x_,
-			parameter_.position_.y_,
-			parameter_.position_.z_};
-		param.range_ = 0.5f;
-		param.offset_ = {0.0f, 0.0f, 0.0f};
-
-		GameServer *game_server = dynamic_cast<GameServer*>(scene);
-		collision_ = game_server->collision_manager()->Create(this, param);
-	}
 	collision_->SetUse(true);
 
 	speed_ = {BULLET_DEF_SPEED_XZ, BULLET_DEF_SPEED_Y, BULLET_DEF_SPEED_XZ};

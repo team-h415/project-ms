@@ -14,6 +14,7 @@
 #include "../../render/renderer.h"
 #include "../../render/directx9/directx9.h"
 #include "../../render/directx9/directx9_holder.h"
+#include "../../math/my_math.h"
 #include "../../math/vector.h"
 #include "../../input/input.h"
 #include "../../input/inputs/keyboard.h"
@@ -73,8 +74,8 @@ void GameServer::Initialize()
 	//-------------------------------------
 	// BGM･SE先行読み込み
 	//-------------------------------------
-	matching_bgm_ = Sound::LoadSound("resource/sound/bgm/game/ms-bgm.wav");
-	game_bgm_ = Sound::LoadSound("resource/sound/bgm/game/ms-bgm.wav");
+	matching_bgm_ = Sound::LoadSound("resource/sound/bgm/matching/matching_bgm.wav");
+	game_bgm_ = Sound::LoadSound("resource/sound/bgm/game/game_bgm.wav");
 	result_bgm_ = Sound::LoadSound("resource/sound/bgm/game/ms-bgm.wav");
 	Sound::StockSE("resource/sound/se/game/countdown.wav");
 	Sound::StockSE("resource/sound/se/game/start.wav");
@@ -1247,6 +1248,7 @@ void GameServer::MatchingGrandfather()
 	{
 		shot_late_[0] = 10;
 
+		// バレットパラメータ設定
 		OBJECT_PARAMETER_DESC bullet_param;
 		bullet_param.layer_ = LAYER_BULLET;
 		bullet_param.parent_layer_ = LAYER_MODEL_GRANDFATHER;
@@ -1257,13 +1259,6 @@ void GameServer::MatchingGrandfather()
 		bullet_param.rotation_ = grandfather_rotation;
 		bullet_param.scaling_ = {1.0f, 1.0f, 1.0f};
 
-		// カメラの回転Xを利用
-		bullet_param.rotation_.x_ = camera_rotation.x;
-
-		// バレット発砲
-		Bullet* bullet = object_manager_->GetNoUseBullet();
-		bullet->Fire(bullet_param);
-
 		// エフェクト再生
 		send_data.type_ = DATA_OBJ_PARAM;
 		send_data.object_param_.type_ = OBJ_EFFECT;
@@ -1273,6 +1268,19 @@ void GameServer::MatchingGrandfather()
 		send_data.object_param_.rotation_ = {0.0f, grandfather_rotation.y_, 0.0f};
 		strcpy_s(send_data.name_, MAX_NAME_LEN, "water");
 		NetworkHost::SendTo(DELI_MULTI, send_data);
+
+		// 発射ループ
+		for(int i = 0; i < 3; i++)
+		{
+			// カメラの回転Xを利用
+			bullet_param.rotation_.x_ = camera_rotation.x;
+			float range = MyMath::Random_Range(-5, 5) * 0.01f;
+			bullet_param.rotation_.y_ += range;
+
+			// バレット発砲
+			Bullet* bullet = object_manager_->GetNoUseBullet();
+			bullet->Fire(bullet_param);
+		}
 	}
 
 	//------------------------------------------------
@@ -1761,6 +1769,7 @@ void GameServer::GameGrandfather()
 	{
 		shot_late_[0] = 10;
 
+		// バレットパラメータ設定
 		OBJECT_PARAMETER_DESC bullet_param;
 		bullet_param.layer_ = LAYER_BULLET;
 		bullet_param.parent_layer_ = LAYER_MODEL_GRANDFATHER;
@@ -1771,13 +1780,6 @@ void GameServer::GameGrandfather()
 		bullet_param.rotation_ = grandfather_rotation;
 		bullet_param.scaling_ = {1.0f, 1.0f, 1.0f};
 
-		// カメラの回転Xを利用
-		bullet_param.rotation_.x_ = camera_rotation.x;
-
-		// バレット発砲
-		Bullet* bullet = object_manager_->GetNoUseBullet();
-		bullet->Fire(bullet_param);
-
 		// エフェクト再生
 		send_data.type_ = DATA_OBJ_PARAM;
 		send_data.object_param_.type_ = OBJ_EFFECT;
@@ -1787,6 +1789,19 @@ void GameServer::GameGrandfather()
 		send_data.object_param_.rotation_ = {0.0f, grandfather_rotation.y_, 0.0f};
 		strcpy_s(send_data.name_, MAX_NAME_LEN, "water");
 		NetworkHost::SendTo(DELI_MULTI, send_data);
+
+		// 発射ループ
+		for (int i = 0; i < 3; i++)
+		{
+			// カメラの回転Xを利用
+			bullet_param.rotation_.x_ = camera_rotation.x;
+			float range = MyMath::Random_Range(-5, 5) * 0.01f;
+			bullet_param.rotation_.y_ += range;
+
+			// バレット発砲
+			Bullet* bullet = object_manager_->GetNoUseBullet();
+			bullet->Fire(bullet_param);
+		}
 
 		//-------------------------------------
 		// 水ゲージを減少させる

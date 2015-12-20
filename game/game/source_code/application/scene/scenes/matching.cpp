@@ -19,6 +19,7 @@
 #include "../../input/input.h"
 #include "../../input/inputs/keyboard.h"
 #include "../../input/inputs/gamepad.h"
+#include "../../sound/sound.h"
 #include "../../font/debug_font.h"
 #include "../../object/object.h"
 #include "../../object/object_manager.h"
