@@ -114,7 +114,6 @@ void Bullet::Fire(OBJECT_PARAMETER_DESC &parameter)
 	parameter_ = parameter;
 	parameter_.name_ = temp;
 
-
 	// âÒì]ílÇè≠Çµí≤êÆ
 	parameter_.rotation_.x_ += BULLET_OFFSET_ROT;
 
@@ -152,7 +151,7 @@ void Bullet::Fire(OBJECT_PARAMETER_DESC &parameter)
 //-------------------------------------
 void Bullet::Update()
 {
-	if(!use_)
+	if (!use_)
 	{
 		return;
 	}
@@ -287,7 +286,7 @@ void Bullet::Update()
 //-------------------------------------
 void Bullet::Draw()
 {
-	if(!use_)
+	if (!use_)
 	{
 		return;
 	}
@@ -386,7 +385,7 @@ void Bullet::Action(
 	const float range)
 {
 #ifdef NETWORK_HOST_MODE
-	if(!use_)
+	if (!use_)
 	{
 		return;
 	}

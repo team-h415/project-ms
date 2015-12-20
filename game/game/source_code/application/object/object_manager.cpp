@@ -16,6 +16,7 @@
 #include "../shader/shader.h"
 #include "objects/model/x_model.h"
 #include "objects/bullet/bullet.h"
+#include "objects/bullet/bomb.h"
 #include "object_factory.h"
 #include "object_manager.h"
 
@@ -164,6 +165,24 @@ Bullet *ObjectManager::GetNoUseBullet()
 		}
 	}
 	ASSERT_WARNING("全部のバレットが活動しているぞ　はーと");
+	return nullptr;
+}
+
+
+//-------------------------------------
+// 未使用ボム取得
+//-------------------------------------
+// 未使用のバレットを取得するための特殊メソッド
+// ObjectManager::Get(
+//     "オブジェクトの名前");
+Bomb *ObjectManager::GetNoUseBomb()
+{
+	for (auto it = objects_[LAYER_BOMB].begin(); it != objects_[LAYER_BOMB].end(); ++it){
+		if ((*it).second->use() == false){
+			return dynamic_cast<Bomb*>((*it).second);
+		}
+	}
+	ASSERT_WARNING("全部のボムが活動しているぞ　ほし");
 	return nullptr;
 }
 

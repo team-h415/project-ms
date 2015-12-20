@@ -108,6 +108,7 @@
     <ClCompile Include="source_code\application\network\network_guest.cpp" />
     <ClCompile Include="source_code\application\network\network_host.cpp" />
     <ClCompile Include="source_code\application\object\object.cpp" />
+    <ClCompile Include="source_code\application\object\objects\bullet\bomb.cpp" />
     <ClCompile Include="source_code\application\object\objects\bullet\bullet.cpp" />
     <ClCompile Include="source_code\application\object\objects\mesh\field.cpp" />
     <ClCompile Include="source_code\application\object\objects\mesh\skydome.cpp" />
@@ -187,6 +188,7 @@
     <ClInclude Include="source_code\application\network\network_guest.h" />
     <ClInclude Include="source_code\application\network\network_host.h" />
     <ClInclude Include="source_code\application\object\object.h" />
+    <ClInclude Include="source_code\application\object\objects\bullet\bomb.h" />
     <ClInclude Include="source_code\application\object\objects\bullet\bullet.h" />
     <ClInclude Include="source_code\application\object\objects\mesh\field.h" />
     <ClInclude Include="source_code\application\object\objects\mesh\skydome.h" />

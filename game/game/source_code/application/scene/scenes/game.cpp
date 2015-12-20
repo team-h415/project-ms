@@ -41,6 +41,7 @@
 #include "../../object/objects/sprite/fort_gauge_manager.h"
 #include "../../object/objects/sprite/message/message.h"
 #include "../../object/objects/bullet/bullet.h"
+#include "../../object/objects/bullet/bomb.h"
 #include "../../effect/effect.h"
 #include "../../effect/effect_manager.h"
 #include "../../camera/camera.h"
@@ -559,6 +560,18 @@ void Game::Initialize()
 		bullet_param.name_ = "bullet" + std::to_string(i);
 		object_manager_->Create(
 			bullet_param);
+	}
+
+	//-------------------------------------
+	// É{ÉÄÇ‡ê∂ê¨ÇµÇƒÇ®Ç≠ÇÊ
+	//-------------------------------------
+	OBJECT_PARAMETER_DESC bomb_param;
+	bomb_param.layer_ = LAYER_BOMB;
+	for (int i = 0; i < MAX_BULLET; i++)
+	{
+		bomb_param.name_ = "bomb" + std::to_string(i);
+		object_manager_->Create(
+			bomb_param);
 	}
 
 	//-------------------------------------

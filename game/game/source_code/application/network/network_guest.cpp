@@ -33,6 +33,7 @@
 #include "../object/objects/model/x_model.h"
 #include "../object/objects/model/fbx_model.h"
 #include "../object/objects/bullet/bullet.h"
+#include "../object/objects/bullet/bomb.h"
 #include "../object/objects/model/fbx/fbx_player.h"
 #include "../object/objects/model/fbx/fbx_grandfather.h"
 #include "../object/objects/model/fbx/fbx_child.h"
@@ -669,6 +670,52 @@ void NetworkGuest::ObjDataAdaptation(
 					}
 					Bullet *bullet = dynamic_cast<Bullet*>(object);
 					bullet->SetUse(false);
+				}
+			}
+			break;
+
+		case OBJ_BOMB:
+			{
+				if(object_manager == nullptr)
+				{
+					return;
+				}
+				std::string name = rec_data.name_;
+				if(rec_data.object_param_.ex_id_ == 0)
+				{
+					// 0‚È‚çXV
+					Object *object = object_manager->Get(name);
+					if(object == nullptr)
+					{
+						return;
+					}
+					Bomb *bomb = dynamic_cast<Bomb*>(object);
+					Vector3 pos, rot, scl;
+					pos.x_ = rec_data.object_param_.position_.x_;
+					pos.y_ = rec_data.object_param_.position_.y_;
+					pos.z_ = rec_data.object_param_.position_.z_;
+
+					rot.x_ = rec_data.object_param_.rotation_.x_;
+					rot.y_ = rec_data.object_param_.rotation_.y_;
+					rot.z_ = rec_data.object_param_.rotation_.z_;
+
+					scl = {1.0f, 1.0f, 1.0f};
+
+					bomb->SetPosition(pos);
+					bomb->SetRotation(rot);
+					bomb->SetScaling(scl);
+					bomb->SetUse(true);
+				}
+				else if(rec_data.object_param_.ex_id_ == 1)
+				{
+					// 1‚È‚çÁ–Å
+					Object *object = object_manager->Get(name);
+					if(object == nullptr)
+					{
+						return;
+					}
+					Bomb *bomb = dynamic_cast<Bomb*>(object);
+					bomb->SetUse(false);
 				}
 			}
 			break;

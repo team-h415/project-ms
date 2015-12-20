@@ -66,6 +66,13 @@ static const float MATCHING_ROTATION[5]
 #define BULLET_ADD_SPEED_Y 0.3f						// 発射角からバレットに加算される速度の調整値
 #define BULLET_GRAVITY 0.003f						// バレットに毎フレームかかる重量値
 
+#define BOMB_OFFSET_ROT (D3DX_PI * 0.1f)			// ゲームから受け取った回転を調整する値
+#define BOMB_DEF_SPEED_XZ 0.2f						// ボムの初期速度XZ
+#define BOMB_DEF_SPEED_Y 0.05f						// ボムの初期速度Y
+#define BOMB_ADD_SPEED_Y 0.3f						// 発射角からボムに加算される速度の調整値
+#define BOMB_GRAVITY 0.01f
+#define BOMB_TIMER 120
+
 #define GAME_TIMER (100)							// ゲームの時間
 
 #define MAX_BULLET (100)							// バレット最大数
@@ -80,9 +87,13 @@ static const float MATCHING_ROTATION[5]
 #define GRANDFATHER_LIFE 1.0f
 // 水ゲージ
 #define GRANDFATHER_WATERGAUGE 1.0f
-#define GRANDFATHER_SUB_WATERGAUGE 0.0015f
+#define GRANDFATHER_RECOVER_WATERGAUGE 0.0015f
+#define GRANDFATHER_SUB_BULLET_WATERGAUGE 0.01f
+#define GRANDFATHER_SUB_BOMB_WATERGAUGE 0.7f
+
 // くらうダメージ量
 #define GRANDFATHER_DAMAGE 0.05f
+
 // 座標
 static const Vector3 GRANDFATHER_POSITION_STAGE[]
 {
@@ -111,6 +122,7 @@ static const float GRANDFATHER_ROTATION_STAGE[]
 #define CHILD_LIFE 1.0f
 // 水ゲージ
 #define CHILD_WATERGAUGE 1.0f
+#define CHILD_RECOVER_WATERGAUGE 0.0015f
 #define CHILD_SUB_WATERGAUGE 0.001f
 // くらうダメージ量
 #define CHILD_DAMAGE 0.2f

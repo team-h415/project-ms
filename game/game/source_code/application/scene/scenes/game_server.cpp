@@ -30,6 +30,7 @@
 #include "../../object/objects/model/fbx/fbx_grandfather.h"
 #include "../../object/objects/model/fbx/fbx_child.h"
 #include "../../object/objects/bullet/bullet.h"
+#include "../../object/objects/bullet/bomb.h"
 #include "../../effect/effect.h"
 #include "../../effect/effect_manager.h"
 #include "../../camera/camera.h"
@@ -1288,6 +1289,42 @@ void GameServer::MatchingGrandfather()
 		Sound::LoadAndPlaySE("resource/sound/se/game/shootGrandfather.wav");
 	}
 
+	//-------------------------------------
+	// ボム発射
+	//-------------------------------------
+	if(GamePad::isTrigger(0, PAD_BUTTON_6))
+	{
+
+		OBJECT_PARAMETER_DESC bomb_param;
+		bomb_param.layer_ = LAYER_BOMB;
+		bomb_param.parent_layer_ = LAYER_MODEL_GRANDFATHER;
+		bomb_param.position_ = grandfather_position;
+		bomb_param.position_.y_ += 0.6f;
+		bomb_param.rotation_ = grandfather_rotation;
+
+		// カメラの回転Xを利用
+		bomb_param.rotation_.x_ = camera_rotation.x;
+		float range = MyMath::Random_Range(-5, 5) * 0.01f;
+		bomb_param.rotation_.y_ += range;
+
+		// エフェクト再生
+		send_data.type_ = DATA_OBJ_PARAM;
+		send_data.object_param_.type_ = OBJ_EFFECT;
+		send_data.object_param_.position_.x_ = bomb_param.position_.x_;
+		send_data.object_param_.position_.y_ = bomb_param.position_.y_;
+		send_data.object_param_.position_.z_ = bomb_param.position_.z_;
+		send_data.object_param_.rotation_ = {0.0f, grandfather_rotation.y_, 0.0f};
+		strcpy_s(send_data.name_, MAX_NAME_LEN, "water");
+		NetworkHost::SendTo(DELI_MULTI, send_data);
+
+		Bomb* bomb = object_manager_->GetNoUseBomb();
+		bomb->Fire(bomb_param);
+
+		//-------------------------------------
+		// おじの弾発射SE再生
+		Sound::LoadAndPlaySE("resource/sound/se/game/shootGrandfather.wav");
+	}
+
 	//------------------------------------------------
 	// プレイヤーデータ転送
 	//------------------------------------------------
@@ -1775,7 +1812,7 @@ void GameServer::GameGrandfather()
 	shot_late_[0]--;
 	shot_late_[0] = std::max<int>(shot_late_[0], 0);
 
-	if(GamePad::isPress(0, PAD_BUTTON_8) && watergauge > 0.0f && shot_late_[0] == 0)
+	if(GamePad::isPress(0, PAD_BUTTON_8) && watergauge >= GRANDFATHER_SUB_BULLET_WATERGAUGE && shot_late_[0] == 0)
 	{
 		shot_late_[0] = 10;
 
@@ -1816,13 +1853,56 @@ void GameServer::GameGrandfather()
 		//-------------------------------------
 		// 水ゲージを減少させる
 		//-------------------------------------
-		watergauge -= GRANDFATHER_SUB_WATERGAUGE;
+		watergauge -= GRANDFATHER_SUB_BULLET_WATERGAUGE;
 		watergauge = std::max<float>(watergauge, 0.0f);
 		grandfather->SetWaterGauge(watergauge);
 
 		//-------------------------------------
 		// 弾発射SE再生
 		//-------------------------------------
+		Sound::LoadAndPlaySE("resource/sound/se/game/shootGrandfather.wav");
+	}
+
+	//-------------------------------------
+	// ボム発射
+	//-------------------------------------
+	if(GamePad::isTrigger(0, PAD_BUTTON_6) && watergauge >= GRANDFATHER_SUB_BOMB_WATERGAUGE)
+	{
+
+		OBJECT_PARAMETER_DESC bomb_param;
+		bomb_param.layer_ = LAYER_BOMB;
+		bomb_param.parent_layer_ = LAYER_MODEL_GRANDFATHER;
+		bomb_param.position_ = grandfather_position;
+		bomb_param.position_.y_ += 0.6f;
+		bomb_param.rotation_ = grandfather_rotation;
+
+		// カメラの回転Xを利用
+		bomb_param.rotation_.x_ = camera_rotation.x;
+		float range = MyMath::Random_Range(-5, 5) * 0.01f;
+		bomb_param.rotation_.y_ += range;
+
+		// エフェクト再生
+		send_data.type_ = DATA_OBJ_PARAM;
+		send_data.object_param_.type_ = OBJ_EFFECT;
+		send_data.object_param_.position_.x_ = bomb_param.position_.x_;
+		send_data.object_param_.position_.y_ = bomb_param.position_.y_;
+		send_data.object_param_.position_.z_ = bomb_param.position_.z_;
+		send_data.object_param_.rotation_ = {0.0f, grandfather_rotation.y_, 0.0f};
+		strcpy_s(send_data.name_, MAX_NAME_LEN, "water");
+		NetworkHost::SendTo(DELI_MULTI, send_data);
+
+		Bomb* bomb = object_manager_->GetNoUseBomb();
+		bomb->Fire(bomb_param);
+
+		//-------------------------------------
+		// 水ゲージを減少させる
+		//-------------------------------------
+		watergauge -= GRANDFATHER_SUB_BOMB_WATERGAUGE;
+		watergauge = std::max<float>(watergauge, 0.0f);
+		grandfather->SetWaterGauge(watergauge);
+
+		//-------------------------------------
+		// おじの弾発射SE再生
 		Sound::LoadAndPlaySE("resource/sound/se/game/shootGrandfather.wav");
 	}
 
@@ -2180,7 +2260,7 @@ void GameServer::GameChild()
 			//-------------------------------------
 			// 水ゲージを減少させる
 			//-------------------------------------
-			watergauge -= GRANDFATHER_SUB_WATERGAUGE;
+			watergauge -= GRANDFATHER_SUB_BULLET_WATERGAUGE;
 			watergauge = std::max<float>(watergauge, 0.0f);
 			child->SetWaterGauge(watergauge);
 

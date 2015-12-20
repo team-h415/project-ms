@@ -328,6 +328,9 @@
     <ClCompile Include="source_code\application\object\objects\sprite\message\message.cpp">
       <Filter>source_code\application\object\objects\sprite\message</Filter>
     </ClCompile>
+    <ClCompile Include="source_code\application\object\objects\bullet\bomb.cpp">
+      <Filter>source_code\application\object\objects\bullet</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source_code\main.h">
@@ -563,6 +566,9 @@
     </ClInclude>
     <ClInclude Include="source_code\application\object\objects\sprite\message\message.h">
       <Filter>source_code\application\object\objects\sprite\message</Filter>
+    </ClInclude>
+    <ClInclude Include="source_code\application\object\objects\bullet\bomb.h">
+      <Filter>source_code\application\object\objects\bullet</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

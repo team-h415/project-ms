@@ -136,12 +136,15 @@ void FbxGrandfather::Action(
 		//temp = name[6];
 		//int my_pad = atoi(&temp);
 
-		if (GamePad::isPress(GAMEPAD_GRANDFATHER, PAD_BUTTON_6) 
-			&& !GamePad::isPress(GAMEPAD_GRANDFATHER, PAD_BUTTON_8)
-			&& water_gauge_ < 1.0f){
-			if (water_supply_enable_){
+		if(GamePad::isPress(0, PAD_BUTTON_5)
+			&& !GamePad::isPress(0, PAD_BUTTON_8)
+			&& !GamePad::isPress(0, PAD_BUTTON_6)
+			&& water_gauge_ < 1.0f)
+		{
+			if (water_supply_enable_)
+			{
 				// êÖï‚ãã
-				water_gauge_ += CHILD_SUB_WATERGAUGE;
+				water_gauge_ += GRANDFATHER_RECOVER_WATERGAUGE;
 				water_gauge_ = std::min<float>(water_gauge_, 1.0f);
 
 				// èdï°ñhé~
