@@ -179,6 +179,11 @@ void Game::Initialize()
 		"resource/effect/SpeedDown.efk",
 		effect_param);
 
+	effect_manager_->Create(
+		"BombFire",
+		"resource/effect/BombFire.efk",
+		effect_param);
+
 
 	//-------------------------------------
 	// ƒƒCƒ“ƒJƒƒ‰
