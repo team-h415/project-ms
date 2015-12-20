@@ -180,11 +180,7 @@ void Game::Initialize()
 		effect_param);
 
 	effect_manager_->Create(
-<<<<<<< HEAD
 		"BombFire",
-=======
-		"bombfire",
->>>>>>> origin/fuka
 		"resource/effect/BombFire.efk",
 		effect_param);
 
