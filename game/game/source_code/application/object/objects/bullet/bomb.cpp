@@ -1,5 +1,5 @@
 //=========================================================
-// bullet.cpp
+// bomb.cpp
 // author:ryuya nakamura
 //=========================================================
 
@@ -35,13 +35,13 @@
 #include "../mesh/field.h"
 #include "../../../collision/collision.h"
 #include "../../../collision/collision_manager.h"
-#include "bullet.h"
+#include "bomb.h"
 
 
 //-------------------------------------
-// Bullet()
+// Bomb()
 //-------------------------------------
-Bullet::Bullet(
+Bomb::Bomb(
 	const OBJECT_PARAMETER_DESC &parameter)
 {
 	// 弾実体生成
@@ -51,40 +51,12 @@ Bullet::Bullet(
 	shader_ = nullptr;
 	shader_ = ShaderManager::Get("resource/shader/bullet.hlsl");
 	texture_ = NULL;
-	LoadMesh("resource/model/x/ball.x");
-	SetTexture("resource/texture/game/bullet.png");
+	LoadMesh("resource/model/x/bomb.x");
+	SetTexture("resource/texture/game/bomb.png");
 
 	// 使用フラグOFF
 	collision_ = nullptr;
 	use_ = false;
-}
-
-
-//-------------------------------------
-// ~Bullet()
-//-------------------------------------
-Bullet::~Bullet()
-{
-	if (collision_){
-		collision_->SetThisDelete(true);
-	}
-	shader_ = nullptr;
-}
-
-
-//-------------------------------------
-// Fire()
-//-------------------------------------
-void Bullet::Fire(OBJECT_PARAMETER_DESC &parameter)
-{
-	parameter_ = parameter;
-
-	speed_ = { BULLET_DEF_SPEED_XZ, BULLET_DEF_SPEED_Y, BULLET_DEF_SPEED_XZ };
-
-	// 回転値を少し調整
-	parameter_.rotation_.x_ += BULLET_OFFSET_ROT;
-	// 回転値を参照して速度を改良
-	speed_.y += sinf(parameter_.rotation_.x_) * BULLET_ADD_SPEED_Y;
 
 	if (collision_ == nullptr)
 	{
@@ -99,7 +71,7 @@ void Bullet::Fire(OBJECT_PARAMETER_DESC &parameter)
 			parameter_.position_.x_,
 			parameter_.position_.y_,
 			parameter_.position_.z_ };
-		param.range_ = 0.5f;
+		param.range_ = 3.0f;
 		param.offset_ = { 0.0f, 0.0f, 0.0f };
 
 		if (str == "Game"){
@@ -111,30 +83,64 @@ void Bullet::Fire(OBJECT_PARAMETER_DESC &parameter)
 			collision_ = matching->collision_manager()->Create(this, param);
 		}
 	}
+	collision_->SetUse(false);
+}
+
+
+//-------------------------------------
+// ~Bomb()
+//-------------------------------------
+Bomb::~Bomb()
+{
+	if (collision_){
+		collision_->SetThisDelete(true);
+	}
+	shader_ = nullptr;
+}
+
+
+//-------------------------------------
+// Fire()
+//-------------------------------------
+void Bomb::Fire(OBJECT_PARAMETER_DESC &parameter)
+{
+	parameter_ = parameter;
+	frame_count_ = 0;
+
+	speed_ = { BOMB_DEF_SPEED_XZ, BOMB_DEF_SPEED_Y, BOMB_DEF_SPEED_XZ };
+
+	// 回転値を少し調整
+	parameter_.rotation_.x_ += BOMB_OFFSET_ROT;
+	// 回転値を参照して速度を改良
+	speed_.y += sinf(parameter_.rotation_.x_) * BOMB_ADD_SPEED_Y;
+
 
 	// 使用フラグOFF
 	use_ = true;
-	collision_->SetUse(true);
+	collision_->SetUse(false);
 }
 
 
 //-------------------------------------
 // Update()
 //-------------------------------------
-void Bullet::Update()
+void Bomb::Update()
 {
 	if (!use_)
 	{
 		return;
 	}
 
+	frame_count_++;
 	parameter_.position_.x_ += sinf(parameter_.rotation_.y_) * speed_.x;
 	parameter_.position_.y_ += speed_.y;
 	parameter_.position_.z_ += cosf(parameter_.rotation_.y_) * speed_.z;
-	speed_.y -= BULLET_GRAVITY;
+	speed_.y -= BOMB_GRAVITY;
 
 	Scene *scene = SceneManager::GetCurrentScene();
 	std::string str = SceneManager::GetCurrentSceneName();
+
+	// ゲームなら
 	if (str == "Game"){
 		Game *game = dynamic_cast<Game*>(scene);
 		Object *obj = game->object_manager()->Get("field");
@@ -144,10 +150,15 @@ void Bullet::Update()
 			parameter_.position_.x_,
 			parameter_.position_.y_,
 			parameter_.position_.z_));
-		if (parameter_.position_.y_ < height){
-			use_ = false;
-			collision_->SetUse(false);
 
+		if (parameter_.position_.y_ < height + 0.35f){
+			parameter_.position_.y_ = height + 0.35f;
+			speed_ *= 0.9f;
+		}
+
+		if (frame_count_ == BOMB_TIMER){
+			collision_->SetUse(true);
+			
 			//-------------------------------------
 			// シーンからエフェクト取得
 			EFFECT_PARAMETER_DESC effect_param;
@@ -161,13 +172,10 @@ void Bullet::Update()
 			//-------------------------------------
 			// エフェクト再生
 			game->effect_manager()->Play("fieldhit");
-
-			parameter_.position_.y_ = 10000.0f;
 		}
-
-
-
 	}
+
+
 
 	if (str == "Matching"){
 		Matching *matching = dynamic_cast<Matching*>(scene);
@@ -179,9 +187,11 @@ void Bullet::Update()
 			parameter_.position_.y_,
 			parameter_.position_.z_));
 		if (parameter_.position_.y_ < height){
-			use_ = false;
-			collision_->SetUse(false);
-			parameter_.position_.y_ = 10000.0f;
+			parameter_.position_.y_ = height;
+			speed_ *= 0.9f;
+		}
+		if (frame_count_ == BOMB_TIMER){
+			collision_->SetUse(true);
 
 			//-------------------------------------
 			// シーンからエフェクト取得
@@ -197,6 +207,13 @@ void Bullet::Update()
 			// エフェクト再生
 			matching->effect_manager()->Play("fieldhit");
 		}
+	}
+
+	if (frame_count_ > BOMB_TIMER){
+		use_ = false;
+		collision_->SetUse(false);
+		parameter_.position_.y_ = 10000.0f;
+
 	}
 
 	// ワールド計算
@@ -224,7 +241,7 @@ void Bullet::Update()
 //-------------------------------------
 // Action()
 //-------------------------------------
-void Bullet::Draw()
+void Bomb::Draw()
 {
 	if (!use_)
 	{
@@ -296,7 +313,7 @@ void Bullet::Draw()
 //-------------------------------------
 // LoadMesh()
 //-------------------------------------
-void Bullet::LoadMesh(
+void Bomb::LoadMesh(
 	const std::string &path)
 {
 	XContainer* container = XContainerManager::GetContainer(path);
@@ -309,7 +326,7 @@ void Bullet::LoadMesh(
 //-------------------------------------
 // SetTexture()
 //-------------------------------------
-void Bullet::SetTexture(
+void Bomb::SetTexture(
 	const std::string &path)
 {
 	//LoadTexture
@@ -320,7 +337,7 @@ void Bullet::SetTexture(
 //-------------------------------------
 // Action()
 //-------------------------------------
-void Bullet::Action(
+void Bomb::Action(
 	Object *target,
 	const float range)
 {
@@ -395,10 +412,6 @@ void Bullet::Action(
 		}
 	}
 }
-
-
-
-
 
 //-------------------------------------
 // end of file

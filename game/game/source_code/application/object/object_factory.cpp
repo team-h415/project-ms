@@ -31,6 +31,7 @@
 #include "objects/model/fbx/fbx_grandfather.h"
 #include "objects/model/fbx/fbx_child.h"
 #include "objects/bullet/bullet.h"
+#include "objects/bullet/bomb.h"
 #include "objects/mesh/skydome.h"
 #include "objects/model/x/x_fort.h"
 
@@ -58,6 +59,9 @@ Object *ObjectFactory::Create(
 		break;
 	case LAYER_BULLET:
 		object = new Bullet(parameter);
+		break;
+	case LAYER_BOMB:
+		object = new Bomb(parameter);
 		break;
 	case LAYER_TREE:
 		object = new InstancingTree(parameter);

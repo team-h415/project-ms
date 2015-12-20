@@ -124,7 +124,7 @@ void FbxGrandfather::Action(
 	//-------------------------------------
 	// åŒÇ∆ìñÇΩÇ¡ÇΩÇÁ
 	if (target->parameter().layer_ == LAYER_SPRITE_LAKE){
-		if (GamePad::isPress(GAMEPAD_GRANDFATHER, PAD_BUTTON_6) 
+		if (GamePad::isPress(GAMEPAD_GRANDFATHER, PAD_BUTTON_5) 
 			&& !GamePad::isPress(GAMEPAD_GRANDFATHER, PAD_BUTTON_8)
 			&& water_gauge_ < 1.0f){
 			if (water_supply_enable_){
@@ -136,7 +136,7 @@ void FbxGrandfather::Action(
 					Game *game = dynamic_cast<Game*>(scene);
 
 					// êÖï‚ãã
-					water_gauge_ += GRANDFATHER_SUB_WATERGAUGE;
+					water_gauge_ += GRANDFATHER_SUB_BULLET_WATERGAUGE;
 					water_gauge_ = std::min<float>(water_gauge_, 1.0f);
 					Object *obj = game->object_manager()->Get("water_gage");
 					WaterGage *water_gage_obj = static_cast<WaterGage*>(obj);

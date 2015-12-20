@@ -38,6 +38,7 @@
 #include "../../object/objects/sprite/fort_gauge_manager.h"
 #include "../../object/objects/sprite/message/message.h"
 #include "../../object/objects/bullet/bullet.h"
+#include "../../object/objects/bullet/bomb.h"
 #include "../../effect/effect.h"
 #include "../../effect/effect_manager.h"
 #include "../../camera/camera.h"
@@ -627,6 +628,18 @@ void Game::Initialize()
 		bullet_param.name_ = "bullet" + std::to_string(i);
 		object_manager_->Create(
 			bullet_param);
+	}
+
+	//-------------------------------------
+	// ボムも生成しておくよ
+	//-------------------------------------
+	OBJECT_PARAMETER_DESC bomb_param;
+	bomb_param.layer_ = LAYER_BOMB;
+	for (int i = 0; i < MAX_BULLET; i++)
+	{
+		bomb_param.name_ = "bomb" + std::to_string(i);
+		object_manager_->Create(
+			bomb_param);
 	}
 
 	//-------------------------------------
@@ -1377,14 +1390,56 @@ void Game::Update()
         //-------------------------------------
         // 水ゲージを減少させる
         //-------------------------------------
-        father_watergauge -= GRANDFATHER_SUB_WATERGAUGE;
+		father_watergauge -= GRANDFATHER_SUB_BULLET_WATERGAUGE;
         father_watergauge = std::max<float>(father_watergauge, 0.0f);
         grandfather->SetWaterGauge(father_watergauge);
         waterGage->SetChangeValue(father_watergauge);
 
         shot_late = 10;
-
     }
+
+	//-------------------------------------
+	// ボム発射
+	//-------------------------------------
+	if (GamePad::isTrigger(GAMEPAD_GRANDFATHER, PAD_BUTTON_6)){
+		EFFECT_PARAMETER_DESC effect_param;
+		MyEffect *effect = effect_manager_->Get("water");
+		effect_param = effect->parameter();
+		effect_param.position_ = grandfather_position;
+		effect_param.position_.y_ += 0.6f;
+		effect_param.rotation_ = grandfather_rotation;
+		effect->SetParameter(effect_param);
+		effect_manager_->Play("water");
+
+		OBJECT_PARAMETER_DESC bomb_param;
+		bomb_param.layer_ = LAYER_BOMB;
+		bomb_param.parent_layer_ = LAYER_MODEL_GRANDFATHER;
+		bomb_param.position_ = grandfather_position;
+		bomb_param.position_.y_ += 0.6f;
+		bomb_param.rotation_ = grandfather_rotation;
+
+		// カメラの回転Xを利用
+		bomb_param.rotation_.x_ = camera_rotation.x;
+		float range = MyMath::Random_Range(-5, 5) * 0.01f;
+		bomb_param.rotation_.y_ += range;
+
+		bomb_param.scaling_ = { 0.35f, 0.35f, 0.35f };
+
+		Bomb* bomb = object_manager_->GetNoUseBomb();
+		bomb->Fire(bomb_param);
+
+		//-------------------------------------
+		// おじの弾発射SE再生
+		Sound::LoadAndPlaySE("resource/sound/se/game/shootGrandfather.wav");
+
+		//-------------------------------------
+		// 水ゲージを減少させる
+		//-------------------------------------
+		father_watergauge -= GRANDFATHER_SUB_BOMB_WATERGAUGE;
+		father_watergauge = std::max<float>(father_watergauge, 0.0f);
+		grandfather->SetWaterGauge(father_watergauge);
+		waterGage->SetChangeValue(father_watergauge);
+	}
 
 
 #ifdef _DEBUG
@@ -1413,8 +1468,8 @@ void Game::Update()
         // カメラの回転Xを利用
         bullet_param.rotation_.x_ = camera_rotation.x;
 
-        Bullet* bullet = object_manager_->GetNoUseBullet();
-        bullet->Fire(bullet_param);
+		Bullet* bullet = object_manager_->GetNoUseBullet();
+		bullet->Fire(bullet_param);
         //-------------------------------------
         // おじの弾発射SE再生
         Sound::LoadAndPlaySE("resource/sound/se/game/shootGrandfather.wav");
@@ -1424,7 +1479,7 @@ void Game::Update()
     // デバッグ時のみ、水ゲージ回復
     //-------------------------------------
     if (KeyBoard::isPress(DIK_1)){
-        father_watergauge += GRANDFATHER_SUB_WATERGAUGE;
+		father_watergauge += GRANDFATHER_SUB_BULLET_WATERGAUGE;
         father_watergauge = std::min<float>(father_watergauge, 1.0f);
         grandfather->SetWaterGauge(father_watergauge);
         waterGage->SetChangeValue(father_watergauge);
