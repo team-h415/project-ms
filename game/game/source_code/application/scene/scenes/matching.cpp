@@ -16,6 +16,7 @@
 #include "../../input/input.h"
 #include "../../input/inputs/keyboard.h"
 #include "../../input/inputs/gamepad.h"
+#include "../../sound/sound.h"
 #include "../../font/debug_font.h"
 #include "../../object/object.h"
 #include "../../object/object_manager.h"
@@ -80,6 +81,7 @@ Matching::Matching()
 //-------------------------------------
 Matching::~Matching()
 {
+	sound_->ReleaseSound(&sound_);
 	SAFE_DELETE(object_manager_);
 	SAFE_DELETE(camera_manager_);
 	SAFE_DELETE(font_);
@@ -324,6 +326,13 @@ void Matching::Initialize()
 	// UIの描画フラグを切る
 	//-------------------------------------
 	object_manager_->SetDrawEnable(LAYER_SPRITE_2D, false);
+
+	//-------------------------------------
+	// サウンド(BGM)
+	//-------------------------------------
+	sound_ = nullptr;
+	sound_ = Sound::LoadSound("resource/sound/bgm/matching/matching_bgm.wav");
+	sound_->Play(true);
 }
 
 

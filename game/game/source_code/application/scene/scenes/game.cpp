@@ -689,7 +689,7 @@ void Game::Initialize()
 	// ƒTƒEƒ“ƒh(BGM)
 	//-------------------------------------
 	sound_ = nullptr;
-	sound_ = Sound::LoadSound("resource/sound/bgm/game/ms-bgm.wav");
+	sound_ = Sound::LoadSound("resource/sound/bgm/game/game_bgm.wav");
 	sound_->Play(true);
 }
 

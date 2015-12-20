@@ -52,12 +52,12 @@ Application::Application(
 	renderer_ = RendererFactory::Create(
 		WindowHolder::handle_,
 		"DirectX9");
+	Sound::Setup();
 	scene_manager_ = new SceneManager;
 	keyboard_ = InputFactory::Create(
 		"KeyBoard");
 	gamepad_ = InputFactory::Create(
 		"GamePad");
-	Sound::Setup();
 }
 
 
