@@ -142,17 +142,17 @@ void GameServer::Initialize()
 		"resource/mesh/map.heightmap");
 
 	//-------------------------------------
-	// 池
+	// 海
 	//-------------------------------------
-	OBJECT_PARAMETER_DESC lake_param;
-	lake_param.name_ = "lake";
-	lake_param.position_ = {0.0f, -0.8f, 0.0f};
-	lake_param.rotation_ = {0.0f, 0.0f, 0.0f};
-	lake_param.scaling_ = {300.0f, 1.0f, 300.0f};
-	lake_param.layer_ = LAYER_SPRITE_LAKE;
+	OBJECT_PARAMETER_DESC sea_param;
+	sea_param.name_ = "sea";
+	sea_param.position_ = {0.0f, SEA_HEIGHT, 0.0f};
+	sea_param.rotation_ = {0.0f, 0.0f, 0.0f};
+	sea_param.scaling_ = {300.0f, 1.0f, 300.0f};
+	sea_param.layer_ = LAYER_SPRITE_LAKE;
 
 	object_manager_->Create(
-		lake_param);
+		sea_param);
 
 	//-------------------------------------
 	// 砦
@@ -505,7 +505,7 @@ void GameServer::Game()
 				ZeroMemory(&send_data, sizeof(send_data));
 				send_data.type_ = DATA_UI_PARAM;
 				send_data.object_param_.type_ = OBJ_UI;
-				strcpy_s(send_data.name, MAX_NAME_LEN, "time");
+				strcpy_s(send_data.name_, MAX_NAME_LEN, "time");
 				send_data.ui_param_.value_i_ = 180;
 				NetworkHost::SendTo(DELI_MULTI, send_data);
 
@@ -583,7 +583,7 @@ void GameServer::Game()
 					ZeroMemory(&send_data, sizeof(send_data));
 					send_data.type_ = DATA_UI_PARAM;
 					send_data.object_param_.type_ = OBJ_UI;
-					strcpy_s(send_data.name, MAX_NAME_LEN, "countdown");
+					strcpy_s(send_data.name_, MAX_NAME_LEN, "countdown");
 					send_data.ui_param_.value_i_ = 4;
 					NetworkHost::SendTo(DELI_MULTI, send_data);
 
@@ -597,7 +597,7 @@ void GameServer::Game()
 					ZeroMemory(&send_data, sizeof(send_data));
 					send_data.type_ = DATA_UI_PARAM;
 					send_data.object_param_.type_ = OBJ_UI;
-					strcpy_s(send_data.name, MAX_NAME_LEN, "countdown");
+					strcpy_s(send_data.name_, MAX_NAME_LEN, "countdown");
 					send_data.ui_param_.value_i_ = time_ / 60;
 					NetworkHost::SendTo(DELI_MULTI, send_data);
 
@@ -801,7 +801,7 @@ void GameServer::Game()
 					ZeroMemory(&send_data, sizeof(send_data));
 					send_data.type_ = DATA_UI_PARAM;
 					send_data.object_param_.type_ = OBJ_UI;
-					strcpy_s(send_data.name, MAX_NAME_LEN, "time");
+					strcpy_s(send_data.name_, MAX_NAME_LEN, "time");
 					send_data.ui_param_.value_i_ = time_ / 60;
 					NetworkHost::SendTo(DELI_MULTI, send_data);
 				}
@@ -827,7 +827,7 @@ void GameServer::Game()
 				send_data.id_ = now_target_fort_;
 				float life(fort->GetLife());
 				send_data.ui_param_.value_f_ = life;
-				strcpy_s(send_data.name, MAX_NAME_LEN, "fort_gauge_manager");
+				strcpy_s(send_data.name_, MAX_NAME_LEN, "fort_gauge_manager");
 				NetworkHost::SendTo(DELI_MULTI, send_data);
 
 				// アナウンスチェック
@@ -841,7 +841,7 @@ void GameServer::Game()
 					send_data.object_param_.position_.x_ = SCREEN_WIDTH + 200.0f;
 					send_data.object_param_.position_.y_ = SCREEN_HEIGHT - 200.0f;
 					send_data.object_param_.position_.z_ = 0.0f;
-					strcpy_s(send_data.name, MAX_NAME_LEN, name.c_str());
+					strcpy_s(send_data.name_, MAX_NAME_LEN, name.c_str());
 					NetworkHost::SendTo(DELI_MULTI, send_data);
 
 					// アナウンス用値減少
@@ -905,7 +905,7 @@ void GameServer::Game()
 				send_data.object_param_.position_.x_ = fort_position.x_;
 				send_data.object_param_.position_.y_ = field_height;
 				send_data.object_param_.position_.z_ = fort_position.z_;
-				strcpy_s(send_data.name, MAX_NAME_LEN, "smoke2");
+				strcpy_s(send_data.name_, MAX_NAME_LEN, "smoke2");
 				NetworkHost::SendTo(DELI_MULTI, send_data);
 
 				fort_position.y_ = field_height + fort_y_[i];
@@ -921,7 +921,7 @@ void GameServer::Game()
 				send_data.object_param_.rotation_.x_ = fort_rotation.x_;
 				send_data.object_param_.rotation_.y_ = fort_rotation.y_;
 				send_data.object_param_.rotation_.z_ = fort_rotation.z_;
-				strcpy_s(send_data.name, MAX_NAME_LEN, fort_str.c_str());
+				strcpy_s(send_data.name_, MAX_NAME_LEN, fort_str.c_str());
 				NetworkHost::SendTo(DELI_MULTI, send_data);
 
 				Camera* sub_camera = camera_manager_->Get("SubCamera");
@@ -986,7 +986,7 @@ void GameServer::Game()
 				send_data.object_param_.position_.x_ = fort_position.x_;
 				send_data.object_param_.position_.y_ = field_height;
 				send_data.object_param_.position_.z_ = fort_position.z_;
-				strcpy_s(send_data.name, MAX_NAME_LEN, "smoke2");
+				strcpy_s(send_data.name_, MAX_NAME_LEN, "smoke2");
 				NetworkHost::SendTo(DELI_MULTI, send_data);
 
 				fort_position.y_ = field_height + fort_y_[i];
@@ -1001,7 +1001,7 @@ void GameServer::Game()
 				send_data.object_param_.rotation_.x_ = fort_rotation.x_;
 				send_data.object_param_.rotation_.y_ = fort_rotation.y_;
 				send_data.object_param_.rotation_.z_ = fort_rotation.z_;
-				strcpy_s(send_data.name, MAX_NAME_LEN, fort_str.c_str());
+				strcpy_s(send_data.name_, MAX_NAME_LEN, fort_str.c_str());
 				NetworkHost::SendTo(DELI_MULTI, send_data);
 
 				Camera* sub_camera = camera_manager_->Get("SubCamera");
@@ -1126,7 +1126,7 @@ void GameServer::MatchingGrandfather()
 			send_data.object_param_.position_.y_ = grandfather_position.y_;
 			send_data.object_param_.position_.z_ = grandfather_position.z_;
 			send_data.object_param_.rotation_ = {0.0f, 0.0f, 0.0f};
-			strcpy_s(send_data.name, MAX_NAME_LEN, "dash");
+			strcpy_s(send_data.name_, MAX_NAME_LEN, "dash");
 			NetworkHost::SendTo(DELI_MULTI, send_data);
 		}
 		dash_effect_timer_++;
@@ -1271,7 +1271,7 @@ void GameServer::MatchingGrandfather()
 		send_data.object_param_.position_.y_ = bullet_param.position_.y_;
 		send_data.object_param_.position_.z_ = bullet_param.position_.z_;
 		send_data.object_param_.rotation_ = {0.0f, grandfather_rotation.y_, 0.0f};
-		strcpy_s(send_data.name, MAX_NAME_LEN, "water");
+		strcpy_s(send_data.name_, MAX_NAME_LEN, "water");
 		NetworkHost::SendTo(DELI_MULTI, send_data);
 	}
 
@@ -1282,7 +1282,7 @@ void GameServer::MatchingGrandfather()
 	send_data.object_param_.type_ = OBJ_PLAYER;
 	send_data.id_ = 0;
 	send_data.object_param_.ex_id_ = 0;
-	strcpy_s(send_data.name, MAX_NAME_LEN, "player0");
+	strcpy_s(send_data.name_, MAX_NAME_LEN, "player0");
 	if(GamePad::isPress(0, PAD_LS_DOWN) ||
 		GamePad::isPress(0, PAD_LS_UP) ||
 		GamePad::isPress(0, PAD_LS_LEFT) ||
@@ -1512,7 +1512,7 @@ void GameServer::MatchingChild()
 			send_data.object_param_.position_.y_ = bullet_param.position_.y_;
 			send_data.object_param_.position_.z_ = bullet_param.position_.z_;
 			send_data.object_param_.rotation_ = {0.0f, child_rotation.y_, 0.0f};
-			strcpy_s(send_data.name, MAX_NAME_LEN, "water");
+			strcpy_s(send_data.name_, MAX_NAME_LEN, "water");
 			NetworkHost::SendTo(DELI_MULTI, send_data);
 		}
 
@@ -1523,7 +1523,7 @@ void GameServer::MatchingChild()
 		send_data.id_ = i;
 		send_data.object_param_.ex_id_ = 0;
 		send_data.object_param_.type_ = OBJ_PLAYER;
-		strcpy_s(send_data.name, MAX_NAME_LEN, name.c_str());
+		strcpy_s(send_data.name_, MAX_NAME_LEN, name.c_str());
 		if(input)
 		{
 			if(GamePad::isPress(i, PAD_LS_DOWN) ||
@@ -1606,7 +1606,7 @@ void GameServer::GameGrandfather()
 		send_data.object_param_.position_.x_ = grandfather_position.x_;
 		send_data.object_param_.position_.y_ = grandfather_position.y_;
 		send_data.object_param_.position_.z_ = grandfather_position.z_;
-		strcpy_s(send_data.name, MAX_NAME_LEN, "smoke");
+		strcpy_s(send_data.name_, MAX_NAME_LEN, "smoke");
 		NetworkHost::SendTo(DELI_MULTI, send_data);
 
 		grandfather_position = GRANDFATHER_POSITION_STAGE[now_target_fort_];
@@ -1634,7 +1634,7 @@ void GameServer::GameGrandfather()
 			send_data.object_param_.position_.y_ = grandfather_position.y_;
 			send_data.object_param_.position_.z_ = grandfather_position.z_;
 			send_data.object_param_.rotation_ = {0.0f, 0.0f, 0.0f};
-			strcpy_s(send_data.name, MAX_NAME_LEN, "dash");
+			strcpy_s(send_data.name_, MAX_NAME_LEN, "dash");
 			NetworkHost::SendTo(DELI_MULTI, send_data);
 		}
 		dash_effect_timer_++;
@@ -1785,7 +1785,7 @@ void GameServer::GameGrandfather()
 		send_data.object_param_.position_.y_ = bullet_param.position_.y_;
 		send_data.object_param_.position_.z_ = bullet_param.position_.z_;
 		send_data.object_param_.rotation_ = {0.0f, grandfather_rotation.y_, 0.0f};
-		strcpy_s(send_data.name, MAX_NAME_LEN, "water");
+		strcpy_s(send_data.name_, MAX_NAME_LEN, "water");
 		NetworkHost::SendTo(DELI_MULTI, send_data);
 
 		//-------------------------------------
@@ -1823,7 +1823,7 @@ void GameServer::GameGrandfather()
 		send_data.object_param_.position_.x_ = grandfather_position.x_;
 		send_data.object_param_.position_.y_ = grandfather_position.y_;
 		send_data.object_param_.position_.z_ = grandfather_position.z_;
-		strcpy_s(send_data.name, MAX_NAME_LEN, "SpeedDown");
+		strcpy_s(send_data.name_, MAX_NAME_LEN, "SpeedDown");
 		NetworkHost::SendTo(DELI_MULTI, send_data);
 	}
 	else
@@ -1833,7 +1833,7 @@ void GameServer::GameGrandfather()
 		send_data.type_ = DATA_OBJ_PARAM;
 		send_data.object_param_.type_ = OBJ_EFFECT;
 		send_data.object_param_.position_.y_ = 50000.0f;
-		strcpy_s(send_data.name, MAX_NAME_LEN, "SpeedDown");
+		strcpy_s(send_data.name_, MAX_NAME_LEN, "SpeedDown");
 		NetworkHost::SendTo(DELI_MULTI, send_data);
 	}
 
@@ -1844,12 +1844,12 @@ void GameServer::GameGrandfather()
 	send_data.type_ = DATA_UI_PARAM;
 	send_data.object_param_.type_ = OBJ_UI;
 	send_data.ui_param_.value_f_ = grandfather->GetWaterGauge();
-	strcpy_s(send_data.name, MAX_NAME_LEN, "water_gage");
+	strcpy_s(send_data.name_, MAX_NAME_LEN, "water_gage");
 	NetworkHost::SendTo((DELI_TYPE)0, send_data);
 
 	// ダメージエフェクト
 	send_data.ui_param_.value_f_ = grandfather->GetLife();
-	strcpy_s(send_data.name, MAX_NAME_LEN, "damage_effect");
+	strcpy_s(send_data.name_, MAX_NAME_LEN, "damage_effect");
 	NetworkHost::SendTo((DELI_TYPE)0, send_data);
 
 	//------------------------------------------------
@@ -1859,7 +1859,7 @@ void GameServer::GameGrandfather()
 	send_data.id_ = 0;
 	send_data.object_param_.ex_id_ = 0;
 	send_data.object_param_.type_ = OBJ_PLAYER;
-	strcpy_s(send_data.name, MAX_NAME_LEN, grandfather_str.c_str());
+	strcpy_s(send_data.name_, MAX_NAME_LEN, grandfather_str.c_str());
 	if(GamePad::isPress(0, PAD_LS_DOWN) ||
 		GamePad::isPress(0, PAD_LS_UP) ||
 		GamePad::isPress(0, PAD_LS_LEFT) ||
@@ -2149,7 +2149,7 @@ void GameServer::GameChild()
 			send_data.object_param_.position_.y_ = bullet_param.position_.y_;
 			send_data.object_param_.position_.z_ = bullet_param.position_.z_;
 			send_data.object_param_.rotation_ = {0.0f, child_rotation.y_, 0.0f};
-			strcpy_s(send_data.name, MAX_NAME_LEN, "water");
+			strcpy_s(send_data.name_, MAX_NAME_LEN, "water");
 			NetworkHost::SendTo(DELI_MULTI, send_data);
 
 			//-------------------------------------
@@ -2185,7 +2185,7 @@ void GameServer::GameChild()
 			send_data.object_param_.position_.y_ = child_position.y_;
 			send_data.object_param_.position_.z_ = child_position.z_;
 			send_data.object_param_.rotation_ = {0.0f, 0.0f, 0.0f};
-			strcpy_s(send_data.name, MAX_NAME_LEN, "dead");
+			strcpy_s(send_data.name_, MAX_NAME_LEN, "dead");
 			NetworkHost::SendTo(DELI_MULTI, send_data);
 		}
 		else if(child_death_[my_id] && !child_respawn_waittime_[my_id])
@@ -2232,12 +2232,12 @@ void GameServer::GameChild()
 		send_data.type_ = DATA_UI_PARAM;
 		send_data.object_param_.type_ = OBJ_UI;
 		send_data.ui_param_.value_f_ = child->GetWaterGauge();
-		strcpy_s(send_data.name, MAX_NAME_LEN, "water_gage");
+		strcpy_s(send_data.name_, MAX_NAME_LEN, "water_gage");
 		NetworkHost::SendTo((DELI_TYPE)i, send_data);
 
 		// ダメージエフェクト
 		send_data.ui_param_.value_f_ = child->GetLife();
-		strcpy_s(send_data.name, MAX_NAME_LEN, "damage_effect");
+		strcpy_s(send_data.name_, MAX_NAME_LEN, "damage_effect");
 		NetworkHost::SendTo((DELI_TYPE)i, send_data);
 
 		//------------------------------------------------
@@ -2247,7 +2247,7 @@ void GameServer::GameChild()
 		send_data.id_ = i;
 		send_data.object_param_.ex_id_ = 0;
 		send_data.object_param_.type_ = OBJ_PLAYER;
-		strcpy_s(send_data.name, MAX_NAME_LEN, child_str.c_str());
+		strcpy_s(send_data.name_, MAX_NAME_LEN, child_str.c_str());
 		if(input)
 		{
 			if(GamePad::isPress(i, PAD_LS_DOWN) ||

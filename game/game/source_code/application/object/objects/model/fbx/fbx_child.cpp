@@ -167,7 +167,7 @@ void FbxChild::Action(
 					send_data.object_param_.position_.z_ += cosf(parameter_.rotation_.y_)*0.2f;
 					send_data.object_param_.position_.y_ += 0.5f;
 
-					strcpy_s(send_data.name, MAX_NAME_LEN, "watersupply");
+					strcpy_s(send_data.name_, MAX_NAME_LEN, "watersupply");
 					NetworkHost::SendTo(DELI_MULTI, send_data);
 				}
 
@@ -178,7 +178,7 @@ void FbxChild::Action(
 				send_data.object_param_.position_.y_ += 0.2f;
 
 				send_data.object_param_.rotation_ = {0.0f, 0.0f, 0.0f};
-				strcpy_s(send_data.name, MAX_NAME_LEN, "watersupplybubble");
+				strcpy_s(send_data.name_, MAX_NAME_LEN, "watersupplybubble");
 				NetworkHost::SendTo(DELI_MULTI, send_data);
 
 				// タイムインクリメント

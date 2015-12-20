@@ -94,7 +94,7 @@ struct NETWORK_DATA
 {
 	int			id_;
 	DATA_TYPE	type_;
-	char		name[MAX_NAME_LEN];
+	char		name_[MAX_NAME_LEN];
 
 	union
 	{

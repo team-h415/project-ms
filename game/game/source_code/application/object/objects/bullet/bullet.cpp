@@ -112,7 +112,7 @@ void Bullet::Fire(OBJECT_PARAMETER_DESC &parameter)
 	send_data.object_param_.rotation_.y_ = parameter_.rotation_.y_;
 	send_data.object_param_.rotation_.z_ = parameter_.rotation_.z_;
 
-	strcpy_s(send_data.name, MAX_NAME_LEN, parameter_.name_.c_str());
+	strcpy_s(send_data.name_, MAX_NAME_LEN, parameter_.name_.c_str());
 	NetworkHost::SendTo(DELI_MULTI, send_data);
 
 	if(collision_ == nullptr)
@@ -173,13 +173,43 @@ void Bullet::Update()
 	send_data.object_param_.rotation_.x_ = parameter_.rotation_.x_;
 	send_data.object_param_.rotation_.y_ = parameter_.rotation_.y_;
 	send_data.object_param_.rotation_.z_ = parameter_.rotation_.z_;
-	strcpy_s(send_data.name, MAX_NAME_LEN, parameter_.name_.c_str());
+	strcpy_s(send_data.name_, MAX_NAME_LEN, parameter_.name_.c_str());
 	NetworkHost::SendTo(DELI_MULTI, send_data);
 
-	Scene *scene = SceneManager::GetCurrentScene();
-	std::string str = SceneManager::GetCurrentSceneName();
-	if (str == "GameServer"){
-		GameServer *game_server = dynamic_cast<GameServer*>(scene);
+	// 海との衝突
+	if(SEA_HEIGHT >= parameter_.position_.y_)
+	{
+		use_ = false;
+		collision_->SetUse(false);
+
+		//-------------------------------------
+		// エフェクト再生報告
+		NETWORK_DATA send_data;
+		ZeroMemory(&send_data, sizeof(send_data));
+		send_data.type_ = DATA_OBJ_PARAM;
+		send_data.object_param_.type_ = OBJ_EFFECT;
+		send_data.object_param_.position_.x_ = parameter_.position_.x_;
+		send_data.object_param_.position_.y_ = SEA_HEIGHT;
+		send_data.object_param_.position_.z_ = parameter_.position_.z_;
+		send_data.object_param_.rotation_ = {0.0f, parameter_.rotation_.y_, 0.0f};
+		strcpy_s(send_data.name_, MAX_NAME_LEN, "fieldhit");
+		NetworkHost::SendTo(DELI_MULTI, send_data);
+
+		parameter_.position_.y_ = 10000.0f;
+
+		//-------------------------------------
+		// ゲストへ消える報告
+		ZeroMemory(&send_data, sizeof(send_data));
+		send_data.type_ = DATA_OBJ_PARAM;
+		send_data.object_param_.type_ = OBJ_BULLET;
+		send_data.object_param_.ex_id_ = 1;
+		strcpy_s(send_data.name_, MAX_NAME_LEN, parameter_.name_.c_str());
+		NetworkHost::SendTo(DELI_MULTI, send_data);
+	}
+	else
+	{
+		// 地形との衝突
+		GameServer *game_server = dynamic_cast<GameServer*>(SceneManager::GetCurrentScene());
 		Object *obj = game_server->object_manager()->Get("field");
 		Field *field = dynamic_cast<Field*>(obj);
 		float height = field->GetHeight(
@@ -187,20 +217,38 @@ void Bullet::Update()
 			parameter_.position_.x_,
 			parameter_.position_.y_,
 			parameter_.position_.z_));
-		if (parameter_.position_.y_ < height){
+
+		if (parameter_.position_.y_ < height)
+		{
 			use_ = false;
 			collision_->SetUse(false);
+
+			//-------------------------------------
+			// エフェクト再生報告
+			NETWORK_DATA send_data;
+			ZeroMemory(&send_data, sizeof(send_data));
+			send_data.type_ = DATA_OBJ_PARAM;
+			send_data.object_param_.type_ = OBJ_EFFECT;
+			send_data.object_param_.position_.x_ = parameter_.position_.x_;
+			send_data.object_param_.position_.y_ = height;
+			send_data.object_param_.position_.z_ = parameter_.position_.z_;
+			send_data.object_param_.rotation_ = {0.0f, parameter_.rotation_.y_, 0.0f};
+			strcpy_s(send_data.name_, MAX_NAME_LEN, "fieldhit");
+			NetworkHost::SendTo(DELI_MULTI, send_data);
+
 			parameter_.position_.y_ = 10000.0f;
 
+			//-------------------------------------
 			// ゲストへ消える報告
-			NETWORK_DATA send_data;
+			ZeroMemory(&send_data, sizeof(send_data));
 			send_data.type_ = DATA_OBJ_PARAM;
 			send_data.object_param_.type_ = OBJ_BULLET;
 			send_data.object_param_.ex_id_ = 1;
-			strcpy_s(send_data.name, MAX_NAME_LEN, parameter_.name_.c_str());
+			strcpy_s(send_data.name_, MAX_NAME_LEN, parameter_.name_.c_str());
 			NetworkHost::SendTo(DELI_MULTI, send_data);
 		}
 	}
+
 #endif
 
 #if defined(_DEBUG) || !defined(NETWORK_HOST_MODE)
@@ -384,7 +432,7 @@ void Bullet::Action(
 			send_data.object_param_.rotation_.x_ = parameter_.rotation_.x_;
 			send_data.object_param_.rotation_.y_ = parameter_.rotation_.y_;
 			send_data.object_param_.rotation_.z_ = parameter_.rotation_.z_;
-			strcpy_s(send_data.name, MAX_NAME_LEN, "damage");
+			strcpy_s(send_data.name_, MAX_NAME_LEN, "damage");
 
 			// オブジェクトデータ転送
 			NetworkHost::SendTo(DELI_MULTI, send_data);
@@ -398,37 +446,11 @@ void Bullet::Action(
 			send_data.type_ = DATA_OBJ_PARAM;
 			send_data.object_param_.type_ = OBJ_BULLET;
 			send_data.object_param_.ex_id_ = 1;
-			strcpy_s(send_data.name, MAX_NAME_LEN, parameter_.name_.c_str());
+			strcpy_s(send_data.name_, MAX_NAME_LEN, parameter_.name_.c_str());
 			NetworkHost::SendTo(DELI_MULTI, send_data);
 
 			// サウンド
 			Sound::LoadAndPlaySE("resource/sound/se/game/waterBreak.wav");
-
-			////-------------------------------------
-			//// シーン取得
-			//Scene *scene = SceneManager::GetCurrentScene();
-			//std::string str = SceneManager::GetCurrentSceneName();
-			//if(str == "Game"){
-			//	Game *game = dynamic_cast<Game*>(scene);
-
-			//	//-------------------------------------
-			//	// シーンからエフェクト取得
-			//	EFFECT_PARAMETER_DESC effect_param;
-			//	MyEffect *effect = game->effect_manager()->Get("damage");
-			//	effect_param = effect->parameter();
-			//	effect_param.position_ = parameter_.position_;
-			//	effect_param.position_.y_ += 0.5f;
-			//	effect_param.rotation_ = parameter_.rotation_;
-			//	effect->SetParameter(effect_param);
-
-			//	//-------------------------------------
-			//	// エフェクト再生
-			//	game->effect_manager()->Play("damage");
-			//	//-------------------------------------
-			//	// 水がはじけるSE再生
-			//	Sound::LoadAndPlaySE("resource/sound/se/game/waterBreak.wav");
-			//}
-
 		}
 	}
 #endif

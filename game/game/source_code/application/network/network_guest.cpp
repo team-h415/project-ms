@@ -396,7 +396,7 @@ unsigned __stdcall NetworkGuest::Communication()
 						{
 							continue;
 						}
-						std::string name = rec_data.name;
+						std::string name = rec_data.name_;
 						if(name == "time")
 						{
 							Object *object = object_manager->Get(name);
@@ -550,7 +550,7 @@ void NetworkGuest::ObjDataAdaptation(
 					return;
 				}
 				EFFECT_PARAMETER_DESC effect_param;
-				std::string name = rec_data.name;
+				std::string name = rec_data.name_;
 				if(name == "marker")
 				{
 					EFFECT_PARAMETER_DESC effect_param;
@@ -607,7 +607,7 @@ void NetworkGuest::ObjDataAdaptation(
 				{
 					return;
 				}
-				std::string name = rec_data.name;
+				std::string name = rec_data.name_;
 				Object *object = object_manager->Get(name);
 				if(object == nullptr)
 				{
@@ -633,7 +633,7 @@ void NetworkGuest::ObjDataAdaptation(
 				{
 					return;
 				}
-				std::string name = rec_data.name;
+				std::string name = rec_data.name_;
 				if(rec_data.object_param_.ex_id_ == 0)
 				{
 					// 0なら更新
@@ -680,7 +680,7 @@ void NetworkGuest::ObjDataAdaptation(
 					return;
 				}
 				// アナウンス
-				std::string name = rec_data.name;
+				std::string name = rec_data.name_;
 				Object *object = object_manager->Get(name);
 				if(object == nullptr)
 				{
@@ -693,6 +693,50 @@ void NetworkGuest::ObjDataAdaptation(
 					rec_data.object_param_.position_.y_,
 					rec_data.object_param_.position_.z_
 				};
+				if(name == "message_fort_25")
+				{
+					Message *message;
+					message = dynamic_cast<Message*>(object_manager->Get("message_fort_50"));
+					message->Move(-100.0f);
+					message = dynamic_cast<Message*>(object_manager->Get("message_fort_75"));
+					message->Move(-100.0f);
+					message = dynamic_cast<Message*>(object_manager->Get("message_fort_100"));
+					message->Move(-100.0f);
+				}
+
+				else if(name == "message_fort_50")
+				{
+					Message *message;
+					message = dynamic_cast<Message*>(object_manager->Get("message_fort_25"));
+					message->Move(-100.0f);
+					message = dynamic_cast<Message*>(object_manager->Get("message_fort_75"));
+					message->Move(-100.0f);
+					message = dynamic_cast<Message*>(object_manager->Get("message_fort_100"));
+					message->Move(-100.0f);
+				}
+
+				else if(name == "message_fort_75")
+				{
+					Message *message;
+					message = dynamic_cast<Message*>(object_manager->Get("message_fort_25"));
+					message->Move(-100.0f);
+					message = dynamic_cast<Message*>(object_manager->Get("message_fort_50"));
+					message->Move(-100.0f);
+					message = dynamic_cast<Message*>(object_manager->Get("message_fort_100"));
+					message->Move(-100.0f);
+				}
+
+				else if(name == "message_fort_100")
+				{
+					Message *message;
+					message = dynamic_cast<Message*>(object_manager->Get("message_fort_25"));
+					message->Move(-100.0f);
+					message = dynamic_cast<Message*>(object_manager->Get("message_fort_50"));
+					message->Move(-100.0f);
+					message = dynamic_cast<Message*>(object_manager->Get("message_fort_75"));
+					message->Move(-100.0f);
+				}
+
 				message->SetPosition(message_position);
 				message->Play();
 			}

@@ -110,8 +110,13 @@ void Matching::Initialize()
 		effect_param);
 
 	effect_manager_->Create(
+		"fieldhit",
+		"resource/effect/FieldHit2.efk",
+		effect_param);
+
+	effect_manager_->Create(
 		"damage",
-		"resource/effect/Damage3_2.efk",
+		"resource/effect/Damage3_3x0.5.efk",
 		effect_param);
 
 	effect_manager_->Create(
@@ -157,6 +162,7 @@ void Matching::Initialize()
 	effect_manager_->Play("water");
 
 	effect_param.position_ = {0.0f, 1000.0f, 0.0f};
+
 	effect_manager_->Create(
 		"marker",
 		"resource/effect/Marker.efk",

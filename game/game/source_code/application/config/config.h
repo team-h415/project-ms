@@ -15,7 +15,7 @@
 //-=--=--=--=--=--=--=--=--=--=--=--=--=--=--=-//
 // Game / Matching 共通
 //-=--=--=--=--=--=--=--=--=--=--=--=--=--=--=-//
-#define CHARANCTER_MOVESPEED 0.15f
+#define CHARANCTER_MOVESPEED 0.12f
 
 
 //-=--=--=--=--=--=--=--=--=--=--=--=--=--=--=-//
@@ -38,6 +38,8 @@ static const float MATCHING_ROTATION[5]
 	1.69f,
 	1.69f,
 };
+
+#define SEA_HEIGHT -0.8f
 
 #define PORTAL_POSITION { 28.63f, 0.00f, -34.24f }
 #define PORTAL_DISTANCE 3.0f
@@ -68,6 +70,7 @@ static const float MATCHING_ROTATION[5]
 
 #define MAX_BULLET (100)							// バレット最大数
 
+#define MESSAGE_DISP_POSITION_Y 500.0f				// メッセージ表示座標
 
 
 //-------------------------------------
