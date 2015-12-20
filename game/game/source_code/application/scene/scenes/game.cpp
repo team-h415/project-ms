@@ -175,8 +175,13 @@ void Game::Initialize()
 		effect_param);
 
 	effect_manager_->Create(
-		"SpeedDown",
+		"speeddown",
 		"resource/effect/SpeedDown.efk",
+		effect_param);
+
+	effect_manager_->Create(
+		"bombfire",
+		"resource/effect/BombFire.efk",
 		effect_param);
 
 
@@ -1690,18 +1695,18 @@ void Game::Update()
         grandfather->SetDebuffPower(debuff_power);
 
         EFFECT_PARAMETER_DESC effect_param;
-        MyEffect *effect = effect_manager_->Get("SpeedDown");
+        MyEffect *effect = effect_manager_->Get("speeddown");
         effect_param = effect->parameter();
         effect_param.position_ = grandfather_position;
         effect_param.rotation_ = { 0.0f, 0.0f, 0.0f };
         effect->SetParameter(effect_param);
         if (debuff_effect_flg){
-            effect_manager_->Play("SpeedDown");
+            effect_manager_->Play("speeddown");
             debuff_effect_flg = false;
         }
     }
     else{
-        effect_manager_->Stop("SpeedDown");
+        effect_manager_->Stop("speeddown");
         debuff_effect_flg = true;
     }
 

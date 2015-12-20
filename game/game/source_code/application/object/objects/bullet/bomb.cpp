@@ -162,7 +162,7 @@ void Bomb::Update()
 			//-------------------------------------
 			// シーンからエフェクト取得
 			EFFECT_PARAMETER_DESC effect_param;
-			MyEffect *effect = game->effect_manager()->Get("fieldhit");
+			MyEffect *effect = game->effect_manager()->Get("bombfire");
 			effect_param = effect->parameter();
 			effect_param.position_ = parameter_.position_;
 			effect_param.position_.y_ = height;
@@ -171,7 +171,7 @@ void Bomb::Update()
 
 			//-------------------------------------
 			// エフェクト再生
-			game->effect_manager()->Play("fieldhit");
+			game->effect_manager()->Play("bombfire");
 		}
 	}
 
