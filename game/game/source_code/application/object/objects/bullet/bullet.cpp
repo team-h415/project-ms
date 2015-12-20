@@ -401,6 +401,9 @@ void Bullet::Action(
 			strcpy_s(send_data.name, MAX_NAME_LEN, parameter_.name_.c_str());
 			NetworkHost::SendTo(DELI_MULTI, send_data);
 
+			// サウンド
+			Sound::LoadAndPlaySE("resource/sound/se/game/waterBreak.wav");
+
 			////-------------------------------------
 			//// シーン取得
 			//Scene *scene = SceneManager::GetCurrentScene();

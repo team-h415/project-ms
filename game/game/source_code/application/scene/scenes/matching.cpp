@@ -170,18 +170,17 @@ void Matching::Initialize()
 		"resource/effect/Portal2x2.efk",
 		effect_param);
 
-
 	effect_manager_->Play("water");
 	effect_manager_->Play("portal");
 
 	//-------------------------------------
 	// ƒJƒƒ‰‰ŠúÀ•W‰‰ŽZ
 	//-------------------------------------
-	D3DXVECTOR3 camera_focus(34.5f, 0.0f, -34.5f);
+	D3DXVECTOR3 camera_focus(34.94f, 0.0f, -34.39f);
 	D3DXVECTOR3 camera_pos(camera_focus);
 	float first_len(CAMERA_POS_LEN * 1.8f);
-	camera_pos.x -= sinf(2.31f - D3DX_PI) * first_len * cosf(D3DX_PI * -0.1f);
-	camera_pos.z -= cosf(2.31f - D3DX_PI) * first_len * cosf(D3DX_PI * -0.1f);
+	camera_pos.x -= sinf(-1.55f + D3DX_PI) * first_len * cosf(D3DX_PI * -0.1f);
+	camera_pos.z -= cosf(-1.55f + D3DX_PI) * first_len * cosf(D3DX_PI * -0.1f);
 	camera_pos.y -= sinf(D3DX_PI * -0.1f) * CAMERA_POS_LEN;
 
 	//-------------------------------------
@@ -258,7 +257,7 @@ void Matching::Initialize()
 	grandfather_param.name_ = "player0";
 	grandfather_param.layer_ = LAYER_MODEL_GRANDFATHER;
 	grandfather_param.position_ = MATCHING_POSITION[0];
-	grandfather_param.rotation_ = {0.0f, 4.65f, 0.0f};
+	grandfather_param.rotation_ = {0.0f, MATCHING_ROTATION[0], 0.0f};
 	grandfather_param.scaling_ = {1.0f, 1.0f, 1.0f};
 
 	object_manager_->Create(grandfather_param);
@@ -280,7 +279,6 @@ void Matching::Initialize()
 	//-------------------------------------
 	OBJECT_PARAMETER_DESC child_param;
 	child_param.layer_ = LAYER_MODEL_CHILD;
-	child_param.rotation_ = {0.0f, 4.65f, 0.0f};
 	child_param.scaling_ = {1.0f, 1.0f, 1.0f};
 
 	for(int i = 1; i < MAX_GUEST; i++)
@@ -288,6 +286,7 @@ void Matching::Initialize()
 		std::string name = "player" + std::to_string(i);
 		child_param.name_ = name;
 		child_param.position_ = MATCHING_POSITION[i];
+		child_param.rotation_ = {0.0f, MATCHING_ROTATION[i], 0.0f};
 		object_manager_->Create(child_param);
 
 		COLLISION_PARAMETER_DESC child_collision_param;
@@ -341,8 +340,8 @@ void Matching::Initialize()
 	OBJECT_PARAMETER_DESC parkstone_param;
 	parkstone_param.name_ = "parkstone";
 	parkstone_param.layer_ = LAYER_MODEL_X;
-	parkstone_param.position_ = { 34.5f, 0.0f, -34.5f };
-	parkstone_param.rotation_ = {0.0f, 2.31f, 0.0f};
+	parkstone_param.position_ = {34.94f, 0.0f, -34.39f};
+	parkstone_param.rotation_ = {0.0f, -1.55f, 0.0f};
 	parkstone_param.scaling_ = { 1.0f, 1.0f, 1.0f };
 
 	object_manager_->Create(

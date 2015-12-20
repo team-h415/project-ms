@@ -78,12 +78,13 @@ void GameServer::Initialize()
 	result_bgm_ = Sound::LoadSound("resource/sound/bgm/game/ms-bgm.wav");
 	Sound::StockSE("resource/sound/se/game/countdown.wav");
 	Sound::StockSE("resource/sound/se/game/start.wav");
-	for(int i = 0; i < 10; i++)
+	for(int i = 0; i < 7; i++)
 	{
 		Sound::StockSE("resource/sound/se/game/shootGrandfather.wav");
 
 		for(int j = 0; j < 4; j++)
 		{
+			Sound::StockSE("resource/sound/se/game/waterBreak.wav");
 			Sound::StockSE("resource/sound/se/game/shootChild.wav");
 		}
 	}
@@ -133,7 +134,7 @@ void GameServer::Initialize()
 	param.name_ = "field";
 	param.position_ = {0.0f, 0.0f, 0.0f};
 	param.rotation_ = {0.0f, 0.0f, 0.0f};
-	param.scaling_ = {200.0f, 1.0f, 200.0f};
+	param.scaling_ = {100.0f, 1.0f, 200.0f};
 	param.layer_ = LAYER_MESH_FIELD;
 
 	object_manager_->Create(
@@ -314,6 +315,14 @@ void GameServer::Update()
 	camera_manager_->Update();
 	object_manager_->Update();
 	collision_manager_->Update();
+
+#ifdef _DEBUG
+	FbxGrandfather *grandfather(dynamic_cast<FbxGrandfather*>(object_manager_->Get("player0")));
+	Vector3 grandfather_position(grandfather->parameter().position_);
+	Vector3 grandfather_rotation(grandfather->parameter().rotation_);
+	font_->Add("POSITION(grandfather) : %3.2f %3.2f %3.2f\n", grandfather_position.x_, grandfather_position.y_, grandfather_position.z_);
+	font_->Add("ROTATION(grandfather) : %3.2f \n", grandfather_rotation.y_);
+#endif
 }
 
 
@@ -1128,7 +1137,7 @@ void GameServer::MatchingGrandfather()
 	{
 		grandfather_rotation.y_ -= D3DX_PI * 2.0f;
 	}
-	else if(grandfather_rotation.y_ < D3DX_PI)
+	else if(grandfather_rotation.y_ < -D3DX_PI)
 	{
 		grandfather_rotation.y_ += D3DX_PI * 2.0f;
 	}
@@ -1152,8 +1161,8 @@ void GameServer::MatchingGrandfather()
 	{
 		grandfather_position = grandfather_position_old;
 	}
-	grandfather_position.x_ = std::max<float>(grandfather_position.x_, 32.0f);
-	grandfather_position.z_ = std::min<float>(grandfather_position.z_, -35.0f);
+	//grandfather_position.x_ = std::max<float>(grandfather_position.x_, 32.0f);
+	//grandfather_position.z_ = std::min<float>(grandfather_position.z_, -35.0f);
 	// パラメータ適応(カメラ用にD3DXVECTOR3にも
 	grandfather->SetPosition(grandfather_position);
 	grandfather->SetRotation(grandfather_rotation);
@@ -1361,7 +1370,7 @@ void GameServer::MatchingChild()
 			{
 				child_rotation.y_ -= D3DX_PI * 2.0f;
 			}
-			else if(child_rotation.y_ < D3DX_PI)
+			else if(child_rotation.y_ < -D3DX_PI)
 			{
 				child_rotation.y_ += D3DX_PI * 2.0f;
 			}
@@ -1386,8 +1395,8 @@ void GameServer::MatchingChild()
 		if(child_position.y_ > 0.4f || child_position.y_ < -0.4f){
 			child_position = child_position_old;
 		}
-		child_position.x_ = std::max<float>(child_position.x_, 32.0f);
-		child_position.z_ = std::min<float>(child_position.z_, -35.0f);
+		//child_position.x_ = std::max<float>(child_position.x_, 32.0f);
+		//child_position.z_ = std::min<float>(child_position.z_, -35.0f);
 
 		//-------------------------------------
 		// パラメータ適応
@@ -1639,7 +1648,7 @@ void GameServer::GameGrandfather()
 	{
 		grandfather_rotation.y_ -= D3DX_PI * 2.0f;
 	}
-	else if(grandfather_rotation.y_ < D3DX_PI)
+	else if(grandfather_rotation.y_ < -D3DX_PI)
 	{
 		grandfather_rotation.y_ += D3DX_PI * 2.0f;
 	}
@@ -1708,12 +1717,14 @@ void GameServer::GameGrandfather()
 
 	// 中間にカメラがめり込みそうなところが無いか検査
 	bool camera_re_calculate = false;
-	for(int j = 0; j < 10; ++j){
+	for(int j = 0; j < 10; ++j)
+	{
 		// 中間地点を計算
 		D3DXVECTOR3 lay_point = camera_position + vec_camera_to_focus * (0.1f * j);
 		float pos_y = field->GetHeight(lay_point);
 		// 回避処理
-		if(lay_point.y < pos_y + 0.1f){
+		if(lay_point.y < pos_y + 0.1f)
+		{
 			camera_re_calculate = true;
 			camera_pos_len_[0] -= CAMARA_LEN_SPEED;
 		}
@@ -1729,7 +1740,8 @@ void GameServer::GameGrandfather()
 	}
 
 	camera_pos_len_[0] += CAMARA_LEN_SPEED;
-	if(camera_pos_len_[0] > CAMERA_POS_LEN){
+	if(camera_pos_len_[0] > CAMERA_POS_LEN)
+	{
 		camera_pos_len_[0] = CAMERA_POS_LEN;
 	}
 
@@ -1839,9 +1851,6 @@ void GameServer::GameGrandfather()
 	send_data.ui_param_.value_f_ = grandfather->GetLife();
 	strcpy_s(send_data.name, MAX_NAME_LEN, "damage_effect");
 	NetworkHost::SendTo((DELI_TYPE)0, send_data);
-
-	Vector3 param = grandfather->parameter().position_;
-	font_->Add("POSITION(grandfather) : %3.2f %3.2f %3.2f\n", param.x_, param.y_, param.z_);
 
 	//------------------------------------------------
 	// プレイヤーデータ転送
@@ -2004,7 +2013,7 @@ void GameServer::GameChild()
 			{
 				child_rotation.y_ -= D3DX_PI * 2.0f;
 			}
-			else if(child_rotation.y_ < D3DX_PI)
+			else if(child_rotation.y_ < -D3DX_PI)
 			{
 				child_rotation.y_ += D3DX_PI * 2.0f;
 			}
@@ -2230,9 +2239,6 @@ void GameServer::GameChild()
 		send_data.ui_param_.value_f_ = child->GetLife();
 		strcpy_s(send_data.name, MAX_NAME_LEN, "damage_effect");
 		NetworkHost::SendTo((DELI_TYPE)i, send_data);
-
-		Vector3 param = child->parameter().position_;
-		font_->Add("POSITION(child) : %3.2f %3.2f %3.2f\n", param.x_, param.y_, param.z_);
 
 		//------------------------------------------------
 		// プレイヤーデータ転送
