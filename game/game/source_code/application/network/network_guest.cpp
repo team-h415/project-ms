@@ -59,6 +59,8 @@ int				NetworkGuest::id_(ID_NONE);									// ID
 SceneManager	*NetworkGuest::scene_manager_(nullptr);						// シーンマネージャー
 int				NetworkGuest::winner_(0);									// 勝者
 bool			NetworkGuest::disco_host_(false);							// ホスト発見フラグ
+bool			NetworkGuest::rec_data_flag_(false);							// ホスト発見フラグ
+bool			NetworkGuest::deta_stop_(false);							// データ処理をストップするフラグ
 
 //-------------------------------------
 // StartCommunication()
@@ -254,8 +256,21 @@ unsigned __stdcall NetworkGuest::Communication()
 	//printf("受信開始\n");
 	while(true)
 	{
-		ZeroMemory(&rec_data, sizeof(rec_data));
+		// データ処理中フラグOFF
+		rec_data_flag_ = false;
+
+		// データ止めるかどうか
+		if(deta_stop_)
+		{
+			continue;
+		}
+
+		// 受信待機
 		erc = recvfrom(socket_data_, (char*)&rec_data, sizeof(rec_data), 0, (sockaddr*)&from_addr, &from_len);
+
+		// データ処理中フラグON
+		rec_data_flag_ = true;
+
 		if(erc == SOCKET_ERROR)
 		{
 			// エラーデータ受信
@@ -266,27 +281,15 @@ unsigned __stdcall NetworkGuest::Communication()
 			switch(rec_data.type_)
 			{
 				case DATA_SCENE_CHANGE_GAME:		// マッチング画面からゲーム画面への遷移命令
-					scene_name = scene_manager_->GetCurrentSceneName();
-					if("Matching" == scene_name || "Loading" == scene_name)
-					{
-						SceneManager::RequestScene("Game");
-					}
+					SceneManager::RequestScene("Game");
 					break;
 
 				case DATA_SCENE_CHANGE_RESULT:		// ゲーム画面からリザルト画面への遷移命令
-					scene_name = scene_manager_->GetCurrentSceneName();
-					if("Game" == scene_name)
-					{
-						SceneManager::RequestScene("Result");
-					}
+					SceneManager::RequestScene("Result");
 					break;
 
 				case DATA_SCENE_CHANGE_MATCHING:	// リザルト画面からマッチング画面への遷移命令
-					scene_name = scene_manager_->GetCurrentSceneName();
-					if("Result" == scene_name)
-					{
-						SceneManager::RequestScene("Matching");
-					}
+					SceneManager::RequestScene("Matching");
 					break;
 
 				case DATA_GAME_WINNER:

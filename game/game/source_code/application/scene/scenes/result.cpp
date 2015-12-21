@@ -88,14 +88,14 @@ void Result::Initialize()
 		// ‚¶‚¶‚¢
 		object_manager_->Create(
 			 param,
-			"resource/texture/result/win_grandfather.png");
+			"resource/texture/result/win_grandfather.jpg");
 	}
 	else
 	{
 		// Žq‹Ÿ
 		object_manager_->Create(
 			param,
-			"resource/texture/result/win_child.png");
+			"resource/texture/result/win_child.jpg");
 	}
 
 	param.name_ = "push8";

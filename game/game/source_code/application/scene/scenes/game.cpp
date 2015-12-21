@@ -108,12 +108,15 @@ Game::Game()
 Game::~Game()
 {
 	setup_ = false;
+#ifdef _DEBUG
+	SAFE_DELETE(font_);
+#endif
+	sound_->ReleaseSound(&sound_);
+	SAFE_DELETE(collision_manager_);
+	SAFE_DELETE(camera_manager_);
+	SAFE_DELETE(object_manager_);
 	effect_manager_->StopAll();
 	effect_manager_ = NULL;
-	sound_->ReleaseSound(&sound_);
-	SAFE_DELETE(object_manager_);
-	SAFE_DELETE(camera_manager_);
-	SAFE_DELETE(collision_manager_);
 }
 
 
@@ -354,6 +357,43 @@ void Game::Initialize()
 	my_id = std::min<int>(my_id, 4);
 
 	//-------------------------------------
+	// 水ポリゴンUI
+	//-------------------------------------
+	OBJECT_PARAMETER_DESC water_poly_param;
+	water_poly_param.name_ = "water_poly";
+	water_poly_param.position_ = {
+		128.0f,
+		624.0f,
+		0.0f
+	};
+	water_poly_param.rotation_ = {0.0f, 0.0f, 0.0f};
+	water_poly_param.scaling_ = {192.0f, 192.0f, 0.0f};
+	water_poly_param.layer_ = LAYER_SPRITE_2D;
+
+	object_manager_->Create(
+		water_poly_param,
+		"resource/texture/game/water_desine_" + std::to_string(my_id) + ".png");
+
+	//-------------------------------------
+	// 水ゲージ（周り）UI
+	//-------------------------------------
+	OBJECT_PARAMETER_DESC water_gage_around_param;
+	water_gage_around_param.name_ = "water_gage_around";
+	water_gage_around_param.position_ = {
+		128.0f,
+		624.0f,
+		0.0f
+	};
+	water_gage_around_param.rotation_ = { 0.0f, 0.0f, 0.0f };
+	water_gage_around_param.scaling_ = { 192.0f, 192.0f, 0.0f };
+	water_gage_around_param.layer_ = LAYER_SPRITE_2D;
+
+	object_manager_->Create(
+		water_gage_around_param,
+		//"resource/texture/game/water_gage_around.png");
+		"resource/texture/game/water_gage_around_" + std::to_string(my_id) + ".png");
+
+	//-------------------------------------
 	// 水ゲージ下地UI
 	//-------------------------------------
 	OBJECT_PARAMETER_DESC water_design_param;
@@ -369,8 +409,8 @@ void Game::Initialize()
 
 	object_manager_->Create(
 		water_design_param,
-		"resource/texture/game/water_gage_background.pmg");
-		//"resource/texture/game/water_gage_background_" + std::to_string(my_id) + ".png");
+		//"resource/texture/game/water_gage_background.png");
+		"resource/texture/game/water_gage_background_" + std::to_string(my_id) + ".png");
 
 	//-------------------------------------
 	// 水ゲージ（ゲージ本体）UI
@@ -389,42 +429,6 @@ void Game::Initialize()
 	object_manager_->Create(
 		water_gage_param,
 		"resource/texture/game/water_gage_diffuse.png");
-
-	//-------------------------------------
-	// 水ゲージ（周り）UI
-	//-------------------------------------
-	OBJECT_PARAMETER_DESC water_gage_around_param;
-	water_gage_around_param.name_ = "water_gage_around";
-	water_gage_around_param.position_ = {
-		128.0f,
-		624.0f,
-		0.0f
-	};
-	water_gage_around_param.rotation_ = { 0.0f, 0.0f, 0.0f };
-	water_gage_around_param.scaling_ = { 192.0f, 192.0f, 0.0f };
-	water_gage_around_param.layer_ = LAYER_SPRITE_2D;
-
-	object_manager_->Create(
-		water_gage_around_param,
-		"resource/texture/game/water_gage_around_" + std::to_string(my_id) + ".png");
-
-	//-------------------------------------
-	// 水ポリゴンUI
-	//-------------------------------------
-	OBJECT_PARAMETER_DESC water_poly_param;
-	water_poly_param.name_ = "water_poly";
-	water_poly_param.position_ = {
-		128.0f,
-		624.0f,
-		0.0f
-	};
-	water_poly_param.rotation_ = { 0.0f, 0.0f, 0.0f };
-	water_poly_param.scaling_ = { 192.0f, 192.0f, 0.0f };
-	water_poly_param.layer_ = LAYER_SPRITE_2D;
-
-	object_manager_->Create(
-		water_poly_param,
-		"resource/texture/game/water_desine_" + std::to_string(my_id) + ".png");
 
 	//-------------------------------------
 	// ダメージエフェクトUI
@@ -629,6 +633,14 @@ void Game::Initialize()
 	object_manager_->Create(result_sprite_param,
 							"resource/texture/game/win.png");
 
+
+	//-------------------------------------
+	// フォント
+	//-------------------------------------
+#ifdef _DEBUG
+	font_ = new DebugFont();
+#endif
+
 #ifdef NETWORK_HOST_MODE
 #else
 	NETWORK_DATA network_data;
@@ -719,17 +731,10 @@ void Game::Update()
 //-------------------------------------
 void Game::Draw()
 {
-	RECT rect1 = {
-		0, 0,
-		static_cast<LONG>(SCREEN_WIDTH) / 2,
-		static_cast<LONG>(SCREEN_HEIGHT) / 2 };
-	RECT rect2 = {
-		static_cast<LONG>(SCREEN_WIDTH)-400,
-		static_cast<LONG>(SCREEN_HEIGHT)-200,
-		static_cast<LONG>(SCREEN_WIDTH),
-		static_cast<LONG>(SCREEN_HEIGHT) };
-	D3DXCOLOR font1_color(0.0f, 0.2f, 0.0f, 1.0f);
-	D3DXCOLOR font2_color(0.0f, 0.0f, 1.0f, 1.0f);
+#ifdef _DEBUG
+	font_->Add("FPS : %d", Fps::GetFps());
+#endif
+
 	MaterialColor color(32, 32, 32, 0);
 	DirectX9Holder::DrawBegin();
 	DirectX9Holder::Clear(color);
@@ -741,6 +746,15 @@ void Game::Draw()
 	effect_manager_->Draw();
 	damage_effect->Draw();
 	//collision_manager_->Draw();
+
+#ifdef _DEBUG
+	RECT rect = {
+		0, 0,
+		static_cast<LONG>(SCREEN_WIDTH) / 2,
+		static_cast<LONG>(SCREEN_HEIGHT) / 2 };
+	D3DXCOLOR font_color(0.0f, 0.2f, 0.0f, 1.0f);
+	font_->Draw(rect, font_color);
+#endif
 
 	Fade::Draw();
 

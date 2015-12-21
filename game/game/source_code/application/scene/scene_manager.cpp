@@ -7,8 +7,9 @@
 //-------------------------------------
 // include 
 //-------------------------------------
-#include "../../common/common.h"
 #include "../network/network.h"
+#include "../network/network_guest.h"
+#include "../../common/common.h"
 #include "../render/renderer.h"
 #include "../render/directx9/directx9.h"
 #include "../render/directx9/directx9_holder.h"
@@ -131,6 +132,14 @@ void SceneManager::RequestScene(const std::string &name)
 //-------------------------------------
 void SceneManager::ChangeScene()
 {
+	// 通信を一度受け入れない用にする
+	current_scene_->SetSetup(false);
+#ifndef NETWORK_HOST_MODE
+	// 受信データ処理中の場合待機する
+	while(NetworkGuest::rec_data_flag())
+	{
+	}
+#endif
 	SAFE_DELETE(current_scene_);
 	current_name_ = next_name_;
 	loading_ = true;

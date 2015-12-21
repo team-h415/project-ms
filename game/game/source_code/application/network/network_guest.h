@@ -49,6 +49,9 @@ public:
 	static int id(){ return id_; }
 	static bool disco_host(){ return disco_host_; }
 	static int winner(){ return winner_; }
+	static bool rec_data_flag(){ return rec_data_flag_; }
+
+	static bool			deta_stop_;							// データ処理をストップするフラグ
 
 private:
 	static unsigned __stdcall Communication();				// ホストからの受信を行います、基本的にサブスレッドで稼働します
@@ -62,6 +65,7 @@ private:
 	static SceneManager	*scene_manager_;					// シーンマネージャー
 	static int			winner_;							// 勝者
 	static bool			disco_host_;						// ホスト発見フラグ
+	static bool			rec_data_flag_;						// データ適応中フラグ
 
 	NetworkGuest(){}
 	~NetworkGuest(){}

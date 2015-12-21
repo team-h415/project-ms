@@ -56,8 +56,7 @@ private:
 	CollisionManager *collision_manager_;
 
 
-	DebugFont *font1_;
-	DebugFont *font2_;
+	DebugFont *font_;
     Sound *sound_;
 	int current_id_;
 	float camera_pos_len_;

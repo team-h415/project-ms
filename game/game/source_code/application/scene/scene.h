@@ -22,6 +22,7 @@ public:
 	virtual void Draw() = 0;
 	
 	bool setup(){ return setup_; }
+	void SetSetup(bool set){ setup_ = set; }	// ”O‚Ì‚½‚ß
 
 protected:
 	bool setup_;

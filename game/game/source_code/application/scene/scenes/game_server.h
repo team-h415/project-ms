@@ -118,6 +118,7 @@ private:
 	int dash_effect_timer_;
 	// 砦アナウンスステート
 	int fort_announce_state_;
+	int fort_effect_counter;
 };
 
 

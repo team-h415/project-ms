@@ -420,8 +420,9 @@ void Bullet::Action(
 			}
 			// Ô
 			else if (target->parameter().layer_ == LAYER_MODEL_FORT &&
-				(parameter_.parent_layer_ == LAYER_MODEL_CHILD ||
-				parameter_.parent_layer_ == LAYER_MODEL_GRANDFATHER)){
+				parameter_.parent_layer_ == LAYER_MODEL_CHILD){
+				//(parameter_.parent_layer_ == LAYER_MODEL_CHILD ||
+				//parameter_.parent_layer_ == LAYER_MODEL_GRANDFATHER)){
 				XFort *fort = dynamic_cast<XFort*>(target);
 				float life = fort->GetLife();
 				life -= FORT_DAMAGE;

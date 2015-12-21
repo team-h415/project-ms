@@ -614,7 +614,6 @@ void GameServer::Game()
 					strcpy_s(send_data.name_, MAX_NAME_LEN, "countdown");
 					send_data.ui_param_.value_i_ = time_ / 60;
 					NetworkHost::SendTo(DELI_MULTI, send_data);
-
 					if(time_ % 60 == 0)
 					{
 						Sound::LoadAndPlaySE("resource/sound/se/game/countdown.wav");
@@ -912,15 +911,20 @@ void GameServer::Game()
 						scene_state_ = STATE_FORT_IN;
 					}
 				}
-				// 砦エフェクト
-				ZeroMemory(&send_data, sizeof(send_data));
-				send_data.type_ = DATA_OBJ_PARAM;
-				send_data.object_param_.type_ = OBJ_EFFECT;
-				send_data.object_param_.position_.x_ = fort_position.x_;
-				send_data.object_param_.position_.y_ = field_height;
-				send_data.object_param_.position_.z_ = fort_position.z_;
-				strcpy_s(send_data.name_, MAX_NAME_LEN, "smoke2");
-				NetworkHost::SendTo(DELI_MULTI, send_data);
+
+				fort_effect_counter++;
+				if(fort_effect_counter % 3 == 0)
+				{
+					// 砦エフェクト
+					ZeroMemory(&send_data, sizeof(send_data));
+					send_data.type_ = DATA_OBJ_PARAM;
+					send_data.object_param_.type_ = OBJ_EFFECT;
+					send_data.object_param_.position_.x_ = fort_position.x_;
+					send_data.object_param_.position_.y_ = field_height;
+					send_data.object_param_.position_.z_ = fort_position.z_;
+					strcpy_s(send_data.name_, MAX_NAME_LEN, "smoke2");
+					NetworkHost::SendTo(DELI_MULTI, send_data);
+				}
 
 				fort_position.y_ = field_height + fort_y_[i];
 
@@ -993,15 +997,19 @@ void GameServer::Game()
 					Camera* sub_camera = camera_manager_->Get("SubCamera");
 					sub_camera->SetRotation(D3DXVECTOR3(0.0f, 0.0f, 0.0f));
 				}
-				// 砦エフェクト
-				ZeroMemory(&send_data, sizeof(send_data));
-				send_data.type_ = DATA_OBJ_PARAM;
-				send_data.object_param_.type_ = OBJ_EFFECT;
-				send_data.object_param_.position_.x_ = fort_position.x_;
-				send_data.object_param_.position_.y_ = field_height;
-				send_data.object_param_.position_.z_ = fort_position.z_;
-				strcpy_s(send_data.name_, MAX_NAME_LEN, "smoke2");
-				NetworkHost::SendTo(DELI_MULTI, send_data);
+				fort_effect_counter++;
+				if(fort_effect_counter % 3 == 0)
+				{
+					// 砦エフェクト
+					ZeroMemory(&send_data, sizeof(send_data));
+					send_data.type_ = DATA_OBJ_PARAM;
+					send_data.object_param_.type_ = OBJ_EFFECT;
+					send_data.object_param_.position_.x_ = fort_position.x_;
+					send_data.object_param_.position_.y_ = field_height;
+					send_data.object_param_.position_.z_ = fort_position.z_;
+					strcpy_s(send_data.name_, MAX_NAME_LEN, "smoke2");
+					NetworkHost::SendTo(DELI_MULTI, send_data);
+				}
 
 				fort_position.y_ = field_height + fort_y_[i];
 				fort->SetPosition(fort_position);
@@ -2654,7 +2662,7 @@ void GameServer::ChangeServerState(SERVER_STATE next)
 
 					fort->SetPosition(fort_pos);
 				}
-
+				fort_effect_counter = 0;
 				fort_announce_state_ = 75;
 				now_target_fort_ = 0;
 				//---------------------------------------

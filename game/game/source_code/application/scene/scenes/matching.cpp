@@ -74,6 +74,7 @@ Matching::Matching()
 	collision_manager_ = new CollisionManager;
 	effect_manager_ = EffectManager::Get();
 	font_ = new DebugFont;
+
 }
 
 //-------------------------------------
@@ -96,6 +97,16 @@ Matching::~Matching()
 //-------------------------------------
 void Matching::Initialize()
 {
+
+	for(int i = 0; i < 20; i++)
+	{
+		effect_manager_->Play("water");
+		effect_manager_->Play("watersupply");
+		effect_manager_->Play("watersupplybubble");
+		effect_manager_->Play("damage");
+		effect_manager_->Play("smoke2");
+	}
+
 	//-------------------------------------
 	// ƒJƒƒ‰‰ŠúÀ•W‰‰Z
 	//-------------------------------------

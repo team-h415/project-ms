@@ -7,6 +7,8 @@
 //-------------------------------------
 // include
 //-------------------------------------
+#include "../network/network.h"
+#include "../network/network_guest.h"
 #include "../../common/common.h"
 #include "../render/renderer.h"
 #include "../render/directx9/directx9.h"
@@ -160,12 +162,22 @@ void EffectManager::Update()
 {
 	SetViewMatrix();
 	SetProjectionMatrix();
+#ifndef NETWORK_HOST_MODE
+	NetworkGuest::deta_stop_ = true;
+	while(NetworkGuest::rec_data_flag() == true)
+	{
+		Sleep(5);
+	}
+#endif
 	manager_->Flip();
-	for (auto it = effects_.begin(); it != effects_.end(); ++it){
+#ifndef NETWORK_HOST_MODE
+	NetworkGuest::deta_stop_ = false;
+#endif
+	for(auto it = effects_.begin(); it != effects_.end(); ++it){
 		(*it).second->Update(manager_);
 	}
 	manager_->Update();
-	effect_count_ = effects_.size();
+	effect_count_ = 0;
 }
 
 

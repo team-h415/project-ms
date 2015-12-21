@@ -90,11 +90,7 @@ Lake::Lake(
 	//-------------------------------------
 	// マッチングかゲームの時のみ、あたり判定を生成
 	//-------------------------------------
-
-	//// シーンを判定
-	//std::string scene_name = SceneManager::GetCurrentSceneName();
-	//if (scene_name != "Game" &&	scene_name != "Matching") return;
-
+#ifdef NETWORK_HOST_MODE
 	// シーン取得
 	Scene *scene = SceneManager::GetCurrentScene();
 	
@@ -115,19 +111,8 @@ Lake::Lake(
 		GameServer *game_server = dynamic_cast<GameServer*>(scene);
 		game_server->collision_manager()->Create(
 			this, collision_param);
-		//if (scene_name == "Game")
-		//{
-		//	Game *game = dynamic_cast<Game*>(scene);
-		//	game->collision_manager()->Create(
-		//		this, collision_param);
-		//}
-		//else
-		//{
-		//	Matching *matching = dynamic_cast<Matching*>(scene);
-		//	matching->collision_manager()->Create(
-		//		this, collision_param);
-		//}
 	}
+#endif
 }
 
 
