@@ -99,38 +99,37 @@ void Matching::Initialize()
 	//-------------------------------------
 	// エフェクトの読み込み
 	//-------------------------------------
-	EFFECT_PARAMETER_DESC water_param;
-	water_param.position_ = { 0.0f, 0.0f, 0.0f };
-	water_param.rotation_ = { 0.0f, 0.0f, 0.0f };
-	water_param.scaling_ = { 1.0f, 1.0f, 1.0f };
-	water_param.speed_ = 1.0f;
+	EFFECT_PARAMETER_DESC effect_param;
+	effect_param.position_ = { 0.0f, 0.0f, 0.0f };
+	effect_param.rotation_ = { 0.0f, 0.0f, 0.0f };
+	effect_param.scaling_ = { 1.0f, 1.0f, 1.0f };
+	effect_param.speed_ = 1.0f;
 
 	effect_manager_->Create(
 		"water",
 		"resource/effect/BulletFire.efk",
-		water_param);
+		effect_param);
 
 	effect_manager_->Create(
 		"fieldhit",
-		"resource/effect/FieldHit2.efk",
-		water_param);
+		"resource/effect/FieldHit2_2.efk",
+		effect_param);
 
-	water_param.position_ = PORTAL_POSITION;
+	effect_param.position_ = PORTAL_POSITION;
 	effect_manager_->Create(
 		"marker",
 		"resource/effect/Marker.efk",
-		water_param);
+		effect_param);
 
 	effect_manager_->Create(
 		"portal",
 		"resource/effect/Portal2x2.efk",
-		water_param);
-
+		effect_param);
 
 	effect_manager_->Play("water");
 	effect_manager_->Play("portal");
 	effect_manager_->Play("marker");
-
+	
 	//-------------------------------------
 	// メインカメラ
 	//-------------------------------------
@@ -688,6 +687,7 @@ void Matching::Update()
 		effect_manager_->StopAll();
 		SceneManager::RequestScene("Game");
 	}
+
 }
 
 

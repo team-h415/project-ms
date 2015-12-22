@@ -146,7 +146,7 @@ void Game::Initialize()
 
 	effect_manager_->Create(
 		"dead",
-		"resource/effect/Dead2.efk",
+		"resource/effect/Dead2_2.efk",
 		effect_param);
 
 	effect_manager_->Create(
@@ -161,7 +161,7 @@ void Game::Initialize()
 
 	effect_manager_->Create(
 		"dash",
-		"resource/effect/Dash.efk",
+		"resource/effect/Dash2.efk",
 		effect_param);
 
 	effect_manager_->Create(
@@ -176,14 +176,13 @@ void Game::Initialize()
 
 	effect_manager_->Create(
 		"speeddown",
-		"resource/effect/SpeedDown.efk",
+		"resource/effect/SpeedDown_2.efk",
 		effect_param);
 
 	effect_manager_->Create(
 		"BombFire",
 		"resource/effect/BombFire.efk",
 		effect_param);
-
 
 	//-------------------------------------
 	// メインカメラ
@@ -899,14 +898,35 @@ void Game::Update()
         player_speed = CHARANCTER_MOVESPEED * 2.0f;
         player_speed -= father_debuff_power * player_speed;
         // ダッシュエフェクト
-        if (dash_effect_timer_ % 10 == 0){
-            EFFECT_PARAMETER_DESC effect_param;
-            MyEffect *effect = effect_manager_->Get("dash");
-            effect_param = effect->parameter();
-            effect_param.position_ = grandfather_position;
-            effect_param.rotation_ = { 0.0f, 0.0f, 0.0f };
-            effect->SetParameter(effect_param);
-            effect_manager_->Play("dash");
+		if (dash_effect_timer_ % 10 == 0 && player_speed > 0.0f){
+			float dash_rotato_y = 0.0f;
+			float speed_x =
+				cosf(grandfather_rotation.y_) * GamePad::isStick(GAMEPAD_GRANDFATHER).lsx_ +
+				sinf(-grandfather_rotation.y_) * GamePad::isStick(GAMEPAD_GRANDFATHER).lsy_;
+			float speed_z =
+				sinf(grandfather_rotation.y_) * GamePad::isStick(GAMEPAD_GRANDFATHER).lsx_ +
+				cosf(-grandfather_rotation.y_) * GamePad::isStick(GAMEPAD_GRANDFATHER).lsy_;
+
+			if (speed_z != 0.0f && speed_x != 0.0f){
+				// エフェクト回転角度を求める
+				dash_rotato_y = atan2(speed_x, speed_z) - D3DX_PI;
+				if (dash_rotato_y < -D3DX_PI){
+					dash_rotato_y += D3DX_PI * 2.0f;
+				}
+				else if (dash_rotato_y > D3DX_PI){
+					dash_rotato_y -= D3DX_PI * 2.0f;
+				}
+				// エフェクト出す
+				EFFECT_PARAMETER_DESC effect_param;
+				MyEffect *effect = effect_manager_->Get("dash");
+				effect_param = effect->parameter();
+				effect_param.position_ = grandfather_position;
+				effect_param.position_.y_ += 0.1f;
+				effect_param.rotation_ = { 0.0f, -dash_rotato_y, 0.0f };
+				effect->SetParameter(effect_param);
+				effect_manager_->Play("dash");
+			}
+
         }
         dash_effect_timer_++;
     }
