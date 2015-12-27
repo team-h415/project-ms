@@ -899,30 +899,34 @@ void Game::Update()
         player_speed -= father_debuff_power * player_speed;
         // ダッシュエフェクト
 		if (dash_effect_timer_ % 10 == 0 && player_speed > 0.0f){
-			float dash_rotato_y = 0.0f;
-			float speed_x =
+			
+			D3DXVECTOR2 move_vector;
+			move_vector.x =
 				cosf(grandfather_rotation.y_) * GamePad::isStick(GAMEPAD_GRANDFATHER).lsx_ +
 				sinf(-grandfather_rotation.y_) * GamePad::isStick(GAMEPAD_GRANDFATHER).lsy_;
-			float speed_z =
+			// Z方向移動
+			move_vector.y =
 				sinf(grandfather_rotation.y_) * GamePad::isStick(GAMEPAD_GRANDFATHER).lsx_ +
 				cosf(-grandfather_rotation.y_) * GamePad::isStick(GAMEPAD_GRANDFATHER).lsy_;
 
-			if (speed_z != 0.0f && speed_x != 0.0f){
+			if (move_vector.x != 0.0f && move_vector.y != 0.0f){
 				// エフェクト回転角度を求める
-				dash_rotato_y = atan2(speed_x, speed_z) - D3DX_PI;
+				float dash_rotato_y = 0.0f;
+				dash_rotato_y = atan2(move_vector.x, -move_vector.y);
 				if (dash_rotato_y < -D3DX_PI){
 					dash_rotato_y += D3DX_PI * 2.0f;
 				}
 				else if (dash_rotato_y > D3DX_PI){
 					dash_rotato_y -= D3DX_PI * 2.0f;
 				}
+
 				// エフェクト出す
 				EFFECT_PARAMETER_DESC effect_param;
 				MyEffect *effect = effect_manager_->Get("dash");
 				effect_param = effect->parameter();
 				effect_param.position_ = grandfather_position;
 				effect_param.position_.y_ += 0.1f;
-				effect_param.rotation_ = { 0.0f, -dash_rotato_y, 0.0f };
+				effect_param.rotation_ = { 0.0f, dash_rotato_y, 0.0f };
 				effect->SetParameter(effect_param);
 				effect_manager_->Play("dash");
 			}
