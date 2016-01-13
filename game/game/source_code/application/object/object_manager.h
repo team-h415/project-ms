@@ -17,6 +17,7 @@
 //-------------------------------------
 class Bullet;
 class Bomb;
+class Blind;
 class ObjectManager
 {
 public:
@@ -68,6 +69,14 @@ public:
 	// ObjectManager::Get(
 	//     "オブジェクトの名前");
 	Bomb *GetNoUseBomb();
+
+	//-------------------------------------
+	// 未使用ブラインド取得
+	//-------------------------------------
+	// 未使用のBlindを取得するための特殊メソッド
+	// ObjectManager::Get(
+	//     "オブジェクトの名前");
+	Blind *GetNoUseBlind();
 
 	//-------------------------------------
 	// 指定レイヤーのオブジェクト削除

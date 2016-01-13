@@ -27,6 +27,7 @@
 #include "../../../scene/scenes/matching.h"
 #include "../../object.h"
 #include "../../object_manager.h"
+#include "../sprite/blind.h"
 #include "../model/fbx_model.h"
 #include "../model/fbx/fbx_player.h"
 #include "../model/fbx/fbx_child.h"
@@ -162,7 +163,7 @@ void Bomb::Update()
 			//-------------------------------------
 			// シーンからエフェクト取得
 			EFFECT_PARAMETER_DESC effect_param;
-			MyEffect *effect = game->effect_manager()->Get("BombFire");
+			MyEffect *effect = game->effect_manager()->Get("bombfire");
 			effect_param = effect->parameter();
 			effect_param.position_ = parameter_.position_;
 			effect_param.position_.y_ = height;
@@ -171,7 +172,7 @@ void Bomb::Update()
 
 			//-------------------------------------
 			// エフェクト再生
-			game->effect_manager()->Play("BombFire");
+			game->effect_manager()->Play("bombfire");
 		}
 	}
 
@@ -196,7 +197,7 @@ void Bomb::Update()
 			//-------------------------------------
 			// シーンからエフェクト取得
 			EFFECT_PARAMETER_DESC effect_param;
-			MyEffect *effect = matching->effect_manager()->Get("BombFire");
+			MyEffect *effect = matching->effect_manager()->Get("bombfire");
 			effect_param = effect->parameter();
 			effect_param.position_ = parameter_.position_;
 			effect_param.position_.y_ = height;
@@ -205,7 +206,7 @@ void Bomb::Update()
 
 			//-------------------------------------
 			// エフェクト再生
-			matching->effect_manager()->Play("BombFire");
+			matching->effect_manager()->Play("bombfire");
 		}
 	}
 
@@ -365,6 +366,8 @@ void Bomb::Action(
 				life -= GRANDFATHER_DAMAGE;
 				father->SetLife(life);
 				father->SetRecoverWaitTimer(0);
+				// 目隠しエフェクト発生
+				this->SetBlind(father->parameter().position_, father->parameter().rotation_);
 			}
 			// 子供
 			else if (target->parameter().layer_ == LAYER_MODEL_CHILD){
@@ -373,14 +376,31 @@ void Bomb::Action(
 				life -= CHILD_DAMAGE;
 				child->SetLife(life);
 				child->SetRecoverWaitTimer(0);
+				// 目隠しエフェクト発生
+				this->SetBlind(child->parameter().position_, child->parameter().rotation_);
 			}
 			// 砦(※子供に差し替えること!)
 			else if (target->parameter().layer_ == LAYER_MODEL_FORT &&
 				parameter_.parent_layer_ == LAYER_MODEL_GRANDFATHER){
 				XFort *fort = dynamic_cast<XFort*>(target);
 				float life = fort->GetLife();
-				life -= FORT_DAMAGE;
-				fort->SetLife(life);
+				float damage = FORT_DAMAGE;
+				//-------------------------------------
+				// シーン取得
+				Scene *scene = SceneManager::GetCurrentScene();
+				std::string str = SceneManager::GetCurrentSceneName();
+				if (str == "Game"){
+					Game *game = dynamic_cast<Game*>(scene);
+					// シールド張ってたらその分減衰する
+					if (game->shield_flg() == true)
+						damage *= SHIELD_DAMAGE_ATTENUATION;
+
+					// ステージ移行中はダメージ無効
+					if (game->change_stage_flg() == false){
+						life -= damage;
+						fort->SetLife(life);
+					}
+				}
 			}
 
 			//-------------------------------------
@@ -411,6 +431,63 @@ void Bomb::Action(
 			collision_->SetUse(false);
 		}
 	}
+}
+
+//-------------------------------------
+// SetBlind()
+//-------------------------------------
+void Bomb::SetBlind(
+	Vector3 player_position,
+	Vector3 player_rotation)
+{
+	//-------------------------------------
+	// シーン取得
+	Scene *scene = SceneManager::GetCurrentScene();
+	std::string str = SceneManager::GetCurrentSceneName();
+	if (str == "Game"){
+		Game *game = dynamic_cast<Game*>(scene);
+
+		// プレイヤーから見てどの位置に当たったか計算する
+		D3DXVECTOR2 vec = {
+			parameter_.position_.x_ - player_position.x_,
+			parameter_.position_.z_ - player_position.z_ };
+		D3DXVec2Normalize(&vec, &vec);
+
+		D3DXVECTOR2 vec2 = {
+			sinf(player_rotation.y_),
+			cosf(player_rotation.y_) };
+		D3DXVec2Normalize(&vec2, &vec2);
+
+		float rotato_y = atan2(D3DXVec2Dot(&vec, &vec2), (vec.x * vec2.y - vec.y * vec2.x));
+
+		for (int i = 0; i < BLIND_BOMB_NUM; i++){
+			float rotato_dest_y = rotato_y + float((rand() % 314)-156) * 0.01f;	// 分散
+			float length = BLIND_LEN_MIN + float((rand() % 10)) * 0.1f * (BLIND_LEN_MAX - BLIND_LEN_MIN);
+			float scaling = float((rand() % (BLIND_SCALING_MAX - BLIND_SCALING_MIN) + BLIND_SCALING_MIN)) * BLIND_BOMB_MAGNIFICATION;
+			float rotato_z = float((rand() % 314))*0.01f;
+
+			//-------------------------------------
+			// ブラインドを発生させる
+			//-------------------------------------
+			OBJECT_PARAMETER_DESC blind_param;
+			blind_param.name_ = "blind";
+			blind_param.position_ = {
+				SCREEN_WIDTH * 0.5f + cosf(rotato_dest_y) * length * 1.777f,		// 画面が横長分微調整する
+				SCREEN_HEIGHT * 0.5f - sinf(rotato_dest_y) * length,
+				0.0f };
+
+			blind_param.rotation_ = { 0.0f, 0.0f, rotato_z };
+			blind_param.scaling_ = { scaling, scaling, 0.0f };
+			blind_param.layer_ = LAYER_BLIND;
+
+			Blind* blind = game->object_manager()->GetNoUseBlind();
+			if (blind != nullptr){
+				blind->SetBlind(blind_param);
+			}
+			else{ break; }
+		}
+	}
+
 }
 
 //-------------------------------------

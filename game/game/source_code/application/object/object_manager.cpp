@@ -17,6 +17,7 @@
 #include "objects/model/x_model.h"
 #include "objects/bullet/bullet.h"
 #include "objects/bullet/bomb.h"
+#include "objects/sprite/blind.h"
 #include "object_factory.h"
 #include "object_manager.h"
 
@@ -185,6 +186,24 @@ Bomb *ObjectManager::GetNoUseBomb()
 	ASSERT_WARNING("全部のボムが活動しているぞ　ほし");
 	return nullptr;
 }
+
+//-------------------------------------
+// 未使用ブラインド取得
+//-------------------------------------
+// 未使用のブラインドを取得するための特殊メソッド
+// ObjectManager::Get(
+//     "オブジェクトの名前");
+Blind *ObjectManager::GetNoUseBlind()
+{
+	for (auto it = objects_[LAYER_BLIND].begin(); it != objects_[LAYER_BLIND].end(); ++it){
+		if ((*it).second->use() == false){
+			return dynamic_cast<Blind*>((*it).second);
+		}
+	}
+	//ASSERT_WARNING("全部のブラインドが活動しているぞ　ほし");
+	return nullptr;
+}
+
 
 
 //-------------------------------------

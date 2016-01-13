@@ -332,6 +332,7 @@ void Matching::Initialize()
 	sound_ = nullptr;
 	sound_ = Sound::LoadSound("resource/sound/bgm/matching/matching_bgm.wav");
 	sound_->Play(true);
+
 }
 
 
@@ -687,7 +688,7 @@ void Matching::Update()
 		effect_manager_->StopAll();
 		SceneManager::RequestScene("Game");
 	}
-
+	
 }
 
 

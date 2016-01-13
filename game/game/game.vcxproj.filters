@@ -316,8 +316,13 @@
     <ClCompile Include="source_code\application\object\objects\bullet\bomb.cpp">
       <Filter>source_code\application\object\objects\bullet</Filter>
     </ClCompile>
+<<<<<<< HEAD
     <ClCompile Include="source_code\application\object\objects\model\x\instancing_playground.cpp">
       <Filter>source_code</Filter>
+=======
+    <ClCompile Include="source_code\application\object\objects\sprite\blind.cpp">
+      <Filter>source_code\application\object\objects\sprite</Filter>
+>>>>>>> origin/fuka
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -543,6 +548,12 @@
     <ClInclude Include="source_code\application\object\objects\bullet\bomb.h">
       <Filter>source_code\application\object\objects\bullet</Filter>
     </ClInclude>
+<<<<<<< HEAD
     <ClInclude Include="source_code\application\object\objects\model\x\instancing_playground.h" />
+=======
+    <ClInclude Include="source_code\application\object\objects\sprite\blind.h">
+      <Filter>source_code\application\object\objects\sprite</Filter>
+    </ClInclude>
+>>>>>>> origin/fuka
   </ItemGroup>
 </Project>
