@@ -21,6 +21,7 @@
 #include "objects/model/x/arrow.h"
 #include "objects/model/x/instancing_tree.h"
 #include "objects/model/x/instancing_bench.h"
+#include "objects/model/x/instancing_playground.h"
 #include "objects/sprite3d/shadow.h"
 #include "objects/sprite3d/lake.h"
 #include "objects/model/fbx_model.h"
@@ -35,6 +36,7 @@
 #include "objects/bullet/bomb.h"
 #include "objects/mesh/skydome.h"
 #include "objects/model/x/x_fort.h"
+#include "../object/objects/sprite/blind.h"
 
 
 //-------------------------------------
@@ -70,6 +72,9 @@ Object *ObjectFactory::Create(
 	case LAYER_BENCH:
 		object = new InstancingBench(parameter);
 		break;
+	case LAYER_PLAYGROUND:
+		object = new InstancingPlaygound(parameter);
+		break;
 	case LAYER_SHADOW:
 		object = new Shadow(parameter);
 		break;
@@ -89,6 +94,9 @@ Object *ObjectFactory::Create(
 		break;
 	case LAYER_ARROW:
 		object = new Arrow(parameter);
+		break;
+	case LAYER_BLIND:
+		object = new Blind(parameter);
 		break;
 	default:
 		ASSERT_ERROR("無効なオブジェクト生成カテゴリです");

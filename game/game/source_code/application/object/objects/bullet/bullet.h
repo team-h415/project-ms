@@ -37,6 +37,9 @@ private:
 		const std::string &path);
 	void SetTexture(
 		const std::string &path);
+	void SetBlind(
+		Vector3 player_position,
+		Vector3 player_rotation);
 	Collision *collision_;
 	D3DXVECTOR3 speed_;
 	LPD3DXMESH mesh_;

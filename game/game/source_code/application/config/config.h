@@ -41,6 +41,10 @@ static const float MATCHING_ROTATION[5]
 #define SEA_HEIGHT -0.8f
 
 #define PORTAL_POSITION { 28.63f, 0.3f, -34.24f }
+
+//-------------------------------------
+// ポータル
+#define PORTAL_POSITION { 20.0f, 0.30f, -30.00f }
 #define PORTAL_DISTANCE 3.0f
 
 
@@ -50,6 +54,8 @@ static const float MATCHING_ROTATION[5]
 
 #define CHAR_ROT_SPEED (D3DX_PI * 0.015f)			// キャラクター回転速度
 
+//-------------------------------------
+// カメラ
 #define CAMERA_FOCUS_OFFSET_Y 1.0f					// キャラクターの座標が足元基準なので上へ
 #define CAMERA_FOCUS_OFFSET 0.5f					// キャラクターの中心からのオフセット
 #define CAMERA_POS_LEN 5.5f							// カメラ注視点からカメラ座標までの距離
@@ -59,12 +65,16 @@ static const float MATCHING_ROTATION[5]
 
 #define CAMERA_SUB_ROT_SPEED (D3DX_PI * 0.007f)		// サブカメラ回転速度
 
+//-------------------------------------
+// 弾
 #define BULLET_OFFSET_ROT (D3DX_PI * 0.1f)			// ゲームから受け取った回転を調整する値
 #define BULLET_DEF_SPEED_XZ 0.4f					// バレットの初期速度XZ
 #define BULLET_DEF_SPEED_Y 0.05f					// バレットの初期速度Y
 #define BULLET_ADD_SPEED_Y 0.3f						// 発射角からバレットに加算される速度の調整値
 #define BULLET_GRAVITY 0.003f						// バレットに毎フレームかかる重量値
 
+//-------------------------------------
+// ボム
 #define BOMB_OFFSET_ROT (D3DX_PI * 0.1f)			// ゲームから受け取った回転を調整する値
 #define BOMB_DEF_SPEED_XZ 0.2f						// ボムの初期速度XZ
 #define BOMB_DEF_SPEED_Y 0.05f						// ボムの初期速度Y
@@ -195,6 +205,45 @@ static const float FORT_LIFE[]
 };
 // くらうダメージ量
 #define FORT_DAMAGE 0.015f;
+
+
+//-------------------------------------
+// シールド
+
+// 座標
+#define SHIELD_POSITION_Y 1.5f
+
+// ダメージ減衰率
+#define SHIELD_DAMAGE_ATTENUATION 0.2f
+
+// シールドON OFF 切り替えのおじライフ量
+#define SHIELD_SWITCH_LIFE 0.5f
+
+
+//-------------------------------------
+// ブラインド
+
+// アルファ減退測度
+#define BLIND_ALPHA_ATTENUATION_SPEED 0.02f
+
+// 移動値
+#define BLIND_LEN_MIN 150.0f	// 画面中央からの最少移動値
+#define BLIND_LEN_MAX 450.0f	// 画面中央からの最大移動値
+
+// スケール
+#define BLIND_SCALING_MIN 150	// 最少サイズ(int)
+#define BLIND_SCALING_MAX 300	// 最大サイズ(int)
+
+// テクスチャ
+#define BLIND_TEXTURE_MAX 4		// 使用数
+
+// ボム
+#define BLIND_BOMB_NUM 10				// ボムに当たった時のブラインド出現数
+#define BLIND_BOMB_MAGNIFICATION 1.3f	// ボムの時だけちょっと大きめにする
+
+#define BLIND_DEST_SCALING_SPEED 0.1f	// 拡大速度
+
+#define MAX_BLIND 30 // 最大数
 
 
 //-=--=--=--=--=--=--=--=--=--=--=--=--=--=--=-//

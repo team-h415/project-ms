@@ -20,7 +20,7 @@ enum OBJECT_LAYER;
 class Object;
 class Bullet;
 class Bomb;
-
+class Blind;
 
 //-------------------------------------
 // class
@@ -73,7 +73,7 @@ public:
 		OBJECT_LAYER layer);
 
 	//-------------------------------------
-	// 未使用ボオブジェクトの取得
+	// 未使用オブジェクトの取得
 	//-------------------------------------
 	// 指定レイヤー内の未使用オブジェクトを取得するためのメソッド
 	// ObjectManager::GetUseOffBomb(

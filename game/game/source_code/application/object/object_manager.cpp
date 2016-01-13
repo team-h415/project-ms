@@ -17,6 +17,7 @@
 #include "objects/model/x_model.h"
 #include "objects/bullet/bullet.h"
 #include "objects/bullet/bomb.h"
+#include "objects/sprite/blind.h"
 #include "object_factory.h"
 #include "object_manager.h"
 
