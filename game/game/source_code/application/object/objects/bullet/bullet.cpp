@@ -362,8 +362,23 @@ void Bullet::Action(
 				parameter_.parent_layer_ == LAYER_MODEL_GRANDFATHER){
 				XFort *fort = dynamic_cast<XFort*>(target);
 				float life = fort->GetLife();
-				life -= FORT_DAMAGE;
-				fort->SetLife(life);
+				float damage = FORT_DAMAGE;
+				//-------------------------------------
+				// シーン取得
+				Scene *scene = SceneManager::GetCurrentScene();
+				std::string str = SceneManager::GetCurrentSceneName();
+				if (str == "Game"){
+					Game *game = dynamic_cast<Game*>(scene);
+					// シールド張ってたらその分減衰する
+					if (game->shield_flg() == true)
+						damage *= SHIELD_DAMAGE_ATTENUATION;
+
+					// ステージ移行中はダメージ無効
+					if (game->change_stage_flg() == false){
+						life -= damage;
+						fort->SetLife(life);
+					}
+				}
 			}
 
 			//-------------------------------------

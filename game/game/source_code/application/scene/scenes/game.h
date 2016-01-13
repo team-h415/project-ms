@@ -48,6 +48,12 @@ public:
 	EffectManager *effect_manager(){
 		return effect_manager_;
 	}
+	bool shield_flg(){
+		return shield_flg_;
+	}
+	bool change_stage_flg(){
+		return change_stage_flg_;
+	}
 
 private:
 	ObjectManager *object_manager_;
@@ -91,6 +97,8 @@ private:
     bool debuff_effect_flg_;
 	// シールド有効フラグ
 	bool shield_flg_;
+	// ステージ移行フラグ
+	bool change_stage_flg_;
 };
 
 

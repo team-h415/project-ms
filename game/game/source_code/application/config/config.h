@@ -160,7 +160,12 @@
 
 //-------------------------------------
 // シールド
-#define SIELD_POSITION_Y 1.5f
+
+// 座標
+#define SHIELD_POSITION_Y 1.5f
+
+// ダメージ減衰率
+#define SHIELD_DAMAGE_ATTENUATION 0.5f
 
 //-=--=--=--=--=--=--=--=--=--=--=--=--=--=--=-//
 // Result

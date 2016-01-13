@@ -89,6 +89,9 @@ Game::Game()
     debuff_effect_flg_ = false;
 	// シールド有効フラグ（はじめOFF)
 	shield_flg_ = false;
+	// ステージ移行フラグ(はじめON)
+	change_stage_flg_ = true;
+
 	//-------------------------------------
 	// 各マネージャ・デバッグシステム初期化
 	//-------------------------------------
@@ -177,7 +180,7 @@ void Game::Initialize()
 
 	effect_manager_->Create(
 		"speeddown",
-		"resource/effect/SpeedDown_2.efk",
+		"resource/effect/SpeedDown_3.efk",
 		effect_param);
 
 	effect_manager_->Create(
@@ -395,7 +398,8 @@ void Game::Initialize()
 	OBJECT_PARAMETER_DESC child_param;
 	child_param.name_ = "child";
 	child_param.layer_ = LAYER_MODEL_CHILD;
-	child_param.position_ = CHILD1_POSITION1;
+	child_param.position_ = GRANDFATHER_POSITION_STAGE1;
+	child_param.position_.x_ += 1.0f;
 	child_param.rotation_ = CHILD1_ROTATION1;
 	child_param.scaling_ = { 1.0f, 1.0f, 1.0f };
 
@@ -856,6 +860,25 @@ void Game::Update()
 		message_50->Move(-100.0f);
 		message_75->Move(-100.0f);
         fort_damage_state = 0;
+		
+		// ステージ移行フラグ設定
+		change_stage_flg_ = true;
+
+		if (shield_flg_ == true){
+			// シールドを消すと同時に
+			// シールド解除エフェクト発生
+			EFFECT_PARAMETER_DESC shieldout_param;
+			MyEffect *effect_shieldout = effect_manager_->Get("shieldout");
+			MyEffect *effect_shieldin = effect_manager_->Get("shieldin");
+			shieldout_param = effect_shieldout->parameter();
+			shieldout_param.position_ = effect_shieldin->parameter().position_;
+			shieldout_param.rotation_ = { 0.0f, 0.0f, 0.0f };
+			effect_shieldout->SetParameter(shieldout_param);
+			effect_manager_->Stop("shieldin");
+			effect_manager_->Play("shieldout");
+
+			shield_flg_ = false;
+		}
     }
     // 損壊率75%
     else if ((fort_damage_state == 50 && fort1_life < FORT1_LiFE * 0.25f && stage_ == 1) ||
@@ -1094,6 +1117,7 @@ void Game::Update()
         fort_underground.x = std::min<float>(fort_underground.x, 0.0f);
         fort_underground.y = std::max<float>(fort_underground.y, -3.0f);
         fort_underground.z = std::max<float>(fort_underground.z, -3.0f);
+		if (fort_underground.x == 0.0f ) change_stage_flg_ = false;	// ステージ移行フラグ圧し折る
         break;
     case 2:
         fort_underground.x -= 0.01f;
@@ -1102,6 +1126,7 @@ void Game::Update()
         fort_underground.x = std::max<float>(fort_underground.x, -3.0f);
         fort_underground.y = std::min<float>(fort_underground.y, 0.0f);
         fort_underground.z = std::max<float>(fort_underground.z, -3.0f);
+		if (fort_underground.y == 0.0f) change_stage_flg_ = false;	// ステージ移行フラグ圧し折る
         break;
     case 3:
         fort_underground.x -= 0.01f;
@@ -1110,6 +1135,7 @@ void Game::Update()
         fort_underground.x = std::max<float>(fort_underground.x, -3.0f);
         fort_underground.y = std::max<float>(fort_underground.y, -3.0f);
         fort_underground.z = std::min<float>(fort_underground.z, 0.0f);
+		if (fort_underground.z == 0.0f) change_stage_flg_ = false;	// ステージ移行フラグ圧し折る
         break;
     }
 
@@ -1170,12 +1196,12 @@ void Game::Update()
         effect_manager_->Play("smoke2");
 
 		// シールドはる
-		if (fort_underground.x > -1.0f && shield_flg_ == false){
+		if (fort_underground.x > -1.0f && shield_flg_ == false && stage_ == 1){
 			EFFECT_PARAMETER_DESC shield_param;
 			MyEffect *effect_shield = effect_manager_->Get("shieldin");
 			shield_param = effect_shield->parameter();
 			shield_param.position_ = fort1_position;
-			shield_param.position_.y_ = SIELD_POSITION_Y;
+			shield_param.position_.y_ = SHIELD_POSITION_Y;
 			shield_param.rotation_ = { 0.0f, 0.0f, 0.0f };
 			effect_shield->SetParameter(shield_param);
 			effect_manager_->Play("shieldin");
@@ -1198,12 +1224,12 @@ void Game::Update()
         effect_manager_->Play("smoke2");
 
 		// シールドはる
-		if (fort_underground.y > -1.0f && shield_flg_ == false){
+		if (fort_underground.y > -1.0f && shield_flg_ == false && stage_ == 2){
 			EFFECT_PARAMETER_DESC shield_param;
 			MyEffect *effect_shield = effect_manager_->Get("shieldin");
 			shield_param = effect_shield->parameter();
 			shield_param.position_ = fort2_position;
-			shield_param.position_.y_ = SIELD_POSITION_Y;
+			shield_param.position_.y_ = SHIELD_POSITION_Y;
 			shield_param.rotation_ = { 0.0f, 0.0f, 0.0f };
 			effect_shield->SetParameter(shield_param);
 			effect_manager_->Play("shieldin");
@@ -1225,12 +1251,12 @@ void Game::Update()
         effect_manager_->Play("smoke2");
 
 		// シールドはる
-		if (fort_underground.z > -1.0f && shield_flg_ == false){
+		if (fort_underground.z > -1.0f && shield_flg_ == false && stage_ == 3){
 			EFFECT_PARAMETER_DESC shield_param;
 			MyEffect *effect_shield = effect_manager_->Get("shieldin");
 			shield_param = effect_shield->parameter();
 			shield_param.position_ = fort3_position;
-			shield_param.position_.y_ = SIELD_POSITION_Y;
+			shield_param.position_.y_ = SHIELD_POSITION_Y;
 			shield_param.rotation_ = { 0.0f, 0.0f, 0.0f };
 			effect_shield->SetParameter(shield_param);
 			effect_manager_->Play("shieldin");
@@ -1794,6 +1820,45 @@ void Game::Update()
         effect_manager_->Stop("speeddown");
         debuff_effect_flg_ = true;
     }
+
+	//-------------------------------------
+	// シールドのON,OFF設定 ステージ移行中は無効
+	//-------------------------------------
+	//-------------------------------------
+	// デバッグ用に子供のライフでやってるので
+	// おじのライフに直す
+	//-------------------------------------
+	if (child_life < 0.5f && shield_flg_ == true && change_stage_flg_ == false){
+
+		// シールドを消すと同時に
+		// シールド解除エフェクト発生
+		EFFECT_PARAMETER_DESC shieldout_param;
+		MyEffect *effect_shieldout = effect_manager_->Get("shieldout");
+		MyEffect *effect_shieldin = effect_manager_->Get("shieldin");
+		shieldout_param = effect_shieldout->parameter();
+		shieldout_param.position_ = effect_shieldin->parameter().position_;
+		shieldout_param.rotation_ = { 0.0f, 0.0f, 0.0f };
+		effect_shieldout->SetParameter(shieldout_param);
+		effect_manager_->Stop("shieldin");
+		effect_manager_->Play("shieldout");
+
+		shield_flg_ = false;
+	}
+	else if (child_life > 0.5f && shield_flg_ == false && change_stage_flg_ == false){
+		// シールドはる
+		EFFECT_PARAMETER_DESC shield_param;
+		MyEffect *effect_shield = effect_manager_->Get("shieldin");
+		shield_param = effect_shield->parameter();
+		shield_param.position_ = fort1_position;
+		shield_param.position_.y_ = SHIELD_POSITION_Y;
+		shield_param.rotation_ = { 0.0f, 0.0f, 0.0f };
+		effect_shield->SetParameter(shield_param);
+		effect_manager_->Play("shieldin");
+
+		// シールドフラグ建てる
+		shield_flg_ = true;
+	}
+
 
 
 	//-------------------------------------
