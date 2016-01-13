@@ -54,8 +54,9 @@ void Blind::Update()
 	if (use_ == false)
 		return;
 
-	AttenuateAlpha();
-	CalculateVertex();
+	this->AttenuateAlpha();
+	this->MagnifyScaling();
+	this->CalculateVertex();
 	
 }
 
@@ -189,13 +190,17 @@ void Blind::AttenuateAlpha(void)
 		use_ = false;
 	}
 
+}
+
+//-------------------------------------
+// MagnifyScaling()
+//-------------------------------------
+void Blind::MagnifyScaling(void)
+{
 	float scaling = (scaling_max_ - parameter_.scaling_.x_)*BLIND_DEST_SCALING_SPEED;
 	parameter_.scaling_.x_ += scaling;
 	parameter_.scaling_.y_ += scaling;
-
 }
-
-
 
 //-------------------------------------
 // SetBlind()

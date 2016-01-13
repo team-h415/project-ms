@@ -38,6 +38,7 @@ public:
 protected:
 	virtual void CalculateVertex();
 	void AttenuateAlpha();
+	void MagnifyScaling();
 	Vertex2D *vertex_;
 	LPDIRECT3DTEXTURE9 texture_;
 	D3DXCOLOR color_;
