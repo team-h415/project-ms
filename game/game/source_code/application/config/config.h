@@ -111,7 +111,7 @@ static const float GRANDFATHER_ROTATION_STAGE[]
 // HPŽ©“®‰ñ•œ‘Ò‚¿ŽžŠÔ
 #define GRANDFATHER_RECOVER_WAITE_TIME 180
 // HP‰ñ•œ—Ê
-#define GRANDFATHER_RECOVER_HP 0.003f
+#define GRANDFATHER_RECOVER_HP 1.0f / (10.0f * 60.0f)
 
 
 //-------------------------------------
@@ -170,7 +170,7 @@ static const float CHILD_ROTATION[]
 // HPŽ©“®‰ñ•œ‘Ò‚¿ŽžŠÔ
 #define CHILD_RECOVER_WAITE_TIME 180
 // HP‰ñ•œ—Ê
-#define CHILD_RECOVER_HP 0.003f
+#define CHILD_RECOVER_HP 1.0f / (20.0f * 60.0f)
 
 
 #define GAME_TIME 180							// ƒQ[ƒ€ŽžŠÔi•bj
