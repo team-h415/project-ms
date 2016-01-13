@@ -29,6 +29,9 @@ public:
 	void Action(
 		Object *target,
 		const float range);
+
+	void SetUse(bool flag);
+
 private:
 	void LoadMesh(
 		const std::string &path);

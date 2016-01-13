@@ -21,8 +21,30 @@
 //-------------------------------------
 // variable
 //-------------------------------------
-std::list<Collision*> CollisionManager::collision_;
-int CollisionManager::collision_count_ = 0;
+CollisionManager* CollisionManager::collision_manager_(nullptr);
+
+
+//-------------------------------------
+// Get()
+//-------------------------------------
+CollisionManager* CollisionManager::Get()
+{
+	if(collision_manager_ == nullptr)
+	{
+		collision_manager_ = new CollisionManager();
+	}
+
+	return collision_manager_;
+}
+
+
+//-------------------------------------
+// Delete()
+//-------------------------------------
+void CollisionManager::Delete()
+{
+	SAFE_DELETE(collision_manager_);
+}
 
 
 //-------------------------------------
@@ -51,8 +73,6 @@ CollisionManager::~CollisionManager()
 //-------------------------------------
 void CollisionManager::Update()
 {
-	collision_count_ = 0;
-
 	//-------------------------------------
 	// 全要素を更新
 	for (auto it = collision_.begin(); it != collision_.end(); ++it){
@@ -64,16 +84,30 @@ void CollisionManager::Update()
 
 	for(auto it = collision_.begin(); it != collision_.end(); ++it){
 		(*it)->Update();
-		collision_count_++;
 	}
 
 
 	//-------------------------------------
 	// 球形同士のあたり判定を実施
-	for (auto it = collision_.begin(); it != collision_.end(); ++it){
-		if((*it)->GetThisDelete() == true || (*it)->GetUse() == false) continue;
-		for (auto it2 = collision_.begin(); it2 != collision_.end(); ++it2){
-			if((*it) == (*it2) || (*it2)->GetThisDelete() == true || (*it2)->GetUse() == false) continue;
+	for (auto it = collision_.begin(); it != collision_.end(); ++it)
+	{
+		// 使用フラグ確認
+		if((*it)->GetUse() == false)
+		{
+			continue;
+		}
+		for (auto it2 = collision_.begin(); it2 != collision_.end(); ++it2)
+		{
+			// 同一オブジェクトや同一レイヤーに当たり判定が必要なオブジェクトは存在しない
+			if(it == it2)
+			{
+				continue;
+			}
+			// 使用フラグ確認
+			if((*it2)->GetUse() == false)
+			{
+				continue;
+			}
 			D3DXVECTOR3 distance =
 				(*it)->parameter().position_ - (*it2)->parameter().position_;
 			float range = (*it)->parameter().range_ + (*it2)->parameter().range_;

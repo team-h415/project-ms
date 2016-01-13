@@ -16,6 +16,7 @@
 // class
 //-------------------------------------
 class XContainer;
+class Shader;
 class InstancingTree : public Object
 {
 public:

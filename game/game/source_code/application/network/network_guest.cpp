@@ -59,8 +59,9 @@ int				NetworkGuest::id_(ID_NONE);									// ID
 SceneManager	*NetworkGuest::scene_manager_(nullptr);						// シーンマネージャー
 int				NetworkGuest::winner_(0);									// 勝者
 bool			NetworkGuest::disco_host_(false);							// ホスト発見フラグ
-bool			NetworkGuest::rec_data_flag_(false);							// ホスト発見フラグ
-bool			NetworkGuest::deta_stop_(false);							// データ処理をストップするフラグ
+bool			NetworkGuest::data_process_(false);							// ホスト発見フラグ
+bool			NetworkGuest::deta_stock_(false);							// データ処理をストップするフラグ
+bool			NetworkGuest::data_neglect_(false);							// 受信データを処理せず、破棄するフラグ
 
 //-------------------------------------
 // StartCommunication()
@@ -257,10 +258,10 @@ unsigned __stdcall NetworkGuest::Communication()
 	while(true)
 	{
 		// データ処理中フラグOFF
-		rec_data_flag_ = false;
+		data_process_ = false;
 
-		// データ止めるかどうか
-		if(deta_stop_)
+		// データストックするかどうか
+		if(deta_stock_)
 		{
 			continue;
 		}
@@ -268,8 +269,14 @@ unsigned __stdcall NetworkGuest::Communication()
 		// 受信待機
 		erc = recvfrom(socket_data_, (char*)&rec_data, sizeof(rec_data), 0, (sockaddr*)&from_addr, &from_len);
 
+		// データ無視するかどうか
+		if(data_neglect_)
+		{
+			continue;
+		}
+
 		// データ処理中フラグON
-		rec_data_flag_ = true;
+		data_process_ = true;
 
 		if(erc == SOCKET_ERROR)
 		{
@@ -303,10 +310,6 @@ unsigned __stdcall NetworkGuest::Communication()
 							// ゲームクラス取得
 							Game *game = dynamic_cast<Game*>(scene_manager_->GetCurrentScene());
 							if(game == nullptr)
-							{
-								continue;
-							}
-							if(!game->setup())
 							{
 								continue;
 							}
@@ -358,10 +361,6 @@ unsigned __stdcall NetworkGuest::Communication()
 						{
 							continue;
 						}
-						if(!matching->setup())
-						{
-							continue;
-						}
 						ObjDataAdaptation(matching->object_manager(),
 							matching->camera_manager(), matching->effect_manager(), rec_data);
 					}
@@ -370,10 +369,6 @@ unsigned __stdcall NetworkGuest::Communication()
 						// ゲームクラス取得
 						Game *game = dynamic_cast<Game*>(scene_manager_->GetCurrentScene());
 						if(game == nullptr)
-						{
-							continue;
-						}
-						if(!game->setup())
 						{
 							continue;
 						}
@@ -388,10 +383,6 @@ unsigned __stdcall NetworkGuest::Communication()
 					{
 						Game *game = dynamic_cast<Game*>(scene_manager_->GetCurrentScene());
 						if(game == nullptr)
-						{
-							continue;
-						}
-						if(!game->setup())
 						{
 							continue;
 						}
@@ -466,10 +457,6 @@ unsigned __stdcall NetworkGuest::Communication()
 							// マッチングクラス取得
 							Matching *matching = dynamic_cast<Matching*>(scene_manager_->GetCurrentScene());
 							if(matching == nullptr)
-							{
-								continue;
-							}
-							if(!matching->setup())
 							{
 								continue;
 							}

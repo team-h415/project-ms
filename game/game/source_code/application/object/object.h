@@ -28,17 +28,17 @@ enum OBJECT_LAYER
 	LAYER_MODEL_GRANDFATHER,
 	LAYER_MODEL_CHILD,
 	LAYER_BULLET,
-	LAYER_ARROW,
 	LAYER_BOMB,
 	LAYER_TREE,
 	LAYER_BENCH,
 	LAYER_SHADOW,
+	LAYER_ARROW,
 	LAYER_MESSAGE,
-    LAYER_DAMAGE_EFFECT,
-    LAYER_WATER_GAGE,
-    LAYER_TIMER,
-    LAYER_SPRITE_2D,
-    LAYER_FORT_GAUGE,
+	LAYER_DAMAGE_EFFECT,
+	LAYER_WATER_GAGE,
+	LAYER_TIMER,
+	LAYER_SPRITE_2D,
+	LAYER_FORT_GAUGE,
 	LAYER_COUNTDOWN,
 	LAYER_MAX,
 };
@@ -88,7 +88,7 @@ public:
 	}
 
 	void SetThisDelete(bool flag){ this_delete_ = flag; }
-	void SetUse(bool flag){ use_ = flag; }
+	virtual void SetUse(bool flag){ use_ = flag; }
 
 	// ÉpÉâÉÅÅ[É^ê›íË
 	void SetPosition(

@@ -18,19 +18,21 @@
 class CollisionManager
 {
 public:
-	CollisionManager();
-	virtual ~CollisionManager();
+	static CollisionManager* Get();
+	static void Delete();
+
 	void Update();
 	void Draw();
-	static Collision *Create(
+	Collision *Create(
 		Object *parent,
 		const COLLISION_PARAMETER_DESC &parameter);
-	static int GetCount(){
-		return collision_count_;
-	}
+
 private:
-	static std::list<Collision *>collision_;
-	static int collision_count_;
+	CollisionManager();
+	virtual ~CollisionManager();
+
+	static CollisionManager* collision_manager_;
+	std::list<Collision *>collision_;
 };
 
 

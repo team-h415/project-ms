@@ -36,6 +36,8 @@ private:
 	// デストラクタ
 	virtual ~Application();
 
+	// 各マネージャーの準備
+	void SetupManagers();
 	// 更新
 	void Update();
 	// 描画

@@ -18,8 +18,9 @@
 class CameraManager
 {
 public:
-	CameraManager();
-	virtual ~CameraManager();
+	static CameraManager* Get();
+	static void Delete();
+
 	void Update();
 	void Set(
 		const std::string &name);
@@ -49,6 +50,11 @@ public:
 		const std::string &name);
 
 private:
+	CameraManager();
+	~CameraManager();
+
+	static CameraManager* camera_manager_;
+
 	bool Search(
 		const std::string &name);
 	std::unordered_map<std::string, Camera*>cameras_;

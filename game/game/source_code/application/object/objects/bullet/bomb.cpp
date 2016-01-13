@@ -66,13 +66,6 @@ Bomb::Bomb(
 
 #ifdef NETWORK_HOST_MODE
 	// 当たり判定作成
-	Scene *scene = SceneManager::GetCurrentScene();
-	std::string str = SceneManager::GetCurrentSceneName();
-	if(str != "GameServer")
-	{
-		ASSERT_ERROR("弾が生成されるべきシーンではありません");
-		return;
-	}
 	COLLISION_PARAMETER_DESC param;
 	param.position_ = {
 		parameter_.position_.x_,
@@ -81,8 +74,7 @@ Bomb::Bomb(
 	param.range_ = 3.0f;
 	param.offset_ = {0.0f, 0.0f, 0.0f};
 
-	GameServer *game_server = dynamic_cast<GameServer*>(scene);
-	collision_ = game_server->collision_manager()->Create(this, param);
+	collision_ = CollisionManager::Get()->Create(this, param);
 	collision_->SetUse(false);
 #endif
 }
@@ -206,8 +198,6 @@ void Bomb::Update()
 		send_data.object_param_.rotation_ = {0.0f, parameter_.rotation_.y_, 0.0f};
 		strcpy_s(send_data.name_, MAX_NAME_LEN, "BombFire");
 		NetworkHost::SendTo(DELI_MULTI, send_data);
-
-		parameter_.position_.y_ = 10000.0f;
 
 		//-------------------------------------
 		// ゲストへ消える報告
@@ -357,75 +347,24 @@ void Bomb::Action(
 	Object *target,
 	const float range)
 {
-	if (!use_)
-	{
-		return;
-	}
-
 	//-------------------------------------
-	// もしXモデルと当たったら
-	if (target->parameter().layer_ == LAYER_MODEL_FORT ||
-		target->parameter().layer_ == LAYER_MODEL_GRANDFATHER ||
-		target->parameter().layer_ == LAYER_MODEL_CHILD){
+	// もし子供に当たったら
+	if (target->parameter().layer_ == LAYER_MODEL_CHILD)
+	{
+		FbxChild *child = dynamic_cast<FbxChild*>(target);
+		float life = child->GetLife();
+		life -= 10.0f;
+		child->SetLife(life);
+		child->SetRecoverWaitTimer(0);
+	}
+}
 
-		//-------------------------------------
-		// 自分の親のレイヤーを確認
-		if (parameter_.parent_layer_ != target->parameter().layer_){
-
-			//-------------------------------------
-			// 当たった対象にパラメータ反映
-			// おじ
-			if (target->parameter().layer_ == LAYER_MODEL_GRANDFATHER){
-				FbxGrandfather *father = dynamic_cast<FbxGrandfather*>(target);
-				float life = father->GetLife();
-				life -= GRANDFATHER_DAMAGE;
-				father->SetLife(life);
-				father->SetRecoverWaitTimer(0);
-			}
-			// 子供
-			else if (target->parameter().layer_ == LAYER_MODEL_CHILD){
-				FbxChild *child = dynamic_cast<FbxChild*>(target);
-				float life = child->GetLife();
-				life -= CHILD_DAMAGE;
-				child->SetLife(life);
-				child->SetRecoverWaitTimer(0);
-			}
-			// 砦(※子供に差し替えること!)
-			else if (target->parameter().layer_ == LAYER_MODEL_FORT &&
-				parameter_.parent_layer_ == LAYER_MODEL_GRANDFATHER){
-				XFort *fort = dynamic_cast<XFort*>(target);
-				float life = fort->GetLife();
-				life -= FORT_DAMAGE;
-				fort->SetLife(life);
-			}
-
-			//-------------------------------------
-			// シーン取得
-			Scene *scene = SceneManager::GetCurrentScene();
-			std::string str = SceneManager::GetCurrentSceneName();
-			if (str == "Game"){
-				Game *game = dynamic_cast<Game*>(scene);
-
-				//-------------------------------------
-				// シーンからエフェクト取得
-				EFFECT_PARAMETER_DESC effect_param;
-				MyEffect *effect = game->effect_manager()->Get("damage");
-				effect_param = effect->parameter();
-				effect_param.position_ = parameter_.position_;
-				effect_param.position_.y_ += 0.5f;
-				effect_param.rotation_ = parameter_.rotation_;
-				effect->SetParameter(effect_param);
-
-				//-------------------------------------
-				// エフェクト再生
-				game->effect_manager()->Play("damage");
-				//-------------------------------------
-				// 水がはじけるSE再生
-				Sound::LoadAndPlaySE("resource/sound/se/game/waterBreak.wav");
-			}
-			use_ = false;
-			collision_->SetUse(false);
-		}
+void Bomb::SetUse(bool flag)
+{
+	use_ = flag;
+	if(collision_ != nullptr)
+	{
+		collision_->SetUse(use_);
 	}
 }
 

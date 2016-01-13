@@ -14,7 +14,7 @@
 //-------------------------------------
 // class
 //-------------------------------------
-class ObjectManager;
+class Sprite2D;
 class Loading : public Scene
 {
 public:
@@ -24,7 +24,7 @@ public:
 	void Update();
 	void Draw();
 private:
-	ObjectManager *object_manager_;
+	Sprite2D*	background_;
 };
 
 

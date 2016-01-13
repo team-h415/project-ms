@@ -25,10 +25,12 @@ Collision::Collision(
 {
 	parent_ = parent;
 	parameter_ = parameter;
-	D3DXMatrixIdentity(&world_);
-	CalculateVertex();
 	this_delete_ = false;
 	use_ = true;
+#ifdef _DEBUG
+	D3DXMatrixIdentity(&world_);
+	CalculateVertex();
+#endif
 }
 
 
@@ -46,11 +48,14 @@ Collision::~Collision()
 //-------------------------------------
 void Collision::Update()
 {
+	// 当たり判定領域の更新
 	Vector3 v = parent_->parameter().position_;
 	parameter_.position_.x = v.x_;
 	parameter_.position_.y = v.y_;
 	parameter_.position_.z = v.z_;
 	parameter_.position_ += parameter_.offset_;
+#ifdef _DEBUG
+	// 描画領域の更新
 	D3DXMatrixIdentity(&world_);
 	D3DXMATRIX translate;
 	D3DXMatrixTranslation(
@@ -59,6 +64,7 @@ void Collision::Update()
 		parameter_.position_.y,
 		parameter_.position_.z);
 	D3DXMatrixMultiply(&world_, &world_, &translate);
+#endif
 }
 
 
@@ -67,6 +73,7 @@ void Collision::Update()
 //-------------------------------------
 void Collision::Draw()
 {
+#ifdef _DEBUG
 	if(!use_)
 	{
 		return;
@@ -94,6 +101,7 @@ void Collision::Draw()
 	DirectX9Holder::device_->SetRenderState(D3DRS_LIGHTING, TRUE);
 
 	DirectX9Holder::device_->SetRenderState(D3DRS_ZFUNC, zfunc);
+#endif
 }
 
 
@@ -102,6 +110,7 @@ void Collision::Draw()
 //-------------------------------------
 void Collision::CalculateVertex()
 {
+#ifdef _DEBUG
 	float arc = 0.0f;
 	for (int i = 0; i < 11; i++, arc += D3DX_PI * 2.0f * 0.1f){
 		vertex_[0][i].position_ = { 
@@ -134,6 +143,7 @@ void Collision::CalculateVertex()
 		vertex_[2][i].normal_ = { 0.0f, 1.0f, 0.0f };
 		vertex_[2][i].texture_ = { 0.0f, 0.0f };
 	}
+#endif
 }
 
 

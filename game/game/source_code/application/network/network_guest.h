@@ -49,9 +49,12 @@ public:
 	static int id(){ return id_; }
 	static bool disco_host(){ return disco_host_; }
 	static int winner(){ return winner_; }
-	static bool rec_data_flag(){ return rec_data_flag_; }
+	static bool data_process(){ return data_process_; }
+	static bool deta_stock(){ return deta_stock_; }
+	static bool data_neglect(){ return data_neglect_; }
 
-	static bool			deta_stop_;							// データ処理をストップするフラグ
+	static void deta_stock(bool set){ deta_stock_ = set; }
+	static void data_neglect(bool set){ data_neglect_ = set; }
 
 private:
 	static unsigned __stdcall Communication();				// ホストからの受信を行います、基本的にサブスレッドで稼働します
@@ -65,7 +68,9 @@ private:
 	static SceneManager	*scene_manager_;					// シーンマネージャー
 	static int			winner_;							// 勝者
 	static bool			disco_host_;						// ホスト発見フラグ
-	static bool			rec_data_flag_;						// データ適応中フラグ
+	static bool			data_process_;						// 受信データ処理中フラグ
+	static bool			deta_stock_;						// 受信データ処理を一度止め、ストックするフラグ
+	static bool			data_neglect_;						// 受信データを処理せず、破棄するフラグ
 
 	NetworkGuest(){}
 	~NetworkGuest(){}

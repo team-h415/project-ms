@@ -66,38 +66,11 @@
 Game::Game()
 {
 	//-------------------------------------
-	// ゲームルール用パラメータ初期化
-	//-------------------------------------
-	// ステージ
-	stage_ = 1;
-	// おじデバフフラグ
-	grandfather_debuff_ = false;
-	// 子供死亡フラグ
-	child_death_ = false;
-	// 子供リスポーン待ち時間
-	child_respawn_waittime_ = 0;
-	// ダッシュエフェクトタイマー初期化
-	dash_effect_timer_ = 0;
-	// 経過フレーム数
-	frame_ = 0;
-	// 経過時間
-	timer_ = 0;
-    // サウンドSEが連続で再生させないためのフラグ
-    start_only_se_flg_ = true;
-    sound_se_flg_ = true;
-    // プレイヤー移動時の経過時間
-    walk_timer_ = 0;
-    walk_flg_ = false;
-    // デバフエフェクトのフラグ
-    debuff_effect_flg = false;
-
-	//-------------------------------------
 	// 各マネージャ・デバッグシステム初期化
 	//-------------------------------------
-	camera_manager_ = new CameraManager;
-	object_manager_ = new ObjectManager;
+	camera_manager_ = CameraManager::Get();
+	object_manager_ = ObjectManager::Get();
 	effect_manager_ = EffectManager::Get();
-	collision_manager_ = new CollisionManager;
     object_manager_->SetDrawEnable(LAYER_DAMAGE_EFFECT, false);
 }
 
@@ -107,16 +80,33 @@ Game::Game()
 //-------------------------------------
 Game::~Game()
 {
-	setup_ = false;
-#ifdef _DEBUG
-	SAFE_DELETE(font_);
-#endif
-	sound_->ReleaseSound(&sound_);
-	SAFE_DELETE(collision_manager_);
-	SAFE_DELETE(camera_manager_);
-	SAFE_DELETE(object_manager_);
+	object_manager_->Get("time")->SetThisDelete(true);
+	object_manager_->Get("fort_state")->SetThisDelete(true);
+	object_manager_->Get("fort_gauge_manager")->SetThisDelete(true);
+	object_manager_->Get("water_poly")->SetThisDelete(true);
+	object_manager_->Get("water_gage_around")->SetThisDelete(true);
+	object_manager_->Get("water_design")->SetThisDelete(true);
+	object_manager_->Get("water_gage")->SetThisDelete(true);
+	object_manager_->Get("damage_effect")->SetThisDelete(true);
+	object_manager_->Get("countdown")->SetThisDelete(true);
+	object_manager_->Get("message_child1_death")->SetThisDelete(true);
+	object_manager_->Get("message_child2_death")->SetThisDelete(true);
+	object_manager_->Get("message_child3_death")->SetThisDelete(true);
+	object_manager_->Get("message_child4_death")->SetThisDelete(true);
+	object_manager_->Get("message_fort_25")->SetThisDelete(true);
+	object_manager_->Get("message_fort_50")->SetThisDelete(true);
+	object_manager_->Get("message_fort_75")->SetThisDelete(true);
+	object_manager_->Get("message_fort_100")->SetThisDelete(true);
+	object_manager_->Get("message_grandfather_debuff")->SetThisDelete(true);
+	object_manager_->Get("message_grandfather_return")->SetThisDelete(true);
+	object_manager_->Get("result_sprite")->SetThisDelete(true);
+	object_manager_->Get("arrow")->SetThisDelete(true);
+
+	object_manager_->DeleteCheck();
+	object_manager_->ObjectUseOffLayer(LAYER_BULLET);
+	object_manager_->ObjectUseOffLayer(LAYER_BOMB);
+
 	effect_manager_->StopAll();
-	effect_manager_ = NULL;
 }
 
 
@@ -125,172 +115,6 @@ Game::~Game()
 //-------------------------------------
 void Game::Initialize()
 {
-	//-------------------------------------
-	// メインカメラ
-	//-------------------------------------
-	CAMERA_PARAMETER_DESC camera_param;
-	camera_param.acpect_ = SCREEN_WIDTH / SCREEN_HEIGHT;
-	camera_param.fovy_ = D3DX_PI * 0.25f;
-	camera_param.position_ = { 0.0f, 0.0f, -10.0f };
-	camera_param.focus_ = { 0.0f, 0.0f, 0.0f };
-	camera_param.rotation_ = { 0.0f, 0.0f, 0.0f };
-	camera_param.up_ = { 0.0f, 1.0f, 0.0f };
-	camera_param.near_ = 0.1f;
-	camera_param.far_ = 800.0f;
-
-	camera_manager_->Create(
-		"Perspective", "MainCamera", camera_param);
-
-
-	//-------------------------------------
-	// 地形
-	//-------------------------------------
-	OBJECT_PARAMETER_DESC field_param;
-	field_param.name_ = "field";
-	field_param.position_ = { 0.0f, 0.0f, 0.0f };
-	field_param.rotation_ = { 0.0f, 0.0f, 0.0f };
-	field_param.scaling_ = { 100.0f, 1.0f, 200.0f };
-	field_param.layer_ = LAYER_MESH_FIELD;
-
-	object_manager_->Create(
-		field_param,
-		"resource/mesh/map.heightmap");
-
-
-	//-------------------------------------
-	// 空
-	//-------------------------------------
-	OBJECT_PARAMETER_DESC skydome_param;
-	skydome_param.name_ = "skydome_up";
-	skydome_param.position_ = { 0.0f, -1.0f, 0.0f };
-	skydome_param.rotation_ = { 0.0f, 0.0f, 0.0f };
-	skydome_param.scaling_ = { 500.0f, 1.0f, 500.0f };
-	skydome_param.layer_ = LAYER_MESH_SKYDOME;
-
-	object_manager_->Create(
-		skydome_param,
-		"resource/mesh/skydome_up.txt");
-
-	skydome_param.name_ = "skydome_bottom";
-	skydome_param.rotation_ = { 0.0f, 0.0f, D3DX_PI };
-
-	object_manager_->Create(
-		skydome_param,
-		"resource/mesh/skydome_bottom.txt");
-
-
-	//-------------------------------------
-	// 池
-	//-------------------------------------
-	OBJECT_PARAMETER_DESC lake_param;
-	lake_param.name_ = "lake";
-	lake_param.position_ = { 0.0f, -0.8f, 0.0f };
-	lake_param.rotation_ = { 0.0f, 0.0f, 0.0f };
-	lake_param.scaling_ = { 300.0f, 1.0f, 300.0f };
-	lake_param.layer_ = LAYER_SPRITE_LAKE;
-
-	object_manager_->Create(
-		lake_param);
-
-	//-------------------------------------
-	// 砦
-	//-------------------------------------
-	OBJECT_PARAMETER_DESC fort_param;
-	COLLISION_PARAMETER_DESC fort_collision_param;
-	Object *fort_obj;
-	XFort *fort;
-	Vector3 fort_pos;
-	D3DXVECTOR3 temp;
-	Field* field = dynamic_cast<Field*>(object_manager_->Get("field"));
-	for(int i = 0; i < 3; i++)
-	{
-		fort_pos = FORT_POSITION[i];
-		temp.x = fort_pos.x_;
-		temp.y = fort_pos.y_;
-		temp.z = fort_pos.z_;
-
-		fort_pos.y_ = field->GetHeight(temp);
-		if(i != 0)
-		{
-			fort_pos.y_ -= 3.0f;
-		}
-		std::string name = "fort" + std::to_string(i);
-		fort_param.name_ = name;
-		fort_param.layer_ = LAYER_MODEL_FORT;
-		fort_param.position_ = fort_pos;
-		fort_param.rotation_ = {0.0f, 0.0f, 0.0f};
-		fort_param.scaling_ = {1.0f, 1.0f, 1.0f};
-
-		object_manager_->Create(
-			fort_param,
-			"resource/model/x/fort.x");
-
-		fort_obj = object_manager_->Get(name);
-		fort = dynamic_cast<XFort*>(fort_obj);
-
-		fort_collision_param.position_ = {
-			fort_pos.x_,
-			fort_pos.y_ + 0.5f,
-			fort_pos.z_};
-		fort_collision_param.range_ = 1.0f;
-		fort_collision_param.offset_ = {0.0f, 0.5f, 0.0f};
-
-		collision_manager_->Create(fort_obj,
-			fort_collision_param);
-		fort->SetLife(FORT_LIFE[i]);
-	}
-
-	//-------------------------------------
-	// FBXおじ
-	//-------------------------------------
-	OBJECT_PARAMETER_DESC grandfather_param;
-	grandfather_param.name_ = "player0";
-	grandfather_param.layer_ = LAYER_MODEL_GRANDFATHER;
-	grandfather_param.position_ = GRANDFATHER_POSITION_STAGE[0];
-	grandfather_param.rotation_ = {0.0f, GRANDFATHER_ROTATION_STAGE[0], 0.0f};
-	grandfather_param.scaling_ = { 1.0f, 1.0f, 1.0f };
-
-	object_manager_->Create(grandfather_param);
-
-	COLLISION_PARAMETER_DESC fbx_collision_param;
-	Object *obj2 = object_manager_->Get("player0");
-
-	fbx_collision_param.position_ = {
-		obj2->parameter().position_.x_,
-		obj2->parameter().position_.y_,
-		obj2->parameter().position_.z_ };
-	fbx_collision_param.range_ = 1.0f;
-	fbx_collision_param.offset_ = { 0.0f, 0.5f, 0.0f };
-
-	collision_manager_->Create(object_manager_->Get("player0"), fbx_collision_param);
-
-	//-------------------------------------
-	// FBX子供
-	//-------------------------------------
-	OBJECT_PARAMETER_DESC child_param;
-	child_param.layer_ = LAYER_MODEL_CHILD;
-	child_param.scaling_ = { 1.0f, 1.0f, 1.0f };
-	for(int i = 1; i < MAX_GUEST; i++)
-	{
-		std::string name = "player" + std::to_string(i);
-		child_param.name_ = name;
-		child_param.position_ = CHILD_POSITION[i];
-		child_param.rotation_ = {0.0f, CHILD_ROTATION[i], 0.0f};
-		object_manager_->Create(child_param);
-
-		COLLISION_PARAMETER_DESC child_collision_param;
-		Object *obj3 = object_manager_->Get(name);
-		child_collision_param.position_ = {
-			obj3->parameter().position_.x_,
-			obj3->parameter().position_.y_,
-			obj3->parameter().position_.z_ };
-		child_collision_param.range_ = 1.0f;
-		child_collision_param.offset_ = { 0.0f, 0.5f, 0.0f };
-
-		collision_manager_->Create(object_manager_->Get(name),
-			child_collision_param);
-	}
-
 	//-------------------------------------
 	// タイマー
 	//-------------------------------------
@@ -390,7 +214,6 @@ void Game::Initialize()
 
 	object_manager_->Create(
 		water_gage_around_param,
-		//"resource/texture/game/water_gage_around.png");
 		"resource/texture/game/water_gage_around_" + std::to_string(my_id) + ".png");
 
 	//-------------------------------------
@@ -409,7 +232,6 @@ void Game::Initialize()
 
 	object_manager_->Create(
 		water_design_param,
-		//"resource/texture/game/water_gage_background.png");
 		"resource/texture/game/water_gage_background_" + std::to_string(my_id) + ".png");
 
 	//-------------------------------------
@@ -447,48 +269,6 @@ void Game::Initialize()
 	object_manager_->Create(
 		hit_point_param);
 
-	//-------------------------------------
-	// 木
-	//-------------------------------------
-	OBJECT_PARAMETER_DESC wood_param;
-	wood_param.name_ = "wood1";
-	wood_param.layer_ = LAYER_TREE;
-	InstancingTree *tree1 = dynamic_cast<InstancingTree*>(object_manager_->Create(wood_param));
-	tree1->SetMesh("resource/model/x/tree01.x");
-	tree1->SetTexture("resource/texture/game/tree01.png");
-	tree1->SetPositionPatern(0);
-
-	wood_param.name_ = "wood2";
-	InstancingTree *tree2 = dynamic_cast<InstancingTree*>(object_manager_->Create(wood_param));
-	tree2->SetMesh("resource/model/x/tree02.x");
-	tree2->SetTexture("resource/texture/game/tree02.png");
-	tree2->SetPositionPatern(1);
-
-	wood_param.name_ = "wood3";
-	InstancingTree *tree3 = dynamic_cast<InstancingTree*>(object_manager_->Create(wood_param));
-	tree3->SetMesh("resource/model/x/tree03.x");
-	tree3->SetTexture("resource/texture/game/tree01.png");
-	tree3->SetPositionPatern(2);
-
-	//-------------------------------------
-	// ベンチ
-	//-------------------------------------
-	OBJECT_PARAMETER_DESC bench_param;
-	bench_param.name_ = "bench";
-	bench_param.layer_ = LAYER_BENCH;
-	object_manager_->Create(bench_param);
-
-	//-------------------------------------
-	// 影
-	//-------------------------------------
-	OBJECT_PARAMETER_DESC shadow_param;
-	shadow_param.layer_ = LAYER_SHADOW;
-	shadow_param.scaling_ = Vector3(1.0f, 1.0f, 1.0f);
-	for(int i = 0; i < MAX_GUEST; i++)
-	{
-		shadow_param.name_ = "shadow" + std::to_string(i);
-		object_manager_->Create(shadow_param);
-	}
 
 	//-------------------------------------
 	// カウントダウン
@@ -505,30 +285,6 @@ void Game::Initialize()
 	countdown_param.layer_ = LAYER_COUNTDOWN;
 	object_manager_->Create(
 		countdown_param);
-
-	//-------------------------------------
-	// バレット生成しておくよ
-	//-------------------------------------
-	OBJECT_PARAMETER_DESC bullet_param;
-	bullet_param.layer_ = LAYER_BULLET;
-	for (int i = 0; i < MAX_BULLET; i++)
-	{
-		bullet_param.name_ = "bullet" + std::to_string(i);
-		object_manager_->Create(
-			bullet_param);
-	}
-
-	//-------------------------------------
-	// ボムも生成しておくよ
-	//-------------------------------------
-	OBJECT_PARAMETER_DESC bomb_param;
-	bomb_param.layer_ = LAYER_BOMB;
-	for (int i = 0; i < MAX_BULLET; i++)
-	{
-		bomb_param.name_ = "bomb" + std::to_string(i);
-		object_manager_->Create(
-			bomb_param);
-	}
 
 	//-------------------------------------
 	// メッセージ
@@ -588,6 +344,49 @@ void Game::Initialize()
 		"resource/texture/game/message/message_grandfather_return.png");
 
 	//-------------------------------------
+	// アロー作成
+	//-------------------------------------
+	OBJECT_PARAMETER_DESC arrow_param;
+	arrow_param.name_ = "arrow";
+	arrow_param.layer_ = LAYER_ARROW;
+	arrow_param.position_ = {0.0f, -5000.0f, 0.0f};
+	arrow_param.scaling_ = {1.0f, 1.0f, 1.0f};
+	object_manager_->Create(arrow_param);
+
+	//-------------------------------------
+	// 勝敗
+	//-------------------------------------
+	OBJECT_PARAMETER_DESC result_sprite_param;
+	result_sprite_param.name_ = "result_sprite";
+	result_sprite_param.layer_ = LAYER_SPRITE_2D;
+	result_sprite_param.position_ = {0.0f, -5000.0f, 0.0f};
+	result_sprite_param.scaling_ = {SCREEN_WIDTH * 0.3f, SCREEN_HEIGHT * 0.3f, 1.0f};
+	object_manager_->Create(result_sprite_param,
+		"resource/texture/game/win.png");
+
+	//-------------------------------------
+	// 砦座標
+	//-------------------------------------
+	Field* field = dynamic_cast<Field*>(object_manager_->Get("field"));
+	for(int i = 0; i < 3; i++)
+	{
+		Object *fort = object_manager_->Get("fort" + std::to_string(i));
+		Vector3 fort_pos = FORT_POSITION[i];
+		D3DXVECTOR3 temp;
+		temp.x = fort_pos.x_;
+		temp.y = fort_pos.y_;
+		temp.z = fort_pos.z_;
+
+		fort_pos.y_ = field->GetHeight(temp);
+		if(i != 0)
+		{
+			fort_pos.y_ -= 3.0f;
+		}
+
+		fort->SetPosition(fort_pos);
+	}
+
+	//-------------------------------------
 	// マーカー
 	//-------------------------------------
 	EFFECT_PARAMETER_DESC effect_param;
@@ -613,33 +412,9 @@ void Game::Initialize()
 	effect_manager_->Play(speed_down_name);
 
 	//-------------------------------------
-	// アロー作成
+	// UIの描画フラグを切る
 	//-------------------------------------
-	OBJECT_PARAMETER_DESC arrow_param;
-	arrow_param.name_ = "arrow";
-	arrow_param.layer_ = LAYER_ARROW;
-	arrow_param.position_ = {0.0f, -5000.0f, 0.0f};
-	arrow_param.scaling_ = {1.0f, 1.0f, 1.0f};
-	object_manager_->Create(arrow_param);
-
-	//-------------------------------------
-	// 勝敗
-	//-------------------------------------
-	OBJECT_PARAMETER_DESC result_sprite_param;
-	result_sprite_param.name_ = "result_sprite";
-	result_sprite_param.layer_ = LAYER_SPRITE_2D;
-	result_sprite_param.position_ = {0.0f, -5000.0f, 0.0f};
-	result_sprite_param.scaling_ = {SCREEN_WIDTH * 0.3f, SCREEN_HEIGHT * 0.3f, 1.0f};
-	object_manager_->Create(result_sprite_param,
-							"resource/texture/game/win.png");
-
-
-	//-------------------------------------
-	// フォント
-	//-------------------------------------
-#ifdef _DEBUG
-	font_ = new DebugFont();
-#endif
+	object_manager_->SetDrawEnable(LAYER_SPRITE_2D, true);
 
 #ifdef NETWORK_HOST_MODE
 #else
@@ -647,11 +422,6 @@ void Game::Initialize()
 	network_data.type_ = DATA_COMPLETE_SCENE_CHANGE;
 	NetworkGuest::SendTo(network_data);
 #endif
-
-	//-------------------------------------
-	// セットアップ完了
-	//-------------------------------------
-	setup_ = true;
 }
 
 
@@ -731,30 +501,16 @@ void Game::Update()
 //-------------------------------------
 void Game::Draw()
 {
-#ifdef _DEBUG
-	font_->Add("FPS : %d", Fps::GetFps());
-#endif
-
 	MaterialColor color(32, 32, 32, 0);
 	DirectX9Holder::DrawBegin();
 	DirectX9Holder::Clear(color);
 
-    DamageEffect *damage_effect = dynamic_cast<DamageEffect*>(
-                                object_manager_->Get("damage_effect"));
 	camera_manager_->Set("MainCamera");
 	object_manager_->Draw();
 	effect_manager_->Draw();
+    DamageEffect *damage_effect = dynamic_cast<DamageEffect*>(
+                                object_manager_->Get("damage_effect"));
 	damage_effect->Draw();
-	//collision_manager_->Draw();
-
-#ifdef _DEBUG
-	RECT rect = {
-		0, 0,
-		static_cast<LONG>(SCREEN_WIDTH) / 2,
-		static_cast<LONG>(SCREEN_HEIGHT) / 2 };
-	D3DXCOLOR font_color(0.0f, 0.2f, 0.0f, 1.0f);
-	font_->Draw(rect, font_color);
-#endif
 
 	Fade::Draw();
 

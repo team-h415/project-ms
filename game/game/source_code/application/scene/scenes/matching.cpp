@@ -69,9 +69,8 @@ Matching::Matching()
 	//-------------------------------------
 	// 各マネージャ・デバッグシステム初期化
 	//-------------------------------------
-	camera_manager_ = new CameraManager;
-	object_manager_ = new ObjectManager;
-	collision_manager_ = new CollisionManager;
+	camera_manager_ = CameraManager::Get();
+	object_manager_ = ObjectManager::Get();
 	effect_manager_ = EffectManager::Get();
 	font_ = new DebugFont;
 
@@ -82,13 +81,16 @@ Matching::Matching()
 //-------------------------------------
 Matching::~Matching()
 {
-	setup_ = false;
-	SAFE_DELETE(object_manager_);
-	SAFE_DELETE(camera_manager_);
+	object_manager_->Get("parkstone")->SetThisDelete(true);
+	object_manager_->Get("standby")->SetThisDelete(true);
+	object_manager_->Get("search")->SetThisDelete(true);
+
+	object_manager_->DeleteCheck();
+	object_manager_->ObjectUseOffLayer(LAYER_BULLET);
+	object_manager_->ObjectUseOffLayer(LAYER_BOMB);
+
 	SAFE_DELETE(font_);
-	SAFE_DELETE(collision_manager_);
 	effect_manager_->StopAll();
-	effect_manager_ = nullptr;
 }
 
 
@@ -97,16 +99,6 @@ Matching::~Matching()
 //-------------------------------------
 void Matching::Initialize()
 {
-
-	for(int i = 0; i < 20; i++)
-	{
-		effect_manager_->Play("water");
-		effect_manager_->Play("watersupply");
-		effect_manager_->Play("watersupplybubble");
-		effect_manager_->Play("damage");
-		effect_manager_->Play("smoke2");
-	}
-
 	//-------------------------------------
 	// カメラ初期座標演算
 	//-------------------------------------
@@ -117,156 +109,27 @@ void Matching::Initialize()
 	camera_pos.z -= cosf(-1.55f + D3DX_PI) * first_len * cosf(D3DX_PI * -0.1f);
 	camera_pos.y -= sinf(D3DX_PI * -0.1f) * CAMERA_POS_LEN;
 
-	//-------------------------------------
-	// メインカメラ
-	//-------------------------------------
-	CAMERA_PARAMETER_DESC camera_param;
-	camera_param.acpect_ = SCREEN_WIDTH / SCREEN_HEIGHT;
-	camera_param.fovy_ = D3DX_PI * 0.25f;
-	camera_param.position_ = camera_pos;
-	camera_param.focus_ = camera_focus;
-	camera_param.position_.z -= 3.0f;
-	camera_param.position_.y += 1.5f;
-	camera_param.rotation_ = {0.0f, 0.0f, 0.0f};
-	camera_param.up_ = { 0.0f, 1.0f, 0.0f };
-	camera_param.near_ = 0.1f;
-	camera_param.far_ = 1000.0f;
-	camera_pos_len_ = CAMERA_POS_LEN;
+	Camera* main_camera = camera_manager_->Get("MainCamera");
+	main_camera->SetPosition(camera_pos);
+	main_camera->SetFocus(camera_focus);
 
-	camera_manager_->Create(
-		"Perspective", "MainCamera", camera_param);
-
-	//-------------------------------------
-	// 地形
-	//-------------------------------------
-	OBJECT_PARAMETER_DESC field_param;
-	field_param.name_ = "field";
-	field_param.position_ = { 0.0f, 0.0f, 0.0f };
-	field_param.rotation_ = { 0.0f, 0.0f, 0.0f };
-	field_param.scaling_ = { 100.0f, 1.0f, 200.0f };
-	field_param.layer_ = LAYER_MESH_FIELD;
-
-	object_manager_->Create(
-		field_param,
-		"resource/mesh/map.heightmap");
-
-	//-------------------------------------
-	// 空
-	//-------------------------------------
-	OBJECT_PARAMETER_DESC skydome_param;
-	skydome_param.name_ = "skydome_up";
-	skydome_param.position_ = { 0.0f, 0.0f, 0.0f };
-	skydome_param.rotation_ = { 0.0f, 0.0f, 0.0f };
-	skydome_param.scaling_ = { 500.0f, 1.0f, 500.0f };
-	skydome_param.layer_ = LAYER_MESH_SKYDOME;
-
-	object_manager_->Create(
-		skydome_param,
-		"resource/mesh/skydome_up.txt");
-
-	skydome_param.name_ = "skydome_bottom";
-	skydome_param.rotation_ = { 0.0f, 0.0f, D3DX_PI };
-
-	object_manager_->Create(
-		skydome_param,
-		"resource/mesh/skydome_bottom.txt");
-
-	//-------------------------------------
-	// 池
-	//-------------------------------------
-	OBJECT_PARAMETER_DESC lake_param;
-	lake_param.name_ = "lake";
-	lake_param.position_ = { 0.0f, -0.8f, 0.0f };
-	lake_param.rotation_ = { 0.0f, 0.0f, 0.0f };
-	lake_param.scaling_ = { 300.0f, 1.0f, 300.0f };
-	lake_param.layer_ = LAYER_SPRITE_LAKE;
-
-	object_manager_->Create(
-		lake_param);
 
 	//-------------------------------------
 	// FBXおじ
 	//-------------------------------------
-	OBJECT_PARAMETER_DESC grandfather_param;
-	grandfather_param.name_ = "player0";
-	grandfather_param.layer_ = LAYER_MODEL_GRANDFATHER;
-	grandfather_param.position_ = MATCHING_POSITION[0];
-	grandfather_param.rotation_ = {0.0f, MATCHING_ROTATION[0], 0.0f};
-	grandfather_param.scaling_ = {1.0f, 1.0f, 1.0f};
-
-	object_manager_->Create(grandfather_param);
-
-	COLLISION_PARAMETER_DESC fbx_collision_param;
-	Object *obj2 = object_manager_->Get("player0");
-
-	fbx_collision_param.position_ = {
-		obj2->parameter().position_.x_,
-		obj2->parameter().position_.y_,
-		obj2->parameter().position_.z_};
-	fbx_collision_param.range_ = 1.0f;
-	fbx_collision_param.offset_ = {0.0f, 0.5f, 0.0f};
-
-	collision_manager_->Create(object_manager_->Get("player0"), fbx_collision_param);
+	Object *grandfather = object_manager_->Get("player0");
+	grandfather->SetPosition(MATCHING_POSITION[0]);
+	grandfather->SetRotationY(MATCHING_ROTATION[0]);
 
 	//-------------------------------------
 	// FBX子供
 	//-------------------------------------
-	OBJECT_PARAMETER_DESC child_param;
-	child_param.layer_ = LAYER_MODEL_CHILD;
-	child_param.scaling_ = {1.0f, 1.0f, 1.0f};
-
 	for(int i = 1; i < MAX_GUEST; i++)
 	{
-		std::string name = "player" + std::to_string(i);
-		child_param.name_ = name;
-		child_param.position_ = MATCHING_POSITION[i];
-		child_param.rotation_ = {0.0f, MATCHING_ROTATION[i], 0.0f};
-		object_manager_->Create(child_param);
-
-		COLLISION_PARAMETER_DESC child_collision_param;
-		Object *obj3 = object_manager_->Get(name);
-		child_collision_param.position_ = {
-			obj3->parameter().position_.x_,
-			obj3->parameter().position_.y_,
-			obj3->parameter().position_.z_};
-		child_collision_param.range_ = 1.0f;
-		child_collision_param.offset_ = {0.0f, 0.5f, 0.0f};
-
-		collision_manager_->Create(object_manager_->Get(name),
-			child_collision_param);
+		Object *child = object_manager_->Get("player" + std::to_string(i));
+		child->SetPosition(MATCHING_POSITION[i]);
+		child->SetRotationY(MATCHING_ROTATION[i]);
 	}
-
-	//-------------------------------------
-	// 木
-	//-------------------------------------
-	OBJECT_PARAMETER_DESC wood_param;
-	wood_param.name_ = "wood1";
-	wood_param.layer_ = LAYER_TREE;
-	InstancingTree *tree1 = dynamic_cast<InstancingTree*>(object_manager_->Create(wood_param));
-	tree1->SetMesh("resource/model/x/tree01.x");
-	tree1->SetTexture("resource/texture/game/tree01.png");
-	tree1->SetPositionPatern(0);
-
-	wood_param.name_ = "wood2";
-	InstancingTree *tree2 = dynamic_cast<InstancingTree*>(object_manager_->Create(wood_param));
-	tree2->SetMesh("resource/model/x/tree02.x");
-	tree2->SetTexture("resource/texture/game/tree02.png");
-	tree2->SetPositionPatern(1);
-
-	wood_param.name_ = "wood3";
-	InstancingTree *tree3 = dynamic_cast<InstancingTree*>(object_manager_->Create(wood_param));
-	tree3->SetMesh("resource/model/x/tree03.x");
-	tree3->SetTexture("resource/texture/game/tree01.png");
-	tree3->SetPositionPatern(2);
-
-	//-------------------------------------
-	// ベンチ
-	//-------------------------------------
-	OBJECT_PARAMETER_DESC bench_param;
-	bench_param.name_ = "bench";
-	bench_param.layer_ = LAYER_BENCH;
-	object_manager_->Create(
-		bench_param);
 
 	//-------------------------------------
 	// 石碑
@@ -285,43 +148,6 @@ void Matching::Initialize()
 	XModel *parkstone = dynamic_cast<XModel*>(
 		object_manager_->Get("parkstone"));
 	parkstone->SetTexture("resource/texture/matching/parkstone.png");
-
-
-	//-------------------------------------
-	// 影
-	//-------------------------------------
-	OBJECT_PARAMETER_DESC shadow_param;
-	shadow_param.layer_ = LAYER_SHADOW;
-	shadow_param.scaling_ = Vector3(1.0f, 1.0f, 1.0f);
-	for(int i = 0; i < MAX_GUEST; i++)
-	{
-		shadow_param.name_ = "shadow" + std::to_string(i);
-		object_manager_->Create(shadow_param);
-	}
-
-	//-------------------------------------
-	// バレット生成しておくよ
-	//-------------------------------------
-	OBJECT_PARAMETER_DESC bullet_param;
-	bullet_param.layer_ = LAYER_BULLET;
-	for (int i = 0; i < MAX_BULLET; i++)
-	{
-		bullet_param.name_ = "bullet" + std::to_string(i);
-		object_manager_->Create(
-			bullet_param);
-	}
-
-	//-------------------------------------
-	// ボムも生成しておくよ
-	//-------------------------------------
-	OBJECT_PARAMETER_DESC bomb_param;
-	bomb_param.layer_ = LAYER_BOMB;
-	for(int i = 0; i < MAX_BULLET; i++)
-	{
-		bomb_param.name_ = "bomb" + std::to_string(i);
-		object_manager_->Create(
-			bomb_param);
-	}
 
 	//-------------------------------------
 	// 出撃準備案内UI
@@ -367,6 +193,24 @@ void Matching::Initialize()
 	alphar_wave_ = 0.0f;
 
 	//-------------------------------------
+	// 砦座標
+	//-------------------------------------
+	Field* field = dynamic_cast<Field*>(object_manager_->Get("field"));
+	for(int i = 0; i < 3; i++)
+	{
+		Object *fort = object_manager_->Get("fort" + std::to_string(i));
+		Vector3 fort_pos = FORT_POSITION[i];
+		D3DXVECTOR3 temp;
+		temp.x = fort_pos.x_;
+		temp.y = fort_pos.y_;
+		temp.z = fort_pos.z_;
+
+		fort_pos.y_ = field->GetHeight(temp);
+
+		fort->SetPosition(fort_pos);
+	}
+
+	//-------------------------------------
 	// マーカー
 	//-------------------------------------
 	EFFECT_PARAMETER_DESC effect_param;
@@ -388,11 +232,6 @@ void Matching::Initialize()
 	effect->SetParameter(effect_param);
 	effect_manager_->Play("water");
 	effect_manager_->Play("portal");
-
-	//-------------------------------------
-	// セットアップ完了
-	//-------------------------------------
-	setup_ = true;
 }
 
 
@@ -534,7 +373,6 @@ void Matching::Draw()
 	Sprite2D *search =
 		dynamic_cast<Sprite2D*>(object_manager_->Get("search"));
 	search->Draw();
-	//collision_manager_->Draw();
 	font_->Draw(rect, font_color);
 	Fade::Draw();
 	DirectX9Holder::DrawEnd();

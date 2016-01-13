@@ -87,13 +87,7 @@ Lake::Lake(
 	vertex_[3].texture_ = { 50.0f, 50.0f };
 
 	
-	//-------------------------------------
-	// マッチングかゲームの時のみ、あたり判定を生成
-	//-------------------------------------
 #ifdef NETWORK_HOST_MODE
-	// シーン取得
-	Scene *scene = SceneManager::GetCurrentScene();
-	
 	// 変数宣言
 	COLLISION_PARAMETER_DESC collision_param;
 	collision_param.position_ = { 0.0f, 0.0f, 0.0f };
@@ -107,10 +101,7 @@ Lake::Lake(
 			collision_offset_and_range[i].z };
 		collision_param.range_ = collision_offset_and_range[i].w;
 
-		// シーンで分岐
-		GameServer *game_server = dynamic_cast<GameServer*>(scene);
-		game_server->collision_manager()->Create(
-			this, collision_param);
+		CollisionManager::Get()->Create(this, collision_param);
 	}
 #endif
 }

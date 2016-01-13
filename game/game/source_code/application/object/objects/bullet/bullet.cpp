@@ -69,12 +69,6 @@ Bullet::Bullet(
 
 #ifdef NETWORK_HOST_MODE
 	// “–‚½‚è”»’èì¬
-	Scene *scene = SceneManager::GetCurrentScene();
-	std::string str = SceneManager::GetCurrentSceneName();
-	if(str != "GameServer"){
-		ASSERT_ERROR("’e‚ª¶¬‚³‚ê‚é‚×‚«ƒV[ƒ“‚Å‚Í‚ ‚è‚Ü‚¹‚ñ");
-		return;
-	}
 	COLLISION_PARAMETER_DESC param;
 	param.position_ = {
 		parameter_.position_.x_,
@@ -83,8 +77,7 @@ Bullet::Bullet(
 	param.range_ = 0.5f;
 	param.offset_ = {0.0f, 0.0f, 0.0f};
 
-	GameServer *game_server = dynamic_cast<GameServer*>(scene);
-	collision_ = game_server->collision_manager()->Create(this, param);
+	collision_ = CollisionManager::Get()->Create(this, param);
 #endif
 }
 
@@ -385,11 +378,6 @@ void Bullet::Action(
 	const float range)
 {
 #ifdef NETWORK_HOST_MODE
-	if (!use_)
-	{
-		return;
-	}
-
 	//-------------------------------------
 	// ‚à‚µXƒ‚ƒfƒ‹‚Æ“–‚½‚Á‚½‚ç
 	if (target->parameter().layer_ == LAYER_MODEL_FORT ||
@@ -464,7 +452,14 @@ void Bullet::Action(
 }
 
 
-
+void Bullet::SetUse(bool flag)
+{
+	use_ = flag;
+	if(collision_ != nullptr)
+	{
+		collision_->SetUse(use_);
+	}
+}
 
 
 //-------------------------------------

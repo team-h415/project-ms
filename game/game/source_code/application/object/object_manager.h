@@ -13,16 +13,26 @@
 
 
 //-------------------------------------
-// class
+// Forward declaration
 //-------------------------------------
+struct OBJECT_PARAMETER_DESC;
+enum OBJECT_LAYER;
+class Object;
 class Bullet;
 class Bomb;
+
+
+//-------------------------------------
+// class
+//-------------------------------------
 class ObjectManager
 {
 public:
-	ObjectManager();
-	virtual ~ObjectManager();
+	static ObjectManager* Get();
+	static void Delete();
+
 	void Update();
+	void DeleteCheck();
 	void Draw();
 
 	//-------------------------------------
@@ -54,20 +64,22 @@ public:
 		const std::string &name);
 
 	//-------------------------------------
-	// 未使用バレット取得
+	// すべてのオブジェクトの使用フラグをOFFに
 	//-------------------------------------
-	// 未使用のバレットを取得するための特殊メソッド
-	// ObjectManager::Get(
-	//     "オブジェクトの名前");
-	Bullet *GetNoUseBullet();
+	// 指定レイヤー内のオブジェクトをすべて未使用にするメソッド
+	// ObjectManager::GetUseOffBomb(
+	//     "オブジェクトのレイヤー");
+	void ObjectUseOffLayer(
+		OBJECT_LAYER layer);
 
 	//-------------------------------------
-	// 未使用ボム取得
+	// 未使用ボオブジェクトの取得
 	//-------------------------------------
-	// 未使用のバレットを取得するための特殊メソッド
-	// ObjectManager::Get(
-	//     "オブジェクトの名前");
-	Bomb *GetNoUseBomb();
+	// 指定レイヤー内の未使用オブジェクトを取得するためのメソッド
+	// ObjectManager::GetUseOffBomb(
+	//     "オブジェクトのレイヤー");
+	Object *GetUseOffLayer(
+		OBJECT_LAYER layer);
 
 	//-------------------------------------
 	// 指定レイヤーのオブジェクト削除
@@ -101,6 +113,11 @@ public:
 	}
 
 private:
+	ObjectManager();
+	~ObjectManager();
+
+	static ObjectManager* object_manager_;
+
 	bool Search(const std::string &name);
 	std::unordered_map<std::string, Object*> objects_[LAYER_MAX];
 	static int object_count_;

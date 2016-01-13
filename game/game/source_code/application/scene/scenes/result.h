@@ -15,9 +15,7 @@
 //-------------------------------------
 // class
 //-------------------------------------
-class ObjectManager;
-class CameraManager;
-class DebugFont;
+class Sprite2D;
 class Result : public Scene
 {
 public:
@@ -27,12 +25,7 @@ public:
 	void Update();
 	void Draw();
 private:
-	ObjectManager *object_manager_;
-	CameraManager *camera_manager_;
-	DebugFont *font_;
-
-	float alphar_wave_;
-	float sprite_alpha_;
+	Sprite2D*	background_;
 };
 
 

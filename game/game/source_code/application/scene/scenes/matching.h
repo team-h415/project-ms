@@ -32,9 +32,6 @@ public:
 	//-------------------------------------
 	// パラメータ
 	//-------------------------------------
-	CollisionManager *collision_manager(){
-		return collision_manager_;
-	}
 	ObjectManager *object_manager(){
 		return object_manager_;
 	}
@@ -49,9 +46,7 @@ private:
 	ObjectManager *object_manager_;
 	CameraManager *camera_manager_;
 	EffectManager *effect_manager_;
-	CollisionManager *collision_manager_;
 	DebugFont *font_;
-	Sound *sound_;
 	float camera_pos_len_;
 	// 経過フレーム数
 	int frame_;

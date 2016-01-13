@@ -30,7 +30,31 @@
 //-------------------------------------
 // variable
 //-------------------------------------
-int ObjectManager::object_count_ = 0;
+ObjectManager* ObjectManager::object_manager_(nullptr);
+int ObjectManager::object_count_(0);
+
+
+//-------------------------------------
+// Get()
+//-------------------------------------
+ObjectManager* ObjectManager::Get()
+{
+	if(object_manager_ == nullptr)
+	{
+		object_manager_ = new ObjectManager();
+	}
+	
+	return object_manager_;
+}
+
+
+//-------------------------------------
+// Delete()
+//-------------------------------------
+void ObjectManager::Delete()
+{
+	SAFE_DELETE(object_manager_);
+}
 
 
 //-------------------------------------
@@ -66,6 +90,21 @@ void ObjectManager::Update()
 {
 	object_count_ = 0;
 	
+	DeleteCheck();
+	for (int i = 0; i < LAYER_MAX; i++){
+		for (auto it = objects_[i].begin(); it != objects_[i].end(); ++it){
+			(*it).second->Update();
+			object_count_++;
+		}
+	}
+}
+
+
+//-------------------------------------
+// DeleteCheck()
+//-------------------------------------
+void ObjectManager::DeleteCheck()
+{
 	for (int i = 0; i < LAYER_MAX; i++){
 		for (auto it = objects_[i].begin(); it != objects_[i].end();){
 			if ((*it).second->this_delete()){
@@ -76,12 +115,6 @@ void ObjectManager::Update()
 			{
 				it++;
 			}
-		}
-	}
-	for (int i = 0; i < LAYER_MAX; i++){
-		for (auto it = objects_[i].begin(); it != objects_[i].end(); ++it){
-			(*it).second->Update();
-			object_count_++;
 		}
 	}
 }
@@ -152,37 +185,29 @@ Object *ObjectManager::Get(
 
 
 //-------------------------------------
-// 未使用バレット取得
+// ObjectUseOffLayer
 //-------------------------------------
-// 未使用のバレットを取得するための特殊メソッド
-// ObjectManager::Get(
-//     "オブジェクトの名前");
-Bullet *ObjectManager::GetNoUseBullet()
+void ObjectManager::ObjectUseOffLayer(
+	OBJECT_LAYER layer)
 {
-	for(auto it = objects_[LAYER_BULLET].begin(); it != objects_[LAYER_BULLET].end(); ++it){
-		if((*it).second->use() == false){
-			return dynamic_cast<Bullet*>((*it).second);
-		}
+	for(auto it = objects_[layer].begin(); it != objects_[layer].end(); ++it){
+		(*it).second->SetUse(false);
 	}
-	ASSERT_WARNING("全部のバレットが活動しているぞ　はーと");
-	return nullptr;
 }
 
 
 //-------------------------------------
-// 未使用ボム取得
+// GetUseOffLayer
 //-------------------------------------
-// 未使用のバレットを取得するための特殊メソッド
-// ObjectManager::Get(
-//     "オブジェクトの名前");
-Bomb *ObjectManager::GetNoUseBomb()
+Object *ObjectManager::GetUseOffLayer(
+	OBJECT_LAYER layer)
 {
-	for (auto it = objects_[LAYER_BOMB].begin(); it != objects_[LAYER_BOMB].end(); ++it){
-		if ((*it).second->use() == false){
-			return dynamic_cast<Bomb*>((*it).second);
+	for(auto it = objects_[layer].begin(); it != objects_[layer].end(); ++it){
+		if((*it).second->use() == false){
+			return (*it).second;
 		}
 	}
-	ASSERT_WARNING("全部のボムが活動しているぞ　ほし");
+	ASSERT_WARNING("指定されたレイヤーは全部が活動しているぞ　はーと");
 	return nullptr;
 }
 

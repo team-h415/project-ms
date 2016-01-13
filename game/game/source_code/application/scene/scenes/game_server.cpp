@@ -59,9 +59,9 @@ GameServer::GameServer()
 	//-------------------------------------
 	// 各マネージャ・デバッグシステム初期化
 	//-------------------------------------
-	camera_manager_ = new CameraManager;
-	object_manager_ = new ObjectManager;
-	collision_manager_ = new CollisionManager;
+	camera_manager_ = CameraManager::Get();
+	object_manager_ = ObjectManager::Get();
+	collision_manager_ = CollisionManager::Get();
 	font_ = new DebugFont;
 	scene_state_ = 0;
 }
@@ -96,190 +96,9 @@ void GameServer::Initialize()
 	}
 
 	//-------------------------------------
-	// カメラ
-	//-------------------------------------
-	CAMERA_PARAMETER_DESC camera_param;
-	camera_param.acpect_ = SCREEN_WIDTH / SCREEN_HEIGHT;
-	camera_param.fovy_ = D3DX_PI * 0.25f;
-	camera_param.position_ = {0.0f, 0.0f, -10.0f};
-	camera_param.focus_ = {0.0f, 0.0f, 0.0f};
-	camera_param.rotation_ = {0.0f, 0.0f, 0.0f};
-	camera_param.up_ = {0.0f, 1.0f, 0.0f};
-	camera_param.near_ = 0.1f;
-	camera_param.far_ = 1000.0f;
-
-	for(int i = 0; i < MAX_GUEST; i++)
-	{
-		camera_manager_->Create(
-			"Perspective", "camera" + std::to_string(i), camera_param);
-	}
-
-	//-------------------------------------
-	// サブカメラ
-	//-------------------------------------
-	camera_param.acpect_ = SCREEN_WIDTH / SCREEN_HEIGHT;
-	camera_param.fovy_ = D3DX_PI * 0.25f;
-	camera_param.position_ = {0.0f, 0.0f, -10.0f};
-	camera_param.focus_ = {0.0f, 0.0f, 0.0f};
-	camera_param.rotation_ = {0.0f, 0.0f, 0.0f};
-	camera_param.up_ = {0.0f, 1.0f, 0.0f};
-	camera_param.near_ = 0.1f;
-	camera_param.far_ = 800.0f;
-
-	camera_manager_->Create(
-		"Perspective", "SubCamera", camera_param);
-
-	//-------------------------------------
-	// 地形
-	//-------------------------------------
-	OBJECT_PARAMETER_DESC param;
-	param.name_ = "field";
-	param.position_ = {0.0f, 0.0f, 0.0f};
-	param.rotation_ = {0.0f, 0.0f, 0.0f};
-	param.scaling_ = {100.0f, 1.0f, 200.0f};
-	param.layer_ = LAYER_MESH_FIELD;
-
-	object_manager_->Create(
-		param,
-		"resource/mesh/map.heightmap");
-
-	//-------------------------------------
-	// 海
-	//-------------------------------------
-	OBJECT_PARAMETER_DESC sea_param;
-	sea_param.name_ = "sea";
-	sea_param.position_ = {0.0f, SEA_HEIGHT, 0.0f};
-	sea_param.rotation_ = {0.0f, 0.0f, 0.0f};
-	sea_param.scaling_ = {300.0f, 1.0f, 300.0f};
-	sea_param.layer_ = LAYER_SPRITE_LAKE;
-
-	object_manager_->Create(
-		sea_param);
-
-	//-------------------------------------
-	// 砦
-	//-------------------------------------
-	OBJECT_PARAMETER_DESC fort_param;
-	COLLISION_PARAMETER_DESC fort_collision_param;
-	Object *fort_obj;
-	XFort *fort;
-	Vector3 fort_pos;
-	std::string name;
-	for(int i = 0; i < 3; i++)
-	{
-		name = "fort" + std::to_string(i);
-		fort_param.name_ = name;
-		fort_param.layer_ = LAYER_MODEL_FORT;
-		fort_param.position_ = FORT_POSITION[i];
-		fort_param.rotation_ = {0.0f, 0.0f, 0.0f};
-		fort_param.scaling_ = {1.0f, 1.0f, 1.0f};
-
-		object_manager_->Create(
-			fort_param,
-			"resource/model/x/fort.x");
-
-		fort_obj = object_manager_->Get(name);
-		fort = dynamic_cast<XFort*>(fort_obj);
-
-		fort_pos = fort_obj->parameter().position_;
-		fort_collision_param.position_ = {
-			fort_pos.x_,
-			fort_pos.y_ + 0.5f,
-			fort_pos.z_};
-		fort_collision_param.range_ = 1.0f;
-		fort_collision_param.offset_ = {0.0f, 0.5f, 0.0f};
-
-		collision_manager_->Create(fort_obj,
-			fort_collision_param);
-		fort->SetLife(FORT_LIFE[i]);
-	}
-
-	//-------------------------------------
-	// FBXおじ
-	//-------------------------------------
-	OBJECT_PARAMETER_DESC grandfather_param;
-	grandfather_param.name_ = "player0";
-	grandfather_param.layer_ = LAYER_MODEL_GRANDFATHER;
-	grandfather_param.position_ = {1.0f, 0.0f, 0.0f};
-	grandfather_param.rotation_ = {0.0f, 0.0f, 0.0f};
-	grandfather_param.scaling_ = {1.0f, 1.0f, 1.0f};
-
-	object_manager_->Create(
-		grandfather_param);
-
-	COLLISION_PARAMETER_DESC fbx_collision_param;
-	Object *obj2 = object_manager_->Get("player0");
-
-	fbx_collision_param.position_ = {
-		obj2->parameter().position_.x_,
-		obj2->parameter().position_.y_,
-		obj2->parameter().position_.z_};
-	fbx_collision_param.range_ = 1.0f;
-	fbx_collision_param.offset_ = {0.0f, 0.5f, 0.0f};
-
-	collision_manager_->Create(object_manager_->Get("player0"), fbx_collision_param);
-
-	//-------------------------------------
-	// FBX子供
-	//-------------------------------------
-	OBJECT_PARAMETER_DESC child_param;
-	child_param.layer_ = LAYER_MODEL_CHILD;
-	child_param.position_ = {-1.0f, 0.0f, 0.0f};
-	child_param.rotation_ = {0.0f, 0.0f, 0.0f};
-	child_param.scaling_ = {1.0f, 1.0f, 1.0f};
-
-	for(int i = 1; i < MAX_GUEST; i++)
-	{
-		name = "player" + std::to_string(i);
-		child_param.name_ = name;
-		object_manager_->Create(
-			child_param);
-
-		COLLISION_PARAMETER_DESC child_collision_param;
-		Object *obj3 = object_manager_->Get(name);
-		child_collision_param.position_ = {
-			obj3->parameter().position_.x_,
-			obj3->parameter().position_.y_,
-			obj3->parameter().position_.z_};
-		child_collision_param.range_ = 1.0f;
-		child_collision_param.offset_ = {0.0f, 0.5f, 0.0f};
-
-		collision_manager_->Create(object_manager_->Get(name),
-			child_collision_param);
-	}
-
-	//-------------------------------------
-	// バレット生成しておくよ
-	//-------------------------------------
-	OBJECT_PARAMETER_DESC bullet_param;
-	bullet_param.layer_ = LAYER_BULLET;
-	for(int i = 0; i < MAX_BULLET; i++)
-	{
-		bullet_param.name_ = "bullet" + std::to_string(i);
-		object_manager_->Create(bullet_param);
-	}
-
-	//-------------------------------------
-	// ボムも生成しておくよ
-	//-------------------------------------
-	OBJECT_PARAMETER_DESC bomb_param;
-	bomb_param.layer_ = LAYER_BOMB;
-	for(int i = 0; i < MAX_BULLET; i++)
-	{
-		bomb_param.name_ = "bomb" + std::to_string(i);
-		object_manager_->Create(
-			bomb_param);
-	}
-
-	//-------------------------------------
 	// ステートセット
 	//-------------------------------------
 	ChangeServerState(STATE_MATCHING);
-
-	//-------------------------------------
-	// セットアップ完了
-	//-------------------------------------
-	setup_ = true;
 }
 
 
@@ -288,10 +107,6 @@ void GameServer::Initialize()
 //-------------------------------------
 GameServer::~GameServer()
 {
-	setup_ = false;
-	SAFE_DELETE(object_manager_);
-	SAFE_DELETE(camera_manager_);
-	SAFE_DELETE(collision_manager_);
 	SAFE_DELETE(font_);
 }
 
@@ -523,6 +338,8 @@ void GameServer::Game()
 				send_data.ui_param_.value_i_ = 180;
 				NetworkHost::SendTo(DELI_MULTI, send_data);
 
+				int access_guest = NetworkHost::access_guest();
+
 				for(int i = 0; i < MAX_GUEST; i++)
 				{
 					//------------------------------------------------
@@ -544,38 +361,46 @@ void GameServer::Game()
 					send_data.object_param_.rotation_.y_ = player_rotation.y_;
 					send_data.object_param_.rotation_.z_ = player_rotation.z_;
 
-					NetworkHost::SendTo(DELI_MULTI, send_data);
+					for(int j = 0; j < access_guest; j++)
+					{
+						if(guest_scene_change_[j])
+						{
+							NetworkHost::SendTo(DELI_TYPE(j), send_data);
+						}
+					}
 
 					//------------------------------------------------
 					// カメラデータ転送
 					//------------------------------------------------
-					Camera* main_camera = camera_manager_->Get("camera" + std::to_string(i));
-					D3DXVECTOR3 camera_position = main_camera->position();
-					D3DXVECTOR3 camera_focus = main_camera->focus();
-					D3DXVECTOR3 camera_rotation = main_camera->rotation();
+					if(guest_scene_change_[i])
+					{
+						Camera* main_camera = camera_manager_->Get("camera" + std::to_string(i));
+						D3DXVECTOR3 camera_position = main_camera->position();
+						D3DXVECTOR3 camera_focus = main_camera->focus();
+						D3DXVECTOR3 camera_rotation = main_camera->rotation();
 
-					send_data.type_ = DATA_OBJ_PARAM;
-					send_data.object_param_.type_ = OBJ_CAMERA;
-					send_data.object_param_.ex_id_ = 0;
+						send_data.type_ = DATA_OBJ_PARAM;
+						send_data.object_param_.type_ = OBJ_CAMERA;
+						send_data.object_param_.ex_id_ = 0;
 
-					send_data.object_param_.position_.x_ = camera_position.x;
-					send_data.object_param_.position_.y_ = camera_position.y;
-					send_data.object_param_.position_.z_ = camera_position.z;
+						send_data.object_param_.position_.x_ = camera_position.x;
+						send_data.object_param_.position_.y_ = camera_position.y;
+						send_data.object_param_.position_.z_ = camera_position.z;
 
-					send_data.object_param_.rotation_.x_ = camera_focus.x;
-					send_data.object_param_.rotation_.y_ = camera_focus.y;
-					send_data.object_param_.rotation_.z_ = camera_focus.z;
-					NetworkHost::SendTo((DELI_TYPE)i, send_data);
+						send_data.object_param_.rotation_.x_ = camera_focus.x;
+						send_data.object_param_.rotation_.y_ = camera_focus.y;
+						send_data.object_param_.rotation_.z_ = camera_focus.z;
+						NetworkHost::SendTo((DELI_TYPE)i, send_data);
 
-					// 回転
-					send_data.object_param_.ex_id_ = 1;
-					send_data.object_param_.rotation_.x_ = camera_rotation.x;
-					send_data.object_param_.rotation_.y_ = camera_rotation.y;
-					send_data.object_param_.rotation_.z_ = camera_rotation.z;
-					NetworkHost::SendTo((DELI_TYPE)i, send_data);
+						// 回転
+						send_data.object_param_.ex_id_ = 1;
+						send_data.object_param_.rotation_.x_ = camera_rotation.x;
+						send_data.object_param_.rotation_.y_ = camera_rotation.y;
+						send_data.object_param_.rotation_.z_ = camera_rotation.z;
+						NetworkHost::SendTo((DELI_TYPE)i, send_data);
+					}
 				}
 
-				int access_guest = NetworkHost::access_guest();
 				for(int i = 0; i < access_guest; i++)
 				{
 					if(!guest_scene_change_[i])
@@ -1099,19 +924,18 @@ void GameServer::Result()
 		ZeroMemory(&send_data, sizeof(send_data));
 		send_data.type_ = DATA_SCENE_CHANGE_MATCHING;
 		NetworkHost::SendTo(DELI_MULTI, send_data);
+		return;
 	}
 
-	for(int i = 0; i < MAX_GUEST; i++)
+	time_++;
+	if(time_ > (60 * 15))
 	{
-		if(GamePad::isTrigger(i, PAD_BUTTON_8))
-		{
-			ChangeServerState(STATE_MATCHING);
-			// シーンチェンジ命令送信
-			ZeroMemory(&send_data, sizeof(send_data));
-			send_data.type_ = DATA_SCENE_CHANGE_MATCHING;
-			NetworkHost::SendTo(DELI_MULTI, send_data);
-			break;
-		}
+		ChangeServerState(STATE_MATCHING);
+		// シーンチェンジ命令送信
+		ZeroMemory(&send_data, sizeof(send_data));
+		send_data.type_ = DATA_SCENE_CHANGE_MATCHING;
+		NetworkHost::SendTo(DELI_MULTI, send_data);
+		return;
 	}
 }
 
@@ -1299,7 +1123,7 @@ void GameServer::MatchingGrandfather()
 			bullet_param.rotation_.y_ += range;
 
 			// バレット発砲
-			Bullet* bullet = object_manager_->GetNoUseBullet();
+			Bullet* bullet = dynamic_cast<Bullet*>(object_manager_->GetUseOffLayer(LAYER_BULLET));
 			bullet->Fire(bullet_param);
 		}
 
@@ -1337,7 +1161,7 @@ void GameServer::MatchingGrandfather()
 		strcpy_s(send_data.name_, MAX_NAME_LEN, "water");
 		NetworkHost::SendTo(DELI_MULTI, send_data);
 
-		Bomb* bomb = object_manager_->GetNoUseBomb();
+		Bomb* bomb = dynamic_cast<Bomb*>(object_manager_->GetUseOffLayer(LAYER_BOMB));
 		bomb->Fire(bomb_param);
 
 		//-------------------------------------
@@ -1427,31 +1251,23 @@ void GameServer::MatchingChild()
 		//-------------------------------------
 		Vector3 child_position_old(child_position);
 		float child_speed(CHARANCTER_MOVESPEED);
-		bool input(true);
-		if(child_death_[i - 1])
+		// 向き
+		child_rotation.y_ += GamePad::isStick(i).rsx_ * CHAR_ROT_SPEED;
+		if(child_rotation.y_ > D3DX_PI)
 		{
-			input = false;
+			child_rotation.y_ -= D3DX_PI * 2.0f;
 		}
-		if(input)
+		else if(child_rotation.y_ < -D3DX_PI)
 		{
-			// 向き
-			child_rotation.y_ += GamePad::isStick(i).rsx_ * CHAR_ROT_SPEED;
-			if(child_rotation.y_ > D3DX_PI)
-			{
-				child_rotation.y_ -= D3DX_PI * 2.0f;
-			}
-			else if(child_rotation.y_ < -D3DX_PI)
-			{
-				child_rotation.y_ += D3DX_PI * 2.0f;
-			}
-			// 移動
-			child_position.x_ += (
-				cosf(child_rotation.y_) * GamePad::isStick(i).lsx_ +
-				sinf(-child_rotation.y_) * GamePad::isStick(i).lsy_) * child_speed;
-			child_position.z_ -= (
-				sinf(child_rotation.y_) * GamePad::isStick(i).lsx_ +
-				cosf(-child_rotation.y_) * GamePad::isStick(i).lsy_) * child_speed;
+			child_rotation.y_ += D3DX_PI * 2.0f;
 		}
+		// 移動
+		child_position.x_ += (
+			cosf(child_rotation.y_) * GamePad::isStick(i).lsx_ +
+			sinf(-child_rotation.y_) * GamePad::isStick(i).lsy_) * child_speed;
+		child_position.z_ -= (
+			sinf(child_rotation.y_) * GamePad::isStick(i).lsx_ +
+			cosf(-child_rotation.y_) * GamePad::isStick(i).lsy_) * child_speed;
 
 		D3DXVECTOR3 child_pos(
 			child_position.x_,
@@ -1572,7 +1388,7 @@ void GameServer::MatchingChild()
 			bullet_param.rotation_.x_ = camera_rotation.x;
 
 			// バレット発砲
-			Bullet* bullet = object_manager_->GetNoUseBullet();
+			Bullet* bullet = dynamic_cast<Bullet*>(object_manager_->GetUseOffLayer(LAYER_BULLET));
 			bullet->Fire(bullet_param);
 
 			// エフェクト再生
@@ -1599,18 +1415,11 @@ void GameServer::MatchingChild()
 		send_data.object_param_.ex_id_ = 0;
 		send_data.object_param_.type_ = OBJ_PLAYER;
 		strcpy_s(send_data.name_, MAX_NAME_LEN, name.c_str());
-		if(input)
-		{
-			if(GamePad::isPress(i, PAD_LS_DOWN) ||
-				GamePad::isPress(i, PAD_LS_UP) ||
-				GamePad::isPress(i, PAD_LS_LEFT) ||
-				GamePad::isPress(i, PAD_LS_RIGHT)){
-				send_data.object_param_.ex_id_ = 1;
-			}
-		}
-		else
-		{
-			send_data.object_param_.ex_id_ = 2;
+		if(GamePad::isPress(i, PAD_LS_DOWN) ||
+			GamePad::isPress(i, PAD_LS_UP) ||
+			GamePad::isPress(i, PAD_LS_LEFT) ||
+			GamePad::isPress(i, PAD_LS_RIGHT)){
+			send_data.object_param_.ex_id_ = 1;
 		}
 
 		send_data.object_param_.position_.x_ = child_position.x_;
@@ -1866,7 +1675,7 @@ void GameServer::GameGrandfather()
 			bullet_param.rotation_.y_ += range;
 
 			// バレット発砲
-			Bullet* bullet = object_manager_->GetNoUseBullet();
+			Bullet* bullet = dynamic_cast<Bullet*>(object_manager_->GetUseOffLayer(LAYER_BULLET));
 			bullet->Fire(bullet_param);
 		}
 
@@ -1911,7 +1720,7 @@ void GameServer::GameGrandfather()
 		strcpy_s(send_data.name_, MAX_NAME_LEN, "water");
 		NetworkHost::SendTo(DELI_MULTI, send_data);
 
-		Bomb* bomb = object_manager_->GetNoUseBomb();
+		Bomb* bomb = dynamic_cast<Bomb*>(object_manager_->GetUseOffLayer(LAYER_BOMB));
 		bomb->Fire(bomb_param);
 
 		//-------------------------------------
@@ -2125,12 +1934,7 @@ void GameServer::GameChild()
 		//-------------------------------------
 		// プレイヤーを地形に沿って移動させる
 		//-------------------------------------
-		bool input(true);
-		if(child_death_[my_id])
-		{
-			input = false;
-		}
-		if(input)
+		if(!child_death_[my_id])
 		{
 			// 向き
 			child_rotation.y_ += GamePad::isStick(i).rsx_ * CHAR_ROT_SPEED;
@@ -2243,52 +2047,55 @@ void GameServer::GameChild()
 		//-------------------------------------
 		// バレット発射
 		//-------------------------------------
-		float watergauge = child->GetWaterGauge();
-		shot_late_[i]--;
-		shot_late_[i] = std::max<int>(shot_late_[i], 0);
-
-		if(GamePad::isPress(i, PAD_BUTTON_8) && watergauge > 0.0f && shot_late_[i] == 0)
+		if(!child_death_[my_id])
 		{
-			shot_late_[i] = 10;
+			float watergauge = child->GetWaterGauge();
+			shot_late_[i]--;
+			shot_late_[i] = std::max<int>(shot_late_[i], 0);
 
-			OBJECT_PARAMETER_DESC bullet_param;
-			bullet_param.layer_ = LAYER_BULLET;
-			bullet_param.parent_layer_ = LAYER_MODEL_CHILD;
-			bullet_param.position_ = child_position;
-			bullet_param.position_.x_ += sinf(child_rotation.y_) * 0.8f;
-			bullet_param.position_.z_ += cosf(child_rotation.y_) * 0.8f;
-			bullet_param.position_.y_ += 0.7f;
-			bullet_param.rotation_ = child_rotation;
-			bullet_param.scaling_ = {1.0f, 1.0f, 1.0f};
+			if(GamePad::isPress(i, PAD_BUTTON_8) && watergauge > 0.0f && shot_late_[i] == 0)
+			{
+				shot_late_[i] = 10;
 
-			// カメラの回転Xを利用
-			bullet_param.rotation_.x_ = camera_rotation.x;
+				OBJECT_PARAMETER_DESC bullet_param;
+				bullet_param.layer_ = LAYER_BULLET;
+				bullet_param.parent_layer_ = LAYER_MODEL_CHILD;
+				bullet_param.position_ = child_position;
+				bullet_param.position_.x_ += sinf(child_rotation.y_) * 0.8f;
+				bullet_param.position_.z_ += cosf(child_rotation.y_) * 0.8f;
+				bullet_param.position_.y_ += 0.7f;
+				bullet_param.rotation_ = child_rotation;
+				bullet_param.scaling_ = {1.0f, 1.0f, 1.0f};
 
-			// バレット発砲
-			Bullet* bullet = object_manager_->GetNoUseBullet();
-			bullet->Fire(bullet_param);
+				// カメラの回転Xを利用
+				bullet_param.rotation_.x_ = camera_rotation.x;
 
-			// エフェクト再生
-			send_data.type_ = DATA_OBJ_PARAM;
-			send_data.object_param_.type_ = OBJ_EFFECT;
-			send_data.object_param_.position_.x_ = bullet_param.position_.x_;
-			send_data.object_param_.position_.y_ = bullet_param.position_.y_;
-			send_data.object_param_.position_.z_ = bullet_param.position_.z_;
-			send_data.object_param_.rotation_ = {0.0f, child_rotation.y_, 0.0f};
-			strcpy_s(send_data.name_, MAX_NAME_LEN, "water");
-			NetworkHost::SendTo(DELI_MULTI, send_data);
+				// バレット発砲
+				Bullet* bullet = dynamic_cast<Bullet*>(object_manager_->GetUseOffLayer(LAYER_BULLET));
+				bullet->Fire(bullet_param);
 
-			//-------------------------------------
-			// 水ゲージを減少させる
-			//-------------------------------------
-			watergauge -= GRANDFATHER_SUB_BULLET_WATERGAUGE;
-			watergauge = std::max<float>(watergauge, 0.0f);
-			child->SetWaterGauge(watergauge);
+				// エフェクト再生
+				send_data.type_ = DATA_OBJ_PARAM;
+				send_data.object_param_.type_ = OBJ_EFFECT;
+				send_data.object_param_.position_.x_ = bullet_param.position_.x_;
+				send_data.object_param_.position_.y_ = bullet_param.position_.y_;
+				send_data.object_param_.position_.z_ = bullet_param.position_.z_;
+				send_data.object_param_.rotation_ = {0.0f, child_rotation.y_, 0.0f};
+				strcpy_s(send_data.name_, MAX_NAME_LEN, "water");
+				NetworkHost::SendTo(DELI_MULTI, send_data);
 
-			//-------------------------------------
-			// 弾発射SE再生
-			//-------------------------------------
-			Sound::LoadAndPlaySE("resource/sound/se/game/shootChild.wav");
+				//-------------------------------------
+				// 水ゲージを減少させる
+				//-------------------------------------
+				watergauge -= GRANDFATHER_SUB_BULLET_WATERGAUGE;
+				watergauge = std::max<float>(watergauge, 0.0f);
+				child->SetWaterGauge(watergauge);
+
+				//-------------------------------------
+				// 弾発射SE再生
+				//-------------------------------------
+				Sound::LoadAndPlaySE("resource/sound/se/game/shootChild.wav");
+			}
 		}
 
 		//-------------------------------------
@@ -2374,7 +2181,7 @@ void GameServer::GameChild()
 		send_data.object_param_.ex_id_ = 0;
 		send_data.object_param_.type_ = OBJ_PLAYER;
 		strcpy_s(send_data.name_, MAX_NAME_LEN, child_str.c_str());
-		if(input)
+		if(!child_death_[my_id])
 		{
 			if(GamePad::isPress(i, PAD_LS_DOWN) ||
 				GamePad::isPress(i, PAD_LS_UP) ||
@@ -2496,6 +2303,11 @@ void GameServer::GameChild()
 //-------------------------------------
 void GameServer::ChangeServerState(SERVER_STATE next)
 {
+	for(int i = 0; i < MAX_GUEST; i++)
+	{
+		guest_scene_change_[i] = false;
+	}
+
 	// サウンドフェードアウト
 	switch(server_state_)
 	{
@@ -2519,9 +2331,11 @@ void GameServer::ChangeServerState(SERVER_STATE next)
 		shot_late_[i] = 0;
 		walk_timer_[i] = 0;
 	}
-	collision_manager_->Update();
+	object_manager_->ObjectUseOffLayer(LAYER_BULLET);
+	object_manager_->ObjectUseOffLayer(LAYER_BOMB);
 	now_target_fort_ = 0;
 	server_state_ = next;
+	time_ = 0;
 	switch(server_state_)
 	{
 		case STATE_MATCHING:

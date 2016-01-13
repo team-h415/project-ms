@@ -25,6 +25,10 @@ public:
 
 	void Update();
 	void Draw();
+	void Create(
+		const std::string &name,
+		const std::string &path,
+		const EFFECT_PARAMETER_DESC &parameter);
 	void Play(
 		const std::string &name);
 	void Stop(
@@ -37,11 +41,6 @@ public:
 	}
 
 private:
-	void CreateEffects();
-	void Create(
-		const std::string &name,
-		const std::string &path,
-		const EFFECT_PARAMETER_DESC &parameter);
 
 	void SetViewMatrix();
 	void SetProjectionMatrix();

@@ -132,12 +132,13 @@ void SceneManager::RequestScene(const std::string &name)
 //-------------------------------------
 void SceneManager::ChangeScene()
 {
-	// 通信を一度受け入れない用にする
-	current_scene_->SetSetup(false);
 #ifndef NETWORK_HOST_MODE
+	// 受信データを処理せずスルーするようにする
+	NetworkGuest::data_neglect(true);
 	// 受信データ処理中の場合待機する
-	while(NetworkGuest::rec_data_flag())
+	while(NetworkGuest::data_process() == true)
 	{
+		Sleep(10);
 	}
 #endif
 	SAFE_DELETE(current_scene_);
@@ -160,6 +161,10 @@ void SceneManager::CreateScene()
 	current_scene_ = Create(next_name_);
 	current_scene_->Initialize();
 	loading_ = false;
+#ifndef NETWORK_HOST_MODE
+	// 受信データを適応するようにする
+	NetworkGuest::data_neglect(false);
+#endif
 }
 
 //-------------------------------------

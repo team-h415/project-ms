@@ -33,6 +33,9 @@ public:
 		Object *parent,
 		const COLLISION_PARAMETER_DESC &parameter);
 	virtual ~Collision();
+
+	void Update();
+	void Draw();
 	
 	//-------------------------------------
 	// パラメータ
@@ -46,11 +49,6 @@ public:
 		return this_delete_;
 	}
 
-	//-------------------------------------
-	// 描画用
-	void CalculateVertex();
-	void Update();
-	void Draw();
 	bool GetThisDelete(void){ return this_delete_; }
 	void SetThisDelete(bool flag){
 		this_delete_ = flag;
@@ -61,12 +59,16 @@ public:
 	}
 
 private:
+	void CalculateVertex();
+
 	COLLISION_PARAMETER_DESC parameter_;
 	Object *parent_;
-	Vertex3D vertex_[3][11];
-	D3DXMATRIX world_;
 	bool this_delete_;
 	bool use_;
+#ifdef _DEBUG
+	Vertex3D vertex_[3][11];
+	D3DXMATRIX world_;
+#endif
 };
 
 

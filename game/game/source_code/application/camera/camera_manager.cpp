@@ -16,6 +16,35 @@
 
 
 //-------------------------------------
+// variable
+//-------------------------------------
+CameraManager* CameraManager::camera_manager_(nullptr);
+
+
+//-------------------------------------
+// Get()
+//-------------------------------------
+CameraManager* CameraManager::Get()
+{
+	if(camera_manager_ == nullptr)
+	{
+		camera_manager_ = new CameraManager();
+	}
+
+	return camera_manager_;
+}
+
+
+//-------------------------------------
+// Delete()
+//-------------------------------------
+void CameraManager::Delete()
+{
+	SAFE_DELETE(camera_manager_);
+}
+
+
+//-------------------------------------
 // CameraManager()
 //-------------------------------------
 CameraManager::CameraManager()

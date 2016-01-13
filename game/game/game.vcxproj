@@ -140,7 +140,6 @@
     <ClCompile Include="source_code\application\render\renderer_factory.cpp" />
     <ClCompile Include="source_code\application\resource\fbx_container_manager.cpp" />
     <ClCompile Include="source_code\application\resource\fbx_my_container.cpp" />
-    <ClCompile Include="source_code\application\resource\resource_holder.cpp" />
     <ClCompile Include="source_code\application\resource\texture.cpp" />
     <ClCompile Include="source_code\application\resource\texture_creator.cpp" />
     <ClCompile Include="source_code\application\resource\texture_manager.cpp" />
@@ -220,7 +219,6 @@
     <ClInclude Include="source_code\application\render\renderer_factory.h" />
     <ClInclude Include="source_code\application\resource\fbx_container_manager.h" />
     <ClInclude Include="source_code\application\resource\fbx_my_container.h" />
-    <ClInclude Include="source_code\application\resource\resource_holder.h" />
     <ClInclude Include="source_code\application\resource\texture.h" />
     <ClInclude Include="source_code\application\resource\texture_creator.h" />
     <ClInclude Include="source_code\application\resource\texture_manager.h" />

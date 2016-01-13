@@ -12,7 +12,7 @@
 #include "../../render/directx9/directx9_holder.h"
 #include "../../math/vector.h"
 #include "../../object/object.h"
-#include "../../object/object_manager.h"
+#include "../../object/objects/sprite/sprite2d.h"
 #include "../scene.h"
 #include "loading.h"
 
@@ -22,7 +22,7 @@
 //-------------------------------------
 Loading::Loading()
 {
-	object_manager_ = new ObjectManager;
+	background_ = nullptr;
 }
 
 
@@ -31,8 +31,7 @@ Loading::Loading()
 //-------------------------------------
 Loading::~Loading()
 {
-	setup_ = false;
-	SAFE_DELETE(object_manager_);
+	SAFE_DELETE(background_);
 }
 
 
@@ -52,14 +51,9 @@ void Loading::Initialize()
 	param.scaling_ = { 200.0f, 50.0f, 0.0f };
 	param.layer_ = LAYER_SPRITE_2D;
 
-	object_manager_->Create(
-		param,
+	background_ = new Sprite2D(param);
+	background_->SetTexture(
 		"resource/texture/loading/now_loading_00.png");
-
-	//-------------------------------------
-	// セットアップ完了
-	//-------------------------------------
-	setup_ = true;
 }
 
 
@@ -68,7 +62,7 @@ void Loading::Initialize()
 //-------------------------------------
 void Loading::Update()
 {
-	object_manager_->Update();
+	background_->Update();
 }
 
 
@@ -80,7 +74,7 @@ void Loading::Draw()
 	MaterialColor color(0, 0, 0, 255);
 	DirectX9Holder::DrawBegin();
 	DirectX9Holder::Clear(color);
-	object_manager_->Draw();
+	background_->Draw();
 	DirectX9Holder::DrawEnd();
 	DirectX9Holder::SwapBuffer();
 }
