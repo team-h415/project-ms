@@ -165,7 +165,10 @@
 #define SHIELD_POSITION_Y 1.5f
 
 // ダメージ減衰率
-#define SHIELD_DAMAGE_ATTENUATION 0.5f
+#define SHIELD_DAMAGE_ATTENUATION 0.2f
+
+// シールドON OFF 切り替えのおじライフ量
+#define SHIELD_SWITCH_LIFE 0.5f
 
 //-=--=--=--=--=--=--=--=--=--=--=--=--=--=--=-//
 // Result

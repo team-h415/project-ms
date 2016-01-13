@@ -1828,7 +1828,7 @@ void Game::Update()
 	// デバッグ用に子供のライフでやってるので
 	// おじのライフに直す
 	//-------------------------------------
-	if (child_life < 0.5f && shield_flg_ == true && change_stage_flg_ == false){
+	if (child_life < SHIELD_SWITCH_LIFE && shield_flg_ == true && change_stage_flg_ == false){
 
 		// シールドを消すと同時に
 		// シールド解除エフェクト発生
@@ -1844,7 +1844,7 @@ void Game::Update()
 
 		shield_flg_ = false;
 	}
-	else if (child_life > 0.5f && shield_flg_ == false && change_stage_flg_ == false){
+	else if (child_life > SHIELD_SWITCH_LIFE && shield_flg_ == false && change_stage_flg_ == false){
 		// シールドはる
 		EFFECT_PARAMETER_DESC shield_param;
 		MyEffect *effect_shield = effect_manager_->Get("shieldin");
