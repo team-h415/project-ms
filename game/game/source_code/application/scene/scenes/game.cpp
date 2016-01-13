@@ -596,6 +596,15 @@ void Game::Initialize()
 		bench_param);
 
 	//-------------------------------------
+	// 遊具
+	//-------------------------------------
+	OBJECT_PARAMETER_DESC playground_param;
+	playground_param.name_ = "playground";
+	playground_param.layer_ = LAYER_PLAYGROUND;
+	object_manager_->Create(
+		playground_param);
+
+	//-------------------------------------
 	// 影
 	//-------------------------------------
 	OBJECT_PARAMETER_DESC shadow_param;
@@ -604,7 +613,6 @@ void Game::Initialize()
 	shadow_param.scaling_ = Vector3(1.0f, 1.0f, 1.0f);
 	object_manager_->Create(
 		shadow_param);
-
 
 	//-------------------------------------
 	// カウントダウン

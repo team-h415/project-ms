@@ -20,6 +20,7 @@
 #include "objects/model/x_model.h"
 #include "objects/model/x/instancing_tree.h"
 #include "objects/model/x/instancing_bench.h"
+#include "objects/model/x/instancing_playground.h"
 #include "objects/sprite3d/shadow.h"
 #include "objects/sprite3d/lake.h"
 #include "objects/model/fbx_model.h"
@@ -68,6 +69,9 @@ Object *ObjectFactory::Create(
 		break;
 	case LAYER_BENCH:
 		object = new InstancingBench(parameter);
+		break;
+	case LAYER_PLAYGROUND:
+		object = new InstancingPlaygound(parameter);
 		break;
 	case LAYER_SHADOW:
 		object = new Shadow(parameter);
