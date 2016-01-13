@@ -41,6 +41,7 @@ protected:
 	Vertex2D *vertex_;
 	LPDIRECT3DTEXTURE9 texture_;
 	D3DXCOLOR color_;
+	float scaling_max_;
 };
 
 

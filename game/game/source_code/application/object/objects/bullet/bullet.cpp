@@ -33,10 +33,10 @@
 #include "../model/fbx/fbx_grandfather.h"
 #include "../model/x/x_fort.h"
 #include "../mesh/field.h"
+#include "../sprite/blind.h"
 #include "../../../collision/collision.h"
 #include "../../../collision/collision_manager.h"
 #include "bullet.h"
-#include "../sprite/blind.h"
 
 
 
@@ -351,7 +351,8 @@ void Bullet::Action(
 				father->SetLife(life);
 				father->SetRecoverWaitTimer(0);
 				// 自分がダメージくらったら
-				//this->SetBlind();	// 目隠しエフェクト発生
+				// 目隠しエフェクト発生
+				this->SetBlind(father->parameter().position_, father->parameter().rotation_);
 			}
 			// 子供
 			else if (target->parameter().layer_ == LAYER_MODEL_CHILD){
@@ -360,7 +361,9 @@ void Bullet::Action(
 				life -= CHILD_DAMAGE;
 				child->SetLife(life);
 				child->SetRecoverWaitTimer(0);
-				this->SetBlind();	// 目隠しエフェクト発生
+				// 自分がダメージくらったら
+				// 目隠しエフェクト発生
+				this->SetBlind(child->parameter().position_, child->parameter().rotation_);
 			}
 			// 砦(※子供に差し替えること!)
 			else if (target->parameter().layer_ == LAYER_MODEL_FORT &&
@@ -419,7 +422,9 @@ void Bullet::Action(
 //-------------------------------------
 // SetBlind()
 //-------------------------------------
-void Bullet::SetBlind(void)
+void Bullet::SetBlind(
+	Vector3 player_position,
+	Vector3 player_rotation)
 {
 	//-------------------------------------
 	// シーン取得
@@ -428,20 +433,39 @@ void Bullet::SetBlind(void)
 	if (str == "Game"){
 		Game *game = dynamic_cast<Game*>(scene);
 
+		// プレイヤーから見てどの位置に当たったか計算する
+		D3DXVECTOR2 vec = {
+			parameter_.position_.x_ - player_position.x_,
+			parameter_.position_.z_ - player_position.z_ };
+		D3DXVec2Normalize(&vec, &vec);
+
+		D3DXVECTOR2 vec2 = { 
+			sinf(player_rotation.y_),
+			cosf(player_rotation.y_) };
+		D3DXVec2Normalize(&vec2, &vec2);
+
+		float rotato_y = atan2(D3DXVec2Dot(&vec, &vec2), (vec.x * vec2.y - vec.y * vec2.x));
+		float length = BLIND_LEN_MIN + float((rand() % 10)) * 0.1f * (BLIND_LEN_MAX - BLIND_LEN_MIN);
+		float scaling = float((rand() % (BLIND_SCALING_MAX - BLIND_SCALING_MIN) + BLIND_SCALING_MIN));
+		float rotato_z = float((rand() % 314)) * 0.01f;
+
 		//-------------------------------------
 		// ブラインドを発生させる
 		//-------------------------------------
 		OBJECT_PARAMETER_DESC blind_param;
 		blind_param.name_ = "blind";
-		blind_param.position_ = { SCREEN_WIDTH*0.5f, SCREEN_HEIGHT*0.5f, 0.0f };
-		blind_param.rotation_ = { 0.0f, 0.0f, 0.0f };
-		blind_param.scaling_ = { 50.0f, 50.0f, 0.0f };
+		blind_param.position_ = {
+			SCREEN_WIDTH * 0.5f + cosf(rotato_y) * length * 1.777f,		// 画面が横長分微調整する
+			SCREEN_HEIGHT * 0.5f - sinf(rotato_y) * length,
+			0.0f };
+
+		blind_param.rotation_ = { 0.0f, 0.0f, rotato_z };
+		blind_param.scaling_ = { scaling, scaling, 0.0f };
 		blind_param.layer_ = LAYER_BLIND;
 
 		Blind* blind = game->object_manager()->GetNoUseBlind();
 		if (blind != nullptr){
 			blind->SetBlind(blind_param);
-			blind->SetTexture("resource/texture/game/blind_00.png");
 		}
 	}
 

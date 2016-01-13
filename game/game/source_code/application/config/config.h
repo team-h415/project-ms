@@ -175,9 +175,27 @@
 // ブラインド
 
 // アルファ減退測度
-#define BLIND_ALPHA_ATTENUATION_SPEED 0.01f
+#define BLIND_ALPHA_ATTENUATION_SPEED 0.02f
 
-#define MAX_BLIND 20 // 最大数
+// 移動値
+#define BLIND_LEN_MIN 150.0f	// 画面中央からの最少移動値
+#define BLIND_LEN_MAX 450.0f	// 画面中央からの最大移動値
+
+// スケール
+#define BLIND_SCALING_MIN 150	// 最少サイズ(int)
+#define BLIND_SCALING_MAX 300	// 最大サイズ(int)
+
+// テクスチャ
+#define BLIND_TEXTURE_MAX 4		// 使用数
+
+// ボム
+#define BLIND_BOMB_NUM 10				// ボムに当たった時のブラインド出現数
+#define BLIND_BOMB_MAGNIFICATION 1.3f	// ボムの時だけちょっと大きめにする
+
+#define BLIND_DEST_SCALING_SPEED 0.1f	// 拡大速度
+
+#define MAX_BLIND 30 // 最大数
+
 
 //-=--=--=--=--=--=--=--=--=--=--=--=--=--=--=-//
 // Result

@@ -93,6 +93,9 @@ Game::Game()
 	// ステージ移行フラグ(はじめON)
 	change_stage_flg_ = true;
 
+	// 乱数生成
+	srand((unsigned)time(NULL));
+
 	//-------------------------------------
 	// 各マネージャ・デバッグシステム初期化
 	//-------------------------------------
@@ -671,7 +674,10 @@ void Game::Initialize()
 	for (int i = 0; i < MAX_BLIND; i++)
 	{
 		blind_param.name_ = "blind" + std::to_string(i);
-		object_manager_->Create(blind_param);
+		Object* obj = object_manager_->Create(blind_param);
+		Blind* blind = static_cast<Blind*>(obj);
+		std::string texture_name = "resource/texture/game/blind_" + std::to_string(i % BLIND_TEXTURE_MAX) + ".png";
+		blind->SetTexture(texture_name);
 	}
 
 	//-------------------------------------

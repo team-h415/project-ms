@@ -14,8 +14,10 @@
 #include "../../../render/directx9/directx9_holder.h"
 #include "../../../math/vector.h"
 #include "../../object.h"
+#include "../sprite/blind.h"
 #include "blind.h"
 #include "../../../resource/texture_manager.h"
+
 
 
 //-------------------------------------
@@ -24,6 +26,7 @@
 Blind::Blind(
 	const OBJECT_PARAMETER_DESC &parameter)
 {
+	scaling_max_ = 1.0f;
 	parameter_ = parameter;
 	vertex_ = new Vertex2D[4];
 	color_ = { 1.0f, 1.0f, 1.0f, 0.0f };
@@ -91,26 +94,26 @@ void Blind::CalculateVertex()
 	if (!vertex_) return;
 
 	vertex_[0].position_ = {
-		parameter_.position_.x_ - parameter_.scaling_.x_ * 0.5f,
-		parameter_.position_.y_ - parameter_.scaling_.y_ * 0.5f,
+		-parameter_.scaling_.x_ * 0.5f,
+		-parameter_.scaling_.y_ * 0.5f,
 		0.0f
 	};
 
 	vertex_[1].position_ = {
-		parameter_.position_.x_ + parameter_.scaling_.x_ * 0.5f,
-		parameter_.position_.y_ - parameter_.scaling_.y_ * 0.5f,
+		parameter_.scaling_.x_ * 0.5f,
+		-parameter_.scaling_.y_ * 0.5f,
 		0.0f
 	};
 
 	vertex_[2].position_ = {
-		parameter_.position_.x_ - parameter_.scaling_.x_ * 0.5f,
-		parameter_.position_.y_ + parameter_.scaling_.y_ * 0.5f,
+		-parameter_.scaling_.x_ * 0.5f,
+		parameter_.scaling_.y_ * 0.5f,
 		0.0f
 	};
 
 	vertex_[3].position_ = {
-		parameter_.position_.x_ + parameter_.scaling_.x_ * 0.5f,
-		parameter_.position_.y_ + parameter_.scaling_.y_ * 0.5f,
+		parameter_.scaling_.x_ * 0.5f,
+		parameter_.scaling_.y_ * 0.5f,
 		0.0f
 	};
 
@@ -128,6 +131,39 @@ void Blind::CalculateVertex()
 	vertex_[1].texture_ = { 1.0f, 0.0f };
 	vertex_[2].texture_ = { 0.0f, 1.0f };
 	vertex_[3].texture_ = { 1.0f, 1.0f };
+
+
+	D3DXMATRIX mtxTransration;			// ‰ñ“]EˆÚ“®Œã‚Ìƒ}ƒgƒŠƒNƒX
+	D3DXMATRIX posMatrix, rotMatrix;
+	D3DXMatrixIdentity(&mtxTransration); // ’PˆÊs—ñ¶¬
+	D3DXMatrixIdentity(&rotMatrix);
+
+	// ‰ñ“]Šp‚ğŠi”[
+	D3DXMatrixRotationYawPitchRoll(&rotMatrix, 0.0f, 0.0f, parameter_.rotation_.z_);
+
+	// Œ»İ‚ÌˆÚ“®À•W‚ğŠi”[
+	D3DXMatrixTranslation(&posMatrix, parameter_.position_.x_, parameter_.position_.y_, 0.0f);
+
+	// ‰ñ“]
+	D3DXMatrixMultiply(&mtxTransration, &mtxTransration, &rotMatrix);
+	// ˆÚ“®
+	D3DXMatrixMultiply(&mtxTransration, &mtxTransration, &posMatrix);
+
+
+	// ˆÚ“®‚Æ‰ñ“]‚ğ‚©‚¯‚é
+	for (int i = 0; i < 4; i++)
+	{
+		D3DXMATRIX mtxTransPos;			// ‰ñ“]EˆÚ“®Œã‚Ìƒ}ƒgƒŠƒNƒX
+		D3DXMatrixTranslation(&mtxTransPos, vertex_[i].position_.x, vertex_[i].position_.y, 0.0f);
+		// ‰ñ“]
+		D3DXMatrixMultiply(&mtxTransPos, &mtxTransPos, &rotMatrix);
+		// ˆÚ“®
+		D3DXMatrixMultiply(&mtxTransPos, &mtxTransPos, &posMatrix);
+
+		// “K‰Œã‚ÌÀ•W‚ğ‚µ‚Ü‚¤
+		vertex_[i].position_.x = mtxTransPos._41;
+		vertex_[i].position_.y = mtxTransPos._42;
+	}
 }
 
 
@@ -148,10 +184,15 @@ void Blind::AttenuateAlpha(void)
 {
 	color_.a -= BLIND_ALPHA_ATTENUATION_SPEED;
 
-	if (color_.a < 0.0f){
+	if (color_.a < 0.08f){
 		color_.a = 0.0f;
 		use_ = false;
 	}
+
+	float scaling = (scaling_max_ - parameter_.scaling_.x_)*BLIND_DEST_SCALING_SPEED;
+	parameter_.scaling_.x_ += scaling;
+	parameter_.scaling_.y_ += scaling;
+
 }
 
 
@@ -163,6 +204,11 @@ void Blind::SetBlind(
 	const OBJECT_PARAMETER_DESC &parameter)
 {
 	parameter_ = parameter;
+
+	scaling_max_ = parameter.scaling_.x_;
+
+	parameter_.scaling_.x_ *= 0.5f;
+	parameter_.scaling_.y_ *= 0.5f;
 
 	color_ = { 1.0f, 1.0, 1.0f, 1.0f };
 	CalculateVertex();
