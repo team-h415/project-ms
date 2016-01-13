@@ -1817,6 +1817,7 @@ void Game::Update()
         }
     }
     else{
+		grandfather->SetDebuffPower(0.0f);
         effect_manager_->Stop("speeddown");
         debuff_effect_flg_ = true;
     }
