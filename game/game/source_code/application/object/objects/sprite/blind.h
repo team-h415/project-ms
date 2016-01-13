@@ -1,6 +1,6 @@
 //=========================================================
-// bullet.h
-// author:ryuya nakamura
+// sprite2d.h
+// author:fuka takahashi
 //=========================================================
 
 
@@ -8,46 +8,43 @@
 // include guard
 //-------------------------------------
 #pragma once
-#ifndef __Bullet_H__
-#define __Bullet_H__
+#ifndef __Blind_H__
+#define __Blind_H__
 
 
 //-------------------------------------
 // class
 //-------------------------------------
-class Collision;
-class MyEffect;
-class Bullet : public Object
+class Blind : public Object
 {
 public:
-	Bullet(
+	Blind(
 		const OBJECT_PARAMETER_DESC &parameter);
-	virtual ~Bullet();
-	void Fire(OBJECT_PARAMETER_DESC &parameter);
-	void Update();
+	virtual ~Blind();
+	virtual void Update();
 	void Draw();
-	void Action(
-		Object *target,
-		const float range);
-
-private:
-	void LoadMesh(
-		const std::string &path);
 	void SetTexture(
 		const std::string &path);
-	void SetBlind();
-	Collision *collision_;
-	D3DXVECTOR3 speed_;
-	LPD3DXMESH mesh_;
-	LPD3DXBUFFER material_buffer_;
-	DWORD material_count_;
-	D3DXMATRIX world_;
+	void SetColor(
+		const D3DXCOLOR &color){
+		color_ = color;
+	}
+	const D3DXCOLOR GetColor(){
+		return color_;
+	}
+	void SetBlind(
+		const OBJECT_PARAMETER_DESC &parameter);
+
+protected:
+	virtual void CalculateVertex();
+	void AttenuateAlpha();
+	Vertex2D *vertex_;
 	LPDIRECT3DTEXTURE9 texture_;
-	Shader *shader_;
+	D3DXCOLOR color_;
 };
 
 
-#endif //__Bullet_H__
+#endif //__Blind_H__
 
 
 //-------------------------------------

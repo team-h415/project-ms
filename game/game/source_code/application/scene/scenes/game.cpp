@@ -37,6 +37,7 @@
 #include "../../object/objects/sprite/water_gage.h"
 #include "../../object/objects/sprite/fort_gauge_manager.h"
 #include "../../object/objects/sprite/message/message.h"
+#include "../../object/objects/sprite/blind.h"
 #include "../../object/objects/bullet/bullet.h"
 #include "../../object/objects/bullet/bomb.h"
 #include "../../effect/effect.h"
@@ -660,6 +661,17 @@ void Game::Initialize()
 		bomb_param.name_ = "bomb" + std::to_string(i);
 		object_manager_->Create(
 			bomb_param);
+	}
+
+	//-------------------------------------
+	// ƒuƒ‰ƒCƒ“ƒh¶¬‚µ‚Ä‚¨‚­‚æ
+	//-------------------------------------
+	OBJECT_PARAMETER_DESC blind_param;
+	blind_param.layer_ = LAYER_BLIND;
+	for (int i = 0; i < MAX_BLIND; i++)
+	{
+		blind_param.name_ = "blind" + std::to_string(i);
+		object_manager_->Create(blind_param);
 	}
 
 	//-------------------------------------

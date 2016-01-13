@@ -34,6 +34,7 @@
 #include "objects/bullet/bomb.h"
 #include "objects/mesh/skydome.h"
 #include "objects/model/x/x_fort.h"
+#include "../object/objects/sprite/blind.h"
 
 
 //-------------------------------------
@@ -85,6 +86,9 @@ Object *ObjectFactory::Create(
 		break;
 	case LAYER_COUNTDOWN:
 		object = new CountDown(parameter);
+		break;
+	case LAYER_BLIND:
+		object = new Blind(parameter);
 		break;
 	default:
 		ASSERT_ERROR("無効なオブジェクト生成カテゴリです");

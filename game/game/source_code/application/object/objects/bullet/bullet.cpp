@@ -36,6 +36,8 @@
 #include "../../../collision/collision.h"
 #include "../../../collision/collision_manager.h"
 #include "bullet.h"
+#include "../sprite/blind.h"
+
 
 
 //-------------------------------------
@@ -348,6 +350,8 @@ void Bullet::Action(
 				life -= GRANDFATHER_DAMAGE;
 				father->SetLife(life);
 				father->SetRecoverWaitTimer(0);
+				// 自分がダメージくらったら
+				//this->SetBlind();	// 目隠しエフェクト発生
 			}
 			// 子供
 			else if (target->parameter().layer_ == LAYER_MODEL_CHILD){
@@ -356,6 +360,7 @@ void Bullet::Action(
 				life -= CHILD_DAMAGE;
 				child->SetLife(life);
 				child->SetRecoverWaitTimer(0);
+				this->SetBlind();	// 目隠しエフェクト発生
 			}
 			// 砦(※子供に差し替えること!)
 			else if (target->parameter().layer_ == LAYER_MODEL_FORT &&
@@ -411,9 +416,36 @@ void Bullet::Action(
 	}
 }
 
+//-------------------------------------
+// SetBlind()
+//-------------------------------------
+void Bullet::SetBlind(void)
+{
+	//-------------------------------------
+	// シーン取得
+	Scene *scene = SceneManager::GetCurrentScene();
+	std::string str = SceneManager::GetCurrentSceneName();
+	if (str == "Game"){
+		Game *game = dynamic_cast<Game*>(scene);
 
+		//-------------------------------------
+		// ブラインドを発生させる
+		//-------------------------------------
+		OBJECT_PARAMETER_DESC blind_param;
+		blind_param.name_ = "blind";
+		blind_param.position_ = { SCREEN_WIDTH*0.5f, SCREEN_HEIGHT*0.5f, 0.0f };
+		blind_param.rotation_ = { 0.0f, 0.0f, 0.0f };
+		blind_param.scaling_ = { 50.0f, 50.0f, 0.0f };
+		blind_param.layer_ = LAYER_BLIND;
 
+		Blind* blind = game->object_manager()->GetNoUseBlind();
+		if (blind != nullptr){
+			blind->SetBlind(blind_param);
+			blind->SetTexture("resource/texture/game/blind_00.png");
+		}
+	}
 
+}
 
 //-------------------------------------
 // end of file
