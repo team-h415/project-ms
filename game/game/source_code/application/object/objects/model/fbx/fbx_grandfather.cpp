@@ -115,8 +115,8 @@ void FbxGrandfather::Action(
 
 	//-------------------------------------
 	// Xƒ‚ƒfƒ‹‚Æ“–‚½‚Á‚½‚ç
-	if (target->parameter().layer_ == LAYER_MODEL_FORT ||
-		target->parameter().layer_ == LAYER_MODEL_CHILD){
+	if (target->parameter().layer_ == LAYER_MODEL_FORT/* ||
+		target->parameter().layer_ == LAYER_MODEL_CHILD*/){
 		Vector3 vec = target->parameter().position_ - parameter_.position_;
 		Vector3 v = vec;
 		Vec3Normalize(vec, vec);
@@ -136,8 +136,7 @@ void FbxGrandfather::Action(
 		//temp = name[6];
 		//int my_pad = atoi(&temp);
 
-		if(GamePad::isPress(0, PAD_BUTTON_5)
-			&& !GamePad::isPress(0, PAD_BUTTON_8)
+		if( !GamePad::isPress(0, PAD_BUTTON_8)
 			&& !GamePad::isPress(0, PAD_BUTTON_6)
 			&& water_gauge_ < 1.0f)
 		{

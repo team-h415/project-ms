@@ -507,30 +507,38 @@ void NetworkGuest::ObjDataAdaptation(
 				{
 					return;
 				}
-				Vector3 set_param;
-				// ‰ñ“]
-				set_param.x_ = rec_data.object_param_.rotation_.x_;
-				set_param.y_ = rec_data.object_param_.rotation_.y_;
-				set_param.z_ = rec_data.object_param_.rotation_.z_;
-				object->SetRotation(set_param);
-				// À•W
-				set_param.x_ = rec_data.object_param_.position_.x_;
-				set_param.y_ = rec_data.object_param_.position_.y_;
-				set_param.z_ = rec_data.object_param_.position_.z_;
-				object->SetPosition(set_param);
-				if(player->GetCurrentAnimationId() != rec_data.object_param_.ex_id_)
+				if(rec_data.object_param_.ex_id_ == 10)
 				{
-					player->PlayAnimation(rec_data.object_param_.ex_id_);
+					// ƒAƒjƒ[ƒVƒ‡ƒ“‘¬“x•ÏX
+					player->SetAnimationSpeed(FbxGrandfather::WALK, rec_data.object_param_.position_.x_);
 				}
-				// ‰e
-				std::string shadow_str = "shadow" + std::to_string(rec_data.id_);
-				Object *shadow = object_manager->Get(shadow_str);
-				if(shadow == nullptr)
+				else
 				{
-					return;
+					Vector3 set_param;
+					// ‰ñ“]
+					set_param.x_ = rec_data.object_param_.rotation_.x_;
+					set_param.y_ = rec_data.object_param_.rotation_.y_;
+					set_param.z_ = rec_data.object_param_.rotation_.z_;
+					object->SetRotation(set_param);
+					// À•W
+					set_param.x_ = rec_data.object_param_.position_.x_;
+					set_param.y_ = rec_data.object_param_.position_.y_;
+					set_param.z_ = rec_data.object_param_.position_.z_;
+					object->SetPosition(set_param);
+					if(player->GetCurrentAnimationId() != rec_data.object_param_.ex_id_)
+					{
+						player->PlayAnimation(rec_data.object_param_.ex_id_);
+					}
+					// ‰e
+					std::string shadow_str = "shadow" + std::to_string(rec_data.id_);
+					Object *shadow = object_manager->Get(shadow_str);
+					if(shadow == nullptr)
+					{
+						return;
+					}
+					set_param.y_ += 0.001f;
+					shadow->SetPosition(set_param);
 				}
-				set_param.y_ += 0.001f;
-				shadow->SetPosition(set_param);
 			}
 			break;
 

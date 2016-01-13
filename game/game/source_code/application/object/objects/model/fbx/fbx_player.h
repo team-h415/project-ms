@@ -60,6 +60,10 @@ public:
 		}
 	}
 
+	void SetAnimationSpeed(int id, float speed)
+	{
+		animation_[id].speed_ = speed;
+	}
 
 	//-------------------------------------
 	// ƒpƒ‰ƒ[ƒ^Œn

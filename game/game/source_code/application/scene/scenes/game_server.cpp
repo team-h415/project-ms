@@ -948,7 +948,8 @@ void GameServer::MatchingGrandfather()
 	//-------------------------------------
 	// 多用変数定義
 	//-------------------------------------
-	FbxGrandfather *grandfather(dynamic_cast<FbxGrandfather*>(object_manager_->Get("player0")));
+	std::string grandfather_str = "player" + std::to_string(0);
+	FbxGrandfather *grandfather(dynamic_cast<FbxGrandfather*>(object_manager_->Get(grandfather_str)));
 	Field *field(dynamic_cast<Field*>(object_manager_->Get("field")));
 	Vector3 grandfather_position(grandfather->parameter().position_);
 	Vector3 grandfather_rotation(grandfather->parameter().rotation_);
@@ -976,6 +977,27 @@ void GameServer::MatchingGrandfather()
 			NetworkHost::SendTo(DELI_MULTI, send_data);
 		}
 		dash_effect_timer_++;
+		// アニメーション速度変更
+		ZeroMemory(&send_data, sizeof(send_data));
+		send_data.type_ = DATA_OBJ_PARAM;
+		send_data.id_ = 0;
+		send_data.object_param_.ex_id_ = 10;
+		send_data.object_param_.type_ = OBJ_PLAYER;
+		send_data.object_param_.position_.x_ = 0.5f * 6.0f;
+		strcpy_s(send_data.name_, MAX_NAME_LEN, grandfather_str.c_str());
+		NetworkHost::SendTo((DELI_TYPE)0, send_data);
+	}
+	else
+	{
+		// アニメーション速度変更
+		ZeroMemory(&send_data, sizeof(send_data));
+		send_data.type_ = DATA_OBJ_PARAM;
+		send_data.id_ = 0;
+		send_data.object_param_.ex_id_ = 10;
+		send_data.object_param_.type_ = OBJ_PLAYER;
+		send_data.object_param_.position_.x_ = 0.5f;
+		strcpy_s(send_data.name_, MAX_NAME_LEN, grandfather_str.c_str());
+		NetworkHost::SendTo((DELI_TYPE)0, send_data);
 	}
 	// 向き変更
 	grandfather_rotation.y_ += GamePad::isStick(0).rsx_ * CHAR_ROT_SPEED;
@@ -1507,6 +1529,8 @@ void GameServer::GameGrandfather()
 	if(GamePad::isPress(GAMEPAD_GRANDFATHER, PAD_BUTTON_11))
 	{
 		grandfather_speed = CHARANCTER_MOVESPEED * 2.0f;
+		// デバフ
+		grandfather_speed *= grandfather->GetDebuffPower();
 		// ダッシュエフェクト
 		if(dash_effect_timer_ % 10 == 0){
 
@@ -1522,9 +1546,30 @@ void GameServer::GameGrandfather()
 			NetworkHost::SendTo(DELI_MULTI, send_data);
 		}
 		dash_effect_timer_++;
+		// アニメーション速度変更
+		ZeroMemory(&send_data, sizeof(send_data));
+		send_data.type_ = DATA_OBJ_PARAM;
+		send_data.id_ = 0;
+		send_data.object_param_.ex_id_ = 10;
+		send_data.object_param_.type_ = OBJ_PLAYER;
+		send_data.object_param_.position_.x_ = 0.5f * 6.0f * grandfather->GetDebuffPower();
+		strcpy_s(send_data.name_, MAX_NAME_LEN, grandfather_str.c_str());
+		NetworkHost::SendTo((DELI_TYPE)0, send_data);
 	}
-	// じじいデバフ
-	grandfather_speed -= grandfather_speed * grandfather->GetDebuffPower();
+	else
+	{
+		// デバフ
+		grandfather_speed *= grandfather->GetDebuffPower();
+		// アニメーション速度変更
+		ZeroMemory(&send_data, sizeof(send_data));
+		send_data.type_ = DATA_OBJ_PARAM;
+		send_data.id_ = 0;
+		send_data.object_param_.ex_id_ = 10;
+		send_data.object_param_.type_ = OBJ_PLAYER;
+		send_data.object_param_.position_.x_ = 0.5f * grandfather->GetDebuffPower();
+		strcpy_s(send_data.name_, MAX_NAME_LEN, grandfather_str.c_str());
+		NetworkHost::SendTo((DELI_TYPE)0, send_data);
+	}
 
 	// 向き
 	grandfather_rotation.y_ += GamePad::isStick(0).rsx_ * CHAR_ROT_SPEED;
@@ -1739,15 +1784,19 @@ void GameServer::GameGrandfather()
 	// おじのデバフパワーをセット
 	//-------------------------------------
 	float life = grandfather->GetLife();
+	if(KeyBoard::isTrigger(DIK_1))
+	{
+		life = 0.0f;
+	}
 	// HP回復
+	//life += CHILD_RECOVER_HP;
 	life = std::max<float>(life, 0.0f);
-	life += CHILD_RECOVER_HP;
 	life = std::min<float>(life, 1.0f);
 	grandfather->SetLife(life);
 	if(life < 0.5f)
 	{
-		float debuff_power = life - 0.75f;
-		debuff_power = abs(debuff_power * 0.5f);
+		// デバフ値設定
+		float debuff_power = life + 0.2f;
 		grandfather->SetDebuffPower(debuff_power);
 
 		// エフェクト再生
@@ -1762,6 +1811,8 @@ void GameServer::GameGrandfather()
 	}
 	else
 	{
+		// デバフ値設定
+		grandfather->SetDebuffPower(1.0f);
 		// エフェクト停止
 		ZeroMemory(&send_data, sizeof(send_data));
 		send_data.type_ = DATA_OBJ_PARAM;

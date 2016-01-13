@@ -396,6 +396,7 @@ void Game::Initialize()
 	effect_param.scaling_ = {1.0f, 1.0f, 1.0f};
 	effect_param.speed_ = 1.0f;
 	effect->SetParameter(effect_param);
+	effect_manager_->Play("water");
 	effect_manager_->Play("marker");
 
 	//-------------------------------------
@@ -409,6 +410,7 @@ void Game::Initialize()
 	effect_param.scaling_ = {1.0f, 1.0f, 1.0f};
 	effect_param.speed_ = 1.0f;
 	effect->SetParameter(effect_param);
+	effect_manager_->Play("water");
 	effect_manager_->Play(speed_down_name);
 
 	//-------------------------------------
@@ -508,8 +510,7 @@ void Game::Draw()
 	camera_manager_->Set("MainCamera");
 	object_manager_->Draw();
 	effect_manager_->Draw();
-    DamageEffect *damage_effect = dynamic_cast<DamageEffect*>(
-                                object_manager_->Get("damage_effect"));
+	DamageEffect *damage_effect = dynamic_cast<DamageEffect*>(object_manager_->Get("damage_effect"));
 	damage_effect->Draw();
 
 	Fade::Draw();

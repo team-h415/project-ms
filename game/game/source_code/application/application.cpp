@@ -392,7 +392,7 @@ void Application::SetupManagers()
 		"resource/effect/Smoke.efk",
 		"resource/effect/Smoke2.efk",
 		"resource/effect/Dash.efk",
-		"resource/effect/SpeedDown2.efk",
+		"resource/effect/SpeedDown_2.efk",
 		"resource/effect/BombFire.efk",
 		"resource/effect/FieldHit2.efk",
 		"resource/effect/Marker.efk",
