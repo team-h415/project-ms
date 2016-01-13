@@ -118,11 +118,13 @@
     <ClCompile Include="source_code\application\object\objects\model\fbx_model.cpp" />
     <ClCompile Include="source_code\application\object\objects\model\x\arrow.cpp" />
     <ClCompile Include="source_code\application\object\objects\model\x\instancing_bench.cpp" />
+    <ClCompile Include="source_code\application\object\objects\model\x\instancing_playground.cpp" />
     <ClCompile Include="source_code\application\object\objects\model\x\instancing_tree.cpp" />
     <ClCompile Include="source_code\application\object\objects\model\x\x_fort.cpp" />
     <ClCompile Include="source_code\application\object\objects\model\x_model.cpp" />
     <ClCompile Include="source_code\application\object\objects\sprite3d\lake.cpp" />
     <ClCompile Include="source_code\application\object\objects\sprite3d\shadow.cpp" />
+    <ClCompile Include="source_code\application\object\objects\sprite\blind.cpp" />
     <ClCompile Include="source_code\application\object\objects\sprite\countdown.cpp" />
     <ClCompile Include="source_code\application\object\objects\sprite\damage_effect.cpp" />
     <ClCompile Include="source_code\application\object\objects\sprite\fort_gage.cpp" />
@@ -197,11 +199,13 @@
     <ClInclude Include="source_code\application\object\objects\model\fbx_model.h" />
     <ClInclude Include="source_code\application\object\objects\model\x\arrow.h" />
     <ClInclude Include="source_code\application\object\objects\model\x\instancing_bench.h" />
+    <ClInclude Include="source_code\application\object\objects\model\x\instancing_playground.h" />
     <ClInclude Include="source_code\application\object\objects\model\x\instancing_tree.h" />
     <ClInclude Include="source_code\application\object\objects\model\x\x_fort.h" />
     <ClInclude Include="source_code\application\object\objects\model\x_model.h" />
     <ClInclude Include="source_code\application\object\objects\sprite3d\lake.h" />
     <ClInclude Include="source_code\application\object\objects\sprite3d\shadow.h" />
+    <ClInclude Include="source_code\application\object\objects\sprite\blind.h" />
     <ClInclude Include="source_code\application\object\objects\sprite\countdown.h" />
     <ClInclude Include="source_code\application\object\objects\sprite\damage_effect.h" />
     <ClInclude Include="source_code\application\object\objects\sprite\fort_gage.h" />

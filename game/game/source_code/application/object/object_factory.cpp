@@ -36,7 +36,7 @@
 #include "objects/bullet/bomb.h"
 #include "objects/mesh/skydome.h"
 #include "objects/model/x/x_fort.h"
-#include "../object/objects/sprite/blind.h"
+#include "objects/sprite/blind.h"
 
 
 //-------------------------------------
