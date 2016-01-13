@@ -174,7 +174,7 @@ InstancingTree::InstancingTree(
 
 	for (int i = 0; i < 3; i++)
 	{
-		// テスト用オブジェクト数
+		// オブジェクト数
 		object_count_ = 40;
 		DirectX9Holder::device_->CreateVertexBuffer(
 			sizeof(D3DXVECTOR3) * object_count_,
@@ -184,7 +184,7 @@ InstancingTree::InstancingTree(
 			&world_buffer_[i],
 			NULL);
 
-		// テスト用座標設定
+		// 座標設定
 		D3DXVECTOR3 *world;
 		world_buffer_[i]->Lock(0, 0, (void**)&world, 0);
 		for (int j = position_patern_ * 40; j < position_patern_ * 40 + 40; j++)

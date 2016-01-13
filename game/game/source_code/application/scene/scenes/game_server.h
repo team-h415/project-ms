@@ -71,6 +71,9 @@ public:
 	CameraManager *camera_manager(){
 		return camera_manager_;
 	}
+	bool shield_flg(){
+		return shield_flg_;
+	}
 
 private:
 	void Matching();
@@ -119,6 +122,8 @@ private:
 	// 砦アナウンスステート
 	int fort_announce_state_;
 	int fort_effect_counter;
+	// シールド有効フラグ
+	bool shield_flg_;
 };
 
 

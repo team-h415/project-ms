@@ -1832,6 +1832,47 @@ void GameServer::GameGrandfather()
 		strcpy_s(send_data.name_, MAX_NAME_LEN, "SpeedDown");
 		NetworkHost::SendTo(DELI_MULTI, send_data);
 	}
+	if(life < SHIELD_SWITCH_LIFE && shield_flg_ == true && scene_state_ == STATE_RUN)
+	{
+		// シールドOFF
+		XFort* fort = dynamic_cast<XFort*>(object_manager_->Get("fort" + std::to_string(now_target_fort_)));
+		if(fort != nullptr)
+		{
+			Vector3 fort_pos = fort->parameter().position_;
+			ZeroMemory(&send_data, sizeof(send_data));
+			send_data.type_ = DATA_OBJ_PARAM;
+			send_data.object_param_.type_ = OBJ_EFFECT;
+			send_data.object_param_.position_.x_ = fort_pos.x_;
+			send_data.object_param_.position_.y_ = SHIELD_POSITION_Y;
+			send_data.object_param_.position_.z_ = fort_pos.z_;
+			send_data.object_param_.ex_id_ = 1;
+			strcpy_s(send_data.name_, MAX_NAME_LEN, "shieldin");
+			NetworkHost::SendTo(DELI_MULTI, send_data);
+
+			strcpy_s(send_data.name_, MAX_NAME_LEN, "shieldout");
+			NetworkHost::SendTo(DELI_MULTI, send_data);
+		}
+		shield_flg_ = false;
+	}
+	else if(life >= SHIELD_SWITCH_LIFE && shield_flg_ == false && scene_state_ == STATE_RUN)
+	{
+		// シールドON
+		XFort* fort = dynamic_cast<XFort*>(object_manager_->Get("fort" + std::to_string(now_target_fort_)));
+		if(fort != nullptr)
+		{
+			Vector3 fort_pos = fort->parameter().position_;
+			ZeroMemory(&send_data, sizeof(send_data));
+			send_data.type_ = DATA_OBJ_PARAM;
+			send_data.object_param_.type_ = OBJ_EFFECT;
+			send_data.object_param_.position_.x_ = fort_pos.x_;
+			send_data.object_param_.position_.y_ = SHIELD_POSITION_Y;
+			send_data.object_param_.position_.z_ = fort_pos.z_;
+			strcpy_s(send_data.name_, MAX_NAME_LEN, "shieldin");
+			send_data.object_param_.ex_id_ = 0;
+			NetworkHost::SendTo(DELI_MULTI, send_data);
+		}
+		shield_flg_ = true;
+	}
 
 	//------------------------------------------------
 	// UIデータ転送
@@ -2541,6 +2582,9 @@ void GameServer::ChangeServerState(SERVER_STATE next)
 				fort_effect_counter = 0;
 				fort_announce_state_ = 75;
 				now_target_fort_ = 0;
+				//---------------------------------------
+				// 砦シールドフラグ
+				shield_flg_ = true;
 				//---------------------------------------
 				// おじ関連パラメータ
 				dash_effect_timer_ = 0;

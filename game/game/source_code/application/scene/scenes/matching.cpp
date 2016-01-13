@@ -88,6 +88,7 @@ Matching::~Matching()
 	object_manager_->DeleteCheck();
 	object_manager_->ObjectUseOffLayer(LAYER_BULLET);
 	object_manager_->ObjectUseOffLayer(LAYER_BOMB);
+	object_manager_->ObjectUseOffLayer(LAYER_BLIND);
 
 	SAFE_DELETE(font_);
 	effect_manager_->StopAll();

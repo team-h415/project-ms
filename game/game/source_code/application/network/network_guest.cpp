@@ -38,6 +38,7 @@
 #include "../object/objects/model/fbx/fbx_grandfather.h"
 #include "../object/objects/model/fbx/fbx_child.h"
 #include "../object/objects/sprite/message/message.h"
+#include "../object/objects/sprite/blind.h"
 #include "../effect/effect.h"
 #include "../effect/effect_manager.h"
 #include "../camera/camera.h"
@@ -579,6 +580,29 @@ void NetworkGuest::ObjDataAdaptation(
 					effect_param.speed_ = 1.0f;
 					effect->SetParameter(effect_param);
 				}
+				else if(name ==  "shieldin")
+				{
+					if(rec_data.object_param_.ex_id_ == 0)
+					{
+						// シールド起動
+						EFFECT_PARAMETER_DESC effect_param;
+						MyEffect *effect = effect_manager->Get(name);
+						effect_param = effect->parameter();
+						effect_param.position_.x_ = rec_data.object_param_.position_.x_;
+						effect_param.position_.y_ = rec_data.object_param_.position_.y_;
+						effect_param.position_.z_ = rec_data.object_param_.position_.z_;
+						effect_param.rotation_ = {0.0f, 0.0f, 0.0f};
+						effect_param.scaling_ = {1.0f, 1.0f, 1.0f};
+						effect_param.speed_ = 1.0f;
+						effect->SetParameter(effect_param);
+						effect_manager->Play(name);
+					}
+					else
+					{
+						// シールド解放
+						effect_manager->Stop(name);
+					}
+				}
 				else
 				{
 					MyEffect *effect = effect_manager->Get(name);
@@ -811,6 +835,33 @@ void NetworkGuest::ObjDataAdaptation(
 				};
 				object->SetPosition(position);
 				object->SetRotation(rotation);
+			}
+			break;
+
+		case OBJ_BLIND:
+			{
+				if(object_manager == nullptr)
+				{
+					return;
+				}
+				// アロー
+				Object *object = object_manager->GetUseOffLayer(LAYER_BLIND);
+				if(object == nullptr)
+				{
+					return;
+				}
+				Blind* blind = dynamic_cast<Blind*>(object);
+				// パラメータ設定
+				OBJECT_PARAMETER_DESC blind_param;
+				ZeroMemory(&blind_param, sizeof(blind_param));
+				blind_param.position_.x_ = rec_data.object_param_.position_.x_;
+				blind_param.position_.y_ = rec_data.object_param_.position_.y_;
+				blind_param.position_.z_ = rec_data.object_param_.position_.z_;
+				blind_param.rotation_.z_ = rec_data.object_param_.rotation_.z_;
+				blind_param.scaling_.x_ = rec_data.object_param_.rotation_.x_;
+				blind_param.scaling_.y_ = rec_data.object_param_.rotation_.x_;
+				// 目隠し起動
+				blind->SetBlind(blind_param);
 			}
 			break;
 

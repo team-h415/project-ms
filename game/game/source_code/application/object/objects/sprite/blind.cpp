@@ -209,7 +209,9 @@ void Blind::MagnifyScaling(void)
 void Blind::SetBlind(
 	const OBJECT_PARAMETER_DESC &parameter)
 {
-	parameter_ = parameter;
+	parameter_.position_ = parameter.position_;
+	parameter_.rotation_ = parameter.rotation_;
+	parameter_.scaling_ = parameter.scaling_;
 
 	scaling_max_ = parameter.scaling_.x_;
 

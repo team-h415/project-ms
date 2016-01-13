@@ -154,20 +154,6 @@ void Bomb::Update()
 	parameter_.position_.z_ += cosf(parameter_.rotation_.y_) * speed_.z;
 	speed_.y -= BOMB_GRAVITY;
 
-	// ゲストへ座標報告
-	NETWORK_DATA send_data;
-	send_data.type_ = DATA_OBJ_PARAM;
-	send_data.object_param_.type_ = OBJ_BOMB;
-	send_data.object_param_.ex_id_ = 0;
-	send_data.object_param_.position_.x_ = parameter_.position_.x_;
-	send_data.object_param_.position_.y_ = parameter_.position_.y_;
-	send_data.object_param_.position_.z_ = parameter_.position_.z_;
-	send_data.object_param_.rotation_.x_ = parameter_.rotation_.x_;
-	send_data.object_param_.rotation_.y_ = parameter_.rotation_.y_;
-	send_data.object_param_.rotation_.z_ = parameter_.rotation_.z_;
-	strcpy_s(send_data.name_, MAX_NAME_LEN, parameter_.name_.c_str());
-	NetworkHost::SendTo(DELI_MULTI, send_data);
-
 	Scene *scene = SceneManager::GetCurrentScene();
 	GameServer *game_server = dynamic_cast<GameServer*>(scene);
 	Object *obj = game_server->object_manager()->Get("field");
@@ -182,44 +168,8 @@ void Bomb::Update()
 	{
 		parameter_.position_.y_ = height + 0.35f;
 		speed_ *= 0.9f;
-//=======
-//	std::string str = SceneManager::GetCurrentSceneName();
-//
-//	// ゲームなら
-//	if (str == "Game"){
-//		Game *game = dynamic_cast<Game*>(scene);
-//		Object *obj = game->object_manager()->Get("field");
-//		Field *field = dynamic_cast<Field*>(obj);
-//		float height = field->GetHeight(
-//			D3DXVECTOR3(
-//			parameter_.position_.x_,
-//			parameter_.position_.y_,
-//			parameter_.position_.z_));
-//
-//		if (parameter_.position_.y_ < height + 0.35f){
-//			parameter_.position_.y_ = height + 0.35f;
-//			speed_ *= 0.9f;
-//		}
-//
-//		if (frame_count_ == BOMB_TIMER){
-//			collision_->SetUse(true);
-//			
-//			//-------------------------------------
-//			// シーンからエフェクト取得
-//			EFFECT_PARAMETER_DESC effect_param;
-//			MyEffect *effect = game->effect_manager()->Get("bombfire");
-//			effect_param = effect->parameter();
-//			effect_param.position_ = parameter_.position_;
-//			effect_param.position_.y_ = height;
-//			effect_param.rotation_ = { 0.0f, parameter_.rotation_.y_, 0.0f };
-//			effect->SetParameter(effect_param);
-//
-//			//-------------------------------------
-//			// エフェクト再生
-//			game->effect_manager()->Play("bombfire");
-//		}
-//>>>>>>> master
 	}
+
 	if (frame_count_ == BOMB_TIMER)
 	{
 		collision_->SetUse(true);
@@ -248,47 +198,28 @@ void Bomb::Update()
 
 		// サウンド
 		Sound::LoadAndPlaySE("resource/sound/se/game/waterBreak.wav");
-//=======
-//
-//
-//	if (str == "Matching"){
-//		Matching *matching = dynamic_cast<Matching*>(scene);
-//		Object *obj = matching->object_manager()->Get("field");
-//		Field *field = dynamic_cast<Field*>(obj);
-//		float height = field->GetHeight(
-//			D3DXVECTOR3(
-//			parameter_.position_.x_,
-//			parameter_.position_.y_,
-//			parameter_.position_.z_));
-//		if (parameter_.position_.y_ < height){
-//			parameter_.position_.y_ = height;
-//			speed_ *= 0.9f;
-//		}
-//		if (frame_count_ == BOMB_TIMER){
-//			collision_->SetUse(true);
-//
-//			//-------------------------------------
-//			// シーンからエフェクト取得
-//			EFFECT_PARAMETER_DESC effect_param;
-//			MyEffect *effect = matching->effect_manager()->Get("bombfire");
-//			effect_param = effect->parameter();
-//			effect_param.position_ = parameter_.position_;
-//			effect_param.position_.y_ = height;
-//			effect_param.rotation_ = { 0.0f, parameter_.rotation_.y_, 0.0f };
-//			effect->SetParameter(effect_param);
-//
-//			//-------------------------------------
-//			// エフェクト再生
-//			matching->effect_manager()->Play("bombfire");
-//		}
-//>>>>>>> master
 	}
-
-	if (frame_count_ > BOMB_TIMER){
+	else if(frame_count_ > BOMB_TIMER)
+	{
 		use_ = false;
 		collision_->SetUse(false);
 		parameter_.position_.y_ = 10000.0f;
-
+	}
+	else
+	{
+		// ゲストへ座標報告
+		NETWORK_DATA send_data;
+		send_data.type_ = DATA_OBJ_PARAM;
+		send_data.object_param_.type_ = OBJ_BOMB;
+		send_data.object_param_.ex_id_ = 0;
+		send_data.object_param_.position_.x_ = parameter_.position_.x_;
+		send_data.object_param_.position_.y_ = parameter_.position_.y_;
+		send_data.object_param_.position_.z_ = parameter_.position_.z_;
+		send_data.object_param_.rotation_.x_ = parameter_.rotation_.x_;
+		send_data.object_param_.rotation_.y_ = parameter_.rotation_.y_;
+		send_data.object_param_.rotation_.z_ = parameter_.rotation_.z_;
+		strcpy_s(send_data.name_, MAX_NAME_LEN, parameter_.name_.c_str());
+		NetworkHost::SendTo(DELI_MULTI, send_data);
 	}
 #endif
 
@@ -428,6 +359,8 @@ void Bomb::Action(
 		life -= 10.0f;
 		child->SetLife(life);
 		child->SetRecoverWaitTimer(0);
+		// 目隠し
+		SetBlind(child->parameter().name_, child->parameter().position_, child->parameter().rotation_);
 	}
 }
 
@@ -437,91 +370,6 @@ void Bomb::SetUse(bool flag)
 	if(collision_ != nullptr)
 	{
 		collision_->SetUse(use_);
-//=======
-//	//-------------------------------------
-//	// もしXモデルと当たったら
-//	if (target->parameter().layer_ == LAYER_MODEL_FORT ||
-//		target->parameter().layer_ == LAYER_MODEL_GRANDFATHER ||
-//		target->parameter().layer_ == LAYER_MODEL_CHILD){
-//
-//		//-------------------------------------
-//		// 自分の親のレイヤーを確認
-//		if (parameter_.parent_layer_ != target->parameter().layer_){
-//
-//			//-------------------------------------
-//			// 当たった対象にパラメータ反映
-//			// おじ
-//			if (target->parameter().layer_ == LAYER_MODEL_GRANDFATHER){
-//				FbxGrandfather *father = dynamic_cast<FbxGrandfather*>(target);
-//				float life = father->GetLife();
-//				life -= GRANDFATHER_DAMAGE;
-//				father->SetLife(life);
-//				father->SetRecoverWaitTimer(0);
-//				// 目隠しエフェクト発生
-//				this->SetBlind(father->parameter().position_, father->parameter().rotation_);
-//			}
-//			// 子供
-//			else if (target->parameter().layer_ == LAYER_MODEL_CHILD){
-//				FbxChild *child = dynamic_cast<FbxChild*>(target);
-//				float life = child->GetLife();
-//				life -= CHILD_DAMAGE;
-//				child->SetLife(life);
-//				child->SetRecoverWaitTimer(0);
-//				// 目隠しエフェクト発生
-//				this->SetBlind(child->parameter().position_, child->parameter().rotation_);
-//			}
-//			// 砦(※子供に差し替えること!)
-//			else if (target->parameter().layer_ == LAYER_MODEL_FORT &&
-//				parameter_.parent_layer_ == LAYER_MODEL_GRANDFATHER){
-//				XFort *fort = dynamic_cast<XFort*>(target);
-//				float life = fort->GetLife();
-//				float damage = FORT_DAMAGE;
-//				//-------------------------------------
-//				// シーン取得
-//				Scene *scene = SceneManager::GetCurrentScene();
-//				std::string str = SceneManager::GetCurrentSceneName();
-//				if (str == "Game"){
-//					Game *game = dynamic_cast<Game*>(scene);
-//					// シールド張ってたらその分減衰する
-//					if (game->shield_flg() == true)
-//						damage *= SHIELD_DAMAGE_ATTENUATION;
-//
-//					// ステージ移行中はダメージ無効
-//					if (game->change_stage_flg() == false){
-//						life -= damage;
-//						fort->SetLife(life);
-//					}
-//				}
-//			}
-//
-//			//-------------------------------------
-//			// シーン取得
-//			Scene *scene = SceneManager::GetCurrentScene();
-//			std::string str = SceneManager::GetCurrentSceneName();
-//			if (str == "Game"){
-//				Game *game = dynamic_cast<Game*>(scene);
-//
-//				//-------------------------------------
-//				// シーンからエフェクト取得
-//				EFFECT_PARAMETER_DESC effect_param;
-//				MyEffect *effect = game->effect_manager()->Get("damage");
-//				effect_param = effect->parameter();
-//				effect_param.position_ = parameter_.position_;
-//				effect_param.position_.y_ += 0.5f;
-//				effect_param.rotation_ = parameter_.rotation_;
-//				effect->SetParameter(effect_param);
-//
-//				//-------------------------------------
-//				// エフェクト再生
-//				game->effect_manager()->Play("damage");
-//				//-------------------------------------
-//				// 水がはじけるSE再生
-//				Sound::LoadAndPlaySE("resource/sound/se/game/waterBreak.wav");
-//			}
-//			use_ = false;
-//			collision_->SetUse(false);
-//		}
-//>>>>>>> master
 	}
 }
 
@@ -529,56 +377,55 @@ void Bomb::SetUse(bool flag)
 // SetBlind()
 //-------------------------------------
 void Bomb::SetBlind(
+	const std::string &name,
 	Vector3 player_position,
 	Vector3 player_rotation)
 {
-	////-------------------------------------
-	//// シーン取得
-	//Scene *scene = SceneManager::GetCurrentScene();
-	//std::string str = SceneManager::GetCurrentSceneName();
-	//if (str == "Game"){
-	//	Game *game = dynamic_cast<Game*>(scene);
+#ifdef NETWORK_HOST_MODE
+	// プレイヤーから見てどの位置に当たったか計算する
+	D3DXVECTOR2 vec = {
+		parameter_.position_.x_ - player_position.x_,
+		parameter_.position_.z_ - player_position.z_ };
+	D3DXVec2Normalize(&vec, &vec);
 
-	//	// プレイヤーから見てどの位置に当たったか計算する
-	//	D3DXVECTOR2 vec = {
-	//		parameter_.position_.x_ - player_position.x_,
-	//		parameter_.position_.z_ - player_position.z_ };
-	//	D3DXVec2Normalize(&vec, &vec);
+	D3DXVECTOR2 vec2 = {
+		sinf(player_rotation.y_),
+		cosf(player_rotation.y_) };
+	D3DXVec2Normalize(&vec2, &vec2);
 
-	//	D3DXVECTOR2 vec2 = {
-	//		sinf(player_rotation.y_),
-	//		cosf(player_rotation.y_) };
-	//	D3DXVec2Normalize(&vec2, &vec2);
+	float rotato_y = atan2(D3DXVec2Dot(&vec, &vec2), (vec.x * vec2.y - vec.y * vec2.x));
 
-	//	float rotato_y = atan2(D3DXVec2Dot(&vec, &vec2), (vec.x * vec2.y - vec.y * vec2.x));
+	char char_name[10];
+	char temp;
+	strcpy_s(char_name, 10, name.c_str());
+	temp = char_name[6];
+	int id = atoi(&temp);
 
-	//	for (int i = 0; i < BLIND_BOMB_NUM; i++){
-	//		float rotato_dest_y = rotato_y + float((rand() % 314)-156) * 0.01f;	// 分散
-	//		float length = BLIND_LEN_MIN + float((rand() % 10)) * 0.1f * (BLIND_LEN_MAX - BLIND_LEN_MIN);
-	//		float scaling = float((rand() % (BLIND_SCALING_MAX - BLIND_SCALING_MIN) + BLIND_SCALING_MIN)) * BLIND_BOMB_MAGNIFICATION;
-	//		float rotato_z = float((rand() % 314))*0.01f;
+	for (int i = 0; i < BLIND_BOMB_NUM; i++)
+	{
+		float rotato_dest_y = rotato_y + float((rand() % 314)-156) * 0.01f;	// 分散
+		float length = BLIND_LEN_MIN + float((rand() % 10)) * 0.1f * (BLIND_LEN_MAX - BLIND_LEN_MIN);
+		float scaling = float((rand() % (BLIND_SCALING_MAX - BLIND_SCALING_MIN) + BLIND_SCALING_MIN)) * BLIND_BOMB_MAGNIFICATION;
+		float rotato_z = float((rand() % 314))*0.01f;
 
-	//		//-------------------------------------
-	//		// ブラインドを発生させる
-	//		//-------------------------------------
-	//		OBJECT_PARAMETER_DESC blind_param;
-	//		blind_param.name_ = "blind";
-	//		blind_param.position_ = {
-	//			SCREEN_WIDTH * 0.5f + cosf(rotato_dest_y) * length * 1.777f,		// 画面が横長分微調整する
-	//			SCREEN_HEIGHT * 0.5f - sinf(rotato_dest_y) * length,
-	//			0.0f };
+		//-------------------------------------
+		// ブラインドを発生させる
+		//-------------------------------------
 
-	//		blind_param.rotation_ = { 0.0f, 0.0f, rotato_z };
-	//		blind_param.scaling_ = { scaling, scaling, 0.0f };
-	//		blind_param.layer_ = LAYER_BLIND;
+		// データ転送用構造体用意
+		NETWORK_DATA send_data;
+		ZeroMemory(&send_data, sizeof(send_data));
+		send_data.type_ = DATA_OBJ_PARAM;
+		send_data.object_param_.type_ = OBJ_BLIND;
+		send_data.object_param_.position_.x_ = SCREEN_WIDTH * 0.5f + cosf(rotato_dest_y) * length * 1.777f;
+		send_data.object_param_.position_.y_ = SCREEN_HEIGHT * 0.5f - sinf(rotato_dest_y) * length;
+		send_data.object_param_.rotation_.z_ = rotato_z;
 
-	//		Blind* blind = game->object_manager()->GetNoUseBlind();
-	//		if (blind != nullptr){
-	//			blind->SetBlind(blind_param);
-	//		}
-	//		else{ break; }
-	//	}
-	//}
+		send_data.object_param_.rotation_.x_ = scaling;
+		// オブジェクトデータ転送
+		NetworkHost::SendTo((DELI_TYPE)id, send_data);
+	}
+#endif
 }
 
 //-------------------------------------

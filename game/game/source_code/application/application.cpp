@@ -37,6 +37,7 @@
 #include "effect/effect_manager.h"
 #include "object/object.h"
 #include "object/objects/model/x/instancing_tree.h"
+#include "object/objects/sprite/blind.h"
 #include "object/object_manager.h"
 #include "camera/camera.h"
 #include "camera/camera_manager.h"
@@ -342,6 +343,12 @@ void Application::SetupManagers()
 	bench_param.layer_ = LAYER_BENCH;
 	object_manager->Create(bench_param);
 
+	// 遊具
+	OBJECT_PARAMETER_DESC playground_param;
+	playground_param.name_ = "playground";
+	playground_param.layer_ = LAYER_PLAYGROUND;
+	object_manager->Create(playground_param);
+
 	// 影
 	OBJECT_PARAMETER_DESC shadow_param;
 	shadow_param.layer_ = LAYER_SHADOW;
@@ -351,20 +358,29 @@ void Application::SetupManagers()
 		shadow_param.name_ = "shadow" + std::to_string(i);
 		object_manager->Create(shadow_param);
 	}
-#endif
+
+	// ブラインド生成しておくよ
+	OBJECT_PARAMETER_DESC blind_param;
+	blind_param.layer_ = LAYER_BLIND;
+	for (int i = 0; i < MAX_BLIND; i++)
+	{
+		blind_param.name_ = "blind" + std::to_string(i);
+		Object* obj = object_manager->Create(blind_param);
+		Blind* blind = static_cast<Blind*>(obj);
+		std::string texture_name = "resource/texture/game/blind_" + std::to_string(i % BLIND_TEXTURE_MAX) + ".png";
+		blind->SetTexture(texture_name);
+	}
 
 	//-------------------------------------
 	// エフェクトの読み込み
 	//-------------------------------------
-#ifdef NETWORK_HOST_MODE
-#else
 	EffectManager* effect_manager(EffectManager::Get());
 	EFFECT_PARAMETER_DESC effect_param;
 	ZeroMemory(&effect_param, sizeof(effect_param));
 	effect_param.scaling_ = {1.0f, 1.0f, 1.0f};
 	effect_param.speed_ = 1.0f;
 
-	const int MAX_EFFECT(13);
+	const int MAX_EFFECT(15);
 	const char* EFFECT_NAME[MAX_EFFECT]
 	{
 		"water",

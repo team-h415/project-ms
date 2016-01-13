@@ -102,7 +102,7 @@ InstancingPlaygound::InstancingPlaygound(
 		&world_buffer_,
 		NULL);
 
-	// テスト用座標設定
+	// 各種滑り台座標設定
 	D3DXMATRIX *world;
 	world_buffer_->Lock(0, 0, (void**)&world, 0);
 	for (int i = 0; i < object_count_; i++)
