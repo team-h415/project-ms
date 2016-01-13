@@ -169,7 +169,7 @@ void Game::Initialize()
 
 	effect_manager_->Create(
 		"dash",
-		"resource/effect/Dash2.efk",
+		"resource/effect/Dash.efk",
 		effect_param);
 
 	effect_manager_->Create(
@@ -184,7 +184,7 @@ void Game::Initialize()
 
 	effect_manager_->Create(
 		"speeddown",
-		"resource/effect/SpeedDown_3.efk",
+		"resource/effect/SpeedDown.efk",
 		effect_param);
 
 	effect_manager_->Create(

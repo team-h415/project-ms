@@ -112,7 +112,7 @@ void Matching::Initialize()
 
 	effect_manager_->Create(
 		"fieldhit",
-		"resource/effect/FieldHit2_2.efk",
+		"resource/effect/FieldHit2.efk",
 		effect_param);
 
 	effect_param.position_ = PORTAL_POSITION;
