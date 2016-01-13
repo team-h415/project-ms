@@ -86,8 +86,9 @@ Game::Game()
     walk_timer_ = 0;
     walk_flg_ = false;
     // デバフエフェクトのフラグ
-    debuff_effect_flg = false;
-
+    debuff_effect_flg_ = false;
+	// シールド有効フラグ（はじめOFF)
+	shield_flg_ = false;
 	//-------------------------------------
 	// 各マネージャ・デバッグシステム初期化
 	//-------------------------------------
@@ -180,8 +181,18 @@ void Game::Initialize()
 		effect_param);
 
 	effect_manager_->Create(
-		"BombFire",
+		"bombfire",
 		"resource/effect/BombFire.efk",
+		effect_param);
+
+	effect_manager_->Create(
+		"shieldin",
+		"resource/effect/ShieldIn_2x2.efk",
+		effect_param);
+
+	effect_manager_->Create(
+		"shieldout",
+		"resource/effect/ShieldOut2x2.efk",
 		effect_param);
 
 	//-------------------------------------
@@ -414,6 +425,7 @@ void Game::Initialize()
 	marker_param.rotation_ = { 0.0f, 0.0f, 0.0f };
 	effect_marker->SetParameter(marker_param);
 	effect_manager_->Play("marker");
+
 
 	//-------------------------------------
 	// タイマー
@@ -1144,9 +1156,10 @@ void Game::Update()
 
 
     //-------------------------------------
-    // 砦にとりあえずエフェクトだす
+    // 砦にエフェクトだす
     //-------------------------------------
     if (fort_underground.x != 0.0f && fort_underground.x != -3.0f){
+		// 土煙発生
         EFFECT_PARAMETER_DESC effect_param;
         MyEffect *effect = effect_manager_->Get("smoke2");
         effect_param = effect->parameter();
@@ -1155,9 +1168,26 @@ void Game::Update()
         effect_param.rotation_ = { 0.0f, 0.0f, 0.0f };
         effect->SetParameter(effect_param);
         effect_manager_->Play("smoke2");
+
+		// シールドはる
+		if (fort_underground.x > -1.0f && shield_flg_ == false){
+			EFFECT_PARAMETER_DESC shield_param;
+			MyEffect *effect_shield = effect_manager_->Get("shieldin");
+			shield_param = effect_shield->parameter();
+			shield_param.position_ = fort1_position;
+			shield_param.position_.y_ = SIELD_POSITION_Y;
+			shield_param.rotation_ = { 0.0f, 0.0f, 0.0f };
+			effect_shield->SetParameter(shield_param);
+			effect_manager_->Play("shieldin");
+
+			// シールドフラグ建てる
+			shield_flg_ = true;
+		}
+
     }
 
     if (fort_underground.y != 0.0f && fort_underground.y != -3.0f){
+		// 土煙発生
         EFFECT_PARAMETER_DESC effect_param;
         MyEffect *effect = effect_manager_->Get("smoke2");
         effect_param = effect->parameter();
@@ -1166,9 +1196,25 @@ void Game::Update()
         effect_param.rotation_ = { 0.0f, 0.0f, 0.0f };
         effect->SetParameter(effect_param);
         effect_manager_->Play("smoke2");
+
+		// シールドはる
+		if (fort_underground.y > -1.0f && shield_flg_ == false){
+			EFFECT_PARAMETER_DESC shield_param;
+			MyEffect *effect_shield = effect_manager_->Get("shieldin");
+			shield_param = effect_shield->parameter();
+			shield_param.position_ = fort2_position;
+			shield_param.position_.y_ = SIELD_POSITION_Y;
+			shield_param.rotation_ = { 0.0f, 0.0f, 0.0f };
+			effect_shield->SetParameter(shield_param);
+			effect_manager_->Play("shieldin");
+
+			// シールドフラグ建てる
+			shield_flg_ = true;
+		}
     }
 
     if (fort_underground.z != 0.0f && fort_underground.z != -3.0f){
+		// 土煙発生
         EFFECT_PARAMETER_DESC effect_param;
         MyEffect *effect = effect_manager_->Get("smoke2");
         effect_param = effect->parameter();
@@ -1177,6 +1223,21 @@ void Game::Update()
         effect_param.rotation_ = { 0.0f, 0.0f, 0.0f };
         effect->SetParameter(effect_param);
         effect_manager_->Play("smoke2");
+
+		// シールドはる
+		if (fort_underground.z > -1.0f && shield_flg_ == false){
+			EFFECT_PARAMETER_DESC shield_param;
+			MyEffect *effect_shield = effect_manager_->Get("shieldin");
+			shield_param = effect_shield->parameter();
+			shield_param.position_ = fort3_position;
+			shield_param.position_.y_ = SIELD_POSITION_Y;
+			shield_param.rotation_ = { 0.0f, 0.0f, 0.0f };
+			effect_shield->SetParameter(shield_param);
+			effect_manager_->Play("shieldin");
+
+			// シールドフラグ建てる
+			shield_flg_ = true;
+		}
     }
 
     //-------------------------------------
@@ -1724,14 +1785,14 @@ void Game::Update()
         effect_param.position_ = grandfather_position;
         effect_param.rotation_ = { 0.0f, 0.0f, 0.0f };
         effect->SetParameter(effect_param);
-        if (debuff_effect_flg){
+        if (debuff_effect_flg_){
             effect_manager_->Play("speeddown");
-            debuff_effect_flg = false;
+            debuff_effect_flg_ = false;
         }
     }
     else{
         effect_manager_->Stop("speeddown");
-        debuff_effect_flg = true;
+        debuff_effect_flg_ = true;
     }
 
 

@@ -26,7 +26,8 @@
 
 
 
-
+//-------------------------------------
+// ポータル
 #define PORTAL_POSITION { 20.0f, 0.30f, -30.00f }
 #define PORTAL_DISTANCE 3.0f
 
@@ -37,6 +38,8 @@
 
 #define CHAR_ROT_SPEED (D3DX_PI * 0.01f)			// キャラクター回転速度
 
+//-------------------------------------
+// カメラ
 #define CAMERA_FOCUS_OFFSET_Y 1.0f					// キャラクターの座標が足元基準なので上へ
 #define CAMERA_FOCUS_OFFSET 0.5f					// キャラクターの中心からのオフセット
 #define CAMERA_POS_LEN 5.5f							// カメラ注視点からカメラ座標までの距離
@@ -46,12 +49,16 @@
 
 #define CAMERA_SUB_ROT_SPEED (D3DX_PI * 0.007f)		// サブカメラ回転速度
 
+//-------------------------------------
+// 弾
 #define BULLET_OFFSET_ROT (D3DX_PI * 0.1f)			// ゲームから受け取った回転を調整する値
 #define BULLET_DEF_SPEED_XZ 0.2f					// バレットの初期速度XZ
 #define BULLET_DEF_SPEED_Y 0.05f					// バレットの初期速度Y
 #define BULLET_ADD_SPEED_Y 0.3f						// 発射角からバレットに加算される速度の調整値
 #define BULLET_GRAVITY 0.003f						// バレットに毎フレームかかる重量値
 
+//-------------------------------------
+// ボム
 #define BOMB_OFFSET_ROT (D3DX_PI * 0.1f)			// ゲームから受け取った回転を調整する値
 #define BOMB_DEF_SPEED_XZ 0.2f						// ボムの初期速度XZ
 #define BOMB_DEF_SPEED_Y 0.05f						// ボムの初期速度Y
@@ -151,6 +158,9 @@
 // くらうダメージ量
 #define FORT_DAMAGE 0.01f;
 
+//-------------------------------------
+// シールド
+#define SIELD_POSITION_Y 1.5f
 
 //-=--=--=--=--=--=--=--=--=--=--=--=--=--=--=-//
 // Result
