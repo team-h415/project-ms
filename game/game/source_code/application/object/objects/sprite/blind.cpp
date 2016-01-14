@@ -52,7 +52,9 @@ Blind::~Blind()
 void Blind::Update()
 {
 	if (use_ == false)
+	{
 		return;
+	}
 
 	this->AttenuateAlpha();
 	this->MagnifyScaling();
@@ -66,6 +68,11 @@ void Blind::Update()
 //-------------------------------------
 void Blind::Draw()
 {
+	if (use_ == false)
+	{
+		return;
+	}
+
 	DirectX9Holder::device_->SetRenderState(D3DRS_ALPHATESTENABLE, TRUE);
 	DirectX9Holder::device_->SetRenderState(D3DRS_ALPHAREF, 0x01);
 	DirectX9Holder::device_->SetRenderState(D3DRS_ALPHAFUNC, D3DCMP_GREATEREQUAL);
