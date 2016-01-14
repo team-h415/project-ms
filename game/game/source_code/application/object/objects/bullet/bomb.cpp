@@ -465,7 +465,7 @@ void Bomb::SetBlind(
 			
 			float length = BLIND_LEN_MIN + float((rand() % 10)) * 0.1f * (BLIND_LEN_MAX - BLIND_LEN_MIN);
 			float scaling = float((rand() % (BLIND_SCALING_MAX - BLIND_SCALING_MIN) + BLIND_SCALING_MIN)) * BLIND_BOMB_MAGNIFICATION;
-			float rotato_z = float((rand() % 314))*0.01f;
+			float rotato_z = float((rand() % 314)) * 0.01f;
 
 			//-------------------------------------
 			// ÉuÉâÉCÉìÉhÇî≠ê∂Ç≥ÇπÇÈ
