@@ -648,8 +648,12 @@ void Matching::Update()
 		effect->SetParameter(effect_param);
 	}
 	
-
+	//-------------------------------------
+	// 実更新処理
+	//-------------------------------------
 	camera_manager_->Update();
+	// オブジェクトの更新の前にカメラの更新した行列適応させておく
+	camera_manager_->Set("MainCamera");
 	object_manager_->Update();
 	effect_manager_->Update();
 	collision_manager_->Update();
