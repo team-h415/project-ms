@@ -27,7 +27,8 @@ public:
 		const std::string &path);
 	virtual void Action(
 		Object *target,
-		const float range);
+		const float range,
+		D3DXVECTOR3 my_position);
 	void SetTexture(
 		const std::string &path);
 

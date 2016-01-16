@@ -546,7 +546,7 @@
     <ClInclude Include="source_code\application\object\objects\bullet\bomb.h">
       <Filter>source_code\application\object\objects\bullet</Filter>
     </ClInclude>
-    <ClInclude Include="source_code\application\object\objects\model\x\instancing_playground.h" />
+    <ClInclude Include="source_code\application\object\objects\model\x\instancing_playground.h">
       <Filter>source_code\application\object\objects\model\x</Filter>
     </ClInclude>
     <ClInclude Include="source_code\application\object\objects\sprite\blind.h">

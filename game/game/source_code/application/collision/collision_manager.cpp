@@ -82,8 +82,8 @@ void CollisionManager::Update()
 			if (range > d){
 				//-------------------------------------
 				// “–‚½‚Á‚½Žž‚Ìˆ—
-				(*it)->parent()->Action((*it2)->parent(), range);
-				(*it2)->parent()->Action((*it)->parent(), range);
+				(*it)->parent()->Action((*it2)->parent(), range, (*it)->parameter().position_);
+				(*it2)->parent()->Action((*it)->parent(), range, (*it2)->parameter().position_);
 			}
 		}
 	}

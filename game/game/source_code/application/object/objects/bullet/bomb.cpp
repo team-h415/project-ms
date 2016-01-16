@@ -240,7 +240,7 @@ void Bomb::Update()
 
 
 //-------------------------------------
-// Action()
+// Draw()
 //-------------------------------------
 void Bomb::Draw()
 {
@@ -340,7 +340,8 @@ void Bomb::SetTexture(
 //-------------------------------------
 void Bomb::Action(
 	Object *target,
-	const float range)
+	const float range,
+	D3DXVECTOR3 my_position)
 {
 	if (!use_)
 	{
