@@ -38,6 +38,9 @@
 #include "object/object.h"
 #include "object/objects/model/x/instancing_tree.h"
 #include "object/objects/sprite/blind.h"
+#include "object/objects/model/fbx_model.h"
+#include "object/objects/model/fbx/fbx_player.h"
+#include "object/objects/model/fbx/fbx_child.h"
 #include "object/object_manager.h"
 #include "camera/camera.h"
 #include "camera/camera_manager.h"
@@ -265,7 +268,12 @@ void Application::SetupManagers()
 		child_param.rotation_ = {0.0f, 0.0f, 0.0f};
 		child_param.scaling_ = {1.0f, 1.0f, 1.0f};
 		child_param.name_ = "player" + std::to_string(i);
-		Object *child = object_manager->Create(child_param);
+		Object *object = object_manager->Create(child_param);
+		FbxChild* child = dynamic_cast<FbxChild*>(object);
+		std::string path = "resource/texture/game/Child_0";
+		path += std::to_string(i);
+		path += ".jpg";
+		child->SetTexture(path);
 
 		COLLISION_PARAMETER_DESC child_collision_param;
 		child_collision_param.position_ = {

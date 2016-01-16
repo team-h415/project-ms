@@ -86,6 +86,8 @@ void NetworkHost::SendTo(DELI_TYPE deli_type, NETWORK_DATA network_data)
 		case DELI_MULTI:
 			send_addr.sin_addr.s_addr = inet_addr(MULTICAST_ADDRESS);
 			break;
+		default:
+			return;
 	}
 	// ëóêM
 	sendto(socket_data_, (char*)&network_data, sizeof(network_data), 0, (sockaddr*)&send_addr, sizeof(send_addr));

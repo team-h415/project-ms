@@ -43,6 +43,7 @@
 #include "../../object/objects/sprite/blind.h"
 #include "../../object/objects/bullet/bullet.h"
 #include "../../object/objects/bullet/bomb.h"
+#include "../../object/objects/sprite/child_remaining_live.h"
 #include "../../effect/effect.h"
 #include "../../effect/effect_manager.h"
 #include "../../camera/camera.h"
@@ -98,10 +99,10 @@ Game::~Game()
 	object_manager_->Get("message_fort_50")->SetThisDelete(true);
 	object_manager_->Get("message_fort_75")->SetThisDelete(true);
 	object_manager_->Get("message_fort_100")->SetThisDelete(true);
-	object_manager_->Get("message_grandfather_debuff")->SetThisDelete(true);
-	object_manager_->Get("message_grandfather_return")->SetThisDelete(true);
+	object_manager_->Get("message_shieldout")->SetThisDelete(true);
 	object_manager_->Get("result_sprite")->SetThisDelete(true);
 	object_manager_->Get("arrow")->SetThisDelete(true);
+	object_manager_->Get("child_remaining_live")->SetThisDelete(true);
 
 	object_manager_->DeleteCheck();
 	object_manager_->ObjectUseOffLayer(LAYER_BULLET);
@@ -735,14 +736,10 @@ void Game::Initialize()
 		"resource/texture/game/message/message_fort_100.png");
 
 
-	message_param.name_ = "message_grandfather_debuff";
+	message_param.name_ = "message_shieldout";
 	object_manager_->Create(
 		message_param,
-		"resource/texture/game/message/message_grandfather_debuff.png");
-	message_param.name_ = "message_grandfather_return";
-	object_manager_->Create(
-		message_param,
-		"resource/texture/game/message/message_grandfather_return.png");
+		"resource/texture/game/message/message_shieldout.png");
 
 	//-------------------------------------
 	// アロー作成
@@ -764,6 +761,30 @@ void Game::Initialize()
 	result_sprite_param.scaling_ = {SCREEN_WIDTH * 0.3f, SCREEN_HEIGHT * 0.3f, 1.0f};
 	object_manager_->Create(result_sprite_param,
 		"resource/texture/game/win.png");
+
+	//-------------------------------------
+	// 子供残機
+	//-------------------------------------
+	OBJECT_PARAMETER_DESC child_remaining_live_param;
+	child_remaining_live_param.name_ = "child_remaining_live";
+	child_remaining_live_param.position_ = {
+		1220.0f,
+		624.0f,
+		0.0f
+	};
+	child_remaining_live_param.rotation_ = {0.0f, 0.0f, 0.0f};
+	child_remaining_live_param.scaling_ = {75.0f, 100.0f, 0.0f};
+	child_remaining_live_param.layer_ = LAYER_CHILD_REMAINING_LIVE;
+
+	ChildRemainingLive* child_remaining_live = static_cast<ChildRemainingLive*>(
+		object_manager_->Create(
+		child_remaining_live_param));
+	child_remaining_live->Initialize();
+	child_remaining_live->SetTexture("resource/texture/number.png");
+	child_remaining_live->SetFigureOffset(-35.0f);
+	child_remaining_live->SetValue(MAX_CHILD_REMAINING_LIVE);
+	//パラメータ設定後に実行
+	child_remaining_live->GenerateNumber();
 
 	//-------------------------------------
 	// 砦座標
@@ -1207,6 +1228,7 @@ void Game::Update()
 	// 実更新処理
 	//-------------------------------------
 	camera_manager_->Update();
+	camera_manager_->Set("MainCamera");
 	object_manager_->Update();
 	effect_manager_->Update();
 
@@ -1227,7 +1249,6 @@ void Game::Draw()
 	DirectX9Holder::DrawBegin();
 	DirectX9Holder::Clear(color);
 
-	camera_manager_->Set("MainCamera");
 	object_manager_->Draw();
 	effect_manager_->Draw();
 	DamageEffect *damage_effect = dynamic_cast<DamageEffect*>(object_manager_->Get("damage_effect"));

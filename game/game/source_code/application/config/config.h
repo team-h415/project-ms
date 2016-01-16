@@ -181,6 +181,7 @@ static const float CHILD_ROTATION[]
 // HP回復量
 #define CHILD_RECOVER_HP 1.0f / (20.0f * 60.0f)
 
+#define MAX_CHILD_REMAINING_LIVE 30
 
 #define GAME_TIME 180							// ゲーム時間（秒）
 
@@ -242,7 +243,7 @@ static const float FORT_LIFE[]
 
 #define BLIND_DEST_SCALING_SPEED 0.1f	// 拡大速度
 
-#define MAX_BLIND 30 // 最大数
+#define MAX_BLIND 60 // 最大数
 
 
 //-=--=--=--=--=--=--=--=--=--=--=--=--=--=--=-//

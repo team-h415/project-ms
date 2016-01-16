@@ -107,6 +107,14 @@ FbxChild::~FbxChild()
 
 
 //-------------------------------------
+// SetTexture()
+//-------------------------------------
+void FbxChild::SetTexture(const std::string& path)
+{
+	texture_ = TextureManager::GetTexture(path.c_str());
+}
+
+//-------------------------------------
 // Action()
 //-------------------------------------
 void FbxChild::Action(

@@ -334,6 +334,9 @@
     <ClCompile Include="source_code\application\object\objects\model\x\instancing_playground.cpp">
       <Filter>source_code\application\object\objects\model\x</Filter>
     </ClCompile>
+    <ClCompile Include="source_code\application\object\objects\sprite\child_remaining_live.cpp">
+      <Filter>source_code\application\object\objects\sprite</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source_code\main.h">
@@ -575,6 +578,9 @@
     </ClInclude>
     <ClInclude Include="source_code\application\object\objects\model\x\instancing_playground.h">
       <Filter>source_code\application\object\objects\model\x</Filter>
+    </ClInclude>
+    <ClInclude Include="source_code\application\object\objects\sprite\child_remaining_live.h">
+      <Filter>source_code\application\object\objects\sprite</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -175,10 +175,10 @@ void FortGage::SetGauge(const float life)
     vertex_[0].position_.y = origin_top_vertex_y_ + parameter_.scaling_.y_ * gauge_uv_y_;
     vertex_[1].position_.y = origin_top_vertex_y_ + parameter_.scaling_.y_ * gauge_uv_y_;
 
-    vertex_[0].texture_ = { 0.0f, gauge_uv_y_ };
-    vertex_[1].texture_ = { 1.0f, gauge_uv_y_ };
-    vertex_[2].texture_ = { 0.0f, 1.0f };
-    vertex_[3].texture_ = { 1.0f, 1.0f };
+	vertex_[0].texture_ = {0.0f, 0.0f};
+	vertex_[1].texture_ = {1.0f, 0.0f};
+	vertex_[2].texture_ = {0.0f, 1.0f - gauge_uv_y_};
+	vertex_[3].texture_ = {1.0f, 1.0f - gauge_uv_y_};
 }
 
 

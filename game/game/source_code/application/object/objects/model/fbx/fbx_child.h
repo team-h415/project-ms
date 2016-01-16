@@ -34,6 +34,7 @@ public:
 		const OBJECT_PARAMETER_DESC &parameter);
 	~FbxChild();
 
+	void SetTexture(const std::string& path);
 	void Action(
 		Object *target,
 		const float range);

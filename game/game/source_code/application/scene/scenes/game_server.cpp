@@ -656,6 +656,32 @@ void GameServer::Game()
 					send_data.id_ = 0;
 					NetworkHost::SendTo(DELI_MULTI, send_data);
 				}
+				// 子供全滅
+				if(child_remaining_count_ == 0)
+				{
+					bool geme_end(true);
+					for(int i = 0; i < (MAX_GUEST - 1); i++)
+					{
+						if(!child_death_[i])
+						{
+							geme_end = false;
+							break;
+						}
+					}
+					if(geme_end)
+					{
+						// ゲームエンド条件３　子供絶滅
+						// じじい勝利
+						// 勝敗メッセージ
+						time_ = 60 * 5;
+						scene_state_ = STATE_GAME_END;
+
+						ZeroMemory(&send_data, sizeof(send_data));
+						send_data.type_ = DATA_GAME_WINNER;
+						send_data.id_ = 0;
+						NetworkHost::SendTo(DELI_MULTI, send_data);
+					}
+				}
 
 				// 砦ライフ管理
 				std::string fort_str = "fort" + std::to_string(now_target_fort_);
@@ -688,9 +714,33 @@ void GameServer::Game()
 
 				if(life <= 0.0f)
 				{
+					// シールドOFF
+					if(shield_flg_)
+					{
+						XFort* fort = dynamic_cast<XFort*>(object_manager_->Get("fort" + std::to_string(now_target_fort_)));
+						if(fort != nullptr)
+						{
+							Vector3 fort_pos = fort->parameter().position_;
+							ZeroMemory(&send_data, sizeof(send_data));
+							send_data.type_ = DATA_OBJ_PARAM;
+							send_data.object_param_.type_ = OBJ_EFFECT;
+							send_data.object_param_.position_.x_ = fort_pos.x_;
+							send_data.object_param_.position_.y_ = SHIELD_POSITION_Y;
+							send_data.object_param_.position_.z_ = fort_pos.z_;
+							send_data.object_param_.ex_id_ = 1;
+							strcpy_s(send_data.name_, MAX_NAME_LEN, "shieldin");
+							NetworkHost::SendTo(DELI_MULTI, send_data);
+
+							strcpy_s(send_data.name_, MAX_NAME_LEN, "shieldout");
+							NetworkHost::SendTo(DELI_MULTI, send_data);
+						}
+						shield_flg_ = false;
+					}
+
 					fort_announce_state_ = 75;
 					now_target_fort_++;
 					scene_state_ = STATE_FORT_OUT;
+					child_remaining_count_ = MAX_CHILD_REMAINING_LIVE;
 				}
 			}
 			break;
@@ -821,6 +871,31 @@ void GameServer::Game()
 					scene_state_ = STATE_RUN;
 					Camera* sub_camera = camera_manager_->Get("SubCamera");
 					sub_camera->SetRotation(D3DXVECTOR3(0.0f, 0.0f, 0.0f));
+
+					// 子供復活シークエンス
+					for(int i = 1; i < 5; i++)
+					{
+						int my_id = i - 1;
+						if(child_death_[my_id] == true)
+						{
+							std::string child_str = "player" + std::to_string(i);
+							FbxChild* child = dynamic_cast<FbxChild*>(object_manager_->Get(child_str));
+
+							child->PlayAnimation(FbxChild::IDLE);
+							child_death_[my_id] = false;
+							child->SetLife(CHILD_LIFE);
+							if(now_target_fort_ <= 2)
+							{
+								child->SetPosition(CHILD_POSITION[my_id + (now_target_fort_ * 4)]);
+								child->SetRotationY(CHILD_ROTATION[my_id + (now_target_fort_ * 4)]);
+							}
+							else
+							{
+								child->SetPosition(CHILD_POSITION[my_id + (2 * 4)]);
+								child->SetRotationY(CHILD_ROTATION[my_id + (2 * 4)]);
+							}
+						}
+					}
 				}
 				fort_effect_counter++;
 				if(fort_effect_counter % 3 == 0)
@@ -928,7 +1003,7 @@ void GameServer::Result()
 	}
 
 	time_++;
-	if(time_ > (60 * 15))
+	if(time_ > (60 * 5))
 	{
 		ChangeServerState(STATE_MATCHING);
 		// シーンチェンジ命令送信
@@ -1853,6 +1928,17 @@ void GameServer::GameGrandfather()
 			NetworkHost::SendTo(DELI_MULTI, send_data);
 		}
 		shield_flg_ = false;
+
+		// シールド消失アナウンス
+		std::string name = "message_shieldout";
+		ZeroMemory(&send_data, sizeof(send_data));
+		send_data.type_ = DATA_OBJ_PARAM;
+		send_data.object_param_.type_ = OBJ_UI;
+		send_data.object_param_.position_.x_ = SCREEN_WIDTH + 200.0f;
+		send_data.object_param_.position_.y_ = SCREEN_HEIGHT - 200.0f;
+		send_data.object_param_.position_.z_ = 0.0f;
+		strcpy_s(send_data.name_, MAX_NAME_LEN, name.c_str());
+		NetworkHost::SendTo(DELI_MULTI, send_data);
 	}
 	else if(life >= SHIELD_SWITCH_LIFE && shield_flg_ == false && scene_state_ == STATE_RUN)
 	{
@@ -2223,9 +2309,31 @@ void GameServer::GameChild()
 			send_data.object_param_.rotation_ = {0.0f, 0.0f, 0.0f};
 			strcpy_s(send_data.name_, MAX_NAME_LEN, "dead");
 			NetworkHost::SendTo(DELI_MULTI, send_data);
+
+			// 死亡
+			child_remaining_count_--;
+			child_remaining_count_ = max<int>(child_remaining_count_, 0);
+
+			ZeroMemory(&send_data, sizeof(send_data));
+			send_data.type_ = DATA_UI_PARAM;
+			send_data.ui_param_.value_i_ = child_remaining_count_;
+			strcpy_s(send_data.name_, MAX_NAME_LEN, "child");
+			NetworkHost::SendTo(DELI_MULTI, send_data);
+
+			// 子供死亡アナウンス
+			std::string name = "message_child" + std::to_string(i) + "_death";
+			ZeroMemory(&send_data, sizeof(send_data));
+			send_data.type_ = DATA_OBJ_PARAM;
+			send_data.object_param_.type_ = OBJ_UI;
+			send_data.object_param_.position_.x_ = SCREEN_WIDTH + 200.0f;
+			send_data.object_param_.position_.y_ = SCREEN_HEIGHT - 200.0f;
+			send_data.object_param_.position_.z_ = 0.0f;
+			strcpy_s(send_data.name_, MAX_NAME_LEN, name.c_str());
+			NetworkHost::SendTo(DELI_MULTI, send_data);
 		}
-		else if(child_death_[my_id] && !child_respawn_waittime_[my_id])
+		else if(child_death_[my_id] && child_respawn_waittime_[my_id] == 0 && child_remaining_count_ != 0)
 		{
+			// 復活
 			child->PlayAnimation(FbxChild::IDLE);
 			child_death_[my_id] = false;
 			child_life = CHILD_LIFE;
@@ -2596,6 +2704,9 @@ void GameServer::ChangeServerState(SERVER_STATE next)
 					child_death_[i] = false;
 					child_respawn_waittime_[i] = 0;
 				}
+				//---------------------------------------
+				// 子供残機
+				child_remaining_count_ = MAX_CHILD_REMAINING_LIVE;
 				//---------------------------------------
 				// プレイヤー関連パラメータ
 				std::string player_str;

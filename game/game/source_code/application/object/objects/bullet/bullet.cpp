@@ -508,9 +508,9 @@ void Bullet::SetBlind(
 	//-------------------------------------
 	// ƒuƒ‰ƒCƒ“ƒh‚ğ”­¶‚³‚¹‚é
 	//-------------------------------------
-	char char_name[10];
+	char char_name[8];
 	char temp;
-	strcpy_s(char_name, 10, name.c_str());
+	strcpy_s(char_name, 8, name.c_str());
 	temp = char_name[6];
 	int id = atoi(&temp);
 

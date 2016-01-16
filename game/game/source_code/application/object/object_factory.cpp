@@ -26,6 +26,7 @@
 #include "objects/sprite3d/lake.h"
 #include "objects/model/fbx_model.h"
 #include "objects/sprite/timer.h"
+#include "objects/sprite/child_remaining_live.h"
 #include "objects/sprite/water_gage.h"
 #include "objects/sprite/damage_effect.h"
 #include "objects/model/fbx/fbx_player.h"
@@ -83,6 +84,9 @@ Object *ObjectFactory::Create(
 		break;
 	case LAYER_TIMER:
 		object = new Timer(parameter);
+		break;
+	case LAYER_CHILD_REMAINING_LIVE:
+		object = new ChildRemainingLive(parameter);
 		break;
 	case LAYER_SPRITE_2D:
 		object = new Sprite2D(parameter);

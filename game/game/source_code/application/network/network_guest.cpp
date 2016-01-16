@@ -30,6 +30,7 @@
 #include "../object/objects/sprite/damage_effect.h"
 #include "../object/objects/sprite/water_gage.h"
 #include "../object/objects/sprite/countdown.h"
+#include "../object/objects/sprite/child_remaining_live.h"
 #include "../object/objects/model/x_model.h"
 #include "../object/objects/model/fbx_model.h"
 #include "../object/objects/bullet/bullet.h"
@@ -447,6 +448,18 @@ unsigned __stdcall NetworkGuest::Communication()
 							CountDown* countdown = dynamic_cast<CountDown*>(object);
 							countdown->Play(rec_data.ui_param_.value_i_);
 						}
+
+						else if(name == "child")
+						{
+							Object *object = object_manager->Get("child_remaining_live");
+							if(object == nullptr)
+							{
+								continue;
+							}
+							ChildRemainingLive* child = dynamic_cast<ChildRemainingLive*>(object);
+							child->SetValue(rec_data.ui_param_.value_i_);
+						}
+
 					}
 					break;
 
@@ -749,59 +762,41 @@ void NetworkGuest::ObjDataAdaptation(
 				// アナウンス
 				std::string name = rec_data.name_;
 				Object *object = object_manager->Get(name);
-				if(object == nullptr)
+				Message *message = dynamic_cast<Message*>(object);
+				if(message == nullptr)
 				{
 					return;
 				}
-				Message *message = dynamic_cast<Message*>(object);
 				Vector3 message_position = 
 				{
 					rec_data.object_param_.position_.x_,
 					rec_data.object_param_.position_.y_,
 					rec_data.object_param_.position_.z_
 				};
-				if(name == "message_fort_25")
-				{
-					Message *message;
-					message = dynamic_cast<Message*>(object_manager->Get("message_fort_50"));
-					message->Move(-100.0f);
-					message = dynamic_cast<Message*>(object_manager->Get("message_fort_75"));
-					message->Move(-100.0f);
-					message = dynamic_cast<Message*>(object_manager->Get("message_fort_100"));
-					message->Move(-100.0f);
-				}
 
-				else if(name == "message_fort_50")
+				char* message_names[] =
 				{
-					Message *message;
-					message = dynamic_cast<Message*>(object_manager->Get("message_fort_25"));
-					message->Move(-100.0f);
-					message = dynamic_cast<Message*>(object_manager->Get("message_fort_75"));
-					message->Move(-100.0f);
-					message = dynamic_cast<Message*>(object_manager->Get("message_fort_100"));
-					message->Move(-100.0f);
-				}
-
-				else if(name == "message_fort_75")
+					"message_fort_25",
+					"message_fort_50",
+					"message_fort_75",
+					"message_fort_100",
+					"message_child1_death",
+					"message_child2_death",
+					"message_child3_death",
+					"message_child4_death",
+					"message_shieldout",
+				};
+				for(int i = 0; i < 9; i++)
 				{
-					Message *message;
-					message = dynamic_cast<Message*>(object_manager->Get("message_fort_25"));
-					message->Move(-100.0f);
-					message = dynamic_cast<Message*>(object_manager->Get("message_fort_50"));
-					message->Move(-100.0f);
-					message = dynamic_cast<Message*>(object_manager->Get("message_fort_100"));
-					message->Move(-100.0f);
-				}
-
-				else if(name == "message_fort_100")
-				{
-					Message *message;
-					message = dynamic_cast<Message*>(object_manager->Get("message_fort_25"));
-					message->Move(-100.0f);
-					message = dynamic_cast<Message*>(object_manager->Get("message_fort_50"));
-					message->Move(-100.0f);
-					message = dynamic_cast<Message*>(object_manager->Get("message_fort_75"));
-					message->Move(-100.0f);
+					Message *move_message = nullptr;
+					if(name != message_names[i])
+					{
+						move_message = dynamic_cast<Message*>(object_manager->Get(message_names[i]));
+						if(move_message != nullptr)
+						{
+							move_message->Move(-100.0f);
+						}
+					}
 				}
 
 				message->SetPosition(message_position);
@@ -844,13 +839,12 @@ void NetworkGuest::ObjDataAdaptation(
 				{
 					return;
 				}
-				// アロー
 				Object *object = object_manager->GetUseOffLayer(LAYER_BLIND);
-				if(object == nullptr)
+				Blind* blind = dynamic_cast<Blind*>(object);
+				if(blind == nullptr)
 				{
 					return;
 				}
-				Blind* blind = dynamic_cast<Blind*>(object);
 				// パラメータ設定
 				OBJECT_PARAMETER_DESC blind_param;
 				ZeroMemory(&blind_param, sizeof(blind_param));

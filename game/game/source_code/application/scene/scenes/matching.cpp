@@ -451,6 +451,7 @@ void Matching::Update()
 	// ŽÀXVˆ—
 	//-------------------------------------
 	camera_manager_->Update();
+	camera_manager_->Set("MainCamera");
 	object_manager_->Update();
 	effect_manager_->Update();
 
@@ -476,7 +477,6 @@ void Matching::Draw()
 	MaterialColor color(32, 32, 32, 255);
 	DirectX9Holder::DrawBegin();
 	DirectX9Holder::Clear(color);
-	camera_manager_->Set("MainCamera");
 	object_manager_->Draw();
 	effect_manager_->Draw();
 	Sprite2D *standby =

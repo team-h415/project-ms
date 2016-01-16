@@ -21,27 +21,25 @@
 #define PORT_NUMBER_1 20001						// ホストからゲストへの送信時のポート
 #define MULTICAST_ADDRESS "239.0.0.25"			// マルチキャスト用のアドレス
 #define MAX_GUEST 5								// 接続ゲスト最大数
-#define MAX_NAME_LEN 20						// 最大文字数
+#define MAX_NAME_LEN 40							// 最大文字数
 
 //-------------------------------------
 // enum
 //-------------------------------------
 enum DATA_TYPE
 {
-	DATA_REQUEST_ADDR,			// ゲストが使用 ホストにIPアドレスを聞く
-	DATA_GIVE_ADDR,				// ホストが使用 ゲストにIPアドレスを教える
+	DATA_REQUEST_ADDR,				// ゲストが使用 ホストにIPアドレスを聞く
+	DATA_GIVE_ADDR,					// ホストが使用 ゲストにIPアドレスを教える
 
-	DATA_SCENE_CHANGE_GAME,		// ホストが使用 マッチング画面からゲーム画面への遷移命令
-	DATA_SCENE_CHANGE_RESULT,	// ホストが使用 ゲーム画面からリザルト画面への遷移命令
-	DATA_SCENE_CHANGE_MATCHING,	// ホストが使用 リザルト画面からマッチング画面への遷移命令
+	DATA_SCENE_CHANGE_GAME,			// ホストが使用 マッチング画面からゲーム画面への遷移命令
+	DATA_SCENE_CHANGE_RESULT,		// ホストが使用 ゲーム画面からリザルト画面への遷移命令
+	DATA_SCENE_CHANGE_MATCHING,		// ホストが使用 リザルト画面からマッチング画面への遷移命令
 
-	DATA_COMPLETE_SCENE_CHANGE,	// ゲストが使用 シーンチェンジが完了したことを伝える
-
-	DATA_GAME_WINNER,			// ホストが使用 ゲームの勝者を送る
-	DATA_OBJ_PARAM,				// ホストが使用 オブジェクトのパラメータ情報を送信
-	DATA_UI_PARAM,				// ホストが使用 UIのパラメータ情報を送信
-
-	DATA_SPRITE2D_TEX,			// スプライト2Dのテクスチャ変更メッセージ
+	DATA_COMPLETE_SCENE_CHANGE,		// ゲストが使用 シーンチェンジが完了したことを伝える
+	DATA_GAME_WINNER,				// ホストが使用 ゲームの勝者を送る
+	DATA_OBJ_PARAM,					// ホストが使用 オブジェクトのパラメータ情報を送信
+	DATA_UI_PARAM,					// ホストが使用 UIのパラメータ情報を送信
+	DATA_SPRITE2D_TEX,				// スプライト2Dのテクスチャ変更メッセージ
 };
 
 
@@ -77,6 +75,7 @@ struct VEC3
 	float x_, y_, z_;
 };
 
+
 struct OBJ_PARAM
 {
 	OBJ_TYPE	type_;			// オブジェクトタイプ
@@ -85,12 +84,14 @@ struct OBJ_PARAM
 	int			ex_id_;			// EX項目 FBXのアニメーションIDなどで
 };
 
+
 struct UI_PARAM
 {
 	UI_TYPE		type_;			// UIタイプ
 	int			value_i_;		// 値
 	float		value_f_;		// 値
 };
+
 
 struct NETWORK_DATA
 {

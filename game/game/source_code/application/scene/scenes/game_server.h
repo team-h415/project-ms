@@ -117,6 +117,8 @@ private:
 	bool child_death_[MAX_GUEST - 1];
 	// 子供リスポーンタイマー
 	int child_respawn_waittime_[MAX_GUEST - 1];
+	// 子供残機
+	int child_remaining_count_;
 	// じじいダッシュ
 	int dash_effect_timer_;
 	// 砦アナウンスステート
