@@ -460,12 +460,13 @@ void Bomb::SetBlind(
 		D3DXVec2Normalize(&vec2, &vec2);
 
 		float rotato_y = atan2(D3DXVec2Dot(&vec, &vec2), (vec.x * vec2.y - vec.y * vec2.x));
+		float rotato_dest_y = rotato_y;	// •ªU
 
 		for (int i = 0; i < BLIND_BOMB_NUM; i++){
-			float rotato_dest_y = rotato_y + float((rand() % 314)-156) * 0.01f;	// •ªU
+			
 			float length = BLIND_LEN_MIN + float((rand() % 10)) * 0.1f * (BLIND_LEN_MAX - BLIND_LEN_MIN);
 			float scaling = float((rand() % (BLIND_SCALING_MAX - BLIND_SCALING_MIN) + BLIND_SCALING_MIN)) * BLIND_BOMB_MAGNIFICATION;
-			float rotato_z = float((rand() % 314))*0.01f;
+			float rotato_z = float((rand() % 314)) * 0.01f;
 
 			//-------------------------------------
 			// ƒuƒ‰ƒCƒ“ƒh‚ğ”­¶‚³‚¹‚é
@@ -486,6 +487,10 @@ void Bomb::SetBlind(
 				blind->SetBlind(blind_param);
 			}
 			else{ break; }
+
+			// Å‰‚Ì‚P‚Â–Ú‚¾‚¯‚¿‚á‚ñ‚Æ‚µ‚½‚Æ‚±‚Éo‚·
+			rotato_dest_y = rotato_y + float((rand() % 250) - 125) * 0.01f;	// •ªU
+
 		}
 	}
 

@@ -170,7 +170,7 @@ void Game::Initialize()
 
 	effect_manager_->Create(
 		"dash",
-		"resource/effect/Dash2.efk",
+		"resource/effect/Dash.efk",
 		effect_param);
 
 	effect_manager_->Create(
@@ -185,7 +185,7 @@ void Game::Initialize()
 
 	effect_manager_->Create(
 		"speeddown",
-		"resource/effect/SpeedDown_3.efk",
+		"resource/effect/SpeedDown.efk",
 		effect_param);
 
 	effect_manager_->Create(
@@ -195,7 +195,7 @@ void Game::Initialize()
 
 	effect_manager_->Create(
 		"shieldin",
-		"resource/effect/ShieldIn_2x2.efk",
+		"resource/effect/ShieldIn_3x2.efk",
 		effect_param);
 
 	effect_manager_->Create(
@@ -1247,7 +1247,7 @@ void Game::Update()
 			EFFECT_PARAMETER_DESC shield_param;
 			MyEffect *effect_shield = effect_manager_->Get("shieldin");
 			shield_param = effect_shield->parameter();
-			shield_param.position_ = fort1_position;
+			shield_param.position_ = FORT1_POSITION;
 			shield_param.position_.y_ = SHIELD_POSITION_Y;
 			shield_param.rotation_ = { 0.0f, 0.0f, 0.0f };
 			effect_shield->SetParameter(shield_param);
@@ -1275,7 +1275,7 @@ void Game::Update()
 			EFFECT_PARAMETER_DESC shield_param;
 			MyEffect *effect_shield = effect_manager_->Get("shieldin");
 			shield_param = effect_shield->parameter();
-			shield_param.position_ = fort2_position;
+			shield_param.position_ = FORT2_POSITION;
 			shield_param.position_.y_ = SHIELD_POSITION_Y;
 			shield_param.rotation_ = { 0.0f, 0.0f, 0.0f };
 			effect_shield->SetParameter(shield_param);
@@ -1302,7 +1302,7 @@ void Game::Update()
 			EFFECT_PARAMETER_DESC shield_param;
 			MyEffect *effect_shield = effect_manager_->Get("shieldin");
 			shield_param = effect_shield->parameter();
-			shield_param.position_ = fort3_position;
+			shield_param.position_ = FORT3_POSITION;
 			shield_param.position_.y_ = SHIELD_POSITION_Y;
 			shield_param.rotation_ = { 0.0f, 0.0f, 0.0f };
 			effect_shield->SetParameter(shield_param);
@@ -1894,10 +1894,15 @@ void Game::Update()
 	}
 	else if (child_life > SHIELD_SWITCH_LIFE && shield_flg_ == false && change_stage_flg_ == false){
 		// シールドはる
+		Vector3 fort_position = FORT1_POSITION;
+
+		if (stage_ == 2){ fort_position = FORT2_POSITION; }
+		else if (stage_ == 3){ fort_position = FORT3_POSITION; }
+
 		EFFECT_PARAMETER_DESC shield_param;
 		MyEffect *effect_shield = effect_manager_->Get("shieldin");
 		shield_param = effect_shield->parameter();
-		shield_param.position_ = fort1_position;
+		shield_param.position_ = fort_position;
 		shield_param.position_.y_ = SHIELD_POSITION_Y;
 		shield_param.rotation_ = { 0.0f, 0.0f, 0.0f };
 		effect_shield->SetParameter(shield_param);
@@ -1913,6 +1918,8 @@ void Game::Update()
 	// 実更新処理
 	//-------------------------------------
 	camera_manager_->Update();
+	// オブジェクトの更新の前にカメラの更新した行列適応させておく
+	camera_manager_->Set(use_camera_name_);
 	object_manager_->Update();
 	effect_manager_->Update();
 	collision_manager_->Update();

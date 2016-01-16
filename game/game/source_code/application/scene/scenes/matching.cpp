@@ -112,7 +112,7 @@ void Matching::Initialize()
 
 	effect_manager_->Create(
 		"fieldhit",
-		"resource/effect/FieldHit2_2.efk",
+		"resource/effect/FieldHit2.efk",
 		effect_param);
 
 	effect_param.position_ = PORTAL_POSITION;
@@ -648,8 +648,12 @@ void Matching::Update()
 		effect->SetParameter(effect_param);
 	}
 	
-
+	//-------------------------------------
+	// 実更新処理
+	//-------------------------------------
 	camera_manager_->Update();
+	// オブジェクトの更新の前にカメラの更新した行列適応させておく
+	camera_manager_->Set("MainCamera");
 	object_manager_->Update();
 	effect_manager_->Update();
 	collision_manager_->Update();
