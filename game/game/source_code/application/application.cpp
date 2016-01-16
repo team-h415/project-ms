@@ -302,6 +302,19 @@ void Application::SetupManagers()
 		bomb_param.name_ = "bomb" + std::to_string(i);
 		object_manager->Create(bomb_param);
 	}
+
+	// ベンチ
+	OBJECT_PARAMETER_DESC bench_param;
+	bench_param.name_ = "bench";
+	bench_param.layer_ = LAYER_BENCH;
+	object_manager->Create(bench_param);
+
+	// 遊具
+	OBJECT_PARAMETER_DESC playground_param;
+	playground_param.name_ = "playground";
+	playground_param.layer_ = LAYER_PLAYGROUND;
+	object_manager->Create(playground_param);
+
 #ifdef NETWORK_HOST_MODE
 
 #else
@@ -345,18 +358,6 @@ void Application::SetupManagers()
 	tree3->SetTexture("resource/texture/game/tree01.png");
 	tree3->SetPositionPatern(2);
 
-	// ベンチ
-	OBJECT_PARAMETER_DESC bench_param;
-	bench_param.name_ = "bench";
-	bench_param.layer_ = LAYER_BENCH;
-	object_manager->Create(bench_param);
-
-	// 遊具
-	OBJECT_PARAMETER_DESC playground_param;
-	playground_param.name_ = "playground";
-	playground_param.layer_ = LAYER_PLAYGROUND;
-	object_manager->Create(playground_param);
-
 	// 影
 	OBJECT_PARAMETER_DESC shadow_param;
 	shadow_param.layer_ = LAYER_SHADOW;
@@ -377,6 +378,14 @@ void Application::SetupManagers()
 		Blind* blind = static_cast<Blind*>(obj);
 		std::string texture_name = "resource/texture/game/blind_" + std::to_string(i % BLIND_TEXTURE_MAX) + ".png";
 		blind->SetTexture(texture_name);
+	}
+
+	//-------------------------------------
+	// 2Dオブジェクトの描画フラグをOFFに
+	//-------------------------------------
+	for(int i = LAYER_DAMAGE_EFFECT; i < LAYER_MAX; i++)
+	{
+		object_manager->SetDrawEnable(i, false);
 	}
 
 	//-------------------------------------

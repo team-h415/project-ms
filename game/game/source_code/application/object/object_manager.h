@@ -34,6 +34,7 @@ public:
 	void Update();
 	void DeleteCheck();
 	void Draw();
+	void Draw(OBJECT_LAYER layer);
 
 	//-------------------------------------
 	// オブジェクト生成

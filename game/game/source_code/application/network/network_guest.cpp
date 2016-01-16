@@ -776,17 +776,15 @@ void NetworkGuest::ObjDataAdaptation(
 
 				char* message_names[] =
 				{
+					"message_child_death",
 					"message_fort_25",
 					"message_fort_50",
 					"message_fort_75",
 					"message_fort_100",
-					"message_child1_death",
-					"message_child2_death",
-					"message_child3_death",
-					"message_child4_death",
-					"message_shieldout",
+					"message_shield_break",
+					"message_shield_resurrection",
 				};
-				for(int i = 0; i < 9; i++)
+				for(int i = 0; i < 7; i++)
 				{
 					Message *move_message = nullptr;
 					if(name != message_names[i])

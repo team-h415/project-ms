@@ -101,98 +101,7 @@ Matching::~Matching()
 void Matching::Initialize()
 {
 	//-------------------------------------
-//<<<<<<< HEAD
-	// カメラ初期座標演算
-//=======
-//	// エフェクトの読み込み
-//	//-------------------------------------
-//	EFFECT_PARAMETER_DESC effect_param;
-//	effect_param.position_ = { 0.0f, 0.0f, 0.0f };
-//	effect_param.rotation_ = { 0.0f, 0.0f, 0.0f };
-//	effect_param.scaling_ = { 1.0f, 1.0f, 1.0f };
-//	effect_param.speed_ = 1.0f;
-//
-//	effect_manager_->Create(
-//		"water",
-//		"resource/effect/BulletFire.efk",
-//		effect_param);
-//
-//	effect_manager_->Create(
-//		"fieldhit",
-//		"resource/effect/FieldHit2_2.efk",
-//		effect_param);
-//
-//	effect_param.position_ = PORTAL_POSITION;
-//	effect_manager_->Create(
-//		"marker",
-//		"resource/effect/Marker.efk",
-//		effect_param);
-//
-//	effect_manager_->Create(
-//		"portal",
-//		"resource/effect/Portal2x2.efk",
-//		effect_param);
-//
-//	effect_manager_->Play("water");
-//	effect_manager_->Play("portal");
-//	effect_manager_->Play("marker");
-//	
-//	//-------------------------------------
-//	// メインカメラ
-//	//-------------------------------------
-//	CAMERA_PARAMETER_DESC camera_param;
-//	camera_param.acpect_ = SCREEN_WIDTH / SCREEN_HEIGHT;
-//	camera_param.fovy_ = D3DX_PI * 0.25f;
-//	camera_param.position_ = GRANDFATHER_POSITION;
-//	camera_param.focus_ = { 0.0f, 0.0f, 0.0f };
-//	camera_param.rotation_ = { 0.0f, 0.0f, 0.0f };
-//	camera_param.up_ = { 0.0f, 1.0f, 0.0f };
-//	camera_param.near_ = 0.1f;
-//	camera_param.far_ = 1000.0f;
-//	camera_pos_len_ = CAMERA_POS_LEN;
-//
-//	camera_manager_->Create(
-//		"Perspective", "MainCamera", camera_param);
-//
-//
-//	//-------------------------------------
-//	// 地形
-//	//-------------------------------------
-//	OBJECT_PARAMETER_DESC field_param;
-//	field_param.name_ = "field";
-//	field_param.position_ = { 0.0f, 0.0f, 0.0f };
-//	field_param.rotation_ = { 0.0f, 0.0f, 0.0f };
-//	field_param.scaling_ = { 100.0f, 1.0f, 200.0f };
-//	field_param.layer_ = LAYER_MESH_FIELD;
-//
-//	object_manager_->Create(
-//		field_param,
-//		"resource/mesh/map.heightmap");
-//
-//
-//	//-------------------------------------
-//	// 空
-//	//-------------------------------------
-//	OBJECT_PARAMETER_DESC skydome_param;
-//	skydome_param.name_ = "skydome_up";
-//	skydome_param.position_ = { 0.0f, 0.0f, 0.0f };
-//	skydome_param.rotation_ = { 0.0f, 0.0f, 0.0f };
-//	skydome_param.scaling_ = { 500.0f, 1.0f, 500.0f };
-//	skydome_param.layer_ = LAYER_MESH_SKYDOME;
-//
-//	object_manager_->Create(
-//		skydome_param,
-//		"resource/mesh/skydome_up.txt");
-//
-//	skydome_param.name_ = "skydome_bottom";
-//	skydome_param.rotation_ = { 0.0f, 0.0f, D3DX_PI };
-//
-//	object_manager_->Create(
-//		skydome_param,
-//		"resource/mesh/skydome_bottom.txt");
-//
-//
-//>>>>>>> master
+	// カメラ設定
 	//-------------------------------------
 	D3DXVECTOR3 camera_focus(34.94f, 0.0f, -34.39f);
 	D3DXVECTOR3 camera_pos(camera_focus);
@@ -204,7 +113,6 @@ void Matching::Initialize()
 	Camera* main_camera = camera_manager_->Get("MainCamera");
 	main_camera->SetPosition(camera_pos);
 	main_camera->SetFocus(camera_focus);
-
 
 	//-------------------------------------
 	// FBXおじ
@@ -270,26 +178,7 @@ void Matching::Initialize()
 	object_manager_->SetDrawEnable(LAYER_SPRITE_2D, false);
 
 	//-------------------------------------
-//<<<<<<< HEAD
-	// あれあれ
-//=======
-//	// サウンド(BGM)
-//	//-------------------------------------
-//	sound_ = nullptr;
-//	sound_ = Sound::LoadSound("resource/sound/bgm/matching/matching_bgm.wav");
-//	sound_->Play(true);
-//
-//}
-//
-//
-////-------------------------------------
-//// Update()
-////-------------------------------------
-//void Matching::Update()
-//{
-//	//-------------------------------------
-//	// 変数宣言
-//>>>>>>> master
+	// サーチホスト
 	//-------------------------------------
 	OBJECT_PARAMETER_DESC search_param;
 	search_param.name_ = "search";
@@ -477,14 +366,17 @@ void Matching::Draw()
 	MaterialColor color(32, 32, 32, 255);
 	DirectX9Holder::DrawBegin();
 	DirectX9Holder::Clear(color);
+
 	object_manager_->Draw();
 	effect_manager_->Draw();
-	Sprite2D *standby =
-		dynamic_cast<Sprite2D*>(object_manager_->Get("standby"));
-	standby->Draw();
-	Sprite2D *search =
-		dynamic_cast<Sprite2D*>(object_manager_->Get("search"));
-	search->Draw();
+	//-------------------------------------
+	// 2Dオブジェクトの描画
+	//-------------------------------------
+	for(int i = LAYER_DAMAGE_EFFECT; i < LAYER_MAX; i++)
+	{
+		object_manager_->Draw((OBJECT_LAYER)i);
+	}
+
 	font_->Draw(rect, font_color);
 	Fade::Draw();
 	DirectX9Holder::DrawEnd();

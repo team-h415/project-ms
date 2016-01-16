@@ -77,7 +77,6 @@ void GameServer::Initialize()
 	//-------------------------------------
 	matching_bgm_ = Sound::LoadSound("resource/sound/bgm/matching/matching_bgm.wav");
 	game_bgm_ = Sound::LoadSound("resource/sound/bgm/game/game_bgm.wav");
-	result_bgm_ = Sound::LoadSound("resource/sound/bgm/game/ms-bgm.wav");
 	Sound::StockSE("resource/sound/se/game/countdown.wav");
 	Sound::StockSE("resource/sound/se/game/start.wav");
 	for(int i = 0; i < 7; i++)
@@ -1930,7 +1929,7 @@ void GameServer::GameGrandfather()
 		shield_flg_ = false;
 
 		// シールド消失アナウンス
-		std::string name = "message_shieldout";
+		std::string name = "message_shield_break";
 		ZeroMemory(&send_data, sizeof(send_data));
 		send_data.type_ = DATA_OBJ_PARAM;
 		send_data.object_param_.type_ = OBJ_UI;
@@ -1958,6 +1957,17 @@ void GameServer::GameGrandfather()
 			NetworkHost::SendTo(DELI_MULTI, send_data);
 		}
 		shield_flg_ = true;
+
+		// シールド消失アナウンス
+		std::string name = "message_shield_resurrection";
+		ZeroMemory(&send_data, sizeof(send_data));
+		send_data.type_ = DATA_OBJ_PARAM;
+		send_data.object_param_.type_ = OBJ_UI;
+		send_data.object_param_.position_.x_ = SCREEN_WIDTH + 200.0f;
+		send_data.object_param_.position_.y_ = SCREEN_HEIGHT - 200.0f;
+		send_data.object_param_.position_.z_ = 0.0f;
+		strcpy_s(send_data.name_, MAX_NAME_LEN, name.c_str());
+		NetworkHost::SendTo(DELI_MULTI, send_data);
 	}
 
 	//------------------------------------------------
@@ -2321,7 +2331,7 @@ void GameServer::GameChild()
 			NetworkHost::SendTo(DELI_MULTI, send_data);
 
 			// 子供死亡アナウンス
-			std::string name = "message_child" + std::to_string(i) + "_death";
+			std::string name = "message_child_death";
 			ZeroMemory(&send_data, sizeof(send_data));
 			send_data.type_ = DATA_OBJ_PARAM;
 			send_data.object_param_.type_ = OBJ_UI;
@@ -2526,10 +2536,9 @@ void GameServer::ChangeServerState(SERVER_STATE next)
 			matching_bgm_->Stop(60);
 			break;
 		case STATE_GAME:
-			game_bgm_->Stop(60);
 			break;
 		case STATE_RESULT:
-			result_bgm_->Stop(60);
+			game_bgm_->Stop(60);
 			break;
 		default:
 			break;
@@ -2810,7 +2819,6 @@ void GameServer::ChangeServerState(SERVER_STATE next)
 			break;
 
 		case STATE_RESULT:
-			result_bgm_->Play(true, 120);
 			break;
 
 		default:

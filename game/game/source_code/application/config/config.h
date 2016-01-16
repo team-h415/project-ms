@@ -243,7 +243,7 @@ static const float FORT_LIFE[]
 
 #define BLIND_DEST_SCALING_SPEED 0.1f	// КgСеСђУx
 
-#define MAX_BLIND 60 // Н≈СеРФ
+#define MAX_BLIND 300 // Н≈СеРФ
 
 
 //-=--=--=--=--=--=--=--=--=--=--=--=--=--=--=-//

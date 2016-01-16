@@ -6,6 +6,7 @@
 //-------------------------------------
 // include
 //-------------------------------------
+#include "../../network/network.h"
 #include "../../../common/common.h"
 #include "../renderer.h"
 #include "directx9.h"
@@ -48,7 +49,11 @@ DirectX9::DirectX9()
 		static_cast<UINT>(SCREEN_HEIGHT);
 	parameters.BackBufferFormat = display.Format;
 	parameters.SwapEffect = D3DSWAPEFFECT_DISCARD;
+#ifdef NETWORK_HOST_MODE
 	parameters.Windowed = TRUE;
+#else
+	parameters.Windowed = FALSE;
+#endif
 	parameters.EnableAutoDepthStencil = TRUE;
 	parameters.AutoDepthStencilFormat = D3DFMT_D24S8;
 	parameters.MultiSampleType = D3DMULTISAMPLE_4_SAMPLES;

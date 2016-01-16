@@ -14,14 +14,14 @@
 //-------------------------------------
 // define
 //-------------------------------------
-//#define NETWORK_HOST_MODE						// exeがホストなのかゲストなのかの分岐 通常はホスト、コメントアウトでゲストに
+#define NETWORK_HOST_MODE						// exeがホストなのかゲストなのかの分岐 通常はホスト、コメントアウトでゲストに
 
 #define ID_NONE -1								// IDの無い状態
 #define PORT_NUMBER_0 20000						// ゲストからホストへの送信時のポート
 #define PORT_NUMBER_1 20001						// ホストからゲストへの送信時のポート
 #define MULTICAST_ADDRESS "239.0.0.25"			// マルチキャスト用のアドレス
 #define MAX_GUEST 5								// 接続ゲスト最大数
-#define MAX_NAME_LEN 40							// 最大文字数
+#define MAX_NAME_LEN 30							// 最大文字数
 
 //-------------------------------------
 // enum

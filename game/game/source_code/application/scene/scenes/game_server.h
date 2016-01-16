@@ -100,7 +100,6 @@ private:
 	// BGM
 	Sound				*matching_bgm_;
 	Sound				*game_bgm_;
-	Sound				*result_bgm_;
 
 	//-------------------------------------
 	// ゲームルール用パラメータ
