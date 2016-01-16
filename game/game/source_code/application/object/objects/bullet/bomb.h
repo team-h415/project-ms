@@ -28,10 +28,15 @@ public:
 	void Draw();
 	void Action(
 		Object *target,
+<<<<<<< HEAD
 		const float range);
 
 	void SetUse(bool flag);
 
+=======
+		const float range,
+		D3DXVECTOR3 my_position);
+>>>>>>> master
 private:
 	void LoadMesh(
 		const std::string &path);

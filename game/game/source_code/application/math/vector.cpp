@@ -59,7 +59,7 @@ Vector3 Vector3::operator-() const
 //-------------------------------------
 // operator*=
 //-------------------------------------
-Vector3& Vector3::operator*=(float f)
+Vector3& Vector3::operator *= (float f)
 {
 	x_ *= f;
 	y_ *= f;

@@ -74,7 +74,7 @@ Object *ObjectFactory::Create(
 		object = new InstancingBench(parameter);
 		break;
 	case LAYER_PLAYGROUND:
-		object = new InstancingPlaygound(parameter);
+		object = new InstancingPlayground(parameter);
 		break;
 	case LAYER_SHADOW:
 		object = new Shadow(parameter);

@@ -80,7 +80,8 @@ public:
 	// ‚ ‚½‚è”»’è
 	virtual void Action(
 		Object *target, 
-		const float range);
+		const float range,
+		D3DXVECTOR3 my_position);
 	
 	// ƒpƒ‰ƒ[ƒ^æ“¾
 	const OBJECT_PARAMETER_DESC &parameter(){

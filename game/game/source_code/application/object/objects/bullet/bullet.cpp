@@ -277,7 +277,7 @@ void Bullet::Update()
 
 
 //-------------------------------------
-// Action()
+// Bullet()
 //-------------------------------------
 void Bullet::Draw()
 {
@@ -377,7 +377,8 @@ void Bullet::SetTexture(
 //-------------------------------------
 void Bullet::Action(
 	Object *target,
-	const float range)
+	const float range,
+	D3DXVECTOR3 my_position)
 {
 #ifdef NETWORK_HOST_MODE
 	//-------------------------------------

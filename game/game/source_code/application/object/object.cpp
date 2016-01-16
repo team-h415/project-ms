@@ -8,6 +8,8 @@
 // include
 //-------------------------------------
 #include "../../common/common.h"
+#include "../render/renderer.h"
+#include "../render/directx9/directx9.h"
 #include "../math/vector.h"
 #include "object.h"
 
@@ -35,7 +37,8 @@ Object::~Object()
 //-------------------------------------
 void Object::Action(
 	Object *target,
-	const float range)
+	const float range,
+	D3DXVECTOR3 my_position)
 {
 }
 

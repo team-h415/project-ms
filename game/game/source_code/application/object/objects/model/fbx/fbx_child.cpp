@@ -119,7 +119,8 @@ void FbxChild::SetTexture(const std::string& path)
 //-------------------------------------
 void FbxChild::Action(
 	Object *target,
-	const float range)
+	const float range,
+	D3DXVECTOR3 my_position)
 {
 #ifndef NETWORK_HOST_MODE
 	return;
