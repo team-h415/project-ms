@@ -37,6 +37,7 @@
 #include "effect/effect_manager.h"
 #include "object/object.h"
 #include "object/objects/model/x/instancing_tree.h"
+#include "object/objects/model/x/instancing_playground.h"
 #include "object/objects/sprite/blind.h"
 #include "object/objects/model/fbx_model.h"
 #include "object/objects/model/fbx/fbx_player.h"
@@ -65,6 +66,9 @@ Application::Application(
 	HINSTANCE instance,
 	int command_show)
 {
+	// コンフィグ読み込み
+	Config::SetupConfig();
+
 	fps_ = new Fps;
 	Window::Create(
 		instance,
@@ -247,6 +251,7 @@ void Application::SetupManagers()
 	grandfather_param.position_ = {1.0f, 0.0f, 0.0f};
 	grandfather_param.rotation_ = {0.0f, 0.0f, 0.0f};
 	grandfather_param.scaling_ = {1.0f, 1.0f, 1.0f};
+	grandfather_param.ex_id_ = 0;
 	Object *grandfather = object_manager->Create(grandfather_param);
 
 	COLLISION_PARAMETER_DESC fbx_collision_param;
@@ -268,6 +273,7 @@ void Application::SetupManagers()
 		child_param.rotation_ = {0.0f, 0.0f, 0.0f};
 		child_param.scaling_ = {1.0f, 1.0f, 1.0f};
 		child_param.name_ = "player" + std::to_string(i);
+		child_param.ex_id_ = i;
 		Object *object = object_manager->Create(child_param);
 		FbxChild* child = dynamic_cast<FbxChild*>(object);
 		std::string path = "resource/texture/game/Child_0";
@@ -297,7 +303,7 @@ void Application::SetupManagers()
 	// ボムも生成しておくよ
 	OBJECT_PARAMETER_DESC bomb_param;
 	bomb_param.layer_ = LAYER_BOMB;
-	for(int i = 0; i < 20; i++)
+	for(int i = 0; i < MAX_BOMB; i++)
 	{
 		bomb_param.name_ = "bomb" + std::to_string(i);
 		object_manager->Create(bomb_param);
@@ -311,9 +317,29 @@ void Application::SetupManagers()
 
 	// 遊具
 	OBJECT_PARAMETER_DESC playground_param;
-	playground_param.name_ = "playground";
+	playground_param.name_ = "playground1";
 	playground_param.layer_ = LAYER_PLAYGROUND;
-	object_manager->Create(playground_param);
+	playground_param.scaling_ = {1.0f, 1.0f, 1.0f};
+	InstancingPlayground *playground1 = dynamic_cast<InstancingPlayground*>(object_manager->Create(playground_param));
+	playground1->SetMesh("resource/model/x/suberi.x");
+	playground1->SetTexture("resource/texture/game/suberi.jpg");
+	playground1->SetPositionPatern(0);
+
+	playground_param.name_ = "playground2";
+	playground_param.layer_ = LAYER_PLAYGROUND;
+	playground_param.scaling_ = {1.0f, 1.0f, 1.0f};
+	InstancingPlayground *playground2 = dynamic_cast<InstancingPlayground*>(object_manager->Create(playground_param));
+	playground2->SetMesh("resource/model/x/buranko.x");
+	playground2->SetTexture("resource/texture/game/buranko.jpg");
+	playground2->SetPositionPatern(1);
+
+	playground_param.name_ = "playground3";
+	playground_param.layer_ = LAYER_PLAYGROUND;
+	playground_param.scaling_ = {1.5f, 1.5f, 1.5f};
+	InstancingPlayground *playground3 = dynamic_cast<InstancingPlayground*>(object_manager->Create(playground_param));
+	playground3->SetMesh("resource/model/x/taiya.x");
+	playground3->SetTexture("resource/texture/game/taiya_x.jpg");
+	playground3->SetPositionPatern(2);
 
 #ifdef NETWORK_HOST_MODE
 

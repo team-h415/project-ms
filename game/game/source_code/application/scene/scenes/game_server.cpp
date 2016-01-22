@@ -79,6 +79,8 @@ void GameServer::Initialize()
 	game_bgm_ = Sound::LoadSound("resource/sound/bgm/game/game_bgm.wav");
 	Sound::StockSE("resource/sound/se/game/countdown.wav");
 	Sound::StockSE("resource/sound/se/game/start.wav");
+	Sound::StockSE("resource/sound/se/game/gameEnd.wav");
+	Sound::StockSE("resource/sound/se/matching/standby_ok.wav");
 	for(int i = 0; i < 7; i++)
 	{
 		Sound::StockSE("resource/sound/se/game/shootGrandfather.wav");
@@ -92,6 +94,10 @@ void GameServer::Initialize()
 	for(int i = 0; i < MAX_GUEST; i++)
 	{
 		Sound::StockSE("resource/sound/se/game/footstep.wav");
+	}
+	for(int i = 0; i < 5; i++)
+	{
+		Sound::StockSE("resource/sound/se/game/warp.wav");
 	}
 
 	//-------------------------------------
@@ -117,6 +123,12 @@ void GameServer::Update()
 {
 	// FPS
 	font_->Add("FPS:%d :", Fps::GetFps());
+
+	// コンフィグリロード
+	if(KeyBoard::isTrigger(DIK_R))
+	{
+		Config::SetupConfig();
+	}
 
 	// 状態分岐
 	switch(server_state_)
@@ -263,6 +275,8 @@ void GameServer::Matching()
 				ZeroMemory(&send_data, sizeof(send_data));
 				send_data.type_ = DATA_SPRITE2D_TEX;
 				NetworkHost::SendTo(DELI_MULTI, send_data);
+				// SE
+				Sound::LoadAndPlaySE("resource/sound/se/matching/standby_ok.wav");
 			}
 			break;
 		case STATE_GO_GAME_WAITING:
@@ -301,25 +315,29 @@ void GameServer::Game()
 	// デバッグ用遷移勝者じじい
 	if(KeyBoard::isTrigger(DIK_9))
 	{
-		// シーンチェンジ命令送信
+		time_ = 60 * 5;
+		scene_state_ = STATE_GAME_END;
+
 		ZeroMemory(&send_data, sizeof(send_data));
-		send_data.type_ = DATA_SCENE_CHANGE_RESULT;
+		send_data.type_ = DATA_GAME_WINNER;
 		send_data.id_ = 0;
 		NetworkHost::SendTo(DELI_MULTI, send_data);
-		// サーバーステート変更
-		ChangeServerState(STATE_RESULT);
+	
+		Sound::LoadAndPlaySE("resource/sound/se/game/gameEnd.wav");
 		return;
 	}
 	// デバッグ用遷移勝者ガキ
 	else if(KeyBoard::isTrigger(DIK_0))
 	{
-		// シーンチェンジ命令送信
+		time_ = 60 * 5;
+		scene_state_ = STATE_GAME_END;
+
 		ZeroMemory(&send_data, sizeof(send_data));
-		send_data.type_ = DATA_SCENE_CHANGE_RESULT;
+		send_data.type_ = DATA_GAME_WINNER;
 		send_data.id_ = 1;
 		NetworkHost::SendTo(DELI_MULTI, send_data);
-		// サーバーステート変更
-		ChangeServerState(STATE_RESULT);
+
+		Sound::LoadAndPlaySE("resource/sound/se/game/gameEnd.wav");
 		return;
 	}
 
@@ -332,9 +350,15 @@ void GameServer::Game()
 			{
 				ZeroMemory(&send_data, sizeof(send_data));
 				send_data.type_ = DATA_UI_PARAM;
+				send_data.ui_param_.value_i_ = child_remaining_count_;
+				strcpy_s(send_data.name_, MAX_NAME_LEN, "child");
+				NetworkHost::SendTo(DELI_MULTI, send_data);
+
+				ZeroMemory(&send_data, sizeof(send_data));
+				send_data.type_ = DATA_UI_PARAM;
 				send_data.object_param_.type_ = OBJ_UI;
 				strcpy_s(send_data.name_, MAX_NAME_LEN, "time");
-				send_data.ui_param_.value_i_ = 180;
+				send_data.ui_param_.value_i_ = Config::GAME_TIME;
 				NetworkHost::SendTo(DELI_MULTI, send_data);
 
 				int access_guest = NetworkHost::access_guest();
@@ -408,7 +432,7 @@ void GameServer::Game()
 					}
 				}
 				scene_state_ = STATE_COUNTDOWN;
-				time_ = 60 * (5 + 4);
+				time_ = 200;
 				return;
 			}
 			break;
@@ -422,24 +446,24 @@ void GameServer::Game()
 					send_data.type_ = DATA_UI_PARAM;
 					send_data.object_param_.type_ = OBJ_UI;
 					strcpy_s(send_data.name_, MAX_NAME_LEN, "countdown");
-					send_data.ui_param_.value_i_ = 4;
+					send_data.ui_param_.value_i_ = 0;
 					NetworkHost::SendTo(DELI_MULTI, send_data);
 
 					scene_state_ = STATE_RUN;
-					time_ = 60 * GAME_TIME;
+					time_ = 60 * Config::GAME_TIME;
 
 					Sound::LoadAndPlaySE("resource/sound/se/game/start.wav");
 				}
-				else if(time_ <= (60 * 4))
+				else if(time_ <= 180)
 				{
-					ZeroMemory(&send_data, sizeof(send_data));
-					send_data.type_ = DATA_UI_PARAM;
-					send_data.object_param_.type_ = OBJ_UI;
-					strcpy_s(send_data.name_, MAX_NAME_LEN, "countdown");
-					send_data.ui_param_.value_i_ = time_ / 60;
-					NetworkHost::SendTo(DELI_MULTI, send_data);
 					if(time_ % 60 == 0)
 					{
+						ZeroMemory(&send_data, sizeof(send_data));
+						send_data.type_ = DATA_UI_PARAM;
+						send_data.object_param_.type_ = OBJ_UI;
+						strcpy_s(send_data.name_, MAX_NAME_LEN, "countdown");
+						send_data.ui_param_.value_i_ = time_ / 60;
+						NetworkHost::SendTo(DELI_MULTI, send_data);
 						Sound::LoadAndPlaySE("resource/sound/se/game/countdown.wav");
 					}
 				}
@@ -469,6 +493,7 @@ void GameServer::Game()
 				}
 
 				int real_time = time_ / 60;
+				real_time++;
 				switch(real_time)
 				{
 					case 3:
@@ -576,7 +601,6 @@ void GameServer::Game()
 						}
 						break;
 
-					case 1:
 					default:
 						// プレイヤー見てる
 						for(int i = 0; i < MAX_GUEST; i++)
@@ -654,6 +678,8 @@ void GameServer::Game()
 					send_data.type_ = DATA_GAME_WINNER;
 					send_data.id_ = 0;
 					NetworkHost::SendTo(DELI_MULTI, send_data);
+
+					Sound::LoadAndPlaySE("resource/sound/se/game/gameEnd.wav");
 				}
 				// 子供全滅
 				if(child_remaining_count_ == 0)
@@ -679,6 +705,8 @@ void GameServer::Game()
 						send_data.type_ = DATA_GAME_WINNER;
 						send_data.id_ = 0;
 						NetworkHost::SendTo(DELI_MULTI, send_data);
+
+						Sound::LoadAndPlaySE("resource/sound/se/game/gameEnd.wav");
 					}
 				}
 
@@ -694,7 +722,7 @@ void GameServer::Game()
 				NetworkHost::SendTo(DELI_MULTI, send_data);
 
 				// アナウンスチェック
-				if(fort_announce_state_ * 0.01f > life)
+				if(fort_announce_state_ * 0.01f >= life)
 				{
 					// ゲストへアナウンス告知命令
 					std::string name = "message_fort_" + std::to_string(100 - fort_announce_state_);
@@ -739,7 +767,18 @@ void GameServer::Game()
 					fort_announce_state_ = 75;
 					now_target_fort_++;
 					scene_state_ = STATE_FORT_OUT;
-					child_remaining_count_ = MAX_CHILD_REMAINING_LIVE;
+					child_remaining_count_ = Config::MAX_CHILD_REMAINING_LIVE;
+
+					ZeroMemory(&send_data, sizeof(send_data));
+					send_data.type_ = DATA_UI_PARAM;
+					send_data.ui_param_.value_i_ = child_remaining_count_;
+					strcpy_s(send_data.name_, MAX_NAME_LEN, "child");
+					NetworkHost::SendTo(DELI_MULTI, send_data);
+
+					// じいちゃん完全回復
+					std::string grandfather_str = "player" + std::to_string(0);
+					FbxGrandfather *grandfather(dynamic_cast<FbxGrandfather*>(object_manager_->Get(grandfather_str)));
+					grandfather->SetLife(1.0f);
 				}
 			}
 			break;
@@ -779,6 +818,8 @@ void GameServer::Game()
 						send_data.type_ = DATA_GAME_WINNER;
 						send_data.id_ = 1;
 						NetworkHost::SendTo(DELI_MULTI, send_data);
+
+						Sound::LoadAndPlaySE("resource/sound/se/game/gameEnd.wav");
 					}
 					else
 					{
@@ -959,10 +1000,10 @@ void GameServer::Game()
 				if(time_ < 0)
 				{
 					// シーンチェンジ命令送信
+					ChangeServerState(STATE_RESULT);
 					ZeroMemory(&send_data, sizeof(send_data));
 					send_data.type_ = DATA_SCENE_CHANGE_RESULT;
 					NetworkHost::SendTo(DELI_MULTI, send_data);
-					ChangeServerState(STATE_RESULT);
 				}
 			}
 			break;
@@ -991,6 +1032,7 @@ void GameServer::Result()
 
 	font_->Add("シーン名:");
 	font_->Add("Result\n");
+	font_->Add("Timer:%d\n", time_);
 	if(KeyBoard::isTrigger(DIK_RETURN))
 	{
 		ChangeServerState(STATE_MATCHING);
@@ -1001,6 +1043,14 @@ void GameServer::Result()
 		return;
 	}
 
+	int access_guest = NetworkHost::access_guest();
+	for(int i = 0; i < access_guest; i++)
+	{
+		if(!guest_scene_change_[i])
+		{
+			return;
+		}
+	}
 	time_++;
 	if(time_ > (60 * 5))
 	{
@@ -1031,11 +1081,11 @@ void GameServer::MatchingGrandfather()
 
 
 	// 速度倍率設定
-	float grandfather_speed(CHARANCTER_MOVESPEED);
+	float grandfather_speed(Config::GRANDFATHER_MOVESPEED);
 	// ダッシュ
 	if(GamePad::isPress(0, PAD_BUTTON_11))
 	{
-		grandfather_speed = CHARANCTER_MOVESPEED * 2.0f;
+		grandfather_speed = Config::GRANDFATHER_MOVESPEED * 2.0f;
 		// ダッシュエフェクト
 		if(dash_effect_timer_ % 10 == 0)
 		{
@@ -1074,7 +1124,7 @@ void GameServer::MatchingGrandfather()
 		NetworkHost::SendTo((DELI_TYPE)0, send_data);
 	}
 	// 向き変更
-	grandfather_rotation.y_ += GamePad::isStick(0).rsx_ * CHAR_ROT_SPEED;
+	grandfather_rotation.y_ += GamePad::isStick(0).rsx_ * Config::CHAR_ROT_SPEED_LR;
 	if(grandfather_rotation.y_ > D3DX_PI)
 	{
 		grandfather_rotation.y_ -= D3DX_PI * 2.0f;
@@ -1117,7 +1167,7 @@ void GameServer::MatchingGrandfather()
 	Camera *main_camera = camera_manager_->Get("camera0");
 	// カメラ向き更新
 	D3DXVECTOR3 camera_rotation(main_camera->rotation());
-	camera_rotation.x += GamePad::isStick(0).rsy_ * CHAR_ROT_SPEED;
+	camera_rotation.x += GamePad::isStick(0).rsy_ * Config::CHAR_ROT_SPEED_UD;
 	if(camera_rotation.x > CAMERA_ROT_X_LIMIT)
 	{
 		camera_rotation.x = CAMERA_ROT_X_LIMIT;
@@ -1213,14 +1263,16 @@ void GameServer::MatchingGrandfather()
 		// 発射ループ
 		for(int i = 0; i < 3; i++)
 		{
-			// カメラの回転Xを利用
-			bullet_param.rotation_.x_ = camera_rotation.x;
-			float range = MyMath::Random_Range(-5, 5) * 0.01f;
-			bullet_param.rotation_.y_ += range;
-
 			// バレット発砲
 			Bullet* bullet = dynamic_cast<Bullet*>(object_manager_->GetUseOffLayer(LAYER_BULLET));
-			bullet->Fire(bullet_param);
+			if(bullet != nullptr)
+			{
+				// カメラの回転Xを利用
+				bullet_param.rotation_.x_ = camera_rotation.x;
+				float range = MyMath::Random_Range(-5, 5) * 0.01f;
+				bullet_param.rotation_.y_ += range;
+				bullet->Fire(bullet_param);
+			}
 		}
 
 		//-------------------------------------
@@ -1234,35 +1286,37 @@ void GameServer::MatchingGrandfather()
 	//-------------------------------------
 	if(GamePad::isTrigger(0, PAD_BUTTON_6))
 	{
-
-		OBJECT_PARAMETER_DESC bomb_param;
-		bomb_param.layer_ = LAYER_BOMB;
-		bomb_param.parent_layer_ = LAYER_MODEL_GRANDFATHER;
-		bomb_param.position_ = grandfather_position;
-		bomb_param.position_.y_ += 0.6f;
-		bomb_param.rotation_ = grandfather_rotation;
-
-		// カメラの回転Xを利用
-		bomb_param.rotation_.x_ = camera_rotation.x;
-		float range = MyMath::Random_Range(-5, 5) * 0.01f;
-		bomb_param.rotation_.y_ += range;
-
-		// エフェクト再生
-		send_data.type_ = DATA_OBJ_PARAM;
-		send_data.object_param_.type_ = OBJ_EFFECT;
-		send_data.object_param_.position_.x_ = bomb_param.position_.x_;
-		send_data.object_param_.position_.y_ = bomb_param.position_.y_;
-		send_data.object_param_.position_.z_ = bomb_param.position_.z_;
-		send_data.object_param_.rotation_ = {0.0f, grandfather_rotation.y_, 0.0f};
-		strcpy_s(send_data.name_, MAX_NAME_LEN, "water");
-		NetworkHost::SendTo(DELI_MULTI, send_data);
-
 		Bomb* bomb = dynamic_cast<Bomb*>(object_manager_->GetUseOffLayer(LAYER_BOMB));
-		bomb->Fire(bomb_param);
+		if(bomb != nullptr)
+		{
+			OBJECT_PARAMETER_DESC bomb_param;
+			bomb_param.layer_ = LAYER_BOMB;
+			bomb_param.parent_layer_ = LAYER_MODEL_GRANDFATHER;
+			bomb_param.position_ = grandfather_position;
+			bomb_param.position_.y_ += 0.6f;
+			bomb_param.rotation_ = grandfather_rotation;
 
-		//-------------------------------------
-		// おじの弾発射SE再生
-		Sound::LoadAndPlaySE("resource/sound/se/game/shootGrandfather.wav");
+			// カメラの回転Xを利用
+			bomb_param.rotation_.x_ = camera_rotation.x;
+			float range = MyMath::Random_Range(-5, 5) * 0.01f;
+			bomb_param.rotation_.y_ += range;
+
+			// エフェクト再生
+			send_data.type_ = DATA_OBJ_PARAM;
+			send_data.object_param_.type_ = OBJ_EFFECT;
+			send_data.object_param_.position_.x_ = bomb_param.position_.x_;
+			send_data.object_param_.position_.y_ = bomb_param.position_.y_;
+			send_data.object_param_.position_.z_ = bomb_param.position_.z_;
+			send_data.object_param_.rotation_ = {0.0f, grandfather_rotation.y_, 0.0f};
+			strcpy_s(send_data.name_, MAX_NAME_LEN, "water");
+			NetworkHost::SendTo(DELI_MULTI, send_data);
+
+			bomb->Fire(bomb_param);
+
+			//-------------------------------------
+			// おじの弾発射SE再生
+			Sound::LoadAndPlaySE("resource/sound/se/game/shootGrandfather.wav");
+		}
 	}
 
 	//------------------------------------------------
@@ -1346,9 +1400,9 @@ void GameServer::MatchingChild()
 		// プレイヤーを地形に沿って移動させる
 		//-------------------------------------
 		Vector3 child_position_old(child_position);
-		float child_speed(CHARANCTER_MOVESPEED);
+		float child_speed(Config::CHILD_MOVESPEED);
 		// 向き
-		child_rotation.y_ += GamePad::isStick(i).rsx_ * CHAR_ROT_SPEED;
+		child_rotation.y_ += GamePad::isStick(i).rsx_ * Config::CHAR_ROT_SPEED_LR;
 		if(child_rotation.y_ > D3DX_PI)
 		{
 			child_rotation.y_ -= D3DX_PI * 2.0f;
@@ -1398,7 +1452,7 @@ void GameServer::MatchingChild()
 		D3DXVECTOR3 camera_rotation(main_camera->rotation());
 
 		// 向き
-		camera_rotation.x += GamePad::isStick(i).rsy_ * CHAR_ROT_SPEED;
+		camera_rotation.x += GamePad::isStick(i).rsy_ * Config::CHAR_ROT_SPEED_UD;
 		if(camera_rotation.x > CAMERA_ROT_X_LIMIT)
 		{
 			camera_rotation.x = CAMERA_ROT_X_LIMIT;
@@ -1468,39 +1522,42 @@ void GameServer::MatchingChild()
 
 		if(GamePad::isPress(i, PAD_BUTTON_8) && shot_late_[i] == 0)
 		{
-			shot_late_[i] = 10;
-
-			OBJECT_PARAMETER_DESC bullet_param;
-			bullet_param.layer_ = LAYER_BULLET;
-			bullet_param.parent_layer_ = LAYER_MODEL_CHILD;
-			bullet_param.position_ = child_position;
-			bullet_param.position_.x_ += sinf(child_rotation.y_) * 0.8f;
-			bullet_param.position_.z_ += cosf(child_rotation.y_) * 0.8f;
-			bullet_param.position_.y_ += 0.7f;
-			bullet_param.rotation_ = child_rotation;
-			bullet_param.scaling_ = {1.0f, 1.0f, 1.0f};
-
-			// カメラの回転Xを利用
-			bullet_param.rotation_.x_ = camera_rotation.x;
-
-			// バレット発砲
 			Bullet* bullet = dynamic_cast<Bullet*>(object_manager_->GetUseOffLayer(LAYER_BULLET));
-			bullet->Fire(bullet_param);
+			if(bullet != nullptr)
+			{
+				shot_late_[i] = 10;
 
-			// エフェクト再生
-			send_data.type_ = DATA_OBJ_PARAM;
-			send_data.object_param_.type_ = OBJ_EFFECT;
-			send_data.object_param_.position_.x_ = bullet_param.position_.x_;
-			send_data.object_param_.position_.y_ = bullet_param.position_.y_;
-			send_data.object_param_.position_.z_ = bullet_param.position_.z_;
-			send_data.object_param_.rotation_ = {0.0f, child_rotation.y_, 0.0f};
-			strcpy_s(send_data.name_, MAX_NAME_LEN, "water");
-			NetworkHost::SendTo(DELI_MULTI, send_data);
+				OBJECT_PARAMETER_DESC bullet_param;
+				bullet_param.layer_ = LAYER_BULLET;
+				bullet_param.parent_layer_ = LAYER_MODEL_CHILD;
+				bullet_param.position_ = child_position;
+				bullet_param.position_.x_ += sinf(child_rotation.y_) * 0.8f;
+				bullet_param.position_.z_ += cosf(child_rotation.y_) * 0.8f;
+				bullet_param.position_.y_ += 0.7f;
+				bullet_param.rotation_ = child_rotation;
+				bullet_param.scaling_ = {1.0f, 1.0f, 1.0f};
 
-			//-------------------------------------
-			// 弾発射SE再生
-			//-------------------------------------
-			Sound::LoadAndPlaySE("resource/sound/se/game/shootChild.wav");
+				// カメラの回転Xを利用
+				bullet_param.rotation_.x_ = camera_rotation.x;
+
+				// バレット発砲
+				bullet->Fire(bullet_param);
+
+				// エフェクト再生
+				send_data.type_ = DATA_OBJ_PARAM;
+				send_data.object_param_.type_ = OBJ_EFFECT;
+				send_data.object_param_.position_.x_ = bullet_param.position_.x_;
+				send_data.object_param_.position_.y_ = bullet_param.position_.y_;
+				send_data.object_param_.position_.z_ = bullet_param.position_.z_;
+				send_data.object_param_.rotation_ = {0.0f, child_rotation.y_, 0.0f};
+				strcpy_s(send_data.name_, MAX_NAME_LEN, "water");
+				NetworkHost::SendTo(DELI_MULTI, send_data);
+
+				//-------------------------------------
+				// 弾発射SE再生
+				//-------------------------------------
+				Sound::LoadAndPlaySE("resource/sound/se/game/shootChild.wav");
+			}
 		}
 
 		//------------------------------------------------
@@ -1598,14 +1655,16 @@ void GameServer::GameGrandfather()
 			send_data.object_param_.position_.y_ = grandfather_position.y_;
 			send_data.object_param_.position_.z_ = grandfather_position.z_;
 			NetworkHost::SendTo(DELI_MULTI, send_data);
+
+			Sound::LoadAndPlaySE("resource/sound/se/game/warp.wav");
 		}
 	}
 
 	// じじいダッシュ
-	float grandfather_speed(CHARANCTER_MOVESPEED);
+	float grandfather_speed(Config::GRANDFATHER_MOVESPEED);
 	if(GamePad::isPress(GAMEPAD_GRANDFATHER, PAD_BUTTON_11))
 	{
-		grandfather_speed = CHARANCTER_MOVESPEED * 2.0f;
+		grandfather_speed = Config::GRANDFATHER_MOVESPEED * 2.0f;
 		// デバフ
 		grandfather_speed *= grandfather->GetDebuffPower();
 		// ダッシュエフェクト
@@ -1651,7 +1710,7 @@ void GameServer::GameGrandfather()
 	if(scene_state_ == STATE_RUN)
 	{
 		// 向き
-		grandfather_rotation.y_ += GamePad::isStick(0).rsx_ * CHAR_ROT_SPEED;
+		grandfather_rotation.y_ += GamePad::isStick(0).rsx_ * Config::CHAR_ROT_SPEED_LR;
 		if(grandfather_rotation.y_ > D3DX_PI)
 		{
 			grandfather_rotation.y_ -= D3DX_PI * 2.0f;
@@ -1694,7 +1753,7 @@ void GameServer::GameGrandfather()
 	D3DXVECTOR3 camera_rotation(main_camera->rotation());
 
 	// 向き
-	camera_rotation.x += GamePad::isStick(0).rsy_ * CHAR_ROT_SPEED;
+	camera_rotation.x += GamePad::isStick(0).rsy_ * Config::CHAR_ROT_SPEED_UD;
 	if(camera_rotation.x > CAMERA_ROT_X_LIMIT)
 	{
 		camera_rotation.x = CAMERA_ROT_X_LIMIT;
@@ -1766,7 +1825,7 @@ void GameServer::GameGrandfather()
 	shot_late_[0]--;
 	shot_late_[0] = std::max<int>(shot_late_[0], 0);
 
-	if(GamePad::isPress(0, PAD_BUTTON_8) && watergauge >= GRANDFATHER_SUB_BULLET_WATERGAUGE && shot_late_[0] == 0)
+	if(GamePad::isPress(0, PAD_BUTTON_8) && watergauge >= Config::GRANDFATHER_SUB_BULLET_WATERGAUGE && shot_late_[0] == 0)
 	{
 		if(scene_state_ == STATE_RUN)
 		{
@@ -1803,13 +1862,16 @@ void GameServer::GameGrandfather()
 
 				// バレット発砲
 				Bullet* bullet = dynamic_cast<Bullet*>(object_manager_->GetUseOffLayer(LAYER_BULLET));
-				bullet->Fire(bullet_param);
+				if(bullet != nullptr)
+				{
+					bullet->Fire(bullet_param);
+				}
 			}
 
 			//-------------------------------------
 			// 水ゲージを減少させる
 			//-------------------------------------
-			watergauge -= GRANDFATHER_SUB_BULLET_WATERGAUGE;
+			watergauge -= Config::GRANDFATHER_SUB_BULLET_WATERGAUGE;
 			watergauge = std::max<float>(watergauge, 0.0f);
 			grandfather->SetWaterGauge(watergauge);
 
@@ -1823,45 +1885,48 @@ void GameServer::GameGrandfather()
 	//-------------------------------------
 	// ボム発射
 	//-------------------------------------
-	if(GamePad::isTrigger(0, PAD_BUTTON_6) && watergauge >= GRANDFATHER_SUB_BOMB_WATERGAUGE)
+	if(GamePad::isTrigger(0, PAD_BUTTON_6) && watergauge >= Config::GRANDFATHER_SUB_BOMB_WATERGAUGE)
 	{
 		if(scene_state_ == STATE_RUN)
 		{
-			OBJECT_PARAMETER_DESC bomb_param;
-			bomb_param.layer_ = LAYER_BOMB;
-			bomb_param.parent_layer_ = LAYER_MODEL_GRANDFATHER;
-			bomb_param.position_ = grandfather_position;
-			bomb_param.position_.y_ += 0.6f;
-			bomb_param.rotation_ = grandfather_rotation;
-
-			// カメラの回転Xを利用
-			bomb_param.rotation_.x_ = camera_rotation.x;
-			float range = MyMath::Random_Range(-5, 5) * 0.01f;
-			bomb_param.rotation_.y_ += range;
-
-			// エフェクト再生
-			send_data.type_ = DATA_OBJ_PARAM;
-			send_data.object_param_.type_ = OBJ_EFFECT;
-			send_data.object_param_.position_.x_ = bomb_param.position_.x_;
-			send_data.object_param_.position_.y_ = bomb_param.position_.y_;
-			send_data.object_param_.position_.z_ = bomb_param.position_.z_;
-			send_data.object_param_.rotation_ = {0.0f, grandfather_rotation.y_, 0.0f};
-			strcpy_s(send_data.name_, MAX_NAME_LEN, "water");
-			NetworkHost::SendTo(DELI_MULTI, send_data);
-
 			Bomb* bomb = dynamic_cast<Bomb*>(object_manager_->GetUseOffLayer(LAYER_BOMB));
-			bomb->Fire(bomb_param);
+			if(bomb != nullptr)
+			{
+				OBJECT_PARAMETER_DESC bomb_param;
+				bomb_param.layer_ = LAYER_BOMB;
+				bomb_param.parent_layer_ = LAYER_MODEL_GRANDFATHER;
+				bomb_param.position_ = grandfather_position;
+				bomb_param.position_.y_ += 0.6f;
+				bomb_param.rotation_ = grandfather_rotation;
 
-			//-------------------------------------
-			// 水ゲージを減少させる
-			//-------------------------------------
-			watergauge -= GRANDFATHER_SUB_BOMB_WATERGAUGE;
-			watergauge = std::max<float>(watergauge, 0.0f);
-			grandfather->SetWaterGauge(watergauge);
+				// カメラの回転Xを利用
+				bomb_param.rotation_.x_ = camera_rotation.x;
+				float range = MyMath::Random_Range(-5, 5) * 0.01f;
+				bomb_param.rotation_.y_ += range;
 
-			//-------------------------------------
-			// おじの弾発射SE再生
-			Sound::LoadAndPlaySE("resource/sound/se/game/shootGrandfather.wav");
+				// エフェクト再生
+				send_data.type_ = DATA_OBJ_PARAM;
+				send_data.object_param_.type_ = OBJ_EFFECT;
+				send_data.object_param_.position_.x_ = bomb_param.position_.x_;
+				send_data.object_param_.position_.y_ = bomb_param.position_.y_;
+				send_data.object_param_.position_.z_ = bomb_param.position_.z_;
+				send_data.object_param_.rotation_ = {0.0f, grandfather_rotation.y_, 0.0f};
+				strcpy_s(send_data.name_, MAX_NAME_LEN, "water");
+				NetworkHost::SendTo(DELI_MULTI, send_data);
+
+				bomb->Fire(bomb_param);
+
+				//-------------------------------------
+				// 水ゲージを減少させる
+				//-------------------------------------
+				watergauge -= Config::GRANDFATHER_SUB_BOMB_WATERGAUGE;
+				watergauge = std::max<float>(watergauge, 0.0f);
+				grandfather->SetWaterGauge(watergauge);
+
+				//-------------------------------------
+				// おじの弾発射SE再生
+				Sound::LoadAndPlaySE("resource/sound/se/game/shootGrandfather.wav");
+			}
 		}
 	}
 
@@ -1874,7 +1939,10 @@ void GameServer::GameGrandfather()
 		life = 0.0f;
 	}
 	// HP回復
-	life += CHILD_RECOVER_HP;
+	if(scene_state_ == STATE_RUN)
+	{
+		life += Config::GRANDFATHER_RECOVER_HP;
+	}
 	life = std::max<float>(life, 0.0f);
 	life = std::min<float>(life, 1.0f);
 	grandfather->SetLife(life);
@@ -1906,7 +1974,7 @@ void GameServer::GameGrandfather()
 		strcpy_s(send_data.name_, MAX_NAME_LEN, "SpeedDown");
 		NetworkHost::SendTo(DELI_MULTI, send_data);
 	}
-	if(life < SHIELD_SWITCH_LIFE && shield_flg_ == true && scene_state_ == STATE_RUN)
+	if(life <= Config::SHIELD_OFF_LIFE && shield_flg_ == true && scene_state_ == STATE_RUN)
 	{
 		// シールドOFF
 		XFort* fort = dynamic_cast<XFort*>(object_manager_->Get("fort" + std::to_string(now_target_fort_)));
@@ -1939,7 +2007,7 @@ void GameServer::GameGrandfather()
 		strcpy_s(send_data.name_, MAX_NAME_LEN, name.c_str());
 		NetworkHost::SendTo(DELI_MULTI, send_data);
 	}
-	else if(life >= SHIELD_SWITCH_LIFE && shield_flg_ == false && scene_state_ == STATE_RUN)
+	else if(life >= Config::SHIELD_ON_LIFE && shield_flg_ == false && scene_state_ == STATE_RUN)
 	{
 		// シールドON
 		XFort* fort = dynamic_cast<XFort*>(object_manager_->Get("fort" + std::to_string(now_target_fort_)));
@@ -2136,7 +2204,7 @@ void GameServer::GameChild()
 		if(!child_death_[my_id] && scene_state_ == STATE_RUN)
 		{
 			// 向き
-			child_rotation.y_ += GamePad::isStick(i).rsx_ * CHAR_ROT_SPEED;
+			child_rotation.y_ += GamePad::isStick(i).rsx_ * Config::CHAR_ROT_SPEED_LR;
 			if(child_rotation.y_ > D3DX_PI)
 			{
 				child_rotation.y_ -= D3DX_PI * 2.0f;
@@ -2146,7 +2214,7 @@ void GameServer::GameChild()
 				child_rotation.y_ += D3DX_PI * 2.0f;
 			}
 			// 移動
-			float child_speed = CHARANCTER_MOVESPEED;
+			float child_speed = Config::CHILD_MOVESPEED;
 			child_position.x_ += (
 				cosf(child_rotation.y_) * GamePad::isStick(i).lsx_ +
 				sinf(-child_rotation.y_) * GamePad::isStick(i).lsy_) * child_speed;
@@ -2180,7 +2248,7 @@ void GameServer::GameChild()
 		D3DXVECTOR3 camera_rotation(main_camera->rotation());
 
 		// 向き
-		camera_rotation.x += GamePad::isStick(i).rsy_ * CHAR_ROT_SPEED;
+		camera_rotation.x += GamePad::isStick(i).rsy_ * Config::CHAR_ROT_SPEED_UD;
 		if(camera_rotation.x > CAMERA_ROT_X_LIMIT)
 		{
 			camera_rotation.x = CAMERA_ROT_X_LIMIT;
@@ -2252,48 +2320,51 @@ void GameServer::GameChild()
 			shot_late_[i]--;
 			shot_late_[i] = std::max<int>(shot_late_[i], 0);
 
-			if(GamePad::isPress(i, PAD_BUTTON_8) && watergauge > 0.0f && shot_late_[i] == 0)
+			if(GamePad::isPress(i, PAD_BUTTON_8) && watergauge >= Config::CHILD_SUB_WATERGAUGE && shot_late_[i] == 0)
 			{
-				shot_late_[i] = 10;
-
-				OBJECT_PARAMETER_DESC bullet_param;
-				bullet_param.layer_ = LAYER_BULLET;
-				bullet_param.parent_layer_ = LAYER_MODEL_CHILD;
-				bullet_param.position_ = child_position;
-				bullet_param.position_.x_ += sinf(child_rotation.y_) * 0.8f;
-				bullet_param.position_.z_ += cosf(child_rotation.y_) * 0.8f;
-				bullet_param.position_.y_ += 0.7f;
-				bullet_param.rotation_ = child_rotation;
-				bullet_param.scaling_ = {1.0f, 1.0f, 1.0f};
-
-				// カメラの回転Xを利用
-				bullet_param.rotation_.x_ = camera_rotation.x;
-
-				// バレット発砲
 				Bullet* bullet = dynamic_cast<Bullet*>(object_manager_->GetUseOffLayer(LAYER_BULLET));
-				bullet->Fire(bullet_param);
+				if(bullet != nullptr)
+				{
+					shot_late_[i] = 10;
 
-				// エフェクト再生
-				send_data.type_ = DATA_OBJ_PARAM;
-				send_data.object_param_.type_ = OBJ_EFFECT;
-				send_data.object_param_.position_.x_ = bullet_param.position_.x_;
-				send_data.object_param_.position_.y_ = bullet_param.position_.y_;
-				send_data.object_param_.position_.z_ = bullet_param.position_.z_;
-				send_data.object_param_.rotation_ = {0.0f, child_rotation.y_, 0.0f};
-				strcpy_s(send_data.name_, MAX_NAME_LEN, "water");
-				NetworkHost::SendTo(DELI_MULTI, send_data);
+					OBJECT_PARAMETER_DESC bullet_param;
+					bullet_param.layer_ = LAYER_BULLET;
+					bullet_param.parent_layer_ = LAYER_MODEL_CHILD;
+					bullet_param.position_ = child_position;
+					bullet_param.position_.x_ += sinf(child_rotation.y_) * 0.8f;
+					bullet_param.position_.z_ += cosf(child_rotation.y_) * 0.8f;
+					bullet_param.position_.y_ += 0.7f;
+					bullet_param.rotation_ = child_rotation;
+					bullet_param.scaling_ = {1.0f, 1.0f, 1.0f};
 
-				//-------------------------------------
-				// 水ゲージを減少させる
-				//-------------------------------------
-				watergauge -= GRANDFATHER_SUB_BULLET_WATERGAUGE;
-				watergauge = std::max<float>(watergauge, 0.0f);
-				child->SetWaterGauge(watergauge);
+					// カメラの回転Xを利用
+					bullet_param.rotation_.x_ = camera_rotation.x;
 
-				//-------------------------------------
-				// 弾発射SE再生
-				//-------------------------------------
-				Sound::LoadAndPlaySE("resource/sound/se/game/shootChild.wav");
+					// バレット発砲
+					bullet->Fire(bullet_param);
+
+					// エフェクト再生
+					send_data.type_ = DATA_OBJ_PARAM;
+					send_data.object_param_.type_ = OBJ_EFFECT;
+					send_data.object_param_.position_.x_ = bullet_param.position_.x_;
+					send_data.object_param_.position_.y_ = bullet_param.position_.y_;
+					send_data.object_param_.position_.z_ = bullet_param.position_.z_;
+					send_data.object_param_.rotation_ = {0.0f, child_rotation.y_, 0.0f};
+					strcpy_s(send_data.name_, MAX_NAME_LEN, "water");
+					NetworkHost::SendTo(DELI_MULTI, send_data);
+
+					//-------------------------------------
+					// 水ゲージを減少させる
+					//-------------------------------------
+					watergauge -= Config::CHILD_SUB_WATERGAUGE;
+					watergauge = std::max<float>(watergauge, 0.0f);
+					child->SetWaterGauge(watergauge);
+
+					//-------------------------------------
+					// 弾発射SE再生
+					//-------------------------------------
+					Sound::LoadAndPlaySE("resource/sound/se/game/shootChild.wav");
+				}
 			}
 		}
 
@@ -2301,11 +2372,17 @@ void GameServer::GameChild()
 		// 子供死亡時制御
 		//-------------------------------------
 		float child_life = child->GetLife();
-		if(child_life < 0 && !child_death_[my_id])
+		if(scene_state_ == STATE_RUN)
+		{
+			child_life += Config::CHILD_RECOVER_HP;
+		}
+		child_life = std::max<float>(child_life, 0.0f);
+		child_life = std::min<float>(child_life, 1.0f);
+		if(child_life <= 0.0f && !child_death_[my_id])
 		{
 			child->PlayAnimation(FbxChild::DOWN);
 			child_death_[my_id] = true;
-			child_respawn_waittime_[my_id] = CHILD_RESPAWN_WAITTIME;
+			child_respawn_waittime_[my_id] = Config::CHILD_RESPAWN_WAITTIME;
 
 			Vector3 child_position = child->parameter().position_;
 
@@ -2358,26 +2435,12 @@ void GameServer::GameChild()
 				child->SetPosition(CHILD_POSITION[my_id + (2 * 4)]);
 				child->SetRotationY(CHILD_ROTATION[my_id + (2 * 4)]);
 			}
+			// ダメージシャットアウトスタート
+			child->StartDamageShutOut();
 		}
 
 		child_respawn_waittime_[my_id]--;
 		child_respawn_waittime_[my_id] = std::max<int>(child_respawn_waittime_[my_id], 0);
-
-		//-------------------------------------
-		// 子供体力自動回復制御
-		//-------------------------------------
-		if(child_life < 1.0f && !child_death_[my_id]){
-			int child_recover_wait_timer = child->GetRecoverWaitTimer();
-
-			if(child_recover_wait_timer > CHILD_RECOVER_WAITE_TIME){
-				float child_life = child->GetLife();
-				child_life += CHILD_RECOVER_HP;
-				std::min<float>(child_life, 1.0f);
-				child->SetLife(child_life);
-			}
-			child_recover_wait_timer++;
-			child->SetRecoverWaitTimer(child_recover_wait_timer);
-		}
 
 		//------------------------------------------------
 		// UIデータ転送
@@ -2430,6 +2493,11 @@ void GameServer::GameChild()
 		send_data.object_param_.rotation_.x_ = child_rotation.x_;
 		send_data.object_param_.rotation_.y_ = child_rotation.y_;
 		send_data.object_param_.rotation_.z_ = child_rotation.z_;
+
+		if(child->GetDrawFlag() == false)
+		{
+			send_data.object_param_.position_.y_ = 10000.0f;
+		}
 
 		NetworkHost::SendTo(DELI_MULTI, send_data);
 
@@ -2715,7 +2783,7 @@ void GameServer::ChangeServerState(SERVER_STATE next)
 				}
 				//---------------------------------------
 				// 子供残機
-				child_remaining_count_ = MAX_CHILD_REMAINING_LIVE;
+				child_remaining_count_ = Config::MAX_CHILD_REMAINING_LIVE;
 				//---------------------------------------
 				// プレイヤー関連パラメータ
 				std::string player_str;

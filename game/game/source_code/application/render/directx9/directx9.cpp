@@ -52,7 +52,14 @@ DirectX9::DirectX9()
 #ifdef NETWORK_HOST_MODE
 	parameters.Windowed = TRUE;
 #else
-	parameters.Windowed = FALSE;
+	if(MessageBox(NULL, "フルスクリーンで起動しますか？\n", "ウィンドウモード", MB_YESNO) == IDYES)
+	{
+		parameters.Windowed = FALSE;
+	}
+	else
+	{
+		parameters.Windowed = TRUE;
+	}
 #endif
 	parameters.EnableAutoDepthStencil = TRUE;
 	parameters.AutoDepthStencilFormat = D3DFMT_D24S8;

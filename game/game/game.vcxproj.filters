@@ -329,19 +329,19 @@
       <Filter>source_code\application\object\objects\bullet</Filter>
     </ClCompile>
     <ClCompile Include="source_code\application\object\objects\sprite\blind.cpp">
-<<<<<<< HEAD
       <Filter>source_code\application\object\objects\sprite</Filter>
     </ClCompile>
     <ClCompile Include="source_code\application\object\objects\model\x\instancing_playground.cpp">
       <Filter>source_code\application\object\objects\model\x</Filter>
     </ClCompile>
     <ClCompile Include="source_code\application\object\objects\sprite\child_remaining_live.cpp">
-=======
->>>>>>> master
       <Filter>source_code\application\object\objects\sprite</Filter>
     </ClCompile>
     <ClCompile Include="source_code\application\object\objects\model\x\instancing_playground.cpp">
       <Filter>source_code\application\object\objects\model\x</Filter>
+    </ClCompile>
+    <ClCompile Include="source_code\application\config\config.cpp">
+      <Filter>source_code\application\config</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -579,12 +579,9 @@
     <ClInclude Include="source_code\application\object\objects\bullet\bomb.h">
       <Filter>source_code\application\object\objects\bullet</Filter>
     </ClInclude>
-<<<<<<< HEAD
     <ClInclude Include="source_code\application\object\objects\sprite\blind.h">
       <Filter>source_code\application\object\objects\sprite</Filter>
     </ClInclude>
-=======
->>>>>>> master
     <ClInclude Include="source_code\application\object\objects\model\x\instancing_playground.h">
       <Filter>source_code\application\object\objects\model\x</Filter>
     </ClInclude>

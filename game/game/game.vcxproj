@@ -96,6 +96,7 @@
     <ClCompile Include="source_code\application\collision\collision.cpp" />
     <ClCompile Include="source_code\application\collision\collision_factory.cpp" />
     <ClCompile Include="source_code\application\collision\collision_manager.cpp" />
+    <ClCompile Include="source_code\application\config\config.cpp" />
     <ClCompile Include="source_code\application\effect\effect.cpp" />
     <ClCompile Include="source_code\application\effect\effect_manager.cpp" />
     <ClCompile Include="source_code\application\font\debug_font.cpp" />

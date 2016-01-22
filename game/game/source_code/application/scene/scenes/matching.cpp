@@ -101,45 +101,7 @@ Matching::~Matching()
 void Matching::Initialize()
 {
 	//-------------------------------------
-<<<<<<< HEAD
 	// カメラ設定
-=======
-	// エフェクトの読み込み
-	//-------------------------------------
-	EFFECT_PARAMETER_DESC effect_param;
-	effect_param.position_ = { 0.0f, 0.0f, 0.0f };
-	effect_param.rotation_ = { 0.0f, 0.0f, 0.0f };
-	effect_param.scaling_ = { 1.0f, 1.0f, 1.0f };
-	effect_param.speed_ = 1.0f;
-
-	effect_manager_->Create(
-		"water",
-		"resource/effect/BulletFire.efk",
-		effect_param);
-
-	effect_manager_->Create(
-		"fieldhit",
-		"resource/effect/FieldHit2.efk",
-		effect_param);
-
-	effect_param.position_ = PORTAL_POSITION;
-	effect_manager_->Create(
-		"marker",
-		"resource/effect/Marker.efk",
-		effect_param);
-
-	effect_manager_->Create(
-		"portal",
-		"resource/effect/Portal2x2.efk",
-		effect_param);
-
-	effect_manager_->Play("water");
-	effect_manager_->Play("portal");
-	effect_manager_->Play("marker");
-	
-	//-------------------------------------
-	// メインカメラ
->>>>>>> master
 	//-------------------------------------
 	D3DXVECTOR3 camera_focus(34.94f, 0.0f, -34.39f);
 	D3DXVECTOR3 camera_pos(camera_focus);
@@ -257,6 +219,7 @@ void Matching::Initialize()
 	effect_param.scaling_ = {1.0f, 1.0f, 1.0f};
 	effect_param.speed_ = 1.0f;
 	effect->SetParameter(effect_param);
+	effect_manager_->Play("water");
 	effect_manager_->Play("marker");
 
 	//-------------------------------------
@@ -374,26 +337,10 @@ void Matching::Update()
 		}
 	}
 
-<<<<<<< HEAD
-=======
-	// 判定外
-	if (!hit_point_field){
-		EFFECT_PARAMETER_DESC effect_param;
-		MyEffect *effect = effect_manager_->Get("marker");
-		effect_param = effect->parameter();
-		effect_param.position_.y_ = -100.0f;
-		effect->SetParameter(effect_param);
-	}
-	
->>>>>>> master
 	//-------------------------------------
 	// 実更新処理
 	//-------------------------------------
 	camera_manager_->Update();
-<<<<<<< HEAD
-=======
-	// オブジェクトの更新の前にカメラの更新した行列適応させておく
->>>>>>> master
 	camera_manager_->Set("MainCamera");
 	object_manager_->Update();
 	effect_manager_->Update();

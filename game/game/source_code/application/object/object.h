@@ -61,6 +61,7 @@ struct OBJECT_PARAMETER_DESC
 	OBJECT_LAYER layer_;
 	OBJECT_LAYER parent_layer_;
 	std::string name_;
+	int ex_id_;
 };
 
 

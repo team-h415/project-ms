@@ -45,7 +45,6 @@ protected:
 	float scaling_max_;
 };
 
-
 #endif //__Blind_H__
 
 

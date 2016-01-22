@@ -77,6 +77,10 @@ void MyEffect::Update(
 void MyEffect::Play(
 	Effekseer::Manager *manager)
 {
+	if(manager == nullptr || effect_ == nullptr)
+	{
+		return;
+	}
 	handle_ = manager->Play(
 		effect_,
 		parameter_.position_.x_,

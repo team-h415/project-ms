@@ -397,23 +397,27 @@ void Bullet::Action(
 			if (target->parameter().layer_ == LAYER_MODEL_GRANDFATHER){
 				FbxGrandfather *father = dynamic_cast<FbxGrandfather*>(target);
 				float life = father->GetLife();
-				life -= GRANDFATHER_DAMAGE;
+				life -= Config::GRANDFATHER_DAMAGE;
 				father->SetLife(life);
 				father->SetRecoverWaitTimer(0);
 				// 自分がダメージくらったら
 				// 目隠しエフェクト発生
-				SetBlind(father->parameter().name_, father->parameter().position_, father->parameter().rotation_);
+				SetBlind(father->parameter().ex_id_, father->parameter().position_, father->parameter().rotation_);
 			}
 			// 子供
-			else if (target->parameter().layer_ == LAYER_MODEL_CHILD){
+			else if (target->parameter().layer_ == LAYER_MODEL_CHILD)
+			{
 				FbxChild *child = dynamic_cast<FbxChild*>(target);
-				float life = child->GetLife();
-				life -= CHILD_DAMAGE;
-				child->SetLife(life);
-				child->SetRecoverWaitTimer(0);
-				// 自分がダメージくらったら
-				// 目隠しエフェクト発生
-				SetBlind(child->parameter().name_, child->parameter().position_, child->parameter().rotation_);
+				if(!child->GetDamageShutOut())
+				{
+					float life = child->GetLife();
+					life -= Config::CHILD_DAMAGE;
+					child->SetLife(life);
+					child->SetRecoverWaitTimer(0);
+					// 自分がダメージくらったら
+					// 目隠しエフェクト発生
+					SetBlind(child->parameter().ex_id_, child->parameter().position_, child->parameter().rotation_);
+				}
 			}
 			// 砦
 			else if (target->parameter().layer_ == LAYER_MODEL_FORT &&
@@ -422,7 +426,7 @@ void Bullet::Action(
 				//parameter_.parent_layer_ == LAYER_MODEL_GRANDFATHER)){
 				XFort *fort = dynamic_cast<XFort*>(target);
 				float life = fort->GetLife();
-				float damage = FORT_DAMAGE;
+				float damage = Config::FORT_DAMAGE;
 				//-------------------------------------
 				// シーン取得
 				Scene *scene = SceneManager::GetCurrentScene();
@@ -430,7 +434,7 @@ void Bullet::Action(
 				// シールド張ってたらその分減衰する
 				if(game_server->shield_flg() == true)
 				{
-					damage *= SHIELD_DAMAGE_ATTENUATION;
+					damage *= Config::SHIELD_DAMAGE_ATTENUATION;
 				}
 				// ダメージ適応
 				life -= damage;
@@ -485,7 +489,7 @@ void Bullet::SetUse(bool flag)
 // SetBlind()
 //-------------------------------------
 void Bullet::SetBlind(
-	const std::string &name,
+	int id,
 	Vector3 player_position,
 	Vector3 player_rotation)
 {
@@ -509,11 +513,6 @@ void Bullet::SetBlind(
 	//-------------------------------------
 	// ブラインドを発生させる
 	//-------------------------------------
-	char char_name[8];
-	char temp;
-	strcpy_s(char_name, 8, name.c_str());
-	temp = char_name[6];
-	int id = atoi(&temp);
 
 	// データ転送用構造体用意
 	NETWORK_DATA send_data;

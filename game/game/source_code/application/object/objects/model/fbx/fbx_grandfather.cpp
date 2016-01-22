@@ -144,7 +144,7 @@ void FbxGrandfather::Action(
 			if (water_supply_enable_)
 			{
 				// êÖï‚ãã
-				water_gauge_ += GRANDFATHER_RECOVER_WATERGAUGE;
+				water_gauge_ += Config::GRANDFATHER_RECOVER_WATERGAUGE;
 				water_gauge_ = std::min<float>(water_gauge_, 1.0f);
 
 				// èdï°ñhé~

@@ -11,11 +11,40 @@
 #ifndef __Config_H__
 #define __Config_H__
 
+//-------------------------------------
+// include
+//-------------------------------------
+#include "../math/vector.h"
+#include <d3dx9.h>
 
-//-=--=--=--=--=--=--=--=--=--=--=--=--=--=--=-//
-// Game / Matching 共通
-//-=--=--=--=--=--=--=--=--=--=--=--=--=--=--=-//
-#define CHARANCTER_MOVESPEED 0.12f
+class Config
+{
+public:
+	static void SetupConfig(void);
+
+	static int GAME_TIME;
+	static float CHAR_ROT_SPEED_LR;
+	static float CHAR_ROT_SPEED_UD;
+	static float GRANDFATHER_MOVESPEED;
+	static float GRANDFATHER_RECOVER_WATERGAUGE;
+	static float GRANDFATHER_SUB_BULLET_WATERGAUGE;
+	static float GRANDFATHER_SUB_BOMB_WATERGAUGE;
+	static float GRANDFATHER_DAMAGE;
+	static float CHILD_MOVESPEED;
+	static float CHILD_RECOVER_WATERGAUGE;
+	static float CHILD_SUB_WATERGAUGE;
+	static float CHILD_DAMAGE;
+	static float GRANDFATHER_RECOVER_HP;
+	static int CHILD_RESPAWN_WAITTIME;
+	static float CHILD_RECOVER_HP;
+	static int CHILD_DAMAGE_SHUT_OUT;
+	static int MAX_CHILD_REMAINING_LIVE;
+	static float FORT_DAMAGE;
+	static float SHIELD_DAMAGE_ATTENUATION;
+	static float SHIELD_OFF_LIFE;
+	static float SHIELD_ON_LIFE;
+};
+
 
 //-=--=--=--=--=--=--=--=--=--=--=--=--=--=--=-//
 // Matching
@@ -43,7 +72,6 @@ static const float MATCHING_ROTATION[5]
 //-------------------------------------
 // ポータル
 #define PORTAL_POSITION { 28.63f, 0.3f, -34.24f }
-//#define PORTAL_POSITION { 20.0f, 0.30f, -30.00f }
 #define PORTAL_DISTANCE 3.0f
 
 
@@ -51,7 +79,6 @@ static const float MATCHING_ROTATION[5]
 // Game
 //-=--=--=--=--=--=--=--=--=--=--=--=--=--=--=-//
 
-#define CHAR_ROT_SPEED (D3DX_PI * 0.015f)			// キャラクター回転速度
 
 //-------------------------------------
 // カメラ
@@ -81,9 +108,9 @@ static const float MATCHING_ROTATION[5]
 #define BOMB_GRAVITY 0.01f
 #define BOMB_TIMER 120
 
-#define GAME_TIMER (100)							// ゲームの時間
 
 #define MAX_BULLET (100)							// バレット最大数
+#define MAX_BOMB (50)								// バレット最大数
 
 #define MESSAGE_DISP_POSITION_Y 500.0f				// メッセージ表示座標
 
@@ -95,12 +122,6 @@ static const float MATCHING_ROTATION[5]
 #define GRANDFATHER_LIFE 1.0f
 // 水ゲージ
 #define GRANDFATHER_WATERGAUGE 1.0f
-#define GRANDFATHER_RECOVER_WATERGAUGE 0.005f
-#define GRANDFATHER_SUB_BULLET_WATERGAUGE 0.01f
-#define GRANDFATHER_SUB_BOMB_WATERGAUGE 0.7f
-
-// くらうダメージ量
-#define GRANDFATHER_DAMAGE 0.05f
 
 // 座標
 static const Vector3 GRANDFATHER_POSITION_STAGE[]
@@ -117,12 +138,6 @@ static const float GRANDFATHER_ROTATION_STAGE[]
 	-0.23f,
 };
 
-// HP自動回復待ち時間
-#define GRANDFATHER_RECOVER_WAITE_TIME 180
-// HP回復量
-#define GRANDFATHER_RECOVER_HP 1.0f / (10.0f * 60.0f)
-
-
 //-------------------------------------
 // 子供
 
@@ -130,10 +145,7 @@ static const float GRANDFATHER_ROTATION_STAGE[]
 #define CHILD_LIFE 1.0f
 // 水ゲージ
 #define CHILD_WATERGAUGE 1.0f
-#define CHILD_RECOVER_WATERGAUGE 0.0015f
-#define CHILD_SUB_WATERGAUGE 0.01f
-// くらうダメージ量
-#define CHILD_DAMAGE 0.2f
+
 // 座標
 static const Vector3 CHILD_POSITION[]
 {
@@ -174,17 +186,6 @@ static const float CHILD_ROTATION[]
 	-2.85f,
 };
 
-// リスポーン待ち時間
-#define CHILD_RESPAWN_WAITTIME 120
-// HP自動回復待ち時間
-#define CHILD_RECOVER_WAITE_TIME 180
-// HP回復量
-#define CHILD_RECOVER_HP 1.0f / (20.0f * 60.0f)
-
-#define MAX_CHILD_REMAINING_LIVE 30
-
-#define GAME_TIME 180							// ゲーム時間（秒）
-
 //-------------------------------------
 // 砦
 
@@ -203,8 +204,6 @@ static const float FORT_LIFE[]
 	1.0f,
 	1.0f,
 };
-// くらうダメージ量
-#define FORT_DAMAGE 0.015f;
 
 
 //-------------------------------------
@@ -212,12 +211,6 @@ static const float FORT_LIFE[]
 
 // 座標
 #define SHIELD_POSITION_Y 1.5f
-
-// ダメージ減衰率
-#define SHIELD_DAMAGE_ATTENUATION 0.2f
-
-// シールドON OFF 切り替えのおじライフ量
-#define SHIELD_SWITCH_LIFE 0.5f
 
 
 //-------------------------------------

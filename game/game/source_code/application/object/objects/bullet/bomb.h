@@ -28,22 +28,18 @@ public:
 	void Draw();
 	void Action(
 		Object *target,
-<<<<<<< HEAD
-		const float range);
+		const float range,
+		D3DXVECTOR3 my_position);
 
 	void SetUse(bool flag);
 
-=======
-		const float range,
-		D3DXVECTOR3 my_position);
->>>>>>> master
 private:
 	void LoadMesh(
 		const std::string &path);
 	void SetTexture(
 		const std::string &path);
 	void SetBlind(
-		const std::string &name,
+		int id,
 		Vector3 player_position,
 		Vector3 player_rotation);
 	Collision *collision_;

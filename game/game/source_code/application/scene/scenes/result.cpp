@@ -72,6 +72,13 @@ void Result::Initialize()
 		background_->SetTexture(
 			"resource/texture/result/win_child.jpg");
 	}
+
+#ifdef NETWORK_HOST_MODE
+#else
+	NETWORK_DATA network_data;
+	network_data.type_ = DATA_COMPLETE_SCENE_CHANGE;
+	NetworkGuest::SendTo(network_data);
+#endif
 }
 
 

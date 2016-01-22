@@ -7,6 +7,7 @@
 //-------------------------------------
 // include
 //-------------------------------------
+#include "../../../../network/network.h"
 #include "../../../../../common/common.h"
 #include "../../../../render/renderer.h"
 #include "../../../../render/directx9/directx9.h"
@@ -155,99 +156,43 @@ InstancingPlayground::InstancingPlayground(
 		world_buffer_[i]->Unlock();
 	}
 
-	// シーンを判定
-	std::string scene_name = SceneManager::GetCurrentSceneName();
-	if (scene_name != "Game" &&	scene_name != "Matching") return;
-
-	// シーン取得
-	Scene *scene = SceneManager::GetCurrentScene();
-
 	// 変数宣言
 	COLLISION_PARAMETER_DESC collision_param;
 	collision_param.position_ = { 0.0f, 0.0f, 0.0f };
 
 	// 定数バッファの数だけあたり判定を生成
 	int collision_count = object_count_[0];
-	for (int i = 0; i < collision_count; i++){
+	for (int i = 0; i < collision_count; i++)
+	{
 		collision_param.offset_ = instance_position1[i];
 		collision_param.range_ = 0.5f;
-		// シーンで分岐
-		if (scene_name == "Game"){
-			Game *game = dynamic_cast<Game*>(scene);
-			game->collision_manager()->Create(
-				this, collision_param);
-		}
-		else{
-			Matching *matching = dynamic_cast<Matching*>(scene);
-			matching->collision_manager()->Create(
-				this, collision_param);
-		}
+
+#ifdef NETWORK_HOST_MODE
+		// 当たり判定作成
+		CollisionManager::Get()->Create(this, collision_param);
+#endif
 	}
 
 	collision_count = object_count_[1];
-	for (int i = 0; i < collision_count; i++){
+	for (int i = 0; i < collision_count; i++)
+	{
 		collision_param.offset_ = instance_position2[i];
 		collision_param.range_ = 1.5f;
-		// シーンで分岐
-		if (scene_name == "Game"){
-			Game *game = dynamic_cast<Game*>(scene);
-			game->collision_manager()->Create(
-				this, collision_param);
-		}
-		else{
-			Matching *matching = dynamic_cast<Matching*>(scene);
-			matching->collision_manager()->Create(
-				this, collision_param);
-		}
+#ifdef NETWORK_HOST_MODE
+		// 当たり判定作成
+		CollisionManager::Get()->Create(this, collision_param);
+#endif
 	}
 
-<<<<<<< HEAD
-	// オブジェクト数
-	object_count_ = sizeof(instance_position) / sizeof(D3DXVECTOR3);;
-	DirectX9Holder::device_->CreateVertexBuffer(
-		sizeof(D3DXMATRIX) * object_count_,
-		D3DUSAGE_WRITEONLY,
-		0,
-		D3DPOOL_MANAGED,
-		&world_buffer_,
-		NULL);
-
-	// 各種滑り台座標設定
-	D3DXMATRIX *world;
-	world_buffer_->Lock(0, 0, (void**)&world, 0);
-	for (int i = 0; i < object_count_; i++)
-	{
-		D3DXMATRIX trans, rotate;
-		D3DXMatrixIdentity(&world[i]);
-		D3DXMatrixIdentity(&trans);
-		D3DXMatrixIdentity(&rotate);
-		D3DXVECTOR3 pos = instance_position[i];
-		D3DXVECTOR3 rot = instance_rotation[i];
-		D3DXMatrixRotationYawPitchRoll(
-			&rotate, rot.y, rot.x, rot.z);
-		D3DXMatrixMultiply(
-			&world[i], &world[i], &rotate);
-		D3DXMatrixTranslation(
-			&trans, pos.x, pos.y, pos.z);
-		D3DXMatrixMultiply(
-			&world[i], &world[i], &trans);
-=======
 	collision_count = object_count_[2];
-	for (int i = 0; i < collision_count; i++){
+	for(int i = 0; i < collision_count; i++)
+	{
 		collision_param.offset_ = instance_position3[i];
 		collision_param.range_ = 0.2f;
-		// シーンで分岐
-		if (scene_name == "Game"){
-			Game *game = dynamic_cast<Game*>(scene);
-			game->collision_manager()->Create(
-				this, collision_param);
-		}
-		else{
-			Matching *matching = dynamic_cast<Matching*>(scene);
-			matching->collision_manager()->Create(
-				this, collision_param);
-		}
->>>>>>> master
+#ifdef NETWORK_HOST_MODE
+		// 当たり判定作成
+		CollisionManager::Get()->Create(this, collision_param);
+#endif
 	}
 }
 

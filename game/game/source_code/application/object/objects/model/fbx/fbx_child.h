@@ -33,12 +33,22 @@ public:
 	FbxChild(
 		const OBJECT_PARAMETER_DESC &parameter);
 	~FbxChild();
+	void Update();
 
 	void SetTexture(const std::string& path);
 	void Action(
 		Object *target,
 		const float range,
 		D3DXVECTOR3 my_position);
+
+	void StartDamageShutOut();
+	bool GetDamageShutOut(){ return damage_shut_out_ ; }
+	bool GetDrawFlag(){ return draw_; }
+
+private:
+	int damage_shut_out_counter_;
+	bool damage_shut_out_;
+	bool draw_;
 };
 
 

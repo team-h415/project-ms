@@ -35,10 +35,7 @@ ChildRemainingLive::ChildRemainingLive(
     figure_offset_ = 0.0f;
     figure_ = 0;
 
-    for (int i = 0; i < 2; i++)
-    {
-        p_sprite2d_[i] = NULL;
-    }
+    p_sprite2d_ = NULL;
 }
 
 
@@ -47,10 +44,7 @@ ChildRemainingLive::ChildRemainingLive(
 //-------------------------------------
 ChildRemainingLive::~ChildRemainingLive()
 {
-    for (int i = 0; i < 2; i++)
-    {
-        SAFE_DELETE(p_sprite2d_[i]);
-    }
+    SAFE_DELETE(p_sprite2d_);
     for (unsigned int num = 0; num < figure_; num++)
     {
         SAFE_DELETE(p_number_[num]);
@@ -74,22 +68,9 @@ void ChildRemainingLive::Initialize()
         0.0f
     };
     remaining_live_design_param.rotation_ = { 0.0f, 0.0f, 0.0f };
-    remaining_live_design_param.scaling_ = { 75.0f, 100.0f, 0.0f };
-    p_sprite2d_[0] = new Sprite2D(remaining_live_design_param);
-    //    p_sprite2d_[0]->SetTexture("resource/texture/game/child_design.png");
-
-    // ×（かける）のデザイン
-    OBJECT_PARAMETER_DESC remaining_live_value_design_param;
-    remaining_live_value_design_param.layer_ = LAYER_SPRITE_2D;
-    remaining_live_value_design_param.position_ = {
-        1150.0f,
-        624.0f,
-        0.0f
-    };
-    remaining_live_value_design_param.rotation_ = { 0.0f, 0.0f, 0.0f };
-    remaining_live_value_design_param.scaling_ = { 75.0f, 100.0f, 0.0f };
-    p_sprite2d_[1] = new Sprite2D(remaining_live_value_design_param);
-    p_sprite2d_[1]->SetTexture("resource/texture/game/kakeru.png");
+    remaining_live_design_param.scaling_ = { 150.0f, 100.0f, 0.0f };
+    p_sprite2d_ = new Sprite2D(remaining_live_design_param);
+    p_sprite2d_->SetTexture("resource/texture/game/zanki.png");
 }
 
 
@@ -98,10 +79,7 @@ void ChildRemainingLive::Initialize()
 //-------------------------------------
 void ChildRemainingLive::Update()
 {
-    for (int i = 0; i < 2; i++)
-    {
-        p_sprite2d_[i]->Update();
-    }
+    p_sprite2d_->Update();
     this->UpdateNumber();
 }
 
@@ -111,10 +89,7 @@ void ChildRemainingLive::Update()
 //-------------------------------------
 void ChildRemainingLive::Draw()
 {
-    for (int i = 0; i < 2; i++)
-    {
-        p_sprite2d_[i]->Draw();
-    }
+    p_sprite2d_->Draw();
     if (p_number_ == NULL){ return; }
 
     for (unsigned int num = 0; num < figure_; num++)

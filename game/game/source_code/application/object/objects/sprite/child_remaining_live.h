@@ -34,7 +34,7 @@ public:
 private:
     void UpdateNumber();
     Number **p_number_;
-    Sprite2D *p_sprite2d_[2];
+    Sprite2D *p_sprite2d_;
     LPDIRECT3DTEXTURE9 texture_;
     float figure_offset_;
     unsigned int figure_;

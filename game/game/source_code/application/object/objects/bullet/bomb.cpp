@@ -356,12 +356,15 @@ void Bomb::Action(
 	if (target->parameter().layer_ == LAYER_MODEL_CHILD)
 	{
 		FbxChild *child = dynamic_cast<FbxChild*>(target);
-		float life = child->GetLife();
-		life -= 10.0f;
-		child->SetLife(life);
-		child->SetRecoverWaitTimer(0);
-		// 目隠し
-		SetBlind(child->parameter().name_, child->parameter().position_, child->parameter().rotation_);
+		if(!child->GetDamageShutOut())
+		{
+			float life = child->GetLife();
+			life -= 10.0f;
+			child->SetLife(life);
+			child->SetRecoverWaitTimer(0);
+			// 目隠し
+			SetBlind(child->parameter().ex_id_, child->parameter().position_, child->parameter().rotation_);
+		}
 	}
 }
 
@@ -378,11 +381,10 @@ void Bomb::SetUse(bool flag)
 // SetBlind()
 //-------------------------------------
 void Bomb::SetBlind(
-	const std::string &name,
+	int id,
 	Vector3 player_position,
 	Vector3 player_rotation)
 {
-<<<<<<< HEAD
 #ifdef NETWORK_HOST_MODE
 	// プレイヤーから見てどの位置に当たったか計算する
 	D3DXVECTOR2 vec = {
@@ -397,72 +399,12 @@ void Bomb::SetBlind(
 
 	float rotato_y = atan2(D3DXVec2Dot(&vec, &vec2), (vec.x * vec2.y - vec.y * vec2.x));
 
-	char char_name[10];
-	char temp;
-	strcpy_s(char_name, 10, name.c_str());
-	temp = char_name[6];
-	int id = atoi(&temp);
-
 	for (int i = 0; i < BLIND_BOMB_NUM; i++)
 	{
 		float rotato_dest_y = rotato_y + float((rand() % 314)-156) * 0.01f;	// 分散
 		float length = BLIND_LEN_MIN + float((rand() % 10)) * 0.1f * (BLIND_LEN_MAX - BLIND_LEN_MIN);
 		float scaling = float((rand() % (BLIND_SCALING_MAX - BLIND_SCALING_MIN) + BLIND_SCALING_MIN)) * BLIND_BOMB_MAGNIFICATION;
 		float rotato_z = float((rand() % 314))*0.01f;
-=======
-	//-------------------------------------
-	// シーン取得
-	Scene *scene = SceneManager::GetCurrentScene();
-	std::string str = SceneManager::GetCurrentSceneName();
-	if (str == "Game"){
-		Game *game = dynamic_cast<Game*>(scene);
-
-		// プレイヤーから見てどの位置に当たったか計算する
-		D3DXVECTOR2 vec = {
-			parameter_.position_.x_ - player_position.x_,
-			parameter_.position_.z_ - player_position.z_ };
-		D3DXVec2Normalize(&vec, &vec);
-
-		D3DXVECTOR2 vec2 = {
-			sinf(player_rotation.y_),
-			cosf(player_rotation.y_) };
-		D3DXVec2Normalize(&vec2, &vec2);
-
-		float rotato_y = atan2(D3DXVec2Dot(&vec, &vec2), (vec.x * vec2.y - vec.y * vec2.x));
-		float rotato_dest_y = rotato_y;	// 分散
-
-		for (int i = 0; i < BLIND_BOMB_NUM; i++){
-			
-			float length = BLIND_LEN_MIN + float((rand() % 10)) * 0.1f * (BLIND_LEN_MAX - BLIND_LEN_MIN);
-			float scaling = float((rand() % (BLIND_SCALING_MAX - BLIND_SCALING_MIN) + BLIND_SCALING_MIN)) * BLIND_BOMB_MAGNIFICATION;
-			float rotato_z = float((rand() % 314)) * 0.01f;
-
-			//-------------------------------------
-			// ブラインドを発生させる
-			//-------------------------------------
-			OBJECT_PARAMETER_DESC blind_param;
-			blind_param.name_ = "blind";
-			blind_param.position_ = {
-				SCREEN_WIDTH * 0.5f + cosf(rotato_dest_y) * length * 1.777f,		// 画面が横長分微調整する
-				SCREEN_HEIGHT * 0.5f - sinf(rotato_dest_y) * length,
-				0.0f };
-
-			blind_param.rotation_ = { 0.0f, 0.0f, rotato_z };
-			blind_param.scaling_ = { scaling, scaling, 0.0f };
-			blind_param.layer_ = LAYER_BLIND;
-
-			Blind* blind = game->object_manager()->GetNoUseBlind();
-			if (blind != nullptr){
-				blind->SetBlind(blind_param);
-			}
-			else{ break; }
-
-			// 最初の１つ目だけちゃんとしたとこに出す
-			rotato_dest_y = rotato_y + float((rand() % 250) - 125) * 0.01f;	// 分散
-
-		}
-	}
->>>>>>> master
 
 		//-------------------------------------
 		// ブラインドを発生させる

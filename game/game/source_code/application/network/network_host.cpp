@@ -66,31 +66,34 @@ void NetworkHost::SendTo(DELI_TYPE deli_type, NETWORK_DATA network_data)
 	ZeroMemory(&send_addr, sizeof(send_addr));
 	send_addr.sin_port = htons(PORT_NUMBER_1);
 	send_addr.sin_family = AF_INET;
-	switch(deli_type)
+	if(deli_type == DELI_MULTI)
 	{
-		case DELI_GRANDFATHER:
-			send_addr.sin_addr.s_addr = guest_addr_[0];
-			break;
-		case DELI_CHILD1:
-			send_addr.sin_addr.s_addr = guest_addr_[1];
-			break;
-		case DELI_CHILD2:
-			send_addr.sin_addr.s_addr = guest_addr_[2];
-			break;
-		case DELI_CHILD3:
-			send_addr.sin_addr.s_addr = guest_addr_[3];
-			break;
-		case DELI_CHILD4:
-			send_addr.sin_addr.s_addr = guest_addr_[4];
-			break;
-		case DELI_MULTI:
-			send_addr.sin_addr.s_addr = inet_addr(MULTICAST_ADDRESS);
-			break;
-		default:
-			return;
+		send_addr.sin_addr.s_addr = inet_addr(MULTICAST_ADDRESS);
 	}
+	else if(deli_type >= 0 && deli_type <= (MAX_GUEST - 1))
+	{
+		if(guest_addr_[deli_type] == 0)
+		{
+			return;
+		}
+		send_addr.sin_addr.s_addr = guest_addr_[deli_type];
+	}
+	else
+	{
+		return;
+	}
+
+#ifdef _DEBUG
+	// ‘—M
+	int c = sendto(socket_data_, (char*)&network_data, sizeof(network_data), 0, (sockaddr*)&send_addr, sizeof(send_addr));
+	if(c == SOCKET_ERROR)
+	{
+		int a = 0;
+	}
+#else
 	// ‘—M
 	sendto(socket_data_, (char*)&network_data, sizeof(network_data), 0, (sockaddr*)&send_addr, sizeof(send_addr));
+#endif
 }
 
 

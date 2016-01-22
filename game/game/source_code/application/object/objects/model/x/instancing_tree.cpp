@@ -138,13 +138,8 @@ InstancingTree::InstancingTree(
 
 	for (int i = 0; i < 3; i++)
 	{
-<<<<<<< HEAD
 		// オブジェクト数
-		object_count_ = 40;
-=======
-		// テスト用オブジェクト数
 		object_count_ = 28;
->>>>>>> master
 		DirectX9Holder::device_->CreateVertexBuffer(
 			sizeof(D3DXVECTOR3) * object_count_,
 			D3DUSAGE_WRITEONLY,

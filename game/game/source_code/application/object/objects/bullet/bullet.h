@@ -39,7 +39,7 @@ private:
 	void SetTexture(
 		const std::string &path);
 	void SetBlind(
-		const std::string &name,
+		int id,
 		Vector3 player_position,
 		Vector3 player_rotation);
 	Collision *collision_;

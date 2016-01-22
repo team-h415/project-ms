@@ -20,7 +20,6 @@
 #include "../../../resource/texture_manager.h"
 
 
-
 //-------------------------------------
 // Blind()
 //-------------------------------------
@@ -226,8 +225,12 @@ void Blind::SetBlind(
 	parameter_.scaling_.y_ *= 0.5f;
 
 	color_ = { 1.0f, 1.0, 1.0f, 1.0f };
-	CalculateVertex();
 
+	// テクスチャランダム設定
+	int set_id = rand() % 4;
+	SetTexture("resource/texture/game/blind_" + std::to_string(set_id) + ".png");
+
+	CalculateVertex();
 
 	// 使用フラグON
 	use_ = true;

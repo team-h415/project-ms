@@ -306,76 +306,56 @@ unsigned __stdcall NetworkGuest::Communication()
 						// 勝者保存
 						winner_ = rec_data.id_;
 						// ゲーム画面に勝敗表示
-						scene_name = scene_manager_->GetCurrentSceneName();
-						if("Game" == scene_name)
+						ObjectManager* object_manager = ObjectManager::Get();
+						if(object_manager == nullptr)
 						{
-							// ゲームクラス取得
-							Game *game = dynamic_cast<Game*>(scene_manager_->GetCurrentScene());
-							if(game == nullptr)
+							continue;
+						}
+						Sprite2D* result_sprite = dynamic_cast<Sprite2D*>(object_manager->Get("result_sprite"));
+						if(result_sprite == nullptr)
+						{
+							continue;
+						}
+						if(winner_ == 0)
+						{
+							// じじい勝利
+							if(id_ == 0)
 							{
-								continue;
-							}
-							Sprite2D* result_sprite = dynamic_cast<Sprite2D*>(game->object_manager()->Get("result_sprite"));
-							if(result_sprite == nullptr)
-							{
-								continue;
-							}
-							if(winner_ == 0)
-							{
-								// じじい勝利
-								if(id_ == 0)
-								{
-									// 自分じじい
-									result_sprite->SetTexture("resource/texture/game/win.png");
-								}
-								else
-								{
-									// 自分子供
-									result_sprite->SetTexture("resource/texture/game/lose.png");
-								}
+								// 自分じじい
+								result_sprite->SetTexture("resource/texture/game/win.png");
 							}
 							else
 							{
-								// 子供勝利
-								if(id_ == 0)
-								{
-									// 自分じじい
-									result_sprite->SetTexture("resource/texture/game/lose.png");
-								}
-								else
-								{
-									// 自分子供
-									result_sprite->SetTexture("resource/texture/game/win.png");
-								}
+								// 自分子供
+								result_sprite->SetTexture("resource/texture/game/lose.png");
 							}
-							result_sprite->SetPosition({SCREEN_WIDTH * 0.5f, SCREEN_HEIGHT * 0.5f, 0.0f});
 						}
+						else
+						{
+							// 子供勝利
+							if(id_ == 0)
+							{
+								// 自分じじい
+								result_sprite->SetTexture("resource/texture/game/lose.png");
+							}
+							else
+							{
+								// 自分子供
+								result_sprite->SetTexture("resource/texture/game/win.png");
+							}
+						}
+						result_sprite->SetPosition({SCREEN_WIDTH * 0.5f, SCREEN_HEIGHT * 0.5f, 0.0f});
 					}
 					break;
 
 				case DATA_OBJ_PARAM:				// オブジェクトのパラメータ情報を送信
-					scene_name = scene_manager_->GetCurrentSceneName();
-					if("Matching" == scene_name)
 					{
-						// マッチングクラス取得
-						Matching *matching = dynamic_cast<Matching*>(scene_manager_->GetCurrentScene());
-						if(matching == nullptr)
-						{
-							continue;
-						}
-						ObjDataAdaptation(matching->object_manager(),
-							matching->camera_manager(), matching->effect_manager(), rec_data);
-					}
-					else if("Game" == scene_name)
-					{
-						// ゲームクラス取得
-						Game *game = dynamic_cast<Game*>(scene_manager_->GetCurrentScene());
-						if(game == nullptr)
-						{
-							continue;
-						}
-						ObjDataAdaptation(game->object_manager(),
-							game->camera_manager(), game->effect_manager(), rec_data);
+						ObjectManager* object_manager = ObjectManager::Get();
+						EffectManager* effect_manager = EffectManager::Get();
+						CameraManager* camera_manager = CameraManager::Get();
+
+						ObjDataAdaptation(object_manager,
+								camera_manager, effect_manager, rec_data);
 					}
 					break;
 
@@ -388,7 +368,7 @@ unsigned __stdcall NetworkGuest::Communication()
 						{
 							continue;
 						}
-						ObjectManager* object_manager = game->object_manager();
+						ObjectManager* object_manager = ObjectManager::Get();
 						if(object_manager == nullptr)
 						{
 							continue;
@@ -465,23 +445,18 @@ unsigned __stdcall NetworkGuest::Communication()
 
 				case DATA_SPRITE2D_TEX:
 					{
-						scene_name = scene_manager_->GetCurrentSceneName();
-						if("Matching" == scene_name)
+						ObjectManager* object_manager = ObjectManager::Get();
+						if(object_manager == nullptr)
 						{
-							// マッチングクラス取得
-							Matching *matching = dynamic_cast<Matching*>(scene_manager_->GetCurrentScene());
-							if(matching == nullptr)
-							{
-								continue;
-							}
-							Sprite2D* sprite = dynamic_cast<Sprite2D*>
-												(matching->object_manager()->Get("standby"));
-							if(sprite == nullptr)
-							{
-								continue;
-							}
-							sprite->SetTexture("resource/texture/matching/ready.png");
+							continue;
 						}
+						Sprite2D* sprite = dynamic_cast<Sprite2D*>
+											(object_manager->Get("standby"));
+						if(sprite == nullptr)
+						{
+							continue;
+						}
+						sprite->SetTexture("resource/texture/matching/ready.png");
 					}
 					break;
 
@@ -563,67 +538,52 @@ void NetworkGuest::ObjDataAdaptation(
 					return;
 				}
 
-				EFFECT_PARAMETER_DESC effect_param;
-				std::string name = rec_data.name_;
-				if(name == "marker")
+				STOCK_EFFECT_PARAM effect_param;
+				effect_param.name_ = rec_data.name_;
+
+				if(effect_param.name_ == "marker")
 				{
-					EFFECT_PARAMETER_DESC effect_param;
-					MyEffect *effect = effect_manager->Get(name);
-					effect_param = effect->parameter();
+					effect_param.state_ = EFFECT_SET_PARAM;
 					effect_param.position_.x_ = rec_data.object_param_.position_.x_;
 					effect_param.position_.y_ = rec_data.object_param_.position_.y_;
 					effect_param.position_.z_ = rec_data.object_param_.position_.z_;
-					effect_param.rotation_ = {0.0f, 0.0f, 0.0f};
 					effect_param.rotation_.y_ = rec_data.object_param_.rotation_.y_;
 					effect_param.scaling_ = {	rec_data.object_param_.rotation_.x_,
 												rec_data.object_param_.rotation_.x_,
 												rec_data.object_param_.rotation_.x_};
-					effect->SetParameter(effect_param);
+					effect_manager->StockEffect(effect_param);
 				}
-				else if(name == "SpeedDown")
+				else if(effect_param.name_ == "SpeedDown")
 				{
-					EFFECT_PARAMETER_DESC effect_param;
-					MyEffect *effect = effect_manager->Get(name);
-					effect_param = effect->parameter();
+					effect_param.state_ = EFFECT_SET_PARAM;
 					effect_param.position_.x_ = rec_data.object_param_.position_.x_;
 					effect_param.position_.y_ = rec_data.object_param_.position_.y_;
 					effect_param.position_.z_ = rec_data.object_param_.position_.z_;
 					effect_param.rotation_ = {0.0f, 0.0f, 0.0f};
-					effect_param.scaling_ = {1.0f, 1.0f, 1.0f};
-					effect_param.speed_ = 1.0f;
-					effect->SetParameter(effect_param);
+					effect_manager->StockEffect(effect_param);
 				}
-				else if(name ==  "shieldin")
+				else if(effect_param.name_ == "shieldin")
 				{
 					if(rec_data.object_param_.ex_id_ == 0)
 					{
 						// シールド起動
-						EFFECT_PARAMETER_DESC effect_param;
-						MyEffect *effect = effect_manager->Get(name);
-						effect_param = effect->parameter();
+						effect_param.state_ = EFFECT_ADD;
 						effect_param.position_.x_ = rec_data.object_param_.position_.x_;
 						effect_param.position_.y_ = rec_data.object_param_.position_.y_;
 						effect_param.position_.z_ = rec_data.object_param_.position_.z_;
 						effect_param.rotation_ = {0.0f, 0.0f, 0.0f};
-						effect_param.scaling_ = {1.0f, 1.0f, 1.0f};
-						effect_param.speed_ = 1.0f;
-						effect->SetParameter(effect_param);
-						effect_manager->Play(name);
+						effect_manager->StockEffect(effect_param);
 					}
 					else
 					{
 						// シールド解放
-						effect_manager->Stop(name);
+						effect_param.state_ = EFFECT_STOP;
+						effect_manager->StockEffect(effect_param);
 					}
 				}
 				else
 				{
-					MyEffect *effect = effect_manager->Get(name);
-					if(effect == nullptr)
-					{
-						return;
-					}
-					effect_param = effect->parameter();
+					effect_param.state_ = EFFECT_ADD;
 					effect_param.position_.x_ = rec_data.object_param_.position_.x_;
 					effect_param.position_.y_ = rec_data.object_param_.position_.y_;
 					effect_param.position_.z_ = rec_data.object_param_.position_.z_;
@@ -632,8 +592,7 @@ void NetworkGuest::ObjDataAdaptation(
 					effect_param.rotation_.y_ = rec_data.object_param_.rotation_.y_;
 					effect_param.rotation_.z_ = rec_data.object_param_.rotation_.z_;
 
-					effect->SetParameter(effect_param);
-					effect_manager->Play(name);
+					effect_manager->StockEffect(effect_param);
 				}
 			}
 			break;
@@ -852,6 +811,7 @@ void NetworkGuest::ObjDataAdaptation(
 				blind_param.rotation_.z_ = rec_data.object_param_.rotation_.z_;
 				blind_param.scaling_.x_ = rec_data.object_param_.rotation_.x_;
 				blind_param.scaling_.y_ = rec_data.object_param_.rotation_.x_;
+
 				// 目隠し起動
 				blind->SetBlind(blind_param);
 			}

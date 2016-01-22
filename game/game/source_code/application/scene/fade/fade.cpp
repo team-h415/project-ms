@@ -68,12 +68,12 @@ void Fade::Update()
 	switch (request_)
 	{
 	case FADE_IN:
-		alpha_ += 1.0f / 60.0f;
+		alpha_ += 1.0f / 30.0f;
 		alpha_ = min(alpha_, 1.0f);
 		break;
 
 	case FADE_OUT:
-		alpha_ -= 1.0f / 60.0f;
+		alpha_ -= 1.0f / 30.0f;
 		alpha_ = max(alpha_, 0.0f);
 		break;
 	}

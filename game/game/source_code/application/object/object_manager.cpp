@@ -164,7 +164,7 @@ Object *ObjectManager::Create(
 			return objects_[i][parameter.name_];
 		}
 	}
-	ASSERT_ERROR("指定したレイヤーが見つからない為、生成できませんでした");
+	//ASSERT_ERROR("指定したレイヤーが見つからない為、生成できませんでした");
 	return nullptr;
 }
 
@@ -179,7 +179,7 @@ Object *ObjectManager::Create(
 			return objects_[i][parameter.name_];
 		}
 	}
-	ASSERT_ERROR("指定したレイヤーが見つからない為、生成できませんでした");
+	//ASSERT_ERROR("指定したレイヤーが見つからない為、生成できませんでした");
 	return nullptr;
 }
 
@@ -224,7 +224,7 @@ Object *ObjectManager::GetUseOffLayer(
 			return (*it).second;
 		}
 	}
-	ASSERT_WARNING("指定されたレイヤーは全部が活動しているぞ　はーと");
+	//ASSERT_WARNING("指定されたレイヤーは全部が活動しているぞ　はーと");
 	return nullptr;
 }
 
@@ -244,7 +244,7 @@ bool ObjectManager::Search(
 				std::string warning;
 				warning = name;
 				warning += ": この名前のオブジェクトは作成済みです";
-				ASSERT_WARNING(warning.c_str());
+				//ASSERT_WARNING(warning.c_str());
 				return true;
 			}
 		}

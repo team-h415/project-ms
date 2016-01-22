@@ -50,6 +50,10 @@ FbxChild::FbxChild(const OBJECT_PARAMETER_DESC &parameter) :
 
 	recover_wait_timer_ = 0;
 
+	damage_shut_out_counter_ = 0;
+	damage_shut_out_ = false;
+	draw_ = true;
+
 	// ÉÇÉfÉãì«Ç›çûÇ›
 	Load("./resource/model/fbx/child_01.fbx");
 	texture_ = TextureManager::GetTexture("resource/texture/game/child_01.jpg");
@@ -107,11 +111,43 @@ FbxChild::~FbxChild()
 
 
 //-------------------------------------
+// Update()
+//-------------------------------------
+void FbxChild::Update()
+{
+	FbxPlayer::Update();
+	if(damage_shut_out_)
+	{
+		damage_shut_out_counter_--;
+		if(damage_shut_out_counter_ % 10 == 0)
+		{
+			draw_ = !draw_;
+		}
+		if(damage_shut_out_counter_ == 0)
+		{
+			damage_shut_out_ = false;
+			draw_ = true;
+		}
+	}
+}
+
+
+//-------------------------------------
 // SetTexture()
 //-------------------------------------
 void FbxChild::SetTexture(const std::string& path)
 {
 	texture_ = TextureManager::GetTexture(path.c_str());
+}
+
+
+//-------------------------------------
+// StartDamageShutOut()
+//-------------------------------------
+void FbxChild::StartDamageShutOut()
+{
+	damage_shut_out_counter_ = Config::CHILD_DAMAGE_SHUT_OUT;
+	damage_shut_out_ = true;
 }
 
 //-------------------------------------
@@ -144,18 +180,14 @@ void FbxChild::Action(
 	// åŒÇ∆ìñÇΩÇ¡ÇΩÇÁ
 	if (target->parameter().layer_ == LAYER_SPRITE_LAKE)
 	{
-		char name[10];
-		char temp;
-		strcpy_s(name, 10, parameter_.name_.c_str());
-		temp = name[6];
-		int my_pad = atoi(&temp);
+		int my_pad = parameter_.ex_id_;
 
 		if( !GamePad::isPress(my_pad, PAD_BUTTON_8)
 			&& !GamePad::isPress(my_pad, PAD_BUTTON_6)
 			&& water_gauge_ < 1.0f){
 			if(water_supply_enable_){
 				// êÖï‚ãã
-				water_gauge_ += CHILD_RECOVER_WATERGAUGE;
+				water_gauge_ += Config::CHILD_RECOVER_WATERGAUGE;
 				water_gauge_ = std::min<float>(water_gauge_, 1.0f);
 
 				// èdï°ñhé~

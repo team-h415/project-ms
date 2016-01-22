@@ -32,7 +32,7 @@ EffectManager* EffectManager::Get()
 {
 	if(effect_manager_ == nullptr)
 	{
-		effect_manager_ = new EffectManager(50000);
+		effect_manager_ = new EffectManager(100000);
 	}
 
 	return effect_manager_;
@@ -75,6 +75,12 @@ EffectManager::EffectManager(
 
 	// 座標系の設定
 	manager_->SetCoordinateSystem(Effekseer::CoordinateSystem::LH);
+
+	// ストックリセット
+	stock_effect_.clear();
+
+	// クリティカルセクション作成
+	InitializeCriticalSection(&critical_section_);
 }
 
 
@@ -83,6 +89,7 @@ EffectManager::EffectManager(
 //-------------------------------------
 EffectManager::~EffectManager()
 {
+	stock_effect_.clear();
 	manager_->StopAllEffects();
 	for (auto it = effects_.begin(); it != effects_.end(); ++it){
 		SAFE_DELETE((*it).second);
@@ -101,19 +108,27 @@ void EffectManager::Update()
 	SetViewMatrix();
 	SetProjectionMatrix();
 #ifndef NETWORK_HOST_MODE
+	// ロック
 	NetworkGuest::deta_stock(true);
-	while(NetworkGuest::data_process() == true)
+	while(true)
 	{
 		Sleep(5);
+		if(NetworkGuest::data_process() == false)
+		{
+			break;
+		}
 	}
 #endif
-	manager_->Flip();
+	AdaptationEffect();
 #ifndef NETWORK_HOST_MODE
+	// アンロック
 	NetworkGuest::deta_stock(false);
 #endif
-	for(auto it = effects_.begin(); it != effects_.end(); ++it){
+	for(auto it = effects_.begin(); it != effects_.end(); ++it)
+	{
 		(*it).second->Update(manager_);
 	}
+	manager_->Flip();
 	manager_->Update();
 	effect_count_ = 0;
 }
@@ -247,7 +262,7 @@ MyEffect *EffectManager::Get(
 			return (*it).second;
 		}
 	}
-	ASSERT_ERROR("指定した名前のエフェクトは存在しません");
+	//ASSERT_ERROR("指定した名前のエフェクトは存在しません");
 	return nullptr;
 }
 
@@ -274,6 +289,72 @@ void EffectManager::StopAll()
 	manager_->StopAllEffects();
 }
 
+
+//-------------------------------------
+// StockEffect()
+//-------------------------------------
+void EffectManager::StockEffect(STOCK_EFFECT_PARAM stock_param)
+{
+	// ロック
+	EnterCriticalSection(&critical_section_);
+	// データIN
+	stock_effect_.push_back(stock_param);
+	// アンロック
+	LeaveCriticalSection(&critical_section_);
+}
+
+
+//-------------------------------------
+// StockEffect()
+//-------------------------------------
+void EffectManager::AdaptationEffect()
+{
+	// ロック
+	EnterCriticalSection(&critical_section_);
+	// エフェクト追加
+	EFFECT_PARAMETER_DESC effect_param;
+	MyEffect *effect;
+	for(auto it = stock_effect_.begin(); it != stock_effect_.end(); it++)
+	{
+		effect = Get(it->name_);
+		if(effect == nullptr)
+		{
+			continue;
+		}
+		switch(it->state_)
+		{
+			case EFFECT_ADD:
+				effect_param = effect->parameter();
+				effect_param.position_ = it->position_;
+				effect_param.rotation_ = it->rotation_;
+				effect_param.scaling_ = it->scaling_;
+
+				effect->SetParameter(effect_param);
+				Play(it->name_);
+				break;
+
+			case EFFECT_SET_PARAM:
+				effect_param = effect->parameter();
+				effect_param.position_ = it->position_;
+				effect_param.rotation_ = it->rotation_;
+				effect_param.scaling_ = it->scaling_;
+
+				effect->SetParameter(effect_param);
+				break;
+
+			case EFFECT_STOP:
+				Stop(it->name_);
+				break;
+
+			default:
+				break;
+		}
+	}
+	// ストック解放
+	stock_effect_.clear();
+	// アンロック
+	LeaveCriticalSection(&critical_section_);
+}
 
 //-------------------------------------
 // end of file
